@@ -36,46 +36,4 @@
     );
     observer.observe(el);
   });
-
-  const revealTargets = document.querySelectorAll(
-    ".card, .feature, .step, .service-row, .split, .contact-form, .contact-info__card"
-  );
-  revealTargets.forEach((el) => el.classList.add("reveal"));
-
-  const revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.12 }
-  );
-  revealTargets.forEach((el) => revealObserver.observe(el));
-
-  const form = document.getElementById("contact-form");
-  if (form) {
-    const status = document.getElementById("form-status");
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      let valid = true;
-      form.querySelectorAll("[required]").forEach((field) => {
-        const ok = field.value.trim() !== "" && field.checkValidity();
-        field.classList.toggle("invalid", !ok);
-        if (!ok) valid = false;
-      });
-
-      if (!valid) {
-        status.textContent = "Please fill in all required fields correctly.";
-        status.className = "form-status error";
-        return;
-      }
-
-      status.textContent = "Thanks! Your message has been sent — we'll reply within one business day.";
-      status.className = "form-status success";
-      form.reset();
-    });
-  }
 })();
