@@ -12,9 +12,7 @@
   <header class="site-header">
     <nav class="nav container" aria-label="Main navigation">
       <a href="index.html" class="nav__logo"><img src="images/logo.png" alt="BrownHub" class="logo-img"></a>
-      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">
-        <span></span><span></span><span></span>
-      </button>
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu"><span></span><span></span><span></span></button>
       <ul class="nav__menu" id="nav-menu">
         <li><a href="index.html" class="nav__link">Home</a></li>
         <li><a href="services.html" class="nav__link">Services</a></li>
@@ -26,108 +24,23 @@
   </header>
 
   <main>
-    <section class="page-hero">
-      <div class="container">
-        <h1>Let's talk about your <span class="text-accent">project</span></h1>
-        <p>Tell us what you're building. We'll get back to you within one business day.</p>
-      </div>
-    </section>
-
+    <section class="page-hero"><div class="container"><h1>Let's talk about your <span class="text-accent">project</span></h1><p>Tell us what you're building. We'll get back to you within one business day.</p></div></section>
     <section class="section">
       <div class="container contact-grid">
         <form class="contact-form" id="contact-form" action="https://formsubmit.co/howelldaniel533@gmail.com" method="POST">
           <input type="hidden" name="_subject" value="New BrownHub website enquiry">
           <input type="hidden" name="_captcha" value="false">
           <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_next" value="https://howelldaniel.github.io/brownhub-website/contact.html?sent=1">
-
           <div class="form-row">
-            <div class="form-field">
-              <label for="name">Full name *</label>
-              <input type="text" id="name" name="name" required autocomplete="name" placeholder="Jane Smith">
-            </div>
-            <div class="form-field">
-              <label for="email">Email address *</label>
-              <input type="email" id="email" name="email" required autocomplete="email" placeholder="jane@company.com">
-            </div>
+            <div class="form-field"><label for="name">Name *</label><input type="text" id="name" name="name" required autocomplete="name" placeholder="Jane Smith"></div>
+            <div class="form-field"><label for="email">Email *</label><input type="email" id="email" name="email" required autocomplete="email" placeholder="jane@company.com"></div>
           </div>
-
-          <div class="form-row">
-            <div class="form-field">
-              <label for="company">Company / brand</label>
-              <input type="text" id="company" name="company" autocomplete="organization" placeholder="Acme Inc.">
-            </div>
-            <div class="form-field">
-              <label for="service">Service needed</label>
-              <select id="service" name="service">
-                <option value="">Select a service…</option>
-                <option>Website Design</option>
-                <option>Website Development</option>
-                <option>Product Engineering</option>
-                <option>Cloud &amp; DevOps</option>
-                <option>AI &amp; Data</option>
-                <option>UX &amp; Product Design</option>
-                <option>Graphic Designing</option>
-                <option>Something else</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-field">
-              <label for="timeline">Preferred timeline</label>
-              <select id="timeline" name="timeline">
-                <option value="">Select a timeline…</option>
-                <option>As soon as possible</option>
-                <option>Within 1 month</option>
-                <option>1–3 months</option>
-                <option>3–6 months</option>
-                <option>I'm flexible</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label for="budget">Estimated budget</label>
-              <select id="budget" name="budget">
-                <option value="">Select a budget range…</option>
-                <option>Under $500</option>
-                <option>$500–$2,000</option>
-                <option>$2,000–$5,000</option>
-                <option>$5,000–$10,000</option>
-                <option>Over $10,000</option>
-                <option>Not sure yet</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-field">
-              <label for="stage">Project stage</label>
-              <select id="stage" name="stage">
-                <option value="">Select your stage…</option>
-                <option>Idea only</option>
-                <option>Planning / research</option>
-                <option>Need design</option>
-                <option>Need full website build</option>
-                <option>Need improvements to an existing site</option>
-                <option>Already have something and need support</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label for="references">Reference link (optional)</label>
-              <input type="url" id="references" name="references" placeholder="https://example.com">
-            </div>
-          </div>
-
-          <div class="form-field">
-            <label for="message">Project details *</label>
-            <textarea id="message" name="message" rows="7" required minlength="20" placeholder="Tell us about your goals, target audience, features, timeline, budget, and inspiration…" aria-describedby="message-help"></textarea>
-            <small id="message-help" class="form-help">The more details you share, the better we can prepare a suitable solution.</small>
-          </div>
-
-          <button type="submit" class="btn btn--primary btn--lg btn--block">Send inquiry</button>
+          <div class="form-field"><label for="company">Company</label><input type="text" id="company" name="company" autocomplete="organization" placeholder="Acme Inc."></div>
+          <div class="form-field"><label for="service">What do you need?</label><select id="service" name="service"><option value="">Select a service…</option><option>Product Engineering</option><option>Cloud &amp; DevOps</option><option>AI &amp; Data</option><option>UX &amp; Product Design</option><option>Graphic Designing</option><option>Something else</option></select></div>
+          <div class="form-field"><label for="message">Project details *</label><textarea id="message" name="message" rows="5" required placeholder="Tell us about your goals, timeline, and budget…"></textarea></div>
+          <button type="submit" class="btn btn--primary btn--lg btn--block">Send message</button>
           <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
         </form>
-
         <aside class="contact-info">
           <div class="contact-info__card"><h3>Email</h3><p><a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a></p></div>
           <div class="contact-info__card"><h3>Phone</h3><p><a href="tel:+233593872873">+233 593 872 873</a></p></div>
@@ -137,38 +50,11 @@
         </aside>
       </div>
     </section>
-
-    <section class="section section--alt">
-      <div class="container">
-        <div class="section__head"><h2>Find us</h2><p>Map views of both locations — tap the link to open directions in Google Maps.</p></div>
-        <div class="maps-grid">
-          <div class="map-card"><div class="map-card__head"><h3>Home — New Heaven Preparatory School</h3><a href="https://maps.app.goo.gl/tof3h6ciUgqP9niWA" target="_blank" rel="noopener">Directions →</a></div><img src="images/maps/home-static.png" alt="Static map of home location, New Heaven Preparatory School" width="640" height="400" loading="lazy"></div>
-          <div class="map-card"><div class="map-card__head"><h3>Work — Accra New Town</h3><a href="https://maps.app.goo.gl/J1d1eDiNE7C7bBoz8" target="_blank" rel="noopener">Directions →</a></div><iframe title="Map of work location, ChrisPrintgh, Accra New Town, Accra" src="https://maps.google.com/maps?q=5.5831149%2C-0.2082251&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
-        </div>
-      </div>
-    </section>
+    <section class="section section--alt"><div class="container"><div class="section__head"><h2>Find us</h2><p>Map views of both locations — tap the link to open directions in Google Maps.</p></div><div class="maps-grid"><div class="map-card"><div class="map-card__head"><h3>Home — New Heaven Preparatory School</h3><a href="https://maps.app.goo.gl/tof3h6ciUgqP9niWA" target="_blank" rel="noopener">Directions →</a></div><img src="images/maps/home-static.png" alt="Static map of home location, New Heaven Preparatory School" width="640" height="400" loading="lazy"></div><div class="map-card"><div class="map-card__head"><h3>Work — Accra New Town</h3><a href="https://maps.app.goo.gl/J1d1eDiNE7C7bBoz8" target="_blank" rel="noopener">Directions →</a></div><iframe title="Map of work location, ChrisPrintgh, Accra New Town, Accra" src="https://maps.google.com/maps?q=5.5831149%2C-0.2082251&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div></div></div></section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer__grid">
-      <div><a href="index.html" class="nav__logo"><img src="images/logo.png" alt="BrownHub" class="logo-img"></a><p class="footer__tag">Modern software, built by people who care.</p></div>
-      <div><h4>Company</h4><ul><li><a href="about.html">About us</a></li><li><a href="services.html">Services</a></li><li><a href="catalog.html">Catalog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
-      <div><h4>Services</h4><ul><li><a href="services.html">Product Engineering</a></li><li><a href="services.html">Cloud &amp; DevOps</a></li><li><a href="services.html">AI &amp; Data</a></li><li><a href="services.html">Graphic Designing</a></li></ul></div>
-      <div><h4>Contact</h4><ul><li><a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a></li><li><a href="tel:+233593872873">+233 593 872 873</a></li></ul></div>
-    </div>
-    <div class="container footer__bottom"><p>© 2026 BrownHub. All rights reserved.</p></div>
-  </footer>
-
+  <footer class="site-footer"><div class="container footer__grid"><div><a href="index.html" class="nav__logo"><img src="images/logo.png" alt="BrownHub" class="logo-img"></a><p class="footer__tag">Modern software, built by people who care.</p></div><div><h4>Company</h4><ul><li><a href="about.html">About us</a></li><li><a href="services.html">Services</a></li><li><a href="catalog.html">Catalog</a></li><li><a href="contact.html">Contact</a></li></ul></div><div><h4>Services</h4><ul><li><a href="services.html">Product Engineering</a></li><li><a href="services.html">Cloud &amp; DevOps</a></li><li><a href="services.html">AI &amp; Data</a></li><li><a href="services.html">Graphic Designing</a></li></ul></div><div><h4>Contact</h4><ul><li><a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a></li><li><a href="tel:+233593872873">+233 593 872 873</a></li></ul></div></div><div class="container footer__bottom"><p>© 2026 BrownHub. All rights reserved.</p></div></footer>
   <script src="js/main.js"></script>
-  <div class="chat-widget">
-    <button class="chat-widget__toggle" id="chatToggle" aria-expanded="false" aria-controls="chatPanel" title="Chat with our robotic assistant">Chat</button>
-    <div class="chat-widget__panel" id="chatPanel" role="dialog" aria-label="Robotic AI assistant" hidden>
-      <div class="chat-widget__head"><strong>Robotic AI Assistant</strong><button class="chat-widget__close" id="chatClose" aria-label="Close chat">&times;</button></div>
-      <div class="chat-widget__messages" id="chatMessages" aria-live="polite"></div>
-      <div class="chat-widget__chips" id="chatChips"></div>
-      <form class="chat-widget__form" id="chatForm"><input id="chatInput" type="text" placeholder="Ask about websites or design work…" autocomplete="off" aria-label="Your message"><button type="submit" aria-label="Send message">Send</button></form>
-    </div>
-  </div>
   <script src="js/chat.js"></script>
 </body>
 </html>
