@@ -104,4 +104,61 @@
       message.insertAdjacentElement("afterend", help);
     }
   }
+
+  // Add the FAQ to the home page using accessible native disclosure panels.
+  const homePage = document.querySelector(".hero");
+  const cta = document.querySelector(".cta");
+  if (homePage && cta && !document.getElementById("faq")) {
+    const faq = document.createElement("section");
+    faq.className = "section faq-section";
+    faq.id = "faq";
+    faq.setAttribute("aria-labelledby", "faq-title");
+    faq.innerHTML = `
+      <div class="container">
+        <div class="section__head">
+          <h2 id="faq-title">Frequently asked questions</h2>
+          <p>Quick answers about working with BrownHub.</p>
+        </div>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary>What services does BrownHub offer?</summary>
+            <p>We provide product engineering, website design and development, cloud and DevOps, AI and data solutions, UX and product design, and graphic design.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How does the project process work?</summary>
+            <p>We begin with a consultation to understand your goals, then align on scope, timeline, and budget before moving through design, development, testing, and launch.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How long does a project take?</summary>
+            <p>Timelines depend on the scope and complexity. After learning about your project, we will provide a realistic delivery plan and milestones.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How much does a project cost?</summary>
+            <p>Every project is different. We create a tailored estimate based on your requirements, desired features, timeline, and level of support.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can you improve an existing website?</summary>
+            <p>Yes. We can refresh the design, improve performance and accessibility, add features, fix issues, or rebuild an existing website.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Do you provide support after launch?</summary>
+            <p>Yes. We can provide ongoing maintenance, updates, monitoring, improvements, and technical support after your project goes live.</p>
+          </details>
+        </div>
+      </div>`;
+    cta.before(faq);
+
+    const faqStyles = document.createElement("style");
+    faqStyles.textContent = `
+      .faq-list { max-width: 860px; margin: 0 auto; display: grid; gap: 1rem; }
+      .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+      .faq-item summary { cursor: pointer; list-style: none; padding: 1.25rem 1.5rem; color: var(--text); font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+      .faq-item summary::-webkit-details-marker { display: none; }
+      .faq-item summary::after { content: "+"; color: var(--accent); font-size: 1.5rem; font-weight: 400; line-height: 1; }
+      .faq-item[open] summary::after { content: "−"; }
+      .faq-item summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+      .faq-item p { margin: 0; padding: 0 1.5rem 1.25rem; color: var(--text-muted); line-height: 1.7; }
+    `;
+    document.head.appendChild(faqStyles);
+  }
 })();
