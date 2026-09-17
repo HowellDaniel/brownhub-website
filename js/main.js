@@ -36,4 +36,28 @@
     );
     observer.observe(el);
   });
+
+  // Use FormSubmit to deliver contact-form submissions to the site owner.
+  // The first submission requires one-time email activation from FormSubmit.
+  const contactForm = document.getElementById("contact-form");
+  if (contactForm) {
+    contactForm.action = "https://formsubmit.co/howelldaniel533@gmail.com";
+    contactForm.method = "POST";
+    contactForm.noValidate = false;
+
+    const hiddenFields = {
+      _subject: "New BrownHub website enquiry",
+      _captcha: "false",
+      _template: "table"
+    };
+
+    Object.entries(hiddenFields).forEach(([name, value]) => {
+      if (contactForm.querySelector(`[name="${name}"]`)) return;
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = value;
+      contactForm.appendChild(input);
+    });
+  }
 })();
