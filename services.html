@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services — BrownHub</title>
+  <meta name="description" content="BrownHub services: product engineering, cloud & DevOps, AI & data, and UX design.">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Main navigation">
+      <a href="index.html" class="nav__logo"><img src="images/logo.png" alt="BrownHub" class="logo-img"></a>
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__menu" id="nav-menu">
+        <li><a href="index.html" class="nav__link">Home</a></li>
+        <li><a href="services.html" class="nav__link nav__link--active">Services</a></li>
+        <li><a href="catalog.html" class="nav__link">Catalog</a></li>
+        <li><a href="about.html" class="nav__link">About</a></li>
+        <li><a href="contact.html" class="nav__link nav__link--cta">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <h1>Services built around <span class="text-accent">your goals</span></h1>
+        <p>From zero-to-one product builds to scaling existing platforms, we bring the right expertise to every stage.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="service-row">
+          <div class="service-row__text">
+            <h2>🧩 Product Engineering</h2>
+            <p>We take your idea from napkin sketch to production. Our cross-functional squads handle discovery, UX design, frontend and backend development, QA, and launch.</p>
+            <ul class="checklist">
+              <li>Web & mobile applications</li>
+              <li>SaaS platforms & marketplaces</li>
+              <li>API design & microservices</li>
+              <li>Legacy modernization</li>
+            </ul>
+          </div>
+          <div class="service-row__visual" aria-hidden="true"><div class="panel panel--code"><pre><code>const product = await brownhub
+  .discover(idea)
+  .design(ux)
+  .build(stack)
+  .ship();</code></pre></div></div>
+        </div>
+
+        <div class="service-row service-row--reverse">
+          <div class="service-row__text">
+            <h2>☁️ Cloud & DevOps</h2>
+            <p>Infrastructure that scales with you and stays out of your way. We design cloud architectures, automate deployments, and keep your systems observable and resilient.</p>
+            <ul class="checklist">
+              <li>AWS / Azure / GCP architecture</li>
+              <li>CI/CD pipelines & infrastructure as code</li>
+              <li>Kubernetes & container orchestration</li>
+              <li>Monitoring, alerting & SRE practices</li>
+            </ul>
+          </div>
+          <div class="service-row__visual" aria-hidden="true"><div class="panel panel--cloud">☁<br><small>99.99% uptime</small></div></div>
+        </div>
+
+        <div class="service-row">
+          <div class="service-row__text">
+            <h2>🤖 AI & Data</h2>
+            <p>Turn data into decisions. We build ML-powered features, integrate LLMs into your products, and design data platforms your team can actually use.</p>
+            <ul class="checklist">
+              <li>LLM integration & AI copilots</li>
+              <li>Machine learning models</li>
+              <li>Data pipelines & warehousing</li>
+              <li>Analytics dashboards</li>
+            </ul>
+          </div>
+          <div class="service-row__visual" aria-hidden="true"><div class="panel panel--ai">🤖<br><small>AI-powered</small></div></div>
+        </div>
+
+        <div class="service-row service-row--reverse">
+          <div class="service-row__text">
+            <h2>🎨 UX & Product Design</h2>
+            <p>Beautiful interfaces grounded in research. We design experiences users love — and that convert.</p>
+            <ul class="checklist">
+              <li>UX research & prototyping</li>
+              <li>UI design systems</li>
+              <li>Accessibility (WCAG) audits</li>
+              <li>Conversion optimization</li>
+            </ul>
+          </div>
+          <div class="service-row__visual" aria-hidden="true"><div class="panel panel--ux">🎨<br><small>Human-centered</small></div></div>
+        </div>
+
+        <div class="service-row">
+          <div class="service-row__text">
+            <h2>🖌️ Graphic Designing</h2>
+            <p>From logo to launch banner — we craft visual identities and marketing materials that make your brand unforgettable, in print and on screen.</p>
+            <ul class="checklist">
+              <li>Brand identity & logo design</li>
+              <li>Posters, flyers & print materials</li>
+              <li>Social media kits & ad creatives</li>
+              <li>Packaging & merchandise design</li>
+            </ul>
+            <p><a href="catalog.html" class="card__link">Browse the catalog →</a></p>
+          </div>
+          <div class="service-row__visual" aria-hidden="true"><div class="panel panel--ux">🖌️<br><small>Brand-first</small></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container">
+        <div class="section__head">
+          <h2>How we work</h2>
+          <p>A simple, proven process.</p>
+        </div>
+        <div class="cards cards--4">
+          <article class="step"><span class="step__num">1</span><h3>Discover</h3><p>We dig into your goals, users, and constraints to define the right solution.</p></article>
+          <article class="step"><span class="step__num">2</span><h3>Design</h3><p>Architecture, prototypes, and a clear roadmap — before a line of production code.</p></article>
+          <article class="step"><span class="step__num">3</span><h3>Build</h3><p>Two-week sprints with demos, so you see progress and steer direction constantly.</p></article>
+          <article class="step"><span class="step__num">4</span><h3>Scale</h3><p>Launch, measure, and iterate. We stay on as your long-term engineering partner.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container cta__inner">
+        <h2>Not sure which service fits?</h2>
+        <p>Book a free 30-minute call and we'll map out the right approach together.</p>
+        <a href="contact.html" class="btn btn--primary btn--lg">Book a call</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer__grid">
+      <div>
+        <a href="index.html" class="nav__logo"><img src="images/logo.png" alt="BrownHub" class="logo-img"></a>
+        <p class="footer__tag">Modern software, built by people who care.</p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About us</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="catalog.html">Catalog</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html">Product Engineering</a></li>
+          <li><a href="services.html">Cloud & DevOps</a></li>
+          <li><a href="services.html">AI & Data</a></li>
+          <li><a href="services.html">Graphic Designing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a></li>
+          <li><a href="tel:+233593872873">+233 593 872 873</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <p>© 2026 BrownHub. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+
+  <div class="chat-widget">
+    <button class="chat-widget__toggle" id="chatToggle" aria-expanded="false" aria-controls="chatPanel" title="Chat with our robotic assistant">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="8.5" width="15" height="10" rx="3"/><path d="M12 8.5V5.5"/><circle cx="12" cy="4" r="1.3"/><circle cx="9.3" cy="12.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="14.7" cy="12.6" r="1.1" fill="currentColor" stroke="none"/><path d="M9.3 15.6h5.4"/><path d="M2 12.5v3M22 12.5v3"/></svg>
+    </button>
+    <div class="chat-widget__panel" id="chatPanel" role="dialog" aria-label="Robotic AI assistant" hidden>
+      <div class="chat-widget__head">
+        <span class="chat-widget__avatar" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="8.5" width="15" height="10" rx="3"/><path d="M12 8.5V5.5"/><circle cx="12" cy="4" r="1.3"/><circle cx="9.3" cy="12.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="14.7" cy="12.6" r="1.1" fill="currentColor" stroke="none"/><path d="M9.3 15.6h5.4"/><path d="M2 12.5v3M22 12.5v3"/></svg>
+        </span>
+        <div class="chat-widget__head-text">
+          <strong>Robotic AI Assistant</strong>
+          <small>Online — quick replies on web &amp; design work</small>
+        </div>
+        <button class="chat-widget__close" id="chatClose" aria-label="Close chat">&times;</button>
+      </div>
+      <div class="chat-widget__messages" id="chatMessages" aria-live="polite"></div>
+      <div class="chat-widget__chips" id="chatChips"></div>
+      <form class="chat-widget__form" id="chatForm">
+        <input id="chatInput" type="text" placeholder="Ask about websites or design work…" autocomplete="off" aria-label="Your message">
+        <button type="submit" aria-label="Send message">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/chat.js"></script>
+</body>
+</html>
