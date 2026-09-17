@@ -59,5 +59,49 @@
       input.value = value;
       contactForm.appendChild(input);
     });
+
+    // Add structured project questions so visitors can provide more useful details.
+    const messageField = contactForm.querySelector("#message")?.closest(".form-field");
+    if (messageField && !contactForm.querySelector("#timeline")) {
+      const projectQuestions = document.createElement("div");
+      projectQuestions.className = "form-row";
+      projectQuestions.innerHTML = `
+        <div class="form-field">
+          <label for="timeline">Preferred timeline</label>
+          <select id="timeline" name="timeline">
+            <option value="">Select a timeline…</option>
+            <option>As soon as possible</option>
+            <option>Within 1 month</option>
+            <option>1–3 months</option>
+            <option>3–6 months</option>
+            <option>I'm flexible</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="budget">Estimated budget</label>
+          <select id="budget" name="budget">
+            <option value="">Select a budget range…</option>
+            <option>Under $500</option>
+            <option>$500–$2,000</option>
+            <option>$2,000–$5,000</option>
+            <option>$5,000–$10,000</option>
+            <option>Over $10,000</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>`;
+      messageField.before(projectQuestions);
+
+      const message = contactForm.querySelector("#message");
+      message.rows = 7;
+      message.minLength = 20;
+      message.placeholder = "Tell us about your goals, features, audience, timeline, budget, and any useful references…";
+      message.setAttribute("aria-describedby", "message-help");
+
+      const help = document.createElement("small");
+      help.id = "message-help";
+      help.className = "form-help";
+      help.textContent = "The more details you provide, the better we can prepare for our response.";
+      message.insertAdjacentElement("afterend", help);
+    }
   }
 })();
