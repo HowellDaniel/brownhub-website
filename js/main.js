@@ -57,9 +57,26 @@
       .hero__card--1 { animation: hero-card-float-one 5s ease-in-out infinite; }
       .hero__card--2 { animation: hero-card-float-two 6s ease-in-out -1.5s infinite; }
       .hero__card--3 { animation: hero-card-float-three 5.5s ease-in-out -3s infinite; }
-      @keyframes hero-card-float-one { 0%, 100% { transform: translate3d(0, 0, 0) rotate(-2deg); } 50% { transform: translate3d(0, -12px, 0) rotate(1deg); } }
-      @keyframes hero-card-float-two { 0%, 100% { transform: translate3d(0, 0, 0) rotate(2deg); } 50% { transform: translate3d(8px, -16px, 0) rotate(-1deg); } }
-      @keyframes hero-card-float-three { 0%, 100% { transform: translate3d(0, 0, 0) rotate(-1deg); } 50% { transform: translate3d(-8px, -10px, 0) rotate(2deg); } }
+      @keyframes hero-card-float-one {
+        0% { transform: translate3d(-18px, 10px, 0) rotate(-6deg); }
+        25% { transform: translate3d(20px, -8px, 0) rotate(2deg); }
+        50% { transform: translate3d(12px, -24px, 0) rotate(4deg); }
+        75% { transform: translate3d(-16px, -14px, 0) rotate(-2deg); }
+        100% { transform: translate3d(-18px, 10px, 0) rotate(-6deg); }
+      }
+      @keyframes hero-card-float-two {
+        0% { transform: translate3d(26px, -16px, 0) rotate(5deg); }
+        33% { transform: translate3d(-10px, -28px, 0) rotate(-2deg); }
+        66% { transform: translate3d(10px, 6px, 0) rotate(3deg); }
+        100% { transform: translate3d(26px, -16px, 0) rotate(5deg); }
+      }
+      @keyframes hero-card-float-three {
+        0% { transform: translate3d(-16px, -10px, 0) rotate(-3deg); }
+        25% { transform: translate3d(18px, -18px, 0) rotate(4deg); }
+        50% { transform: translate3d(28px, 8px, 0) rotate(0deg); }
+        75% { transform: translate3d(-8px, 10px, 0) rotate(-5deg); }
+        100% { transform: translate3d(-16px, -10px, 0) rotate(-3deg); }
+      }
       @media (max-width: 700px) { .interactive-background::before, .interactive-background::after { width: 14rem; height: 14rem; filter: blur(50px); } }
     `;
     document.head.appendChild(style);
