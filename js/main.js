@@ -39,28 +39,16 @@
 
   const contactForm = document.getElementById("contact-form");
   if (contactForm) {
-    // Allow browsers and password managers to recognize and safely offer saved details.
     contactForm.setAttribute("autocomplete", "on");
-    const autocomplete = {
-      name: "name",
-      email: "email",
-      company: "organization",
-      message: "off"
-    };
+    const autocomplete = { name: "name", email: "email", company: "organization", message: "off" };
     Object.entries(autocomplete).forEach(([id, value]) => {
       const field = contactForm.querySelector(`#${id}`);
       if (field) field.setAttribute("autocomplete", value);
     });
-
     contactForm.action = "https://formsubmit.co/howelldaniel533@gmail.com";
     contactForm.method = "POST";
     contactForm.noValidate = false;
-
-    const hiddenFields = {
-      _subject: "New BrownHub website enquiry",
-      _captcha: "false",
-      _template: "table"
-    };
+    const hiddenFields = { _subject: "New BrownHub website enquiry", _captcha: "false", _template: "table" };
     Object.entries(hiddenFields).forEach(([name, value]) => {
       if (contactForm.querySelector(`[name="${name}"]`)) return;
       const input = document.createElement("input");
@@ -69,6 +57,27 @@
       input.value = value;
       contactForm.appendChild(input);
     });
+  }
+
+  // Add the company name beside the modest-sized logo in the top navigation.
+  const navBrand = document.querySelector(".site-header .nav__logo");
+  if (navBrand && !navBrand.querySelector(".brand-name")) {
+    const brandName = document.createElement("span");
+    brandName.className = "brand-name";
+    brandName.textContent = "BrownHub";
+    navBrand.appendChild(brandName);
+
+    const brandStyle = document.createElement("style");
+    brandStyle.textContent = `
+      .site-header .nav__logo { display: inline-flex; align-items: center; gap: .6rem; }
+      .site-header .logo-img { width: 112px; height: auto; }
+      .site-header .brand-name { color: var(--text); font-size: 1.35rem; font-weight: 800; letter-spacing: .02em; white-space: nowrap; }
+      @media (max-width: 700px) {
+        .site-header .logo-img { width: 92px; }
+        .site-header .brand-name { font-size: 1.1rem; }
+      }
+    `;
+    document.head.appendChild(brandStyle);
   }
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
