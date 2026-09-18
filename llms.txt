@@ -1,0 +1,24 @@
+# BrownHub
+
+## Overview
+BrownHub builds modern software products, web platforms, and cloud solutions for ambitious businesses.
+
+## Services
+- Product Engineering
+- Cloud & DevOps
+- AI & Data
+- Graphic Designing
+- Website design and development
+
+## Company details
+- Website: https://howelldaniel.github.io/brownhub-website/
+- Email: howelldaniel533@gmail.com
+- Phone: +233 593 872 873
+- Location: Accra, Ghana
+
+## Contact
+Use the contact page to request a quote or start a project:
+https://howelldaniel.github.io/brownhub-website/contact.html
+
+## Content guidance
+BrownHub is a digital product studio focused on software development, cloud infrastructure, web design, AI/data work, and branding.
