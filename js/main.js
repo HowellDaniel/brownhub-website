@@ -37,9 +37,41 @@
     observer.observe(el);
   });
 
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const contactForm = document.getElementById("contact-form");
+  if (contactForm) {
+    // Allow browsers and password managers to recognize and safely offer saved details.
+    contactForm.setAttribute("autocomplete", "on");
+    const autocomplete = {
+      name: "name",
+      email: "email",
+      company: "organization",
+      message: "off"
+    };
+    Object.entries(autocomplete).forEach(([id, value]) => {
+      const field = contactForm.querySelector(`#${id}`);
+      if (field) field.setAttribute("autocomplete", value);
+    });
 
-  // Interactive background: a subtle pointer-responsive glow behind the page content.
+    contactForm.action = "https://formsubmit.co/howelldaniel533@gmail.com";
+    contactForm.method = "POST";
+    contactForm.noValidate = false;
+
+    const hiddenFields = {
+      _subject: "New BrownHub website enquiry",
+      _captcha: "false",
+      _template: "table"
+    };
+    Object.entries(hiddenFields).forEach(([name, value]) => {
+      if (contactForm.querySelector(`[name="${name}"]`)) return;
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = value;
+      contactForm.appendChild(input);
+    });
+  }
+
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!prefersReducedMotion) {
     const background = document.createElement("div");
     background.className = "interactive-background";
@@ -57,26 +89,9 @@
       .hero__card--1 { animation: hero-card-float-one 5s ease-in-out infinite; }
       .hero__card--2 { animation: hero-card-float-two 6s ease-in-out -1.5s infinite; }
       .hero__card--3 { animation: hero-card-float-three 5.5s ease-in-out -3s infinite; }
-      @keyframes hero-card-float-one {
-        0% { transform: translate3d(-18px, 10px, 0) rotate(-6deg); }
-        25% { transform: translate3d(20px, -8px, 0) rotate(2deg); }
-        50% { transform: translate3d(12px, -24px, 0) rotate(4deg); }
-        75% { transform: translate3d(-16px, -14px, 0) rotate(-2deg); }
-        100% { transform: translate3d(-18px, 10px, 0) rotate(-6deg); }
-      }
-      @keyframes hero-card-float-two {
-        0% { transform: translate3d(26px, -16px, 0) rotate(5deg); }
-        33% { transform: translate3d(-10px, -28px, 0) rotate(-2deg); }
-        66% { transform: translate3d(10px, 6px, 0) rotate(3deg); }
-        100% { transform: translate3d(26px, -16px, 0) rotate(5deg); }
-      }
-      @keyframes hero-card-float-three {
-        0% { transform: translate3d(-16px, -10px, 0) rotate(-3deg); }
-        25% { transform: translate3d(18px, -18px, 0) rotate(4deg); }
-        50% { transform: translate3d(28px, 8px, 0) rotate(0deg); }
-        75% { transform: translate3d(-8px, 10px, 0) rotate(-5deg); }
-        100% { transform: translate3d(-16px, -10px, 0) rotate(-3deg); }
-      }
+      @keyframes hero-card-float-one { 0% { transform: translate3d(-18px, 10px, 0) rotate(-6deg); } 25% { transform: translate3d(20px, -8px, 0) rotate(2deg); } 50% { transform: translate3d(12px, -24px, 0) rotate(4deg); } 75% { transform: translate3d(-16px, -14px, 0) rotate(-2deg); } 100% { transform: translate3d(-18px, 10px, 0) rotate(-6deg); } }
+      @keyframes hero-card-float-two { 0% { transform: translate3d(26px, -16px, 0) rotate(5deg); } 33% { transform: translate3d(-10px, -28px, 0) rotate(-2deg); } 66% { transform: translate3d(10px, 6px, 0) rotate(3deg); } 100% { transform: translate3d(26px, -16px, 0) rotate(5deg); } }
+      @keyframes hero-card-float-three { 0% { transform: translate3d(-16px, -10px, 0) rotate(-3deg); } 25% { transform: translate3d(18px, -18px, 0) rotate(4deg); } 50% { transform: translate3d(28px, 8px, 0) rotate(0deg); } 75% { transform: translate3d(-8px, 10px, 0) rotate(-5deg); } 100% { transform: translate3d(-16px, -10px, 0) rotate(-3deg); } }
       @media (max-width: 700px) { .interactive-background::before, .interactive-background::after { width: 14rem; height: 14rem; filter: blur(50px); } }
     `;
     document.head.appendChild(style);
