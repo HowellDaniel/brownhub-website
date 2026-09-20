@@ -64,9 +64,13 @@
 
     var style = document.createElement("style");
     style.textContent =
-      ".lang-select{background:transparent;border:1px solid var(--border);color:var(--text);" +
-      "border-radius:8px;padding:.3rem .4rem;font-size:.78rem;cursor:pointer;margin-left:.6rem;" +
-      "max-width:110px;flex:none}";
+      ".lang-select{-webkit-appearance:none;appearance:none;flex:none;background:transparent;" +
+      "background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238a94a6' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E\");" +
+      "background-repeat:no-repeat;background-position:right 2px center;" +
+      "border:0;color:var(--text-muted);font-family:inherit;font-size:0.95rem;font-weight:500;" +
+      "padding:.25rem 1.2rem .25rem .1rem;margin-left:1.1rem;cursor:pointer;transition:color .2s}" +
+      ".lang-select:hover,.lang-select:focus{color:var(--text);outline:none}" +
+      ".lang-select option{color:var(--text);background:var(--surface)}";
     document.head.appendChild(style);
 
     var select = document.createElement("select");
