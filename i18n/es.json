@@ -188,7 +188,7 @@
  "ABS board signage": "Señalética en panel ABS",
  "Crystal award plaque frame": "Marco de placa de premio en cristal",
  "Event flyer design": "Diseño de volante de evento",
- "Funeral Banner": "Bandera de funeral",
+ "Funeral Banner": "Pendón funerario",
  "Funeral banner design": "Diseño de bandera de funeral",
  "Book Design (Inside and Cover)": "Diseño de libro (interior y portada)",
  "Book cover and interior design": "Portada y diseño interior de libro",
@@ -268,5 +268,15 @@
  "BrownHub services: product engineering, cloud & DevOps, AI & data, and UX design.": "Servicios de BrownHub: ingeniería de producto, cloud y DevOps, IA y datos, y diseño UX.",
  "Get in touch with BrownHub. Free consultation within 24 hours.": "Contacta con BrownHub. Consulta gratuita en 24 horas.",
  "BrownHub is a software company on a mission to help businesses build great technology.": "BrownHub es una empresa de software con la misión de ayudar a los negocios a construir gran tecnología.",
- "CTO": "CTO"
+ "CTO": "CTO",
+ "Banners & signage": "Banners y señalética",
+ "More in Banners & signage": "En la categoría Banners y señalética",
+ "Frames & awards": "Marcos y premios",
+ "More in Frames & awards": "En la categoría Marcos y premios",
+ "Flyers & printing": "Volantes e impresión",
+ "More in Flyers & printing": "En la categoría Volantes e impresión",
+ "Books & covers": "Libros y cubiertas",
+ "More in Books & covers": "En la categoría Libros y cubiertas",
+ "More in this category": "Más en esta categoría",
+ "More from the catalog": "Más artículos del catálogo"
 }

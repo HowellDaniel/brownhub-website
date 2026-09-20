@@ -15,3 +15,15 @@
 .modal__desc{color:var(--text-muted);font-size:.95rem}
 .modal__actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.25rem}
 .modal__close{position:absolute;top:.6rem;right:.6rem;width:34px;height:34px;border-radius:50%;border:none;background:rgba(0,0,0,.45);color:#fff;font-size:1.25rem;cursor:pointer;line-height:1;z-index:1}
+
+/* Catalog modal: category chip + related items */
+.modal__card{max-height:90vh;overflow-y:auto}
+.modal__cat{display:inline-block;margin-top:.4rem;font-size:.78rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:.15rem .6rem}
+.modal__more{margin-top:1.4rem;border-top:1px solid var(--border);padding-top:1rem}
+.modal__more h4{font-size:.95rem;margin-bottom:.7rem;color:var(--text-muted)}
+.modal__more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.more-item{background:var(--bg-alt);border:1px solid var(--border);border-radius:10px;padding:.45rem;cursor:pointer;color:var(--text);font-family:inherit;font-size:.8rem;display:flex;flex-direction:column;gap:.35rem;transition:.15s;text-align:left}
+.more-item:hover{border-color:var(--accent);transform:translateY(-2px)}
+.more-item img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;display:block}
+.more-item span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.25}
+@media (max-width:520px){.modal__more-grid{grid-template-columns:repeat(2,1fr)}}
