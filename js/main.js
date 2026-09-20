@@ -39,11 +39,11 @@
     if (brand.querySelector(".brand-name")) return;
     const name = document.createElement("span");
     name.className = "brand-name";
-    name.textContent = "BrownHub";
+    name.textContent = "BrownHub Studio";
     name.setAttribute("aria-hidden", "true");
     brand.appendChild(name);
     brand.style.cssText += ";display:inline-flex!important;align-items:center!important;gap:10px!important;white-space:nowrap!important;visibility:visible!important;";
-    name.style.cssText = "display:inline-block!important;visibility:visible!important;color:#e8ecf1!important;font-size:1.35rem!important;font-weight:800!important;line-height:1!important;letter-spacing:.02em!important;white-space:nowrap!important;";
+    name.style.cssText = "display:inline-block!important;visibility:visible!important;color:var(--text)!important;font-size:1.35rem!important;font-weight:800!important;line-height:1!important;letter-spacing:.02em!important;white-space:nowrap!important;";
   });
 
   const contactForm = document.getElementById("contact-form");
