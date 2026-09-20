@@ -11,6 +11,10 @@
   const WA = "https://wa.me/233502954541";
   const WA_CATALOG = "https://wa.me/c/233502954541";
 
+  function T(s) {
+    return (window.I18N && window.I18N.t) ? window.I18N.t(s) : s;
+  }
+
   const questionIntents = [
     {
       keys: ["human", "agent", "real person", "talk to someone", "speak to someone", "call you", "phone", "email", "whatsapp", "contact"],
@@ -92,7 +96,7 @@
     const el = document.createElement("div");
     el.className = `chat-msg chat-msg--${who}`;
     if (who === "user") el.textContent = html;
-    else el.innerHTML = html;
+    else el.innerHTML = T(html);
     messages.appendChild(el);
     scrollDown();
     return el;
@@ -112,7 +116,7 @@
     for (const label of list) {
       const b = document.createElement("button");
       b.type = "button";
-      b.textContent = label;
+      b.textContent = T(label);
       b.addEventListener("click", () => send(label));
       chips.appendChild(b);
     }
