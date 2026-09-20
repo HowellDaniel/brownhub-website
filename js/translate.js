@@ -1,7 +1,9 @@
 (function () {
   "use strict";
 
-  var LANGS = [["en", "English"], ["fr", "Français"], ["es", "Español"], ["pt", "Português"]];
+  var LANGS = [["en", "English"], ["fr", "Français"], ["es", "Español"], ["pt", "Português"],
+    ["ar", "العربية"], ["zh", "简体中文"], ["de", "Deutsch"], ["nl", "Nederlands"],
+    ["it", "Italiano"], ["ru", "Русский"], ["hi", "हिन्दी"], ["sw", "Kiswahili"], ["tw", "Twi"]];
   var ATTRS = ["placeholder", "title", "alt", "aria-label"];
   var dicts = {};
   var records = [];
@@ -80,7 +82,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=5")
+    return fetch("i18n/" + code + ".json?v=6")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }
@@ -133,7 +135,10 @@
       "font-size:0.95rem;font-weight:500;padding:.3rem 1.8rem .3rem .85rem;margin-left:1.1rem;cursor:pointer;" +
       "transition:color .2s,box-shadow .2s}" +
       ".lang-select:hover,.lang-select:focus{color:var(--text);outline:none;box-shadow:0 0 0 3px rgba(217,122,31,0.18)}" +
-      ".lang-select option{color:var(--text);background:var(--surface)}";
+      ".lang-select option{color:var(--text);background:var(--surface)}" +
+      "@media (max-width:640px){.lang-select{font-size:.75rem;padding:.25rem 1.35rem .25rem .45rem;margin-left:.45rem;background-position:right .35rem center;max-width:7.4rem}" +
+      ".site-header .theme-toggle{margin-left:.5rem;width:36px;height:36px}}" +
+      "@media (max-width:430px){.lang-select{max-width:6.4rem;font-size:.72rem}.site-header .logo-img{height:32px}}";
     document.head.appendChild(style);
 
     selectEl = document.createElement("select");
@@ -166,6 +171,7 @@
       saved = localStorage.getItem("brownhub-lang") || "";
       if (!saved) {
         var nav2 = (navigator.language || "en").slice(0, 2);
+        if (nav2 === "ak") nav2 = "tw";
         saved = LANGS.some(function (l) { return l[0] === nav2; }) ? nav2 : "en";
       }
     } catch (e) {}

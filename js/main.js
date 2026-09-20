@@ -46,6 +46,18 @@
     name.style.cssText = "display:inline-block!important;visibility:visible!important;color:var(--text)!important;font-size:1.35rem!important;font-weight:800!important;line-height:1!important;letter-spacing:.02em!important;white-space:nowrap!important;";
   });
 
+  // On very small phones the wordmark competes with the language pill; hide it via
+  // JS because its inline !important styles cannot be overridden by the stylesheet.
+  const smallPhone = window.matchMedia("(max-width:430px)");
+  const syncBrand = () => {
+    document.querySelectorAll(".site-header .brand-name").forEach((n) => {
+      if (smallPhone.matches) n.style.setProperty("display", "none", "important");
+      else n.style.setProperty("display", "inline-block", "important");
+    });
+  };
+  syncBrand();
+  smallPhone.addEventListener("change", syncBrand);
+
   const contactForm = document.getElementById("contact-form");
   if (contactForm) {
     contactForm.autocomplete = "on";
