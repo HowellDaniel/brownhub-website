@@ -54,6 +54,13 @@
       const field = contactForm.querySelector(`#${id}`);
       if (field) field.autocomplete = value;
     });
+    const item = new URLSearchParams(location.search).get("item");
+    if (item) {
+      const message = document.getElementById("message");
+      if (message && !message.value) message.value = "I'd like to order: " + item;
+      const service = document.getElementById("service");
+      if (service) service.value = "Graphic Designing";
+    }
   }
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

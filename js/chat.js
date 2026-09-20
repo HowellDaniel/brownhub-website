@@ -34,7 +34,7 @@
     },
     {
       keys: ["order", "buy", "purchase", "book", "place an order"],
-      html: `Ordering is simple: 1) pick an item in the <a href="catalog.html">catalog</a>, 2) tap “View on WhatsApp”, 3) send your sizes, quantity and deadline. We confirm the price and start right away.`
+      html: `Ordering is simple: 1) open the item in our <a href="catalog.html">catalog</a>, 2) press “Order now via chat” or “Request a quote”, 3) send your sizes, quantity and deadline. We confirm the price and start right away.`
     },
     {
       keys: ["price", "cost", "quote", "how much", "charge", "fee", "budget"],
@@ -49,7 +49,7 @@
     },
     {
       keys: ["catalog", "catalogue", "product", "item", "print", "printing", "flyer", "banner", "pull up", "pull-up", "frame", "abs board", "book design", "funeral"],
-      html: `Browse featured print &amp; design pieces in our <a href="catalog.html">on-site catalog</a>, or the full WhatsApp catalog at <a href="${WA_CATALOG}" target="_blank" rel="noopener">wa.me/c/233502954541</a>. Every item links straight to WhatsApp for ordering.`
+      html: `Browse every print &amp; design piece in our <a href="catalog.html">website catalog</a> — tap any item to see details and order right here. The catalog is also on <a href="${WA_CATALOG}" target="_blank" rel="noopener">WhatsApp</a>.`
     },
     {
       keys: ["graphic", "design", "logo", "brand", "branding", "poster", "card", "artwork"],
