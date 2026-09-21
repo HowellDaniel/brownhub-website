@@ -304,5 +304,14 @@
  "Message sent successfully!": "Сообщение успешно отправлено!",
  "Could not send your message. Please check your connection and try again.": "Не удалось отправить сообщение. Проверьте подключение и попробуйте снова.",
  "Back to home": "Вернуться на главную",
- "We'll get back to you within some few minutes. Thank you! 🙏 😊": "Ответим в течение нескольких минут. Спасибо! 🙏 😊"
+ "We'll get back to you within some few minutes. Thank you! 🙏 😊": "Ответим в течение нескольких минут. Спасибо! 🙏 😊",
+ "Budget": "Бюджет",
+ "Select a budget range…": "Выберите диапазон бюджета…",
+ "GH₵500 – GH₵1,500": "GH₵500 – GH₵1 500",
+ "GH₵1,500 – GH₵5,000": "GH₵1 500 – GH₵5 000",
+ "GH₵5,000 – GH₵15,000": "GH₵5 000 – GH₵15 000",
+ "Above GH₵15,000": "Более GH₵15 000",
+ "Dictate your message": "Продиктуйте сообщение",
+ "Stop dictating": "Остановить диктовку",
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500"
 }

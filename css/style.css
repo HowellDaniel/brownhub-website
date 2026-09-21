@@ -142,3 +142,9 @@ body{-webkit-tap-highlight-color:rgba(224,138,60,0.18)}
 .form-success__actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center;margin-top:.5rem}
 .form-status-busy{color:var(--text-muted)}
 .form-status-error{color:#ff8a8a}
+
+/* ---- Voice dictation button in the contact form message field ---- */
+.form-field--voice{position:relative}
+.msg-mic{position:absolute;right:.65rem;bottom:.65rem;width:36px;height:36px;border-radius:50%;border:none;background:var(--accent);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:var(--shadow);transition:background .2s,transform .2s}
+.msg-mic:hover{background:var(--accent-hover);transform:scale(1.07)}
+.msg-mic.listening{background:#e5484d;animation:voice-pulse 1s ease-in-out infinite}

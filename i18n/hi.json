@@ -304,5 +304,14 @@
  "Message sent successfully!": "संदेश सफलतापूर्वक भेजा गया!",
  "Could not send your message. Please check your connection and try again.": "आपका संदेश नहीं भेजा जा सका। कृपया अपना इंटरनेट जाँचें और फिर कोशिश करें।",
  "Back to home": "होम पर लौटें",
- "We'll get back to you within some few minutes. Thank you! 🙏 😊": "हम कुछ ही मिनटों में जवाब देंगे। धन्यवाद! 🙏 😊"
+ "We'll get back to you within some few minutes. Thank you! 🙏 😊": "हम कुछ ही मिनटों में जवाब देंगे। धन्यवाद! 🙏 😊",
+ "Budget": "बजट",
+ "Select a budget range…": "बजट सीमा चुनें…",
+ "GH₵500 – GH₵1,500": "GH₵500 – GH₵1,500",
+ "GH₵1,500 – GH₵5,000": "GH₵1,500 – GH₵5,000",
+ "GH₵5,000 – GH₵15,000": "GH₵5,000 – GH₵15,000",
+ "Above GH₵15,000": "GH₵15,000 से अधिक",
+ "Dictate your message": "अपना संदेश बोलें",
+ "Stop dictating": "बोलना बंद करें",
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500"
 }

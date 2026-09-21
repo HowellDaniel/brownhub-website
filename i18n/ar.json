@@ -304,5 +304,14 @@
  "Message sent successfully!": "تم إرسال الرسالة بنجاح!",
  "Could not send your message. Please check your connection and try again.": "تعذر إرسال رسالتك. تحقق من اتصالك ثم حاول مرة أخرى.",
  "Back to home": "العودة إلى الرئيسية",
- "We'll get back to you within some few minutes. Thank you! 🙏 😊": "سنرد خلال بضع دقائق. شكرًا! 🙏 😊"
+ "We'll get back to you within some few minutes. Thank you! 🙏 😊": "سنرد خلال بضع دقائق. شكرًا! 🙏 😊",
+ "Budget": "الميزانية",
+ "Select a budget range…": "اختر نطاق الميزانية…",
+ "GH₵500 – GH₵1,500": "GH₵500 – GH₵1,500",
+ "GH₵1,500 – GH₵5,000": "GH₵1,500 – GH₵5,000",
+ "GH₵5,000 – GH₵15,000": "GH₵5,000 – GH₵15,000",
+ "Above GH₵15,000": "أكثر من GH₵15,000",
+ "Dictate your message": "امْلِئ رسالتك صوتيًا",
+ "Stop dictating": "إيقاف الإملاء",
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500"
 }

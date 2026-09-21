@@ -96,6 +96,7 @@
           "Name: " + (data.name || "-") + "\nEmail: " + (data.email || "-") +
           (data.company ? "\nCompany: " + data.company : "") +
           (data.service ? "\nService: " + data.service : "") +
+          (data.budget ? "\nBudget: " + data.budget : "") +
           "\n\n" + (data.message || "");
         status.innerHTML = '<div class="form-success"><div class="form-success__icon" aria-hidden="true">✓</div>' +
           "<strong>Message sent successfully!</strong>" +
@@ -111,6 +112,48 @@
       }
       submitBtn.disabled = false;
     });
+
+    // Voice dictation for the "Project details" box (where supported).
+    const messageEl = document.getElementById("message");
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (messageEl && SR) {
+      const SR_LANGS = { en: "en-GH", fr: "fr-FR", es: "es-ES", pt: "pt-BR", ar: "ar-SA", zh: "zh-CN",
+        de: "de-DE", nl: "nl-NL", it: "it-IT", ru: "ru-RU", hi: "hi-IN", sw: "sw-KE", tw: "ak-GH" };
+      const dictBtn = document.createElement("button");
+      dictBtn.type = "button";
+      dictBtn.className = "msg-mic";
+      dictBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>';
+      const field = messageEl.closest(".form-field") || messageEl.parentNode;
+      field.classList.add("form-field--voice");
+      field.appendChild(dictBtn);
+      const setAria = (k) => dictBtn.setAttribute("aria-label", (window.I18N && I18N.t) ? I18N.t(k) : k);
+      setAria("Dictate your message");
+      document.addEventListener("i18n-applied", () => { if (!rec) setAria("Dictate your message"); });
+      let rec = null;
+      dictBtn.addEventListener("click", () => {
+        if (rec) { try { rec.stop(); } catch (e) {} return; }
+        rec = new SR();
+        rec.lang = SR_LANGS[(window.I18N && window.I18N.lang) || "en"] || "en-GH";
+        rec.continuous = true;
+        rec.interimResults = true;
+        let base = messageEl.value;
+        if (base && !/\s$/.test(base)) base += " ";
+        const show = (final, interim) => {
+          messageEl.value = base + final + (interim ? (final ? " " : "") + interim : "");
+        };
+        rec.onresult = (ev) => {
+          let final = "", interim = "";
+          for (const r of ev.results) { if (r.isFinal) final += r[0].transcript.trim() + " "; else interim += r[0].transcript; }
+          show(final.trim(), interim);
+        };
+        const done = () => { rec = null; dictBtn.classList.remove("listening"); setAria("Dictate your message"); };
+        rec.onend = done;
+        rec.onerror = done;
+        dictBtn.classList.add("listening");
+        setAria("Stop dictating");
+        try { rec.start(); } catch (e) { done(); }
+      });
+    }
   }
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

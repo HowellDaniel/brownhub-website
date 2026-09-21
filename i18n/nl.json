@@ -304,5 +304,14 @@
  "Message sent successfully!": "Bericht succesvol verzonden!",
  "Could not send your message. Please check your connection and try again.": "Je bericht kon niet worden verzonden. Controleer je verbinding en probeer het opnieuw.",
  "Back to home": "Terug naar home",
- "We'll get back to you within some few minutes. Thank you! 🙏 😊": "We reageren binnen enkele minuten. Bedankt! 🙏 😊"
+ "We'll get back to you within some few minutes. Thank you! 🙏 😊": "We reageren binnen enkele minuten. Bedankt! 🙏 😊",
+ "Budget": "Budget",
+ "Select a budget range…": "Kies een budgetrange…",
+ "GH₵500 – GH₵1,500": "GH₵500 – GH₵1.500",
+ "GH₵1,500 – GH₵5,000": "GH₵1.500 – GH₵5.000",
+ "GH₵5,000 – GH₵15,000": "GH₵5.000 – GH₵15.000",
+ "Above GH₵15,000": "Boven GH₵15.000",
+ "Dictate your message": "Dichteer je bericht",
+ "Stop dictating": "Dictaten stoppen",
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500"
 }

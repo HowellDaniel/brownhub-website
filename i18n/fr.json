@@ -304,5 +304,14 @@
  "Message sent successfully!": "Message envoyé avec succès !",
  "Could not send your message. Please check your connection and try again.": "Impossible d'envoyer votre message. Vérifiez votre connexion puis réessayez.",
  "Back to home": "Retour à l'accueil",
- "We'll get back to you within some few minutes. Thank you! 🙏 😊": "Nous vous répondrons dans quelques minutes. Merci ! 🙏 😊"
+ "We'll get back to you within some few minutes. Thank you! 🙏 😊": "Nous vous répondrons dans quelques minutes. Merci ! 🙏 😊",
+ "Budget": "Budget",
+ "Select a budget range…": "Sélectionnez une fourchette de budget…",
+ "GH₵500 – GH₵1,500": "GH₵500 – GH₵1 500",
+ "GH₵1,500 – GH₵5,000": "GH₵1 500 – GH₵5 000",
+ "GH₵5,000 – GH₵15,000": "GH₵5 000 – GH₵15 000",
+ "Above GH₵15,000": "Plus de GH₵15 000",
+ "Dictate your message": "Dictez votre message",
+ "Stop dictating": "Arrêter la dictée",
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500"
 }

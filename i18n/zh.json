@@ -304,5 +304,14 @@
  "Message sent successfully!": "消息发送成功！",
  "Could not send your message. Please check your connection and try again.": "无法发送您的消息。请检查网络后重试。",
  "Back to home": "返回首页",
- "We'll get back to you within some few minutes. Thank you! 🙏 😊": "我们会在几分钟内回复您。谢谢！🙏 😊"
+ "We'll get back to you within some few minutes. Thank you! 🙏 😊": "我们会在几分钟内回复您。谢谢！🙏 😊",
+ "Budget": "预算",
+ "Select a budget range…": "请选择预算范围…",
+ "GH₵500 – GH₵1,500": "GH₵500 – GH₵1,500",
+ "GH₵1,500 – GH₵5,000": "GH₵1,500 – GH₵5,000",
+ "GH₵5,000 – GH₵15,000": "GH₵5,000 – GH₵15,000",
+ "Above GH₵15,000": "GH₵15,000 以上",
+ "Dictate your message": "语音听写消息",
+ "Stop dictating": "停止听写",
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500"
 }

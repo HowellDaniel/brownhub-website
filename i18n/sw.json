@@ -304,5 +304,14 @@
  "Message sent successfully!": "Ujumbe umetumwa kwa mafanikio!",
  "Could not send your message. Please check your connection and try again.": "Haikuwezekana kutuma ujumbe wako. Angalia muunganisho wako kisha ujaribu tena.",
  "Back to home": "Rudi nyumbani",
- "We'll get back to you within some few minutes. Thank you! 🙏 😊": "Tutakujibu ndani ya dakika chache. Asanteni! 🙏 😊"
+ "We'll get back to you within some few minutes. Thank you! 🙏 😊": "Tutakujibu ndani ya dakika chache. Asanteni! 🙏 😊",
+ "Budget": "Bajeti",
+ "Select a budget range…": "Chagua kiwango cha bajeti…",
+ "GH₵500 – GH₵1,500": "GH₵500 – GH₵1,500",
+ "GH₵1,500 – GH₵5,000": "GH₵1,500 – GH₵5,000",
+ "GH₵5,000 – GH₵15,000": "GH₵5,000 – GH₵15,000",
+ "Above GH₵15,000": "Zaidi ya GH₵15,000",
+ "Dictate your message": "Lamba ujumbe wako",
+ "Stop dictating": "Acha kulamba",
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500"
 }

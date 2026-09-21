@@ -304,5 +304,14 @@
  "Message sent successfully!": "Wɔatoma wo nkrasɛm no!",
  "Could not send your message. Please check your connection and try again.": "Yɣantumi wo nkrasɛm no. Hyɛ wo intanɛt so muyi, na sɔ bio.",
  "Back to home": "San kɔ firi",
- "We'll get back to you within some few minutes. Thank you! 🙏 😊": "Yɛbɛdaa wo wɔ simma kakrae mu. Meda ase! 🙏 😊"
+ "We'll get back to you within some few minutes. Thank you! 🙏 😊": "Yɛbɛdaa wo wɔ simma kakrae mu. Meda ase! 🙏 😊",
+ "Budget": "Sika a wode yɛ adwuma",
+ "Select a budget range…": "Paw sika dodow a wopɛ…",
+ "GH₵500 – GH₵1,500": "GH₵500 – GH₵1,500",
+ "GH₵1,500 – GH₵5,000": "GH₵1,500 – GH₵5,000",
+ "GH₵5,000 – GH₵15,000": "GH₵5,000 – GH₵15,000",
+ "Above GH₵15,000": "GH₵15,000 so",
+ "Dictate your message": "Ka wo nkrasɛm no hyɛ mu",
+ "Stop dictating": "Gyae kaka hyɛ mu",
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500"
 }
