@@ -115,3 +115,12 @@ body{-webkit-tap-highlight-color:rgba(224,138,60,0.18)}
   .modal__img{max-height:34vh}
   .nav__menu{max-height:calc(100vh - 4.5rem);max-height:calc(100dvh - 4.5rem);overflow-y:auto}
 }
+
+/* Robot assistant button: dangling float, spinning ring, hover glow */
+.chat-widget__toggle{position:relative;animation:robot-bob 3.2s ease-in-out infinite;transition:transform .25s,box-shadow .25s,background .25s}
+.chat-widget__toggle::before{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px dashed var(--accent);opacity:.4;animation:robot-spin 9s linear infinite;pointer-events:none;transition:opacity .25s}
+.chat-widget__toggle:hover,.chat-widget__toggle:focus-visible{background:var(--accent-hover);transform:scale(1.08);box-shadow:0 12px 30px rgba(224,138,60,.38)}
+.chat-widget__toggle:hover::before,.chat-widget__toggle:focus-visible::before{opacity:.9}
+@keyframes robot-bob{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes robot-spin{to{rotate:360deg}}
+@media (prefers-reduced-motion:reduce){.chat-widget__toggle,.chat-widget__toggle::before{animation:none}}
