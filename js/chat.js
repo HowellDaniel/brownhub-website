@@ -246,10 +246,17 @@
   }
   function barReview() {
     phase = "review";
-    vhtml('<audio controls preload="metadata" class="voice-audio" src="' + URL.createObjectURL(blob) + '"></audio><button type="button" class="btn btn--primary voice-btn" id="voiceSend">' + T("Send") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceCancel">' + T("Cancel") + "</button>");
+    vhtml('<audio controls preload="metadata" class="voice-audio" src="' + URL.createObjectURL(blob) + '"></audio><button type="button" class="btn btn--primary voice-btn" id="voiceSend">' + T("Send") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceRedo">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceCancel">' + T("Cancel") + "</button>");
     document.getElementById("voiceSend").addEventListener("click", sendVoice);
+    document.getElementById("voiceRedo").addEventListener("click", () => { showIdle(); startRecording(); });
     document.getElementById("voiceCancel").addEventListener("click", showIdle);
     micLabel("Record a voice message");
+  }
+  function barSent() {
+    phase = "sent";
+    vhtml('<span class="voice-busy">' + T("Emailed — now send it on WhatsApp too") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceWa">' + T("Continue to WhatsApp") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceDone">' + T("Done") + "</button>");
+    document.getElementById("voiceWa").addEventListener("click", toWhatsApp);
+    document.getElementById("voiceDone").addEventListener("click", showIdle);
   }
   function barBusy(msg) { vhtml('<span class="voice-busy">' + T(msg) + "</span>"); }
   function barError(msg) {
@@ -325,11 +332,31 @@
       if (!res.ok) throw new Error(String(res.status));
       addMsg(transcript || T("Voice message"), "user");
       addMsg("Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.", "bot");
-      showIdle();
+      barSent();
     } catch (e) {
       phase = "review";
       barError("Could not send the voice message. Please try once more, or contact us on WhatsApp.");
     }
+  }
+
+  async function toWhatsApp() {
+    const note = "Hello BrownHub! I sent a voice message from your website" +
+      (transcript ? ". Transcript: " + transcript : "") +
+      ". The audio was also emailed to the team. My page: " + location.href;
+    try {
+      if (blob && navigator.canShare) {
+        const file = new File([blob], "brownhub-voice-message.webm", { type: blob.type || "audio/webm" });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ title: "BrownHub voice message", text: note, files: [file] });
+          showIdle();
+          return;
+        }
+      }
+    } catch (e) {
+      if (e && e.name === "AbortError") return;
+    }
+    window.open(WA + "?text=" + encodeURIComponent(note), "_blank", "noopener");
+    showIdle();
   }
 
   micBtn.addEventListener("click", () => {
