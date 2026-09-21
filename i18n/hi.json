@@ -299,5 +299,10 @@
  "Continue to WhatsApp": "WhatsApp पर जारी रखें",
  "Done": "हो गया",
  "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "बताएं आप क्या बना रहे हैं। कुछ ही मिनटों में हम जवाब दे देंगे। धन्यवाद! 🙏 😊",
- "Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊": "आपका वॉइस मैसेज ऑडियो अटैचमेंट के साथ हमारी टीम को भेज दिया गया है। हम कुछ ही मिनटों में आपके ईमेल पर जवाब दे देंगे। धन्यवाद! 🙏 😊"
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊": "आपका वॉइस मैसेज ऑडियो अटैचमेंट के साथ हमारी टीम को भेज दिया गया है। हम कुछ ही मिनटों में आपके ईमेल पर जवाब दे देंगे। धन्यवाद! 🙏 😊",
+ "Sending your message…": "आपका संदेश भेजा जा रहा है…",
+ "Message sent successfully!": "संदेश सफलतापूर्वक भेजा गया!",
+ "Could not send your message. Please check your connection and try again.": "आपका संदेश नहीं भेजा जा सका। कृपया अपना इंटरनेट जाँचें और फिर कोशिश करें।",
+ "Back to home": "होम पर लौटें",
+ "We'll get back to you within some few minutes. Thank you! 🙏 😊": "हम कुछ ही मिनटों में जवाब देंगे। धन्यवाद! 🙏 😊"
 }

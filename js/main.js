@@ -68,6 +68,49 @@
       setPrefill();
       document.addEventListener("i18n-applied", setPrefill);
     }
+
+    const FORM_EMAIL = "https://formsubmit.co/ajax/howelldaniel533@gmail.com";
+    const WA_NUMBER = "https://wa.me/233502954541";
+    const status = document.getElementById("form-status");
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+
+    contactForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!status) return;
+      // English only: the translate.js MutationObserver localises the card on insert.
+      const data = Object.fromEntries(new FormData(contactForm).entries());
+      submitBtn.disabled = true;
+      status.innerHTML = '<span class="form-status-busy">Sending your message…</span>';
+      const fd = new FormData();
+      Object.entries(data).forEach(([k, v]) => fd.append(k, v));
+      fd.append("_subject", "New enquiry from the BrownHub website");
+      fd.append("_captcha", "false");
+      fd.append("_template", "table");
+      fd.append("page", location.href);
+      fd.append("time", new Date().toISOString());
+      try {
+        const res = await fetch(FORM_EMAIL, { method: "POST", body: fd });
+        if (!res.ok) throw new Error(String(res.status));
+        contactForm.reset();
+        const waText = "Hello BrownHub! I just sent this enquiry from your website:\n\n" +
+          "Name: " + (data.name || "-") + "\nEmail: " + (data.email || "-") +
+          (data.company ? "\nCompany: " + data.company : "") +
+          (data.service ? "\nService: " + data.service : "") +
+          "\n\n" + (data.message || "");
+        status.innerHTML = '<div class="form-success"><div class="form-success__icon" aria-hidden="true">✓</div>' +
+          "<strong>Message sent successfully!</strong>" +
+          "<p>We'll get back to you within some few minutes. Thank you! 🙏 😊</p>" +
+          '<div class="form-success__actions"><button type="button" class="btn btn--primary" id="wa-continue">Continue to WhatsApp</button>' +
+          '<a class="btn btn--ghost" href="index.html">Back to home</a></div></div>';
+        document.getElementById("wa-continue").addEventListener("click", () => {
+          window.open(WA_NUMBER + "?text=" + encodeURIComponent(waText), "_blank", "noopener");
+          location.href = "index.html";
+        });
+      } catch (err) {
+        status.innerHTML = '<span class="form-status-error">Could not send your message. Please check your connection and try again.</span>';
+      }
+      submitBtn.disabled = false;
+    });
   }
 
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
