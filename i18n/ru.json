@@ -278,5 +278,18 @@
  "Books & covers": "Книги и обложки",
  "More in Books & covers": "Больше в категории «Книги и обложки»",
  "More in this category": "Больше в этой категории",
- "More from the catalog": "Больше из каталога"
+ "More from the catalog": "Больше из каталога",
+ "Record a voice message": "Записать голосовое сообщение",
+ "Stop recording": "Остановить запись",
+ "Listening…": "Слушаем…",
+ "Stop": "Остановить",
+ "Send": "Отправить",
+ "Cancel": "Отмена",
+ "Send voice message": "Отправить голосовое сообщение",
+ "Sending your voice message…": "Отправляем ваше голосовое сообщение…",
+ "Voice message": "Голосовое сообщение",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Ваше голосовое сообщение отправлено нашей команде, аудиозапись — во вложении. Ответим на вашу почту в течение одного рабочего дня.",
+ "Microphone access was blocked. Allow it in your browser settings, then try again.": "Доступ к микрофону заблокирован. Разрешите его в настройках браузера и попробуйте ещё раз.",
+ "The recording came out empty. Please try again.": "Запись получилась пустой. Попробуйте ещё раз.",
+ "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Не удалось отправить голосовое сообщение. Попробуйте ещё раз или напишите нам в WhatsApp."
 }

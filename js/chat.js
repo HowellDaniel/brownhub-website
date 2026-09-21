@@ -10,6 +10,7 @@
 
   const WA = "https://wa.me/233502954541";
   const WA_CATALOG = "https://wa.me/c/233502954541";
+  const VOICE_EMAIL = "https://formsubmit.co/ajax/howelldaniel533@gmail.com";
 
   function T(s) {
     return (window.I18N && window.I18N.t) ? window.I18N.t(s) : s;
@@ -168,4 +169,159 @@
     send(input.value);
     input.value = "";
   });
+
+  // ---- Voice notes: for visitors who cannot type, record and email the message ----
+  const voiceBar = document.createElement("div");
+  voiceBar.className = "chat-widget__voice";
+  voiceBar.hidden = true;
+  panel.insertBefore(voiceBar, form);
+
+  const micBtn = document.createElement("button");
+  micBtn.type = "button";
+  micBtn.className = "chat-widget__mic";
+  micBtn.setAttribute("aria-label", "Record a voice message");
+  micBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>';
+  form.insertBefore(micBtn, form.firstChild);
+
+  const canRecord = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let stream = null, recorder = null, chunks = [], blob = null;
+  let timer = null, secs = 0, phase = "idle", transcript = "";
+
+  function vhtml(h) { voiceBar.innerHTML = h; if (window.I18N && I18N.lang !== "en") I18N.translateNode(voiceBar); }
+  function micLabel(t) { micBtn.setAttribute("aria-label", T(t)); }
+  function stopSpeech() { if (recognition) try { recognition.stop(); } catch (e) {} }
+  function cleanup() {
+    if (timer) { clearInterval(timer); timer = null; }
+    stopSpeech();
+    if (stream) { stream.getTracks().forEach((tr) => tr.stop()); stream = null; }
+  }
+  function showIdle() {
+    phase = "idle"; blob = null; chunks = []; transcript = "";
+    voiceBar.hidden = true;
+    voiceBar.textContent = "";
+    micLabel("Record a voice message");
+  }
+
+  let recognition = null;
+  function startSpeech() {
+    if (!SR) return;
+    try {
+      recognition = new SR();
+      recognition.lang = (window.I18N && I18N.lang !== "en") ? I18N.lang : "en";
+      recognition.interimResults = true;
+      recognition.continuous = true;
+      recognition.onresult = (ev) => {
+        let txt = "";
+        for (const r of ev.results) txt += r[0].transcript;
+        transcript = txt.trim();
+        const el = document.getElementById("voiceTranscript");
+        if (el) el.textContent = transcript || T("Listening…");
+      };
+      recognition.onerror = () => {};
+      recognition.start();
+    } catch (e) { recognition = null; }
+  }
+
+  function barStop() {
+    vhtml('<span class="voice-dot" aria-hidden="true"></span><span class="voice-time">0:00</span><span class="voice-transcript" id="voiceTranscript">' + T("Listening…") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceStop">' + T("Stop") + "</button>");
+    document.getElementById("voiceStop").addEventListener("click", stopRecording);
+    micLabel("Stop recording");
+  }
+  function barReview() {
+    phase = "review";
+    vhtml('<audio controls preload="metadata" class="voice-audio" src="' + URL.createObjectURL(blob) + '"></audio><button type="button" class="btn btn--primary voice-btn" id="voiceSend">' + T("Send") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceCancel">' + T("Cancel") + "</button>");
+    document.getElementById("voiceSend").addEventListener("click", sendVoice);
+    document.getElementById("voiceCancel").addEventListener("click", showIdle);
+    micLabel("Record a voice message");
+  }
+  function barBusy(msg) { vhtml('<span class="voice-busy">' + T(msg) + "</span>"); }
+  function barError(msg) {
+    vhtml('<span class="voice-error">' + T(msg) + '</span><button type="button" class="btn btn--ghost voice-btn" id="voiceDismiss">' + T("Cancel") + "</button>");
+    document.getElementById("voiceDismiss").addEventListener("click", showIdle);
+  }
+
+  async function startRecording() {
+    micBtn.disabled = true;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (e) {
+      micBtn.disabled = false;
+      barError("Microphone access was blocked. Allow it in your browser settings, then try again.");
+      return;
+    }
+    micBtn.disabled = false;
+    chunks = [];
+    let options = { mimeType: "audio/webm" };
+    try {
+      if (!MediaRecorder.isTypeSupported("audio/webm")) options = {};
+      recorder = new MediaRecorder(stream, options);
+    } catch (e) {
+      recorder = new MediaRecorder(stream);
+    }
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      cleanup();
+      micBtn.disabled = false;
+      if (!blob || !blob.size) { barError("The recording came out empty. Please try again."); return; }
+      barReview();
+    };
+    recorder.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+    recorder.onstop = () => { blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" }); finish(); };
+    recorder.onerror = () => { blob = null; finish(); };
+    startSpeech();
+    secs = 0;
+    phase = "recording";
+    voiceBar.hidden = false;
+    barStop();
+    timer = setInterval(() => {
+      secs += 1;
+      const el = voiceBar.querySelector(".voice-time");
+      if (el) el.textContent = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
+      if (secs >= 120) stopRecording();
+    }, 1000);
+    recorder.start(250);
+  }
+
+  function stopRecording() {
+    if (timer) { clearInterval(timer); timer = null; }
+    stopSpeech();
+    if (recorder && recorder.state !== "inactive") recorder.stop();
+  }
+
+  async function sendVoice() {
+    if (!blob) return;
+    phase = "sending";
+    voiceBar.hidden = false;
+    barBusy("Sending your voice message…");
+    const fd = new FormData();
+    fd.append("voice_note", new File([blob], "voice-message.webm", { type: blob.type || "audio/webm" }));
+    fd.append("transcript", transcript || "(no automatic transcript)");
+    fd.append("_subject", "Voice message from the BrownHub website");
+    fd.append("page", location.href);
+    fd.append("time", new Date().toISOString());
+    fd.append("_captcha", "false");
+    fd.append("_template", "table");
+    try {
+      const res = await fetch(VOICE_EMAIL, { method: "POST", body: fd });
+      if (!res.ok) throw new Error(String(res.status));
+      addMsg(transcript || T("Voice message"), "user");
+      addMsg("Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.", "bot");
+      showIdle();
+    } catch (e) {
+      phase = "review";
+      barError("Could not send the voice message. Please try once more, or contact us on WhatsApp.");
+    }
+  }
+
+  micBtn.addEventListener("click", () => {
+    if (phase === "recording") stopRecording();
+    else if (phase === "idle") startRecording();
+  });
+  if (!canRecord) {
+    micBtn.disabled = true;
+    micBtn.title = "Voice recording is not supported in this browser";
+  }
 })();

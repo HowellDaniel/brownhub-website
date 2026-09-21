@@ -278,5 +278,18 @@
  "Books & covers": "Boeken & omslagen",
  "More in Books & covers": "Meer in Boeken & omslagen",
  "More in this category": "Meer in deze categorie",
- "More from the catalog": "Meer uit de catalogus"
+ "More from the catalog": "Meer uit de catalogus",
+ "Record a voice message": "Spraakbericht opnemen",
+ "Stop recording": "Opname stoppen",
+ "Listening…": "Ik luister…",
+ "Stop": "Stop",
+ "Send": "Verzenden",
+ "Cancel": "Annuleren",
+ "Send voice message": "Spraakbericht verzenden",
+ "Sending your voice message…": "Je spraakbericht wordt verzonden…",
+ "Voice message": "Spraakbericht",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Je spraakbericht is met de audio als bijlage naar ons team verzonden. We reageren binnen één werkdag op je e-mail.",
+ "Microphone access was blocked. Allow it in your browser settings, then try again.": "De toegang tot je microfoon is geblokkeerd. Sta dit toe in je browserinstellingen en probeer het opnieuw.",
+ "The recording came out empty. Please try again.": "De opname is leeg geworden. Probeer het opnieuw.",
+ "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Kon het spraakbericht niet verzenden. Probeer het nog eens of stuur ons een bericht op WhatsApp."
 }

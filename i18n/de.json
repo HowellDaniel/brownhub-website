@@ -278,5 +278,18 @@
  "Books & covers": "Bücher & Cover",
  "More in Books & covers": "Mehr in Bücher & Cover",
  "More in this category": "Mehr in dieser Kategorie",
- "More from the catalog": "Mehr aus dem Katalog"
+ "More from the catalog": "Mehr aus dem Katalog",
+ "Record a voice message": "Sprachnachricht aufnehmen",
+ "Stop recording": "Aufnahme stoppen",
+ "Listening…": "Ich höre zu…",
+ "Stop": "Stopp",
+ "Send": "Senden",
+ "Cancel": "Abbrechen",
+ "Send voice message": "Sprachnachricht senden",
+ "Sending your voice message…": "Eure Sprachnachricht wird gesendet…",
+ "Voice message": "Sprachnachricht",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Eure Sprachnachricht wurde samt Audio-Anhang an unser Team gesendet. Wir antworten innerhalb eines Werktags auf eure E-Mail.",
+ "Microphone access was blocked. Allow it in your browser settings, then try again.": "Der Zugriff aufs Mikrofon wurde blockiert. Gebt ihn in euren Browsereinstellungen frei und versucht es erneut.",
+ "The recording came out empty. Please try again.": "Die Aufnahme war leer. Versucht es bitte erneut.",
+ "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Die Sprachnachricht konnte nicht gesendet werden. Versucht es noch einmal oder schreibt uns auf WhatsApp."
 }

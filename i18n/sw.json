@@ -278,5 +278,18 @@
  "Books & covers": "Vitabu & mikomo",
  "More in Books & covers": "Zaidi katika Vitabu & mikomo",
  "More in this category": "Zaidi katika kundi hili",
- "More from the catalog": "Zaidi kutoka katalogi"
+ "More from the catalog": "Zaidi kutoka katalogi",
+ "Record a voice message": "Rekodi ujumbe wa sauti",
+ "Stop recording": "Acha kurekodi",
+ "Listening…": "Ninasikiliza…",
+ "Stop": "Acha",
+ "Send": "Tuma",
+ "Cancel": "Ghairi",
+ "Send voice message": "Tuma ujumbe wa sauti",
+ "Sending your voice message…": "Tunatuma ujumbe wako wa sauti…",
+ "Voice message": "Ujumbe wa sauti",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Ujumbe wako wa sauti umetumwa kwa timu yetu ukiwa umeambatishwa faili ya sauti. Tutakujibu kwa barua pepe ndani ya siku moja ya kazi.",
+ "Microphone access was blocked. Allow it in your browser settings, then try again.": "Ufikiaji wa maikrofoni umezuiwa. Uruhusu katika mipangilio ya kivinjari chako, kisha jaribu tena.",
+ "The recording came out empty. Please try again.": "Rekodi ilikuwa tupu. Tafadhali jaribu tena.",
+ "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Hatukuweza kutuma ujumbe wa sauti. Tafadhali jaribu tena, au wasiliana nasi kwenye WhatsApp."
 }

@@ -278,5 +278,18 @@
  "Books & covers": "Libros y cubiertas",
  "More in Books & covers": "En la categoría Libros y cubiertas",
  "More in this category": "Más en esta categoría",
- "More from the catalog": "Más artículos del catálogo"
+ "More from the catalog": "Más artículos del catálogo",
+ "Record a voice message": "Grabar un mensaje de voz",
+ "Stop recording": "Detener la grabación",
+ "Listening…": "Escuchando…",
+ "Stop": "Detener",
+ "Send": "Enviar",
+ "Cancel": "Cancelar",
+ "Send voice message": "Enviar mensaje de voz",
+ "Sending your voice message…": "Enviando tu mensaje de voz…",
+ "Voice message": "Mensaje de voz",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Tu mensaje de voz se envió a nuestro equipo con el audio adjunto. Responderemos a tu correo en un día hábil.",
+ "Microphone access was blocked. Allow it in your browser settings, then try again.": "Se bloqueó el acceso al micrófono. Permítelo en la configuración de tu navegador y vuelve a intentarlo.",
+ "The recording came out empty. Please try again.": "La grabación salió vacía. Inténtalo de nuevo.",
+ "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "No pudimos enviar el mensaje de voz. Inténtalo otra vez o contáctanos por WhatsApp."
 }
