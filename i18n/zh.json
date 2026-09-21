@@ -289,7 +289,6 @@
  "Voice message": "语音留言",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "麦克风访问权限被阻止。请在浏览器设置中允许访问，然后重试。",
  "The recording came out empty. Please try again.": "未录制到任何声音。请重试。",
- "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "语音留言发送失败。请再试一次，或通过 WhatsApp 与我们联系。",
  "I want to order:": "我想订购：",
  "I'd like to order:": "我要订购：",
  "Choose language": "选择语言",
@@ -312,5 +311,6 @@
  "Above GH₵15,000": "GH₵15,000 以上",
  "Dictate your message": "语音听写消息",
  "Stop dictating": "停止听写",
- "GH₵250 – GH₵500": "GH₵250 – GH₵500"
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500",
+ "Could not send your voice message.": "无法发送您的语音留言。"
 }

@@ -289,7 +289,6 @@
  "Voice message": "Mensagem de voz",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "O acesso ao microfone foi bloqueado. Permita-o nas configurações do seu navegador e tente novamente.",
  "The recording came out empty. Please try again.": "A gravação ficou vazia. Tente novamente.",
- "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Não foi possível enviar a mensagem de voz. Tente mais uma vez ou fale conosco no WhatsApp.",
  "I want to order:": "Quero encomendar:",
  "I'd like to order:": "Gostaria de encomendar:",
  "Choose language": "Escolher idioma",
@@ -312,5 +311,6 @@
  "Above GH₵15,000": "Acima de GH₵15.000",
  "Dictate your message": "Dite sua mensagem",
  "Stop dictating": "Parar de ditar",
- "GH₵250 – GH₵500": "GH₵250 – GH₵500"
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500",
+ "Could not send your voice message.": "Não foi possível enviar a sua mensagem de voz."
 }

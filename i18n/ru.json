@@ -289,7 +289,6 @@
  "Voice message": "Голосовое сообщение",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "Доступ к микрофону заблокирован. Разрешите его в настройках браузера и попробуйте ещё раз.",
  "The recording came out empty. Please try again.": "Запись получилась пустой. Попробуйте ещё раз.",
- "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Не удалось отправить голосовое сообщение. Попробуйте ещё раз или напишите нам в WhatsApp.",
  "I want to order:": "Я хочу заказать:",
  "I'd like to order:": "Я бы хотел заказать:",
  "Choose language": "Выберите язык",
@@ -312,5 +311,6 @@
  "Above GH₵15,000": "Более GH₵15 000",
  "Dictate your message": "Продиктуйте сообщение",
  "Stop dictating": "Остановить диктовку",
- "GH₵250 – GH₵500": "GH₵250 – GH₵500"
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500",
+ "Could not send your voice message.": "Не удалось отправить голосовое сообщение."
 }

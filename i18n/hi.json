@@ -289,7 +289,6 @@
  "Voice message": "वॉइस मैसेज",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "माइक तक पहुंच ब्लॉक कर दी गई है। अपने ब्राउज़र की सेटिंग्स में इसे अनुमति दें, फिर दोबारा कोशिश करें।",
  "The recording came out empty. Please try again.": "रिकॉर्डिंग खाली आई। कृपया दोबारा कोशिश करें।",
- "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "वॉइस मैसेज नहीं भेजा जा सका। कृपया एक बार और कोशिश करें, या हमसे WhatsApp पर संपर्क करें।",
  "I want to order:": "मैं ऑर्डर करना चाहता हूँ:",
  "I'd like to order:": "मैं ऑर्डर करना चाहूँगा:",
  "Choose language": "भाषा चुनें",
@@ -312,5 +311,6 @@
  "Above GH₵15,000": "GH₵15,000 से अधिक",
  "Dictate your message": "अपना संदेश बोलें",
  "Stop dictating": "बोलना बंद करें",
- "GH₵250 – GH₵500": "GH₵250 – GH₵500"
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500",
+ "Could not send your voice message.": "आपकी वॉइस मैसेज भेजी नहीं जा सकी।"
 }

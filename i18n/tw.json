@@ -289,7 +289,6 @@
  "Voice message": "Nne Nkrasɛm",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "Wɔasɔ kwan a ɛfa maikrofon ho no. Ma kwan wɔ wo brawuza nhyehyɛe mu, na sɔ hwɛ bio.",
  "The recording came out empty. Please try again.": "Rikoɔd no yɛɛ firi. Mesrɛma, sɔ hwɛ bio.",
- "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Yɛantumi ansom nne nkrasɛm no. Mesrɛma, sɔ hwɛ bio, anaa di nkitahodi wɔ WhatsApp so.",
  "I want to order:": "Mepɛ sɛ mesa:",
  "I'd like to order:": "Mepɛ sɛ mesa:",
  "Choose language": "Yi kasa no",
@@ -312,5 +311,6 @@
  "Above GH₵15,000": "GH₵15,000 so",
  "Dictate your message": "Ka wo nkrasɛm no hyɛ mu",
  "Stop dictating": "Gyae kaka hyɛ mu",
- "GH₵250 – GH₵500": "GH₵250 – GH₵500"
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500",
+ "Could not send your voice message.": "Yɛntumi wo nkrasɛm a ɛyɛ nne no."
 }

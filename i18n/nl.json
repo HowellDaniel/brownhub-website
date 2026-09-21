@@ -289,7 +289,6 @@
  "Voice message": "Spraakbericht",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "De toegang tot je microfoon is geblokkeerd. Sta dit toe in je browserinstellingen en probeer het opnieuw.",
  "The recording came out empty. Please try again.": "De opname is leeg geworden. Probeer het opnieuw.",
- "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Kon het spraakbericht niet verzenden. Probeer het nog eens of stuur ons een bericht op WhatsApp.",
  "I want to order:": "Ik wil bestellen:",
  "I'd like to order:": "Ik zou graag willen bestellen:",
  "Choose language": "Kies taal",
@@ -312,5 +311,6 @@
  "Above GH₵15,000": "Boven GH₵15.000",
  "Dictate your message": "Dichteer je bericht",
  "Stop dictating": "Dictaten stoppen",
- "GH₵250 – GH₵500": "GH₵250 – GH₵500"
+ "GH₵250 – GH₵500": "GH₵250 – GH₵500",
+ "Could not send your voice message.": "Je voicebericht kon niet worden verzonden."
 }

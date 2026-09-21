@@ -255,13 +255,20 @@
   function barSent() {
     phase = "sent";
     vhtml('<span class="voice-busy">' + T("Emailed — now send it on WhatsApp too") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceWa">' + T("Continue to WhatsApp") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceDone">' + T("Done") + "</button>");
-    document.getElementById("voiceWa").addEventListener("click", toWhatsApp);
+    document.getElementById("voiceWa").addEventListener("click", () => toWhatsApp(true));
     document.getElementById("voiceDone").addEventListener("click", showIdle);
   }
   function barBusy(msg) { vhtml('<span class="voice-busy">' + T(msg) + "</span>"); }
   function barError(msg) {
     vhtml('<span class="voice-error">' + T(msg) + '</span><button type="button" class="btn btn--ghost voice-btn" id="voiceDismiss">' + T("Cancel") + "</button>");
     document.getElementById("voiceDismiss").addEventListener("click", showIdle);
+  }
+  function barSendFail() {
+    phase = "review";
+    vhtml('<span class="voice-error">' + T("Could not send your voice message.") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceRetry">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceWaFail">' + T("Continue to WhatsApp") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceDismissFail">' + T("Cancel") + "</button>");
+    document.getElementById("voiceRetry").addEventListener("click", sendVoice);
+    document.getElementById("voiceWaFail").addEventListener("click", () => toWhatsApp(false));
+    document.getElementById("voiceDismissFail").addEventListener("click", showIdle);
   }
 
   async function startRecording() {
@@ -303,7 +310,6 @@
       secs += 1;
       const el = voiceBar.querySelector(".voice-time");
       if (el) el.textContent = Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
-      if (secs >= 120) stopRecording();
     }, 1000);
     recorder.start(250);
   }
@@ -334,15 +340,18 @@
       addMsg("Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊", "bot");
       barSent();
     } catch (e) {
-      phase = "review";
-      barError("Could not send the voice message. Please try once more, or contact us on WhatsApp.");
+      barSendFail();
     }
   }
 
-  async function toWhatsApp() {
-    const note = "Hello BrownHub! I sent a voice message from your website" +
-      (transcript ? ". Transcript: " + transcript : "") +
-      ". The audio was also emailed to the team. My page: " + location.href;
+  async function toWhatsApp(emailSent) {
+    const note = emailSent
+      ? "Hello BrownHub! I sent a voice message from your website" +
+        (transcript ? ". Transcript: " + transcript : "") +
+        ". The audio was also emailed to the team. My page: " + location.href
+      : "Hello BrownHub! I recorded a voice message on your website but the email could not send." +
+        (transcript ? " Transcript: " + transcript : "") +
+        " I am sending the audio here. My page: " + location.href;
     try {
       if (blob && navigator.canShare) {
         const file = new File([blob], "brownhub-voice-message.webm", { type: blob.type || "audio/webm" });
