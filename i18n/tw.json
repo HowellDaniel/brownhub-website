@@ -162,8 +162,6 @@
  "Send message": "Som Krataa No",
  "Your message": "Wo Krataa",
  "Find us": "Hwehwɛ Yɛn",
- "Map views of both locations — tap the link to open directions in Google Maps.": "Mmap a ɛkyerɛ beaeɛ abien — twa ɔlink no na Google Maps bɛkyerɛ kwan a wobɛfa.",
- "Home — New Heaven Preparatory School": "Fie — New Heaven Preparatory School",
  "Work — Accra New Town": "Adwumaguafie — Accra New Town",
  "Get directions →": "Nya kwan a wobɛfa →",
  "Directions →": "Kwan a wobɛfa →",
@@ -181,7 +179,6 @@
  "Main navigation": "Kwan a ɛdi mpanim",
  "Switch to light mode": "Dan kɔ hann mu",
  "Switch to dark mode": "Dan kɔ sumu mu",
- "Map of home location, New Heaven Preparatory School": "Mmap a ɛkyerɛ fie beaeɛ, New Heaven Preparatory School",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "Mmap a ɛkyerɛ adwumaguafie beaeɛ, ChrisPrintgh, Accra New Town, Accra",
  "Printed materials sample": "Ntɛnkrataa mfonini",
  "Pull up banner design mockup": "Pull up banner nanhoni mfonini",
@@ -202,7 +199,6 @@
  "Get a quote": "Nya Boɛ",
  "Talk to a human": "Di ɔnipa ho kɔmmɔ",
  "You can reach the team directly: call or WhatsApp <a href=\"tel:+233593872873\">+233 593 872 873</a>, email <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a>, or chat on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>. The <a href=\"contact.html\">contact form</a> works too.": "Wobɛtumi aka kuw no ho nsɛm ntɛm ara: frɛ anaa WhatsApp wɔ <a href=\"tel:+233593872873\">+233 593 872 873</a>, fa imeil <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a>, anaa di kɔmmɔ wɔ <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> so. <a href=\"contact.html\">Nkɔmmɔ dwina</a> no nso yɛ adwuma.",
- "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Both locations with maps are on the <a href=\"contact.html\">contact page</a>.": "Yɛwɔ Accra, Ghana — adwumaguafie: ChrisPrintgh, Accra New Town, Greater Accra. Beaeɛ abien a mmap wɔ mu no wɔ <a href=\"contact.html\">Nkɔmmɔ peji</a> so.",
  "We're open Mon–Fri, 9am–6pm GMT. Messages sent outside those hours (here or on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>) get answered the next working day.": "Yɛabue Dwoeda–Pfiada, 9am–6pm GMT. Krataa a wobɛsom akyi saa berɛ no (ha anaa wɔ <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>) no, yɛbua no wɔ adwuma da a ɛdi kan no mu.",
  "Typical turnaround: flyers &amp; banners 1–3 days, logos &amp; branding about a week, websites 1–3 weeks depending on page count. Rush job? Ask on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> and we'll confirm what's possible.": "Sɛnea nnwuma twa no: flyers &amp; banners nnafua 1–3, logos &amp; branding bɛyɛ nnawɔtwe baako, wɛbsaet nnawɔtwe 1–3 gye sɛ peji dodoɛ te sɛn. Ntɛmtɛm adwuma? Bisa wɔ <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> so na yɛbɛka nea yɛbɛtumi ayɛ no akyerɛ wo.",
  "Prices depend on scope — pages, sizes, materials and deadline. Send the details on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> or by email and you'll get a quick quote; design jobs are usually quoted the same day.": "Boɛ no gyina nea wopɛ sɛ wɔyɛ so — peji, kɛseɛ, nneɛma a wɔde yɛ, ne berɛ a ɛsɛ sɛ ɛba. Fa nsɛm nyinaa soma wɔ <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> anaa imeil so na wunnya boɛ ntɛm; nanhoni nnwuma no, yɛhyɛ boɛ daa ne saa da no ara.",
@@ -312,5 +308,7 @@
  "Dictate your message": "Ka wo nkrasɛm no hyɛ mu",
  "Stop dictating": "Gyae kaka hyɛ mu",
  "GH₵250 – GH₵500": "GH₵250 – GH₵500",
- "Could not send your voice message.": "Yɛntumi wo nkrasɛm a ɛyɛ nne no."
+ "Could not send your voice message.": "Yɛntumi wo nkrasɛm a ɛyɛ nne no.",
+ "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Our location map is on the <a href=\"contact.html\">contact page</a>.": "Yɛwɔ Accra, Ghana — adwumaguafie: ChrisPrintgh, Accra New Town, Greater Accra. Yɛn beaeɛ mapa no wɔ <a href=\"contact.html\">Nkɔmmɔ peji</a> so.",
+ "Map view of our work location — tap the link to open directions in Google Maps.": "Mmapa a yɛn adwumaguabeae — hwɛ link no na bue nkwankyerɛ wɔ Google Maps mu."
 }

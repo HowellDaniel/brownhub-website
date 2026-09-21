@@ -162,8 +162,6 @@
  "Send message": "发送消息",
  "Your message": "您的留言",
  "Find us": "找到我们",
- "Map views of both locations — tap the link to open directions in Google Maps.": "两个地点的地图视图——点击链接即可在 Google Maps 中打开路线。",
- "Home — New Heaven Preparatory School": "住所 — New Heaven Preparatory School",
  "Work — Accra New Town": "工作地点 — Accra New Town",
  "Get directions →": "查看路线 →",
  "Directions →": "路线 →",
@@ -181,7 +179,6 @@
  "Main navigation": "主导航",
  "Switch to light mode": "切换为浅色模式",
  "Switch to dark mode": "切换为深色模式",
- "Map of home location, New Heaven Preparatory School": "住所位置地图，New Heaven Preparatory School",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "工作地点地图，ChrisPrintgh，Accra New Town，阿克拉",
  "Printed materials sample": "印刷物料样品",
  "Pull up banner design mockup": "易拉宝设计效果图",
@@ -202,7 +199,6 @@
  "Get a quote": "获取报价",
  "Talk to a human": "与真人沟通",
  "You can reach the team directly: call or WhatsApp <a href=\"tel:+233593872873\">+233 593 872 873</a>, email <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a>, or chat on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>. The <a href=\"contact.html\">contact form</a> works too.": "您也可以直接联系团队：拨打或在 WhatsApp 上发消息至 <a href=\"tel:+233593872873\">+233 593 872 873</a>，发邮件至 <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a>，或在 <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> 上聊天。<a href=\"contact.html\">联系表单</a>同样可用。",
- "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Both locations with maps are on the <a href=\"contact.html\">contact page</a>.": "我们位于加纳阿克拉——工作地点：ChrisPrintgh，Accra New Town，Greater Accra。两个地点的地图都可在 <a href=\"contact.html\">联系页面</a>查看。",
  "We're open Mon–Fri, 9am–6pm GMT. Messages sent outside those hours (here or on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>) get answered the next working day.": "我们的工作时间为周一至周五 9:00–18:00 GMT。此时间段之外发送的消息（无论在这里还是在 <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> 上），我们会在下一个工作日回复。",
  "Typical turnaround: flyers &amp; banners 1–3 days, logos &amp; branding about a week, websites 1–3 weeks depending on page count. Rush job? Ask on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> and we'll confirm what's possible.": "常规周期：传单 &amp; 横幅 1–3 天，标志 &amp; 品牌设计约一周，网站 1–3 周（视页面数量而定）。需要加急？在 <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> 上问问，我们会告诉您能做到什么程度。",
  "Prices depend on scope — pages, sizes, materials and deadline. Send the details on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> or by email and you'll get a quick quote; design jobs are usually quoted the same day.": "价格取决于范围——页面、尺寸、材料与交付时间。把详情发到 <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> 或邮件给我们，即可快速获得报价；设计类需求通常当天报价。",
@@ -312,5 +308,7 @@
  "Dictate your message": "语音听写消息",
  "Stop dictating": "停止听写",
  "GH₵250 – GH₵500": "GH₵250 – GH₵500",
- "Could not send your voice message.": "无法发送您的语音留言。"
+ "Could not send your voice message.": "无法发送您的语音留言。",
+ "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Our location map is on the <a href=\"contact.html\">contact page</a>.": "我们位于加纳阿克拉——工作地点：ChrisPrintgh，Accra New Town，Greater Accra。我们工作地点的地图可在 <a href=\"contact.html\">联系页面</a>查看。",
+ "Map view of our work location — tap the link to open directions in Google Maps.": "我们工作地点的地图——点击链接即可在 Google 地图中查看路线。"
 }

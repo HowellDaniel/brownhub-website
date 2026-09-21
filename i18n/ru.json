@@ -162,8 +162,6 @@
  "Send message": "Отправить сообщение",
  "Your message": "Ваше сообщение",
  "Find us": "Как нас найти",
- "Map views of both locations — tap the link to open directions in Google Maps.": "Карты обеих локаций — нажмите на ссылку, чтобы построить маршрут в Google Maps.",
- "Home — New Heaven Preparatory School": "Дом — New Heaven Preparatory School",
  "Work — Accra New Town": "Работа — Accra New Town",
  "Get directions →": "Построить маршрут →",
  "Directions →": "Маршрут →",
@@ -181,7 +179,6 @@
  "Main navigation": "Основная навигация",
  "Switch to light mode": "Включить светлую тему",
  "Switch to dark mode": "Включить тёмную тему",
- "Map of home location, New Heaven Preparatory School": "Карта домашнего адреса — New Heaven Preparatory School",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "Карта рабочей точки — ChrisPrintgh, Accra New Town, Accra",
  "Printed materials sample": "Образцы печатной продукции",
  "Pull up banner design mockup": "Макет баннера ролл-ап",
@@ -202,7 +199,6 @@
  "Get a quote": "Получить расчёт",
  "Talk to a human": "Поговорить с человеком",
  "You can reach the team directly: call or WhatsApp <a href=\"tel:+233593872873\">+233 593 872 873</a>, email <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a>, or chat on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>. The <a href=\"contact.html\">contact form</a> works too.": "Связаться с командой можно напрямую: звонок или WhatsApp на <a href=\"tel:+233593872873\">+233 593 872 873</a>, письмо на <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a> или чат в <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>. Ещё можно воспользоваться <a href=\"contact.html\">формой контакта</a>.",
- "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Both locations with maps are on the <a href=\"contact.html\">contact page</a>.": "Мы находимся в Аккре, Гана — рабочий адрес: ChrisPrintgh, Accra New Town, Greater Accra. Обе точки с картами — на <a href=\"contact.html\">странице контактов</a>.",
  "We're open Mon–Fri, 9am–6pm GMT. Messages sent outside those hours (here or on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>) get answered the next working day.": "Мы работаем пн–пт с 9:00 до 18:00 GMT. На сообщения, отправленные в другое время (здесь или в <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>), отвечаем на следующий рабочий день.",
  "Typical turnaround: flyers &amp; banners 1–3 days, logos &amp; branding about a week, websites 1–3 weeks depending on page count. Rush job? Ask on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> and we'll confirm what's possible.": "Обычные сроки: флаеры и баннеры — 1–3 дня, логотип и фирменный стиль — около недели, сайты — 1–3 недели в зависимости от количества страниц. Нужно срочно? Спросите в <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> — подтвердим, что возможно.",
  "Prices depend on scope — pages, sizes, materials and deadline. Send the details on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> or by email and you'll get a quick quote; design jobs are usually quoted the same day.": "Цены зависят от объёма — страниц, размеров, материалов и сроков. Пришлите детали в <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> или на почту — и получите расчёт; дизайнерские задачи обычно рассчитываем в тот же день.",
@@ -312,5 +308,7 @@
  "Dictate your message": "Продиктуйте сообщение",
  "Stop dictating": "Остановить диктовку",
  "GH₵250 – GH₵500": "GH₵250 – GH₵500",
- "Could not send your voice message.": "Не удалось отправить голосовое сообщение."
+ "Could not send your voice message.": "Не удалось отправить голосовое сообщение.",
+ "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Our location map is on the <a href=\"contact.html\">contact page</a>.": "Мы находимся в Аккре, Гана — рабочий адрес: ChrisPrintgh, Accra New Town, Greater Accra. Карта нашего местоположения — на <a href=\"contact.html\">странице контактов</a>.",
+ "Map view of our work location — tap the link to open directions in Google Maps.": "Карта нашего рабочего адреса — нажмите на ссылку, чтобы открыть маршрут в Google Картах."
 }

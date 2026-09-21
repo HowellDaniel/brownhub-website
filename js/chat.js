@@ -27,7 +27,7 @@
     },
     {
       keys: ["where", "address", "location", "office", "visit", "find you", "based"],
-      html: `We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Both locations with maps are on the <a href="contact.html">contact page</a>.`
+      html: `We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Our location map is on the <a href="contact.html">contact page</a>.`
     },
     {
       keys: ["hours", "open", "closed", "available", "weekend"],

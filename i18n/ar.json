@@ -162,8 +162,6 @@
  "Send message": "إرسال الرسالة",
  "Your message": "رسالتك",
  "Find us": "مواقعنا",
- "Map views of both locations — tap the link to open directions in Google Maps.": "خرائط لكلا الموقعين — اضغط الرابط لفتح الاتجاهات في Google Maps.",
- "Home — New Heaven Preparatory School": "المنزل — New Heaven Preparatory School",
  "Work — Accra New Town": "العمل — أكرا نيو تاون",
  "Get directions →": "اعرف الاتجاهات →",
  "Directions →": "الاتجاهات →",
@@ -181,7 +179,6 @@
  "Main navigation": "التنقّل الرئيسي",
  "Switch to light mode": "التبديل إلى الوضع الفاتح",
  "Switch to dark mode": "التبديل إلى الوضع الداكن",
- "Map of home location, New Heaven Preparatory School": "خريطة موقع المنزل، New Heaven Preparatory School",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "خريطة موقع العمل، ChrisPrintgh، أكرا نيو تاون، أكرا",
  "Printed materials sample": "عيّنة من المواد المطبوعة",
  "Pull up banner design mockup": "نموذج مبدّئي لتصميم بنر سحّاب",
@@ -202,7 +199,6 @@
  "Get a quote": "احصل على عرض سعر",
  "Talk to a human": "تحدّث مع أحد من فريقنا",
  "You can reach the team directly: call or WhatsApp <a href=\"tel:+233593872873\">+233 593 872 873</a>, email <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a>, or chat on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>. The <a href=\"contact.html\">contact form</a> works too.": "يمكنك الوصول إلى فريقنا مباشرة: اتصل أو راسل على WhatsApp عبر <a href=\"tel:+233593872873\">+233 593 872 873</a>، أو البريد الإلكتروني <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a>، أو الدردشة على <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>. ويمكن أيضًا استخدام <a href=\"contact.html\">نموذج التواصل</a>.",
- "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Both locations with maps are on the <a href=\"contact.html\">contact page</a>.": "مقرّنا في أكرا، غانا — عنوان العمل: ChrisPrintgh، أكرا نيو تاون، أكرا الكبرى. كلا الموقعين مع خرائطهما متاحان في <a href=\"contact.html\">صفحة التواصل</a>.",
  "We're open Mon–Fri, 9am–6pm GMT. Messages sent outside those hours (here or on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>) get answered the next working day.": "دوامنا الاثنين–الجمعة، 9 صباحًا–6 مساءً بتوقيت GMT. الرسائل التي تصلنا خارج هذه الأوقات (هنا أو على <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>) نردّ عليها في يوم العمل التالي.",
  "Typical turnaround: flyers &amp; banners 1–3 days, logos &amp; branding about a week, websites 1–3 weeks depending on page count. Rush job? Ask on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> and we'll confirm what's possible.": "المدة المعتادة للتنفيذ: المنشورات &amp; اللافتات 1–3 أيام، والشعارات &amp; هوية العلامة نحو أسبوع، والمواقع الإلكترونية 1–3 أسابيع بحسب عدد الصفحات. عمل مستعجل؟ اسألنا على <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> لنؤكّد لك ما يمكن إنجازه.",
  "Prices depend on scope — pages, sizes, materials and deadline. Send the details on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> or by email and you'll get a quick quote; design jobs are usually quoted the same day.": "تعتمد الأسعار على نطاق العمل — الصفحات، والمقاسات، والمواد، والمهلة الزمنية. أرسل التفاصيل على <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> أو بالبريد الإلكتروني لتحصل على عرض سعر سريع؛ أما أعمال التصميم فغالبًا ما نُسعّرها في اليوم نفسه.",
@@ -312,5 +308,7 @@
  "Dictate your message": "امْلِئ رسالتك صوتيًا",
  "Stop dictating": "إيقاف الإملاء",
  "GH₵250 – GH₵500": "GH₵250 – GH₵500",
- "Could not send your voice message.": "تعذر إرسال رسالتك الصوتية."
+ "Could not send your voice message.": "تعذر إرسال رسالتك الصوتية.",
+ "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Our location map is on the <a href=\"contact.html\">contact page</a>.": "مقرّنا في أكرا، غانا — عنوان العمل: ChrisPrintgh، أكرا نيو تاون، أكرا الكبرى. خريطة موقعنا متاحة في <a href=\"contact.html\">صفحة التواصل</a>.",
+ "Map view of our work location — tap the link to open directions in Google Maps.": "خريطة موقع عملنا — اضغط على الرابط لفتح الاتجاهات في خرائط Google."
 }

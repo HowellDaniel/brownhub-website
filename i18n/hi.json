@@ -162,8 +162,6 @@
  "Send message": "मैसेज भेजें",
  "Your message": "आपका मैसेज",
  "Find us": "हमें खोजें",
- "Map views of both locations — tap the link to open directions in Google Maps.": "दोनों ठिकानों के नक्शे — दिशाएँ देखने के लिए लिंक पर टैप करें, Google Maps खुल जाएगा।",
- "Home — New Heaven Preparatory School": "होम — New Heaven Preparatory School",
  "Work — Accra New Town": "कार्यस्थल — Accra New Town",
  "Get directions →": "रास्ता देखें →",
  "Directions →": "दिशाएँ →",
@@ -181,7 +179,6 @@
  "Main navigation": "मुख्य नेविगेशन",
  "Switch to light mode": "लाइट मोड पर स्विच करें",
  "Switch to dark mode": "डार्क मोड पर स्विच करें",
- "Map of home location, New Heaven Preparatory School": "होम लोकेशन का नक्शा — New Heaven Preparatory School",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "कार्यस्थल का नक्शा — ChrisPrintgh, Accra New Town, Accra",
  "Printed materials sample": "प्रिंट किए गए मटीरियल का नमूना",
  "Pull up banner design mockup": "पुल-अप बैनर डिज़ाइन का मॉकअप",
@@ -202,7 +199,6 @@
  "Get a quote": "कोटेशन पाएं",
  "Talk to a human": "किसी इंसान से बात करें",
  "You can reach the team directly: call or WhatsApp <a href=\"tel:+233593872873\">+233 593 872 873</a>, email <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a>, or chat on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>. The <a href=\"contact.html\">contact form</a> works too.": "आप टीम से सीधे संपर्क कर सकते हैं: फ़ोन करें या WhatsApp पर <a href=\"tel:+233593872873\">+233 593 872 873</a>, ईमेल करें <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a> पर, या <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> पर चैट करें। <a href=\"contact.html\">संपर्क फ़ॉर्म</a> भी उतना ही काम करता है।",
- "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Both locations with maps are on the <a href=\"contact.html\">contact page</a>.": "हम अक्रा, घाना में हैं — कार्यस्थल का पता: ChrisPrintgh, Accra New Town, Greater Accra। दोनों जगहों के नक्शे <a href=\"contact.html\">संपर्क पेज</a> पर उपलब्ध हैं।",
  "We're open Mon–Fri, 9am–6pm GMT. Messages sent outside those hours (here or on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>) get answered the next working day.": "हम सोम–शुक्र, सुबह 9 से शाम 6 बजे GMT तक खुले रहते हैं। इन घंटों के बाहर भेजे गए मैसेज (यहाँ या <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> पर) को अगले वर्किंग डे पर जवाब मिलता है।",
  "Typical turnaround: flyers &amp; banners 1–3 days, logos &amp; branding about a week, websites 1–3 weeks depending on page count. Rush job? Ask on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> and we'll confirm what's possible.": "आम तौर पर: फ़्लायर &amp; बैनर 1–3 दिन, लोगो &amp; ब्रांडिंग करीब एक हफ़्ता, वेबसाइट पेजों की गिनती के हिसाब से 1–3 हफ़्ते। जल्दी चाहिए? <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> पर पूछें — हम बता देंगे कि क्या-क्या मुमकिन है।",
  "Prices depend on scope — pages, sizes, materials and deadline. Send the details on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> or by email and you'll get a quick quote; design jobs are usually quoted the same day.": "कीमतें काम की सीमा पर निर्भर — कितने पेज, कौन-से साइज़, कौन-सा मटीरियल और कितनी डेडलाइन। पूरी डिटेल <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> पर या ईमेल से भेजें, जल्दी ही कोटेशन मिल जाएगा; डिज़ाइन के काम की कोट आमतौर पर उसी दिन।",
@@ -312,5 +308,7 @@
  "Dictate your message": "अपना संदेश बोलें",
  "Stop dictating": "बोलना बंद करें",
  "GH₵250 – GH₵500": "GH₵250 – GH₵500",
- "Could not send your voice message.": "आपकी वॉइस मैसेज भेजी नहीं जा सकी।"
+ "Could not send your voice message.": "आपकी वॉइस मैसेज भेजी नहीं जा सकी।",
+ "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Our location map is on the <a href=\"contact.html\">contact page</a>.": "हम अक्रा, घाना में हैं — कार्यस्थल का पता: ChrisPrintgh, Accra New Town, Greater Accra। हमारे स्थान का नक्शा <a href=\"contact.html\">संपर्क पेज</a> पर उपलब्ध है।",
+ "Map view of our work location — tap the link to open directions in Google Maps.": "हमारे कार्य स्थान का नक्शा — दिशाएँ देखने के लिए लिंक पर टैप करें और Google Maps खोलें।"
 }

@@ -162,8 +162,6 @@
  "Send message": "Tuma ujumbe",
  "Your message": "Ujumbe wako",
  "Find us": "Tutafute",
- "Map views of both locations — tap the link to open directions in Google Maps.": "Ramani za maeneo yote mawili — gusa kiungo ili kufungua maelekezo katika Google Maps.",
- "Home — New Heaven Preparatory School": "Nyumbani — New Heaven Preparatory School",
  "Work — Accra New Town": "Kazi — Accra New Town",
  "Get directions →": "Pata maelekezo →",
  "Directions →": "Maelekezo →",
@@ -181,7 +179,6 @@
  "Main navigation": "Urambazaji mkuu",
  "Switch to light mode": "Badilisha kwenye mwonekano wa mwanga",
  "Switch to dark mode": "Badilisha kwenye mwonekano wa giza",
- "Map of home location, New Heaven Preparatory School": "Ramani ya eneo la nyumbani, New Heaven Preparatory School",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "Ramani ya eneo la kazi, ChrisPrintgh, Accra New Town, Accra",
  "Printed materials sample": "Mfano wa machapisho",
  "Pull up banner design mockup": "Kielelezo cha muundo wa bango la kusimamisha",
@@ -202,7 +199,6 @@
  "Get a quote": "Pata mkadirio wa bei",
  "Talk to a human": "Zungumza na binadamu",
  "You can reach the team directly: call or WhatsApp <a href=\"tel:+233593872873\">+233 593 872 873</a>, email <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a>, or chat on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>. The <a href=\"contact.html\">contact form</a> works too.": "Unaweza kuwasiliana na timu moja kwa moja: piga simu au WhatsApp <a href=\"tel:+233593872873\">+233 593 872 873</a>, barua pepe <a href=\"mailto:howelldaniel533@gmail.com\">howelldaniel533@gmail.com</a>, au gumza kwenye <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>. <a href=\"contact.html\">Fomu ya mawasiliano</a> nayo hufanya kazi.",
- "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Both locations with maps are on the <a href=\"contact.html\">contact page</a>.": "Tupo Accra, Ghana — anwani ya kazi: ChrisPrintgh, Accra New Town, Greater Accra. Maeneo yote mawili yenye ramani yapo kwenye <a href=\"contact.html\">ukurasa wa mawasiliano</a>.",
  "We're open Mon–Fri, 9am–6pm GMT. Messages sent outside those hours (here or on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>) get answered the next working day.": "Tunafanya kazi Jumatatu–Ijumaa, 9 asubuhi–6 jioni GMT. Ujumbe unaotumwa nje ya saa hizo (hapa au kwenye <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>) hukujibiwa siku inayofuata ya kazi.",
  "Typical turnaround: flyers &amp; banners 1–3 days, logos &amp; branding about a week, websites 1–3 weeks depending on page count. Rush job? Ask on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> and we'll confirm what's possible.": "Muda wa kawaida: mafliya &amp; mabango siku 1–3, nembo &amp; utambulisho wa chapa takriban wiki moja, tovuti wiki 1–3 kulingana na idadi ya kurasa. Kazi ya haraka? Uliza kwenye <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> na tutakwambia kinachowezekana.",
  "Prices depend on scope — pages, sizes, materials and deadline. Send the details on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> or by email and you'll get a quick quote; design jobs are usually quoted the same day.": "Bei hutegemea ukubwa wa mradi — kurasa, saizi, vifaa na tarehe ya mwisho. Tuma maelezo kwenye <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> au kwa barua pepe na utapata mkadirio wa haraka; kazi za ubuni mara nyingi hupewa mkadirio siku hiyo hiyo.",
@@ -312,5 +308,7 @@
  "Dictate your message": "Lamba ujumbe wako",
  "Stop dictating": "Acha kulamba",
  "GH₵250 – GH₵500": "GH₵250 – GH₵500",
- "Could not send your voice message.": "Haikuwezekana kutuma ujumbe wako wa sauti."
+ "Could not send your voice message.": "Haikuwezekana kutuma ujumbe wako wa sauti.",
+ "We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Our location map is on the <a href=\"contact.html\">contact page</a>.": "Tupo Accra, Ghana — anwani ya kazi: ChrisPrintgh, Accra New Town, Greater Accra. Ramani ya eneo letu iko kwenye <a href=\"contact.html\">ukurasa wa mawasiliano</a>.",
+ "Map view of our work location — tap the link to open directions in Google Maps.": "Ramani ya eneo letu la kazi — gonga kiungo ili kufungua maelekezo katika Google Maps."
 }
