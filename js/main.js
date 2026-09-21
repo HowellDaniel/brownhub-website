@@ -42,21 +42,7 @@
     name.textContent = "BrownHub Studio";
     name.setAttribute("aria-hidden", "true");
     brand.appendChild(name);
-    brand.style.cssText += ";display:inline-flex!important;align-items:center!important;gap:10px!important;white-space:nowrap!important;visibility:visible!important;";
-    name.style.cssText = "display:inline-block!important;visibility:visible!important;color:var(--text)!important;font-size:1.35rem!important;font-weight:800!important;line-height:1!important;letter-spacing:.02em!important;white-space:nowrap!important;";
   });
-
-  // On very small phones the wordmark competes with the language pill; hide it via
-  // JS because its inline !important styles cannot be overridden by the stylesheet.
-  const smallPhone = window.matchMedia("(max-width:430px)");
-  const syncBrand = () => {
-    document.querySelectorAll(".site-header .brand-name").forEach((n) => {
-      if (smallPhone.matches) n.style.setProperty("display", "none", "important");
-      else n.style.setProperty("display", "inline-block", "important");
-    });
-  };
-  syncBrand();
-  smallPhone.addEventListener("change", syncBrand);
 
   const contactForm = document.getElementById("contact-form");
   if (contactForm) {
@@ -105,7 +91,7 @@
       @keyframes hero-card-float-one { 0% { transform:translate3d(-18px,10px,0) rotate(-6deg); } 25% { transform:translate3d(20px,-8px,0) rotate(2deg); } 50% { transform:translate3d(12px,-24px,0) rotate(4deg); } 75% { transform:translate3d(-16px,-14px,0) rotate(-2deg); } 100% { transform:translate3d(-18px,10px,0) rotate(-6deg); } }
       @keyframes hero-card-float-two { 0% { transform:translate3d(26px,-16px,0) rotate(5deg); } 33% { transform:translate3d(-10px,-28px,0) rotate(-2deg); } 66% { transform:translate3d(10px,6px,0) rotate(3deg); } 100% { transform:translate3d(26px,-16px,0) rotate(5deg); } }
       @keyframes hero-card-float-three { 0% { transform:translate3d(-16px,-10px,0) rotate(-3deg); } 25% { transform:translate3d(18px,-18px,0) rotate(4deg); } 50% { transform:translate3d(28px,8px,0) rotate(0deg); } 75% { transform:translate3d(-8px,10px,0) rotate(-5deg); } 100% { transform:translate3d(-16px,-10px,0) rotate(-3deg); } }
-      @media (max-width:700px) { .interactive-background::before,.interactive-background::after { width:14rem; height:14rem; filter:blur(50px); } .site-header .brand-name { font-size:1.1rem!important; } }
+      @media (max-width:700px) { .interactive-background::before,.interactive-background::after { width:14rem; height:14rem; filter:blur(50px); } }
     `;
     document.head.appendChild(style);
 
