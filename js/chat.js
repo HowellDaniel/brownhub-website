@@ -16,6 +16,10 @@
     return (window.I18N && window.I18N.t) ? window.I18N.t(s) : s;
   }
 
+  // On touch devices, never auto-focus: it pops the on-screen keyboard over the chat.
+  const finePointer = window.matchMedia("(pointer:fine)").matches;
+  function focusInput() { if (finePointer) input.focus(); }
+
   const questionIntents = [
     {
       keys: ["human", "agent", "real person", "talk to someone", "speak to someone", "call you", "phone", "email", "whatsapp", "contact"],
@@ -133,7 +137,7 @@
       bubble.remove();
       addMsg(answer(clean), "bot");
       renderChips(defaultChips);
-      input.focus();
+      focusInput();
     }, 550 + Math.random() * 450);
   }
 
@@ -150,7 +154,7 @@
         renderChips(defaultChips);
       }, 600);
     }
-    input.focus();
+    focusInput();
   }
 
   function closeChat() {

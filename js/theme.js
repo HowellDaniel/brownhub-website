@@ -7,6 +7,14 @@
     try { localStorage.setItem(KEY, theme); } catch (e) {}
     const btn = document.querySelector(".theme-toggle");
     if (btn) btn.setAttribute("aria-label", theme === "light" ? "Switch to dark mode" : "Switch to light mode");
+    // Match the mobile browser chrome (address bar) to the page theme.
+    let meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.name = "theme-color";
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", theme === "light" ? "#f6f7f9" : "#0e1116");
   }
 
   let saved = null;

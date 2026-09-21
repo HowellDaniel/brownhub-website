@@ -137,7 +137,7 @@
       ".lang-select:hover,.lang-select:focus{color:var(--text);outline:none;box-shadow:0 0 0 3px rgba(217,122,31,0.18)}" +
       ".lang-select option{color:var(--text);background:var(--surface)}" +
       "@media (max-width:640px){.lang-select{font-size:.75rem;padding:.25rem 1.35rem .25rem .45rem;margin-left:.45rem;background-position:right .35rem center;max-width:7.4rem}" +
-      ".site-header .theme-toggle{margin-left:.5rem;width:36px;height:36px}}" +
+      ".site-header .theme-toggle{margin-left:.5rem;width:40px;height:40px}}" +
       "@media (max-width:430px){.lang-select{max-width:6.4rem;font-size:.72rem}.site-header .logo-img{height:32px}}";
     document.head.appendChild(style);
 
