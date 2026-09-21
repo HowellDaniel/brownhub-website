@@ -6,8 +6,10 @@
     ["it", "Italiano"], ["ru", "Русский"], ["hi", "हिन्दी"], ["sw", "Kiswahili"], ["tw", "Twi"]];
   var ATTRS = ["placeholder", "title", "alt", "aria-label"];
   var dicts = {};
+  var rmaps = {};
   var records = [];
   var seen = new WeakSet();
+  var seenAttr = new WeakMap();
   var current = "en";
   var selectEl = null;
 
@@ -38,7 +40,11 @@
     if (root.nodeType !== 1 || root.tagName === "SCRIPT" || root.tagName === "STYLE" || root.id === "lang-select") return;
     for (var i = 0; i < ATTRS.length; i++) {
       var a = ATTRS[i];
-      if (root.hasAttribute(a) && !seen.has(root)) { seen.add(root); record(null, root, a); }
+      if (root.hasAttribute(a)) {
+        var m = seenAttr.get(root);
+        if (!m) { m = {}; seenAttr.set(root, m); }
+        if (!m[a]) { m[a] = 1; record(null, root, a); }
+      }
     }
     var kids = root.childNodes;
     for (var j = 0; j < kids.length; j++) collect(kids[j]);
@@ -82,9 +88,24 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=7")
+    return fetch("i18n/" + code + ".json?v=8")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
+  }
+
+  function revMap(code) {
+    if (!rmaps[code]) {
+      var d = dicts[code];
+      if (!d) return null;
+      var m = {};
+      for (var k in d) { if (!m[d[k]]) m[d[k]] = k; }
+      rmaps[code] = m;
+    }
+    return rmaps[code];
+  }
+
+  function announce() {
+    try { document.dispatchEvent(new Event("i18n-applied")); } catch (e) {}
   }
 
   function apply(code) {
@@ -96,11 +117,13 @@
         else { r.orig = now; r.last = now; }
       });
       applyMeta(null);
+      announce();
     } else {
       loadDict(code).then(function (dict) {
         current = code;
         records.forEach(function (r) { translateRecord(r, dict); });
         applyMeta(dict);
+        announce();
       }).catch(function () { return; });
     }
     document.documentElement.setAttribute("lang", code);
@@ -112,6 +135,13 @@
     t: t,
     apply: apply,
     get lang() { return current; },
+    // Map a translated string back to its English source (for keyword routing).
+    en: function (text) {
+      var m = revMap(current);
+      if (!m) return text;
+      var hit = m[trimKey(text)];
+      return hit === undefined ? text : hit;
+    },
     translateNode: function (node) {
       var before = records.length;
       collect(node);
@@ -144,7 +174,10 @@
     selectEl = document.createElement("select");
     selectEl.className = "lang-select";
     selectEl.id = "lang-select";
-    selectEl.setAttribute("aria-label", "Choose language");
+    selectEl.setAttribute("aria-label", t("Choose language"));
+    document.addEventListener("i18n-applied", function () {
+      if (selectEl) selectEl.setAttribute("aria-label", t("Choose language"));
+    });
     LANGS.forEach(function (l) {
       var o = document.createElement("option");
       o.value = l[0];
@@ -170,9 +203,13 @@
     try {
       saved = localStorage.getItem("brownhub-lang") || "";
       if (!saved) {
-        var nav2 = (navigator.language || "en").slice(0, 2);
-        if (nav2 === "ak") nav2 = "tw";
-        saved = LANGS.some(function (l) { return l[0] === nav2; }) ? nav2 : "en";
+        // Walk the visitor's whole preferred-language list, not just the first one.
+        var prefs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || "en"];
+        for (var pi = 0; pi < prefs.length; pi++) {
+          var code = String(prefs[pi] || "").slice(0, 2).toLowerCase();
+          if (code === "ak") code = "tw";
+          if (LANGS.some(function (l) { return l[0] === code; })) { saved = code; break; }
+        }
       }
     } catch (e) {}
 

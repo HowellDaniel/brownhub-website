@@ -69,9 +69,18 @@
     const item = new URLSearchParams(location.search).get("item");
     if (item) {
       const message = document.getElementById("message");
-      if (message && !message.value) message.value = "I'd like to order: " + item;
       const service = document.getElementById("service");
-      if (service) service.value = "Graphic Designing";
+      let auto = null;
+      const tr = (s) => (window.I18N && I18N.t ? I18N.t(s) : s);
+      const setPrefill = () => {
+        if (message && (auto === null || message.value === auto)) {
+          auto = tr("I'd like to order:") + " " + tr(item);
+          message.value = auto;
+        }
+        if (service) service.value = "Graphic Designing";
+      };
+      setPrefill();
+      document.addEventListener("i18n-applied", setPrefill);
     }
   }
 

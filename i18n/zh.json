@@ -291,5 +291,9 @@
  "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "您的语音留言已发送给我们的团队，录音已作为附件一并发送。我们会在一个工作日内回复您的电子邮箱。",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "麦克风访问权限被阻止。请在浏览器设置中允许访问，然后重试。",
  "The recording came out empty. Please try again.": "未录制到任何声音。请重试。",
- "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "语音留言发送失败。请再试一次，或通过 WhatsApp 与我们联系。"
+ "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "语音留言发送失败。请再试一次，或通过 WhatsApp 与我们联系。",
+ "I want to order:": "我想订购：",
+ "I'd like to order:": "我要订购：",
+ "Choose language": "选择语言",
+ "The BrownHub": "BrownHub 的"
 }

@@ -291,5 +291,9 @@
  "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Ujumbe wako wa sauti umetumwa kwa timu yetu ukiwa umeambatishwa faili ya sauti. Tutakujibu kwa barua pepe ndani ya siku moja ya kazi.",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "Ufikiaji wa maikrofoni umezuiwa. Uruhusu katika mipangilio ya kivinjari chako, kisha jaribu tena.",
  "The recording came out empty. Please try again.": "Rekodi ilikuwa tupu. Tafadhali jaribu tena.",
- "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Hatukuweza kutuma ujumbe wa sauti. Tafadhali jaribu tena, au wasiliana nasi kwenye WhatsApp."
+ "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Hatukuweza kutuma ujumbe wa sauti. Tafadhali jaribu tena, au wasiliana nasi kwenye WhatsApp.",
+ "I want to order:": "Nataka kuagiza:",
+ "I'd like to order:": "Ningependa kuagiza:",
+ "Choose language": "Chagua lugha",
+ "The BrownHub": "BrownHub ya"
 }

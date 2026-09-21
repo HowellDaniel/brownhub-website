@@ -291,5 +291,9 @@
  "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Ваше голосовое сообщение отправлено нашей команде, аудиозапись — во вложении. Ответим на вашу почту в течение одного рабочего дня.",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "Доступ к микрофону заблокирован. Разрешите его в настройках браузера и попробуйте ещё раз.",
  "The recording came out empty. Please try again.": "Запись получилась пустой. Попробуйте ещё раз.",
- "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Не удалось отправить голосовое сообщение. Попробуйте ещё раз или напишите нам в WhatsApp."
+ "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Не удалось отправить голосовое сообщение. Попробуйте ещё раз или напишите нам в WhatsApp.",
+ "I want to order:": "Я хочу заказать:",
+ "I'd like to order:": "Я бы хотел заказать:",
+ "Choose language": "Выберите язык",
+ "The BrownHub": "Наш"
 }

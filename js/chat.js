@@ -90,22 +90,35 @@
   }
 
   function answer(text) {
-    const t = text.toLowerCase();
+    // Visitors may type (or we may prefill) in their own language: map known
+    // translated strings back to their English source before keyword scoring.
+    const src = (window.I18N && window.I18N.en) ? window.I18N.en(text) : text;
+    const t = src.toLowerCase();
     const hit = bestOf(questionIntents, t) || bestOf(topicIntents, t);
     return hit ? hit.html : fallback;
   }
 
+  // Let other scripts (catalog "Order now via chat") send a message with a
+  // display text in the visitor's language while routing on the English source.
+  window.BROWNHUB_CHAT = { send: send };
+
   function scrollDown() { messages.scrollTop = messages.scrollHeight; }
 
+  const botHistory = [];
   function addMsg(html, who) {
     const el = document.createElement("div");
     el.className = `chat-msg chat-msg--${who}`;
     if (who === "user") el.textContent = html;
-    else el.innerHTML = T(html);
+    else { el.innerHTML = T(html); botHistory.push({ el, src: html }); }
     messages.appendChild(el);
     scrollDown();
     return el;
   }
+
+  // Messages rendered before a language switch must follow the new language too.
+  document.addEventListener("i18n-applied", () => {
+    for (const h of botHistory) if (h.el.isConnected) h.el.innerHTML = T(h.src);
+  });
 
   function typingBubble() {
     const el = document.createElement("div");
@@ -122,20 +135,19 @@
       const b = document.createElement("button");
       b.type = "button";
       b.textContent = T(label);
-      b.addEventListener("click", () => send(label));
+      b.addEventListener("click", () => send(T(label), label));
       chips.appendChild(b);
     }
   }
 
-  function send(text) {
-    const clean = text.trim();
+  function send(text, routeAs) {    const clean = text.trim();
     if (!clean) return;
     addMsg(clean, "user");
     renderChips([]);
     const bubble = typingBubble();
     setTimeout(() => {
       bubble.remove();
-      addMsg(answer(clean), "bot");
+      addMsg(answer(routeAs || clean), "bot");
       renderChips(defaultChips);
       focusInput();
     }, 550 + Math.random() * 450);

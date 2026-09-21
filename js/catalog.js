@@ -108,10 +108,14 @@
     if (!toggle || !panel) return;
     if (panel.hidden) toggle.click();
     setTimeout(function () {
-      var input = document.getElementById("chatInput");
-      var form = document.getElementById("chatForm");
-      input.value = "I want to order: " + item;
-      form.requestSubmit();
+      var tr = function (s) { return (window.I18N && I18N.t) ? I18N.t(s) : s; };
+      var display = tr("I want to order:") + " " + tr(item);
+      if (window.BROWNHUB_CHAT) {
+        BROWNHUB_CHAT.send(display, "I want to order: " + item);
+      } else {
+        document.getElementById("chatInput").value = display;
+        document.getElementById("chatForm").requestSubmit();
+      }
     }, 350);
   });
 })();

@@ -291,5 +291,9 @@
  "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Il tuo messaggio vocale è stato inviato al nostro team con l’audio allegato. Risponderemo alla tua e-mail entro un giorno lavorativo.",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "L’accesso al microfono è stato bloccato. Consenti l’accesso nelle impostazioni del browser e riprova.",
  "The recording came out empty. Please try again.": "La registrazione è risultata vuota. Riprova.",
- "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Impossibile inviare il messaggio vocale. Riprova oppure contattaci su WhatsApp."
+ "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Impossibile inviare il messaggio vocale. Riprova oppure contattaci su WhatsApp.",
+ "I want to order:": "Voglio ordinare:",
+ "I'd like to order:": "Vorrei ordinare:",
+ "Choose language": "Scegli lingua",
+ "The BrownHub": "Il BrownHub"
 }
