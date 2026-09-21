@@ -151,7 +151,6 @@
  "Contact — BrownHub": "Contact — BrownHub",
  "Let's talk about your": "Parlons de",
  "project": "votre projet",
- "Tell us what you're building. We'll get back to you within one business day.": "Dites-nous ce que vous construisez. Nous vous répondrons sous un jour ouvré.",
  "Name *": "Nom *",
  "Email *": "E-mail *",
  "Phone": "Téléphone",
@@ -299,5 +298,6 @@
  "Try again": "Réessayer",
  "Emailed — now send it on WhatsApp too": "Envoyé par e-mail — envoyez-le aussi sur WhatsApp",
  "Continue to WhatsApp": "Continuer sur WhatsApp",
- "Done": "Terminé"
+ "Done": "Terminé",
+ "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Dites-nous ce que vous construisez. Nous vous répondrons dans quelques minutes. Merci ! 🙏 😊"
 }

@@ -151,7 +151,6 @@
  "Contact — BrownHub": "Контакты — BrownHub",
  "Let's talk about your": "Давайте обсудим ваш",
  "project": "проект",
- "Tell us what you're building. We'll get back to you within one business day.": "Расскажите, что вы хотите создать. Ответим в течение одного рабочего дня.",
  "Name *": "Имя *",
  "Email *": "Эл. почта *",
  "Phone": "Телефон",
@@ -299,5 +298,6 @@
  "Try again": "Повторить",
  "Emailed — now send it on WhatsApp too": "Отправлено по электронной почте — отправьте также в WhatsApp",
  "Continue to WhatsApp": "Продолжить в WhatsApp",
- "Done": "Готово"
+ "Done": "Готово",
+ "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Расскажите, что вы хотите создать. Ответим в течение нескольких минут. Спасибо! 🙏 😊"
 }

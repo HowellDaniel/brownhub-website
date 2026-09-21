@@ -151,7 +151,6 @@
  "Contact — BrownHub": "اتصل بنا — BrownHub",
  "Let's talk about your": "لنتحدّث عن",
  "project": "مشروعك",
- "Tell us what you're building. We'll get back to you within one business day.": "أخبرنا بما تبنيه. سنعود إليك خلال يوم عمل واحد.",
  "Name *": "الاسم *",
  "Email *": "البريد الإلكتروني *",
  "Phone": "الهاتف",
@@ -299,5 +298,6 @@
  "Try again": "حاول مرة أخرى",
  "Emailed — now send it on WhatsApp too": "تم الإرسال بالبريد — أرسله أيضًا عبر واتساب",
  "Continue to WhatsApp": "المتابعة إلى واتساب",
- "Done": "تم"
+ "Done": "تم",
+ "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "أخبرنا بما تبنيه. سنعود إليك خلال بضع دقائق. شكرًا! 🙏 😊"
 }
