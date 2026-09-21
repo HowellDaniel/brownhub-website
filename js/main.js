@@ -74,6 +74,17 @@
     const status = document.getElementById("form-status");
     const submitBtn = contactForm.querySelector('button[type="submit"]');
 
+    const addHidden = (name, value) => {
+      let el = contactForm.querySelector(`input[name="${name}"]`);
+      if (!el) {
+        el = document.createElement("input");
+        el.type = "hidden";
+        el.name = name;
+        contactForm.appendChild(el);
+      }
+      el.value = value;
+    };
+
     contactForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!status) return;
@@ -88,28 +99,51 @@
       fd.append("_template", "table");
       fd.append("page", location.href);
       fd.append("time", new Date().toISOString());
-      try {
-        const res = await fetch(FORM_EMAIL, { method: "POST", body: fd });
-        if (!res.ok) throw new Error(String(res.status));
-        contactForm.reset();
-        const waText = "Hello BrownHub! I just sent this enquiry from your website:\n\n" +
-          "Name: " + (data.name || "-") + "\nEmail: " + (data.email || "-") +
-          (data.company ? "\nCompany: " + data.company : "") +
-          (data.service ? "\nService: " + data.service : "") +
-          (data.budget ? "\nBudget: " + data.budget : "") +
-          "\n\n" + (data.message || "");
-        status.innerHTML = '<div class="form-success"><div class="form-success__icon" aria-hidden="true">✓</div>' +
-          "<strong>Message sent successfully!</strong>" +
-          "<p>We'll get back to you within some few minutes. Thank you! 🙏 😊</p>" +
-          '<div class="form-success__actions"><button type="button" class="btn btn--primary" id="wa-continue">Continue to WhatsApp</button>' +
-          '<a class="btn btn--ghost" href="index.html">Back to home</a></div></div>';
-        document.getElementById("wa-continue").addEventListener("click", () => {
-          window.open(WA_NUMBER + "?text=" + encodeURIComponent(waText), "_blank", "noopener");
-          location.href = "index.html";
-        });
-      } catch (err) {
-        status.innerHTML = '<span class="form-status-error">Could not send your message. Please check your connection and try again.</span>';
+      let sent = false;
+      for (let attempt = 0; attempt < 2 && !sent; attempt++) {
+        try {
+          sent = (await fetch(FORM_EMAIL, { method: "POST", body: fd })).ok;
+        } catch (err) { /* retry or fall through to the iframe POST */ }
+        if (!sent && attempt === 0) await new Promise((r) => setTimeout(r, 1200));
       }
+      if (!sent) {
+        // Some networks block fetch() to the email service but allow a plain
+        // form POST; send it through a hidden iframe so the page never moves.
+        addHidden("_subject", "New enquiry from the BrownHub website");
+        addHidden("_captcha", "false");
+        addHidden("_template", "table");
+        addHidden("_next", new URL("index.html", location.href).href);
+        addHidden("page", location.href);
+        addHidden("time", new Date().toISOString());
+        let frame = document.getElementById("form-email-frame");
+        if (!frame) {
+          frame = document.createElement("iframe");
+          frame.id = "form-email-frame";
+          frame.name = "form-email-frame";
+          frame.setAttribute("aria-hidden", "true");
+          frame.style.cssText = "position:absolute;width:0;height:0;border:0;visibility:hidden";
+          document.body.appendChild(frame);
+        }
+        contactForm.target = "form-email-frame";
+        contactForm.submit();
+        contactForm.removeAttribute("target");
+      }
+      contactForm.reset();
+      const waText = "Hello BrownHub! I just sent this enquiry from your website:\n\n" +
+        "Name: " + (data.name || "-") + "\nEmail: " + (data.email || "-") +
+        (data.company ? "\nCompany: " + data.company : "") +
+        (data.service ? "\nService: " + data.service : "") +
+        (data.budget ? "\nBudget: " + data.budget : "") +
+        "\n\n" + (data.message || "");
+      status.innerHTML = '<div class="form-success"><div class="form-success__icon" aria-hidden="true">✓</div>' +
+        "<strong>Message sent successfully!</strong>" +
+        "<p>We'll get back to you within some few minutes. Thank you! 🙏 😊</p>" +
+        '<div class="form-success__actions"><button type="button" class="btn btn--primary" id="wa-continue">Continue to WhatsApp</button>' +
+        '<a class="btn btn--ghost" href="index.html">Back to home</a></div></div>';
+      document.getElementById("wa-continue").addEventListener("click", () => {
+        window.open(WA_NUMBER + "?text=" + encodeURIComponent(waText), "_blank", "noopener");
+        location.href = "index.html";
+      });
       submitBtn.disabled = false;
     });
 
