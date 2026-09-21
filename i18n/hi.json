@@ -287,7 +287,6 @@
  "Send voice message": "वॉइस मैसेज भेजें",
  "Sending your voice message…": "आपका वॉइस मैसेज भेजा जा रहा है…",
  "Voice message": "वॉइस मैसेज",
- "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "आपका वॉइस मैसेज ऑडियो अटैचमेंट के साथ हमारी टीम को भेज दिया गया है। हम एक वर्किंग डे के अंदर आपके ईमेल पर जवाब दे देंगे।",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "माइक तक पहुंच ब्लॉक कर दी गई है। अपने ब्राउज़र की सेटिंग्स में इसे अनुमति दें, फिर दोबारा कोशिश करें।",
  "The recording came out empty. Please try again.": "रिकॉर्डिंग खाली आई। कृपया दोबारा कोशिश करें।",
  "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "वॉइस मैसेज नहीं भेजा जा सका। कृपया एक बार और कोशिश करें, या हमसे WhatsApp पर संपर्क करें।",
@@ -299,5 +298,6 @@
  "Emailed — now send it on WhatsApp too": "ईमेल से भेजा गया — इसे WhatsApp पर भी भेजें",
  "Continue to WhatsApp": "WhatsApp पर जारी रखें",
  "Done": "हो गया",
- "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "बताएं आप क्या बना रहे हैं। कुछ ही मिनटों में हम जवाब दे देंगे। धन्यवाद! 🙏 😊"
+ "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "बताएं आप क्या बना रहे हैं। कुछ ही मिनटों में हम जवाब दे देंगे। धन्यवाद! 🙏 😊",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊": "आपका वॉइस मैसेज ऑडियो अटैचमेंट के साथ हमारी टीम को भेज दिया गया है। हम कुछ ही मिनटों में आपके ईमेल पर जवाब दे देंगे। धन्यवाद! 🙏 😊"
 }

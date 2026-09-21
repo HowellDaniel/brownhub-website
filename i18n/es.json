@@ -287,7 +287,6 @@
  "Send voice message": "Enviar mensaje de voz",
  "Sending your voice message…": "Enviando tu mensaje de voz…",
  "Voice message": "Mensaje de voz",
- "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Tu mensaje de voz se envió a nuestro equipo con el audio adjunto. Responderemos a tu correo en un día hábil.",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "Se bloqueó el acceso al micrófono. Permítelo en la configuración de tu navegador y vuelve a intentarlo.",
  "The recording came out empty. Please try again.": "La grabación salió vacía. Inténtalo de nuevo.",
  "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "No pudimos enviar el mensaje de voz. Inténtalo otra vez o contáctanos por WhatsApp.",
@@ -299,5 +298,6 @@
  "Emailed — now send it on WhatsApp too": "Enviado por correo — envíalo también por WhatsApp",
  "Continue to WhatsApp": "Continuar por WhatsApp",
  "Done": "Listo",
- "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Cuéntanos qué estás construyendo. Te responderemos en unos minutos. ¡Gracias! 🙏 😊"
+ "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Cuéntanos qué estás construyendo. Te responderemos en unos minutos. ¡Gracias! 🙏 😊",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊": "Tu mensaje de voz se envió a nuestro equipo con el audio adjunto. Responderemos a tu correo en unos minutos. ¡Gracias! 🙏 😊"
 }

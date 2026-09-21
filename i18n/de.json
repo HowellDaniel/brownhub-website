@@ -287,7 +287,6 @@
  "Send voice message": "Sprachnachricht senden",
  "Sending your voice message…": "Eure Sprachnachricht wird gesendet…",
  "Voice message": "Sprachnachricht",
- "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Eure Sprachnachricht wurde samt Audio-Anhang an unser Team gesendet. Wir antworten innerhalb eines Werktags auf eure E-Mail.",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "Der Zugriff aufs Mikrofon wurde blockiert. Gebt ihn in euren Browsereinstellungen frei und versucht es erneut.",
  "The recording came out empty. Please try again.": "Die Aufnahme war leer. Versucht es bitte erneut.",
  "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Die Sprachnachricht konnte nicht gesendet werden. Versucht es noch einmal oder schreibt uns auf WhatsApp.",
@@ -299,5 +298,6 @@
  "Emailed — now send it on WhatsApp too": "Per E-Mail gesendet — senden Sie es auch über WhatsApp",
  "Continue to WhatsApp": "In WhatsApp fortfahren",
  "Done": "Fertig",
- "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Erzählt uns, was ihr baut. Wir melden uns innerhalb einiger Minuten bei euch. Danke! 🙏 😊"
+ "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Erzählt uns, was ihr baut. Wir melden uns innerhalb einiger Minuten bei euch. Danke! 🙏 😊",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊": "Eure Sprachnachricht wurde samt Audio-Anhang an unser Team gesendet. Wir antworten innerhalb einiger Minuten auf eure E-Mail. Danke! 🙏 😊"
 }

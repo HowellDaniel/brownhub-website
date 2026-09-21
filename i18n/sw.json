@@ -287,7 +287,6 @@
  "Send voice message": "Tuma ujumbe wa sauti",
  "Sending your voice message…": "Tunatuma ujumbe wako wa sauti…",
  "Voice message": "Ujumbe wa sauti",
- "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Ujumbe wako wa sauti umetumwa kwa timu yetu ukiwa umeambatishwa faili ya sauti. Tutakujibu kwa barua pepe ndani ya siku moja ya kazi.",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "Ufikiaji wa maikrofoni umezuiwa. Uruhusu katika mipangilio ya kivinjari chako, kisha jaribu tena.",
  "The recording came out empty. Please try again.": "Rekodi ilikuwa tupu. Tafadhali jaribu tena.",
  "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Hatukuweza kutuma ujumbe wa sauti. Tafadhali jaribu tena, au wasiliana nasi kwenye WhatsApp.",
@@ -299,5 +298,6 @@
  "Emailed — now send it on WhatsApp too": "Imetumwa kwa barua pepe — aitume pia kupitia WhatsApp",
  "Continue to WhatsApp": "Endelea kwenye WhatsApp",
  "Done": "Imekamilika",
- "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Tuambie unachojenga. Tutakujibu ndani ya dakika chache. Asanteni! 🙏 😊"
+ "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Tuambie unachojenga. Tutakujibu ndani ya dakika chache. Asanteni! 🙏 😊",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊": "Ujumbe wako wa sauti umetumwa kwa timu yetu ukiwa umeambatishwa faili ya sauti. Tutakujibu kwa barua pepe ndani ya dakika chache. Asanteni! 🙏 😊"
 }

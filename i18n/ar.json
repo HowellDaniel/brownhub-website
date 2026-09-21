@@ -287,7 +287,6 @@
  "Send voice message": "إرسال الرسالة الصوتية",
  "Sending your voice message…": "جارٍ إرسال رسالتك الصوتية…",
  "Voice message": "رسالة صوتية",
- "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "تم إرسال رسالتك الصوتية إلى فريقنا مع إرفاق المقطع الصوتي. سنردّ على بريدك الإلكتروني خلال يوم عمل واحد.",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "تم حظر الوصول إلى الميكروفون. اسمح بالوصول إليه في إعدادات متصفّحك، ثم حاول مرة أخرى.",
  "The recording came out empty. Please try again.": "لم يُسجَّل أي صوت. يرجى المحاولة مرة أخرى.",
  "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "تعذّر إرسال الرسالة الصوتية. يرجى المحاولة مرة أخرى، أو التواصل معنا على WhatsApp.",
@@ -299,5 +298,6 @@
  "Emailed — now send it on WhatsApp too": "تم الإرسال بالبريد — أرسله أيضًا عبر واتساب",
  "Continue to WhatsApp": "المتابعة إلى واتساب",
  "Done": "تم",
- "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "أخبرنا بما تبنيه. سنعود إليك خلال بضع دقائق. شكرًا! 🙏 😊"
+ "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "أخبرنا بما تبنيه. سنعود إليك خلال بضع دقائق. شكرًا! 🙏 😊",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊": "تم إرسال رسالتك الصوتية إلى فريقنا مع إرفاق المقطع الصوتي. سنردّ على بريدك الإلكتروني خلال بضع دقائق. شكرًا! 🙏 😊"
 }

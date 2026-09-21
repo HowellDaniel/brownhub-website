@@ -287,7 +287,6 @@
  "Send voice message": "Som nne nkrasɛm no",
  "Sending your voice message…": "Yɛresom wo nne nkrasɛm no…",
  "Voice message": "Nne Nkrasɛm",
- "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Wɔasom wo nne nkrasɛm no akɔma yɛn kuw no, na wɔde audio no aka ho. Yɛbɛdaa wo so wɔ wo imeil so wɔ adwuma da baako mu.",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "Wɔasɔ kwan a ɛfa maikrofon ho no. Ma kwan wɔ wo brawuza nhyehyɛe mu, na sɔ hwɛ bio.",
  "The recording came out empty. Please try again.": "Rikoɔd no yɛɛ firi. Mesrɛma, sɔ hwɛ bio.",
  "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Yɛantumi ansom nne nkrasɛm no. Mesrɛma, sɔ hwɛ bio, anaa di nkitahodi wɔ WhatsApp so.",
@@ -299,5 +298,6 @@
  "Emailed — now send it on WhatsApp too": "Yɔde afa kɔɔ eɲɛ — fa ɛkɔ WhatsApp so nso",
  "Continue to WhatsApp": "Toa so wɔ WhatsApp so",
  "Done": "Ɛwie",
- "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Ka nea woreyɛ no kyerɛ yɛn. Yɛbɛdaa wo wɔ simma kakrae mu. Meda ase! 🙏 😊"
+ "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Ka nea woreyɛ no kyerɛ yɛn. Yɛbɛdaa wo wɔ simma kakrae mu. Meda ase! 🙏 😊",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊": "Wɔasom wo nne nkrasɛm no akɔma yɛn kuw no, na wɔde audio no aka ho. Yɛbɛdaa wo so wɔ wo imeil so wɔ simma kakrae mu. Meda ase! 🙏 😊"
 }

@@ -287,7 +287,6 @@
  "Send voice message": "Spraakbericht verzenden",
  "Sending your voice message…": "Je spraakbericht wordt verzonden…",
  "Voice message": "Spraakbericht",
- "Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.": "Je spraakbericht is met de audio als bijlage naar ons team verzonden. We reageren binnen één werkdag op je e-mail.",
  "Microphone access was blocked. Allow it in your browser settings, then try again.": "De toegang tot je microfoon is geblokkeerd. Sta dit toe in je browserinstellingen en probeer het opnieuw.",
  "The recording came out empty. Please try again.": "De opname is leeg geworden. Probeer het opnieuw.",
  "Could not send the voice message. Please try once more, or contact us on WhatsApp.": "Kon het spraakbericht niet verzenden. Probeer het nog eens of stuur ons een bericht op WhatsApp.",
@@ -299,5 +298,6 @@
  "Emailed — now send it on WhatsApp too": "Via e-mail verzonden — stuur het ook via WhatsApp",
  "Continue to WhatsApp": "Doorgaan op WhatsApp",
  "Done": "Gereed",
- "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Vertel ons wat je bouwt. We reageren binnen enkele minuten. Bedankt! 🙏 😊"
+ "Tell us what you're building. We'll get back to you within some few minutes. Thank you! 🙏 😊": "Vertel ons wat je bouwt. We reageren binnen enkele minuten. Bedankt! 🙏 😊",
+ "Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊": "Je spraakbericht is met de audio als bijlage naar ons team verzonden. We reageren binnen enkele minuten op je e-mail. Bedankt! 🙏 😊"
 }

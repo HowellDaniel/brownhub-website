@@ -331,7 +331,7 @@
       const res = await fetch(VOICE_EMAIL, { method: "POST", body: fd });
       if (!res.ok) throw new Error(String(res.status));
       addMsg(transcript || T("Voice message"), "user");
-      addMsg("Your voice message was sent to our team with the audio attached. We will reply to your email within one business day.", "bot");
+      addMsg("Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊", "bot");
       barSent();
     } catch (e) {
       phase = "review";
