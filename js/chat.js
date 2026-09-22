@@ -328,18 +328,21 @@
   }
   function barSent() {
     phase = "sent";
-    vhtml('<span class="voice-busy">' + T("Emailed — now send it on WhatsApp too") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceWa">' + T("Continue to WhatsApp") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceDone">' + T("Done") + "</button>");
+    vhtml('<span class="voice-busy">' + T("Emailed — now send it on WhatsApp too") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceWa">' + T("Continue to WhatsApp") + "</button>" + dlHtml() + '<button type="button" class="btn btn--ghost voice-btn" id="voiceDone">' + T("Done") + "</button>");
     document.getElementById("voiceWa").addEventListener("click", () => toWhatsApp(true));
     document.getElementById("voiceDone").addEventListener("click", showIdle);
   }
   function barBusy(msg) { vhtml('<span class="voice-busy">' + T(msg) + "</span>"); }
+  function dlHtml() {
+    return voiceUrl ? '<a class="btn btn--ghost voice-btn" download="brownhub-voice-message.' + VOICE_EXT + '" href="' + voiceUrl + '">' + T("Download audio") + "</a>" : "";
+  }
   function barError(msg) {
     vhtml('<span class="voice-error">' + T(msg) + '</span><button type="button" class="btn btn--ghost voice-btn" id="voiceDismiss">' + T("Cancel") + "</button>");
     document.getElementById("voiceDismiss").addEventListener("click", showIdle);
   }
   function barSendFail() {
     phase = "review";
-    vhtml('<span class="voice-error">' + T("Could not send your voice message.") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceRetry">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceWaFail">' + T("Continue to WhatsApp") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceDismissFail">' + T("Cancel") + "</button>");
+    vhtml('<span class="voice-error">' + T("Could not send your voice message.") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceRetry">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceWaFail">' + T("Continue to WhatsApp") + "</button>" + dlHtml() + '<button type="button" class="btn btn--ghost voice-btn" id="voiceDismissFail">' + T("Cancel") + "</button>");
     document.getElementById("voiceRetry").addEventListener("click", sendVoice);
     document.getElementById("voiceWaFail").addEventListener("click", () => toWhatsApp(false));
     document.getElementById("voiceDismissFail").addEventListener("click", showIdle);

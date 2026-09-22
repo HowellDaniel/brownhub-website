@@ -146,6 +146,7 @@ body{-webkit-tap-highlight-color:rgba(224,138,60,0.18)}
 .voice-meter{display:inline-flex;align-items:flex-end;gap:2px;height:18px;flex:none;margin-left:.15rem}
 .voice-meter i{width:3px;height:100%;border-radius:2px;background:var(--accent);transform-origin:bottom;transform:scaleY(.15);transition:transform .08s linear}
 .voice-dot--paused{background:#d97706;animation:none}
+a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 @media (prefers-reduced-motion:reduce){.voice-meter i{transition:none}}
 
 /* ---- Contact form success sign ---- */
