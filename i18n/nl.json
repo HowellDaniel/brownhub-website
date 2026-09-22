@@ -320,5 +320,7 @@
  "Paused": "Gepauzeerd",
  "Download audio": "Audio downloaden",
  "Remove": "Verwijderen",
- "Voice attached to your enquiry": "Spraakbericht toegevoegd aan uw aanvraag"
+ "Voice attached to your enquiry": "Spraakbericht toegevoegd aan uw aanvraag",
+ "Play": "Afspelen",
+ "Could not play the recording here. Use Download audio to listen to it.": "Kan hier niet afspelen. Gebruik Audio downloaden om te beluisteren."
 }

@@ -175,9 +175,21 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
 .voice-audio{height:44px}
 
 /* ---- Project details recorder (contact form) ---- */
-.msg-voice{margin-top:.6rem;border:1px solid var(--border);border-radius:12px}
+.msg-voice{display:flex;align-items:center;flex-wrap:wrap;gap:.55rem .6rem;margin-top:.6rem;padding:.7rem .8rem;font-size:.82rem;color:var(--text-muted);background:var(--bg-alt);border:1px solid var(--border);border-radius:12px}
+.msg-voice[hidden]{display:none}
 .msg-voice .voice-audio{flex:1 1 100%;width:100%;min-width:0}
 .msg-voice .voice-btn{flex:0 0 auto}
 .msg-voice .voice-hint{flex:1 1 100%}
 .form-field--voice .msg-mic[hidden]{display:none}
 .msg-wrap{position:relative;display:block}
+
+/* ---- Shared in-page audio player (replaces native controls, which die on headerless clips) ---- */
+.bh-player{display:flex;align-items:center;gap:.5rem;flex:1 1 100%;flex-wrap:wrap;min-width:0}
+.bh-player__el{display:none}
+.bh-player__btn{min-width:6.2rem}
+.bh-player__btn svg{flex:0 0 auto}
+.bh-player__track{flex:1 1 70px;min-width:56px;height:6px;border-radius:99px;background:var(--border);overflow:hidden}
+.bh-player__track i{display:block;height:100%;transform:scaleX(0);transform-origin:left;background:var(--accent)}
+.bh-player__time{font-size:.76rem;font-variant-numeric:tabular-nums;color:var(--text-muted)}
+.bh-player--blocked .bh-player__time{color:#e5484d}
+@media (max-width:640px){.bh-player__btn{min-width:5.4rem}}

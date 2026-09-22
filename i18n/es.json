@@ -320,5 +320,7 @@
  "Paused": "En pausa",
  "Download audio": "Descargar audio",
  "Remove": "Quitar",
- "Voice attached to your enquiry": "Mensaje de voz adjunto a tu solicitud"
+ "Voice attached to your enquiry": "Mensaje de voz adjunto a tu solicitud",
+ "Play": "Reproducir",
+ "Could not play the recording here. Use Download audio to listen to it.": "No se puede reproducir aquí. Usa Descargar audio para escucharlo."
 }

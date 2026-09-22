@@ -254,6 +254,7 @@
   }
   function showIdle() {
     phase = "idle"; blob = null; chunks = []; transcript = ""; transcriptBase = "";
+    BHPlayer.stop();
     if (voiceUrl) { URL.revokeObjectURL(voiceUrl); voiceUrl = null; }
     voiceBar.hidden = true;
     voiceBar.textContent = "";
@@ -321,7 +322,8 @@
     phase = "review";
     if (voiceUrl) URL.revokeObjectURL(voiceUrl);
     voiceUrl = URL.createObjectURL(blob);
-    vhtml('<span class="voice-hint voice-hint--top">' + T("Listen it back, then tap Send") + '</span><audio controls preload="metadata" class="voice-audio" src="' + voiceUrl + '"></audio><button type="button" class="btn btn--primary voice-btn" id="voiceSend">' + T("Send") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceRedo">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceCancel">' + T("Cancel") + "</button>");
+    vhtml('<span class="voice-hint voice-hint--top">' + T("Listen it back, then tap Send") + "</span>" + BHPlayer.html(voiceUrl) + '<button type="button" class="btn btn--primary voice-btn" id="voiceSend">' + T("Send") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceRedo">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceCancel">' + T("Cancel") + "</button>");
+    BHPlayer.mount(voiceBar);
     document.getElementById("voiceSend").addEventListener("click", sendVoice);
     document.getElementById("voiceRedo").addEventListener("click", () => { showIdle(); startRecording(); });
     document.getElementById("voiceCancel").addEventListener("click", showIdle);
@@ -395,6 +397,7 @@
 
   async function sendVoice() {
     if (!blob) return;
+    BHPlayer.stop();
     phase = "sending";
     voiceBar.hidden = false;
     barBusy("Sending your voice message…");

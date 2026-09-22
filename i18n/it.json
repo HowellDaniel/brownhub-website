@@ -320,5 +320,7 @@
  "Paused": "In pausa",
  "Download audio": "Scarica l'audio",
  "Remove": "Rimuovi",
- "Voice attached to your enquiry": "Messaggio vocale allegato alla tua richiesta"
+ "Voice attached to your enquiry": "Messaggio vocale allegato alla tua richiesta",
+ "Play": "Riproduci",
+ "Could not play the recording here. Use Download audio to listen to it.": "Riproduzione non disponibile qui. Usa Scarica audio per ascoltarlo."
 }

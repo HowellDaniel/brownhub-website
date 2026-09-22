@@ -320,5 +320,7 @@
  "Paused": "متوقف مؤقتًا",
  "Download audio": "تنزيل الصوت",
  "Remove": "إزالة",
- "Voice attached to your enquiry": "تم إرفاق الرسالة الصوتية بطلبك"
+ "Voice attached to your enquiry": "تم إرفاق الرسالة الصوتية بطلبك",
+ "Play": "تشغيل",
+ "Could not play the recording here. Use Download audio to listen to it.": "لا يمكن التشغيل هنا. استخدم تنزيل الصوت للاستماع."
 }

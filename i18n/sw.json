@@ -320,5 +320,7 @@
  "Paused": "Imesimamishwa",
  "Download audio": "Pakua sauti",
  "Remove": "Ondoa",
- "Voice attached to your enquiry": "Ujumbe wa sauti umejumuishwa kwenye ombi lako"
+ "Voice attached to your enquiry": "Ujumbe wa sauti umejumuishwa kwenye ombi lako",
+ "Play": "Cheza",
+ "Could not play the recording here. Use Download audio to listen to it.": "Haiwezi kucheza hapa. Tumia Pakia sauti ili uisikilize."
 }

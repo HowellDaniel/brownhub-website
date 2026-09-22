@@ -176,7 +176,7 @@
       wrap.appendChild(messageEl);
       wrap.appendChild(micBtn);
       const bar = document.createElement("div");
-      bar.className = "chat-widget__voice msg-voice";
+      bar.className = "msg-voice";
       bar.hidden = true;
       field.appendChild(bar);
       const IDLE_LABEL = canRec ? "Record a voice message" : "Dictate your message";
@@ -260,9 +260,10 @@
       }
       function discard() {
         cleanup();
+        BHPlayer.stop();
+        detachFile();
         blob = null; chunks = [];
         if (url) { URL.revokeObjectURL(url); url = null; }
-        detachFile();
         phase = "idle";
         bar.hidden = true;
         bar.textContent = "";
@@ -298,7 +299,8 @@
       function barReview() {
         phase = "review";
         url = URL.createObjectURL(blob);
-        vhtml('<span class="voice-hint voice-hint--top">' + T("Listen it back, then tap Send") + '</span><audio controls preload="metadata" class="voice-audio" src="' + url + '"></audio><button type="button" class="btn btn--primary voice-btn" id="msgAttach">' + T("Done") + '</button><button type="button" class="btn btn--ghost voice-btn" id="msgRedo">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="msgCancel">' + T("Cancel") + "</button>");
+        vhtml('<span class="voice-hint voice-hint--top">' + T("Listen it back, then tap Send") + "</span>" + BHPlayer.html(url) + '<button type="button" class="btn btn--primary voice-btn" id="msgAttach">' + T("Done") + '</button><button type="button" class="btn btn--ghost voice-btn" id="msgRedo">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="msgCancel">' + T("Cancel") + "</button>");
+        BHPlayer.mount(bar);
         document.getElementById("msgAttach").addEventListener("click", barAttached);
         document.getElementById("msgRedo").addEventListener("click", () => { discard(); startRecording(); });
         document.getElementById("msgCancel").addEventListener("click", () => { const keep = messageEl.value; discard(); messageEl.value = keep; });
@@ -308,8 +310,9 @@
       function barAttached() {
         phase = "attached";
         attachFile();
-        vhtml('<span class="voice-busy">' + T("Voice attached to your enquiry") + '</span><audio controls preload="metadata" class="voice-audio" src="' + url + '"></audio>' +
+        vhtml('<span class="voice-busy">' + T("Voice attached to your enquiry") + "</span>" + BHPlayer.html(url) +
           '<a class="btn btn--ghost voice-btn" download="brownhub-voice-message.' + VOICE_EXT + '" href="' + url + '">' + T("Download audio") + '</a><button type="button" class="btn btn--ghost voice-btn" id="msgRemove">' + T("Remove") + "</button>");
+        BHPlayer.mount(bar);
         document.getElementById("msgRemove").addEventListener("click", () => { const keep = messageEl.value; discard(); messageEl.value = keep; });
         setListening(false);
         setAria(IDLE_LABEL);

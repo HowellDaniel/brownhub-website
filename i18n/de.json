@@ -320,5 +320,7 @@
  "Paused": "Pausiert",
  "Download audio": "Audio herunterladen",
  "Remove": "Entfernen",
- "Voice attached to your enquiry": "Sprachnachricht an Ihre Anfrage angehängt"
+ "Voice attached to your enquiry": "Sprachnachricht an Ihre Anfrage angehängt",
+ "Play": "Abspielen",
+ "Could not play the recording here. Use Download audio to listen to it.": "Hier kann nicht abgespielt werden. Nutzen Sie \"Audio herunterladen\", um es zu hören."
 }

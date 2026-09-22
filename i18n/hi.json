@@ -320,5 +320,7 @@
  "Paused": "रोका हुआ",
  "Download audio": "ऑडियो डाउनलोड करें",
  "Remove": "हटाएँ",
- "Voice attached to your enquiry": "आपके अनुरोध में वॉइस संदेश संलग्न है"
+ "Voice attached to your enquiry": "आपके अनुरोध में वॉइस संदेश संलग्न है",
+ "Play": "चलाएँ",
+ "Could not play the recording here. Use Download audio to listen to it.": "यहाँ रिकॉर्डिंग नहीं चल सकती। सुनने के लिए ऑडियो डाउनलोड करें प्रयोग करें।"
 }

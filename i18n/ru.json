@@ -320,5 +320,7 @@
  "Paused": "На паузе",
  "Download audio": "Скачать аудио",
  "Remove": "Удалить",
- "Voice attached to your enquiry": "Голосовое сообщение прикреплено к вашей заявке"
+ "Voice attached to your enquiry": "Голосовое сообщение прикреплено к вашей заявке",
+ "Play": "Воспроизвести",
+ "Could not play the recording here. Use Download audio to listen to it.": "Здесь воспроизведение недоступно. Используйте «Скачать аудио», чтобы прослушать."
 }
