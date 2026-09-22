@@ -315,5 +315,8 @@
  "Follow us on Facebook": "اتبعنا على Facebook",
  "Follow us on Instagram": "اتبعنا على Instagram",
  "Tap Stop when you're done": "اضغط «إيقاف» عندما تنتهي",
- "Listen it back, then tap Send": "استمع إليه مرة أخرى ثم اضغط «إرسال»"
+ "Listen it back, then tap Send": "استمع إليه مرة أخرى ثم اضغط «إرسال»",
+ "Pause": "إيقاف مؤقت",
+ "Resume": "استئناف",
+ "Paused": "متوقف مؤقتًا"
 }
