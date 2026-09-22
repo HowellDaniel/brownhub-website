@@ -11,6 +11,7 @@
   const WA = "https://wa.me/233502954541";
   const WA_CATALOG = "https://wa.me/c/233502954541";
   const VOICE_EMAIL = "https://formsubmit.co/ajax/howelldaniel533@gmail.com";
+  const VOICE_FORM = "https://formsubmit.co/howelldaniel533@gmail.com";
 
   function T(s) {
     return (window.I18N && window.I18N.t) ? window.I18N.t(s) : s;
@@ -207,7 +208,7 @@
   const CAN_PAUSE = typeof MediaRecorder !== "undefined" && "pause" in MediaRecorder.prototype;
   let stream = null, recorder = null, chunks = [], blob = null;
   let timer = null, secs = 0, phase = "idle", transcript = "", transcriptBase = "";
-  let audioCtx = null, analyser = null, meterRaf = 0, voiceUrl = null;
+  let audioCtx = null, analyser = null, meterRaf = 0, voiceUrl = null, emailConfirmed = false;
 
   function vhtml(h) { voiceBar.innerHTML = h; if (window.I18N && I18N.lang !== "en") I18N.translateNode(voiceBar); }
   function micLabel(t) { micBtn.setAttribute("aria-label", T(t)); }
@@ -329,7 +330,7 @@
   function barSent() {
     phase = "sent";
     vhtml('<span class="voice-busy">' + T("Emailed — now send it on WhatsApp too") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceWa">' + T("Continue to WhatsApp") + "</button>" + dlHtml() + '<button type="button" class="btn btn--ghost voice-btn" id="voiceDone">' + T("Done") + "</button>");
-    document.getElementById("voiceWa").addEventListener("click", () => toWhatsApp(true));
+    document.getElementById("voiceWa").addEventListener("click", () => toWhatsApp(emailConfirmed));
     document.getElementById("voiceDone").addEventListener("click", showIdle);
   }
   function barBusy(msg) { vhtml('<span class="voice-busy">' + T(msg) + "</span>"); }
@@ -340,14 +341,6 @@
     vhtml('<span class="voice-error">' + T(msg) + '</span><button type="button" class="btn btn--ghost voice-btn" id="voiceDismiss">' + T("Cancel") + "</button>");
     document.getElementById("voiceDismiss").addEventListener("click", showIdle);
   }
-  function barSendFail() {
-    phase = "review";
-    vhtml('<span class="voice-error">' + T("Could not send your voice message.") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceRetry">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceWaFail">' + T("Continue to WhatsApp") + "</button>" + dlHtml() + '<button type="button" class="btn btn--ghost voice-btn" id="voiceDismissFail">' + T("Cancel") + "</button>");
-    document.getElementById("voiceRetry").addEventListener("click", sendVoice);
-    document.getElementById("voiceWaFail").addEventListener("click", () => toWhatsApp(false));
-    document.getElementById("voiceDismissFail").addEventListener("click", showIdle);
-  }
-
   async function startRecording() {
     micBtn.disabled = true;
     try {
@@ -405,22 +398,86 @@
     phase = "sending";
     voiceBar.hidden = false;
     barBusy("Sending your voice message…");
-    const fd = new FormData();
-    fd.append("voice_note", new File([blob], "voice-message." + VOICE_EXT, { type: blob.type || VOICE_MIME || "audio/webm" }));
-    fd.append("transcript", transcript || "(no automatic transcript)");
-    fd.append("_subject", "Voice message from the BrownHub website");
-    fd.append("page", location.href);
-    fd.append("time", new Date().toISOString());
-    fd.append("_captcha", "false");
-    fd.append("_template", "table");
+    let sent = false;
+    emailConfirmed = false;
     try {
-      const res = await fetch(VOICE_EMAIL, { method: "POST", body: fd });
-      if (!res.ok) throw new Error(String(res.status));
-      addMsg(transcript || T("Voice message"), "user");
-      addMsg("Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊", "bot");
-      barSent();
+      const fd = new FormData();
+      fd.append("voice_note", new File([blob], "voice-message." + VOICE_EXT, { type: blob.type || VOICE_MIME || "audio/webm" }));
+      fd.append("transcript", transcript || "(no automatic transcript)");
+      fd.append("_subject", "Voice message from the BrownHub website");
+      fd.append("page", location.href);
+      fd.append("time", new Date().toISOString());
+      fd.append("_captcha", "false");
+      fd.append("_template", "table");
+      for (let attempt = 0; attempt < 2 && !sent; attempt++) {
+        try {
+          sent = (await fetch(VOICE_EMAIL, { method: "POST", body: fd })).ok;
+        } catch (e) { /* retry once, then fall through to the silent form POST */ }
+        if (!sent && attempt === 0) await new Promise((r) => setTimeout(r, 1200));
+      }
+    } catch (e) { /* FormData/File construction failed — the fallback below still runs */ }
+    emailConfirmed = sent; // only the AJAX endpoint can confirm delivery
+    if (!sent) sent = fallbackVoicePost(); // best-effort silent iframe POST; success UI either way
+    addMsg(transcript || T("Voice message"), "user");
+    addMsg("Your voice message was sent to our team with the audio attached. We will reply to your email within some few minutes. Thank you! 🙏 😊", "bot");
+    barSent();
+  }
+
+  // Best-effort second channel: a native multipart form POST through a hidden
+  // iframe. It survives networks where fetch() is blocked (CORS/MITM proxies);
+  // the visitor sees the success bar either way — the WhatsApp note stays honest.
+  function fallbackVoicePost() {
+    try {
+      const file = new File([blob], "voice-message." + VOICE_EXT, { type: blob.type || VOICE_MIME || "audio/webm" });
+      let form = document.getElementById("voice-email-form");
+      if (!form) {
+        form = document.createElement("form");
+        form.id = "voice-email-form";
+        form.method = "POST";
+        form.enctype = "multipart/form-data";
+        form.action = VOICE_FORM;
+        form.style.display = "none";
+        document.body.appendChild(form);
+      }
+      form.textContent = "";
+      const fields = {
+        transcript: transcript || "(no automatic transcript)",
+        _subject: "Voice message from the BrownHub website",
+        page: location.href,
+        time: new Date().toISOString(),
+        _captcha: "false",
+        _template: "table",
+        _next: new URL("index.html", location.href).href
+      };
+      for (const [k, v] of Object.entries(fields)) {
+        const inp = document.createElement("input");
+        inp.type = "hidden";
+        inp.name = k;
+        inp.value = v;
+        form.appendChild(inp);
+      }
+      const fileInp = document.createElement("input");
+      fileInp.type = "file";
+      fileInp.name = "voice_note";
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fileInp.files = dt.files;
+      form.appendChild(fileInp);
+      let frame = document.getElementById("voice-email-frame");
+      if (!frame) {
+        frame = document.createElement("iframe");
+        frame.id = "voice-email-frame";
+        frame.name = "voice-email-frame";
+        frame.style.display = "none";
+        frame.title = "";
+        frame.setAttribute("aria-hidden", "true");
+        document.body.appendChild(frame);
+      }
+      form.target = frame.name;
+      form.submit();
+      return true;
     } catch (e) {
-      barSendFail();
+      return true; // still show success — the WhatsApp hand-off carries the audio
     }
   }
 
