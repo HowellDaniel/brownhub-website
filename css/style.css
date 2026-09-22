@@ -166,3 +166,10 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
 .footer-social{display:flex;gap:.6rem;margin-top:1rem}
 .footer-social a{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);display:grid;place-items:center;transition:color .2s,border-color .2s,transform .2s}
 .footer-social a:hover,.footer-social a:focus-visible{color:#fff;background:var(--accent);border-color:var(--accent);transform:translateY(-2px)}
+
+/* ---- Enlarged chat box so record / pause / listen / send all fit ---- */
+.chat-widget__panel{width:min(400px,calc(100vw - 1.5rem));max-height:min(480px,calc(100vh - 7rem));max-height:min(480px,calc(100dvh - 7rem))}
+@media (max-width:640px){.chat-widget__panel{width:min(420px,calc(100vw - 1.5rem));max-height:min(72vh,480px);max-height:min(72dvh,480px)}}
+.chat-widget__messages{min-height:120px}
+.chat-widget__panel:has(.chat-widget__voice:not([hidden])) .chat-widget__chips{display:none}
+.voice-audio{height:44px}
