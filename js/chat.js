@@ -232,7 +232,7 @@
         for (const r of ev.results) txt += r[0].transcript;
         transcript = txt.trim();
         const el = document.getElementById("voiceTranscript");
-        if (el) el.textContent = transcript || T("Listening…");
+        if (el) el.textContent = transcript || T("Speak, we are listening…");
       };
       recognition.onerror = () => {};
       recognition.start();
@@ -240,13 +240,13 @@
   }
 
   function barStop() {
-    vhtml('<span class="voice-dot" aria-hidden="true"></span><span class="voice-time">0:00</span><span class="voice-transcript" id="voiceTranscript">' + T("Listening…") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceStop">' + T("Stop") + "</button>");
+    vhtml('<span class="voice-dot" aria-hidden="true"></span><span class="voice-time">0:00</span><span class="voice-transcript" id="voiceTranscript">' + T("Speak, we are listening…") + '</span><button type="button" class="btn btn--primary voice-btn" id="voiceStop">' + T("Stop") + '</button><span class="voice-hint">' + T("Tap Stop when you're done") + "</span>");
     document.getElementById("voiceStop").addEventListener("click", stopRecording);
     micLabel("Stop recording");
   }
   function barReview() {
     phase = "review";
-    vhtml('<audio controls preload="metadata" class="voice-audio" src="' + URL.createObjectURL(blob) + '"></audio><button type="button" class="btn btn--primary voice-btn" id="voiceSend">' + T("Send") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceRedo">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceCancel">' + T("Cancel") + "</button>");
+    vhtml('<span class="voice-hint voice-hint--top">' + T("Listen it back, then tap Send") + '</span><audio controls preload="metadata" class="voice-audio" src="' + URL.createObjectURL(blob) + '"></audio><button type="button" class="btn btn--primary voice-btn" id="voiceSend">' + T("Send") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceRedo">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="voiceCancel">' + T("Cancel") + "</button>");
     document.getElementById("voiceSend").addEventListener("click", sendVoice);
     document.getElementById("voiceRedo").addEventListener("click", () => { showIdle(); startRecording(); });
     document.getElementById("voiceCancel").addEventListener("click", showIdle);

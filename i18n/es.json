@@ -276,7 +276,7 @@
  "More from the catalog": "Más artículos del catálogo",
  "Record a voice message": "Grabar un mensaje de voz",
  "Stop recording": "Detener la grabación",
- "Listening…": "Escuchando…",
+ "Speak, we are listening…": "Habla, te estamos escuchando…",
  "Stop": "Detener",
  "Send": "Enviar",
  "Cancel": "Cancelar",
@@ -313,5 +313,7 @@
  "Map view of our work location — tap the link to open directions in Google Maps.": "Vista de mapa de nuestra ubicación de trabajo — toca el enlace para abrir la ruta en Google Maps.",
  "Follow us on X": "Síguenos en X",
  "Follow us on Facebook": "Síguenos en Facebook",
- "Follow us on Instagram": "Síguenos en Instagram"
+ "Follow us on Instagram": "Síguenos en Instagram",
+ "Tap Stop when you're done": "Pulsa Detener cuando termines",
+ "Listen it back, then tap Send": "Escúchalo y luego pulsa Enviar"
 }

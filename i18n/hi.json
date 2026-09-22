@@ -276,7 +276,7 @@
  "More from the catalog": "कैटलॉग से और भी",
  "Record a voice message": "वॉइस मैसेज रिकॉर्ड करें",
  "Stop recording": "रिकॉर्डिंग रोकें",
- "Listening…": "मैं सुन रहा हूं…",
+ "Speak, we are listening…": "बोलें, हम सुन रहे हैं…",
  "Stop": "रोकें",
  "Send": "भेजें",
  "Cancel": "रद्द करें",
@@ -313,5 +313,7 @@
  "Map view of our work location — tap the link to open directions in Google Maps.": "हमारे कार्य स्थान का नक्शा — दिशाएँ देखने के लिए लिंक पर टैप करें और Google Maps खोलें।",
  "Follow us on X": "X पर हमें फ़ॉलो करें",
  "Follow us on Facebook": "Facebook पर हमें फ़ॉलो करें",
- "Follow us on Instagram": "Instagram पर हमें फ़ॉलो करें"
+ "Follow us on Instagram": "Instagram पर हमें फ़ॉलो करें",
+ "Tap Stop when you're done": "जब पूरा हो तो «रोकें» दबाएँ",
+ "Listen it back, then tap Send": "पहले सुनें, फिर «भेजें» दबाएँ"
 }

@@ -276,7 +276,7 @@
  "More from the catalog": "Zaidi kutoka katalogi",
  "Record a voice message": "Rekodi ujumbe wa sauti",
  "Stop recording": "Acha kurekodi",
- "Listening…": "Ninasikiliza…",
+ "Speak, we are listening…": "Zungumza, tunasikiliza…",
  "Stop": "Acha",
  "Send": "Tuma",
  "Cancel": "Ghairi",
@@ -313,5 +313,7 @@
  "Map view of our work location — tap the link to open directions in Google Maps.": "Ramani ya eneo letu la kazi — gonga kiungo ili kufungua maelekezo katika Google Maps.",
  "Follow us on X": "Tufuatilie kwenye X",
  "Follow us on Facebook": "Tufuatilie kwenye Facebook",
- "Follow us on Instagram": "Tufuatilie kwenye Instagram"
+ "Follow us on Instagram": "Tufuatilie kwenye Instagram",
+ "Tap Stop when you're done": "Gonga «Acha» unapomaliza",
+ "Listen it back, then tap Send": "Kikiliza tena, kisha ugonge «Tuma»"
 }

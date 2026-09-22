@@ -276,7 +276,7 @@
  "More from the catalog": "Nneɛma foforo wɔ katɔlog mu",
  "Record a voice message": "Rikoɔd nne nkrasɛm bi",
  "Stop recording": "Gyae rikoɔd no",
- "Listening…": "Metie…",
+ "Speak, we are listening…": "Kasa, yɛresoe…",
  "Stop": "Gyae",
  "Send": "Som",
  "Cancel": "Twi",
@@ -313,5 +313,7 @@
  "Map view of our work location — tap the link to open directions in Google Maps.": "Mmapa a yɛn adwumaguabeae — hwɛ link no na bue nkwankyerɛ wɔ Google Maps mu.",
  "Follow us on X": "Di wo wɔ X so",
  "Follow us on Facebook": "Di wo wɔ Facebook so",
- "Follow us on Instagram": "Di wo wɔ Instagram so"
+ "Follow us on Instagram": "Di wo wɔ Instagram so",
+ "Tap Stop when you're done": "Bɔ Stop bere a wode awie",
+ "Listen it back, then tap Send": "Tie wo ani, akyi no bɔ Send"
 }

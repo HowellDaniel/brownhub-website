@@ -276,7 +276,7 @@
  "More from the catalog": "目录中的更多商品",
  "Record a voice message": "录制语音留言",
  "Stop recording": "停止录制",
- "Listening…": "正在聆听…",
+ "Speak, we are listening…": "请说话，我们正在聆听…",
  "Stop": "停止",
  "Send": "发送",
  "Cancel": "取消",
@@ -313,5 +313,7 @@
  "Map view of our work location — tap the link to open directions in Google Maps.": "我们工作地点的地图——点击链接即可在 Google 地图中查看路线。",
  "Follow us on X": "在 X 上关注我们",
  "Follow us on Facebook": "在 Facebook 上关注我们",
- "Follow us on Instagram": "在 Instagram 上关注我们"
+ "Follow us on Instagram": "在 Instagram 上关注我们",
+ "Tap Stop when you're done": "完成后请点按“停止”",
+ "Listen it back, then tap Send": "先回听一遍，然后点按“发送”"
 }
