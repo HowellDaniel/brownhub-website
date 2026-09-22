@@ -173,3 +173,11 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
 .chat-widget__messages{min-height:120px}
 .chat-widget__panel:has(.chat-widget__voice:not([hidden])) .chat-widget__chips{display:none}
 .voice-audio{height:44px}
+
+/* ---- Project details recorder (contact form) ---- */
+.msg-voice{margin-top:.6rem;border:1px solid var(--border);border-radius:12px}
+.msg-voice .voice-audio{flex:1 1 100%;width:100%;min-width:0}
+.msg-voice .voice-btn{flex:0 0 auto}
+.msg-voice .voice-hint{flex:1 1 100%}
+.form-field--voice .msg-mic[hidden]{display:none}
+.msg-wrap{position:relative;display:block}

@@ -318,5 +318,7 @@
  "Pause": "暂停",
  "Resume": "继续",
  "Paused": "已暂停",
- "Download audio": "下载音频"
+ "Download audio": "下载音频",
+ "Remove": "移除",
+ "Voice attached to your enquiry": "语音已附在您的咨询中"
 }

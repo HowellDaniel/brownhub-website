@@ -318,5 +318,7 @@
  "Pause": "إيقاف مؤقت",
  "Resume": "استئناف",
  "Paused": "متوقف مؤقتًا",
- "Download audio": "تنزيل الصوت"
+ "Download audio": "تنزيل الصوت",
+ "Remove": "إزالة",
+ "Voice attached to your enquiry": "تم إرفاق الرسالة الصوتية بطلبك"
 }

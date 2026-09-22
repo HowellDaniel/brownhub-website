@@ -147,46 +147,260 @@
       submitBtn.disabled = false;
     });
 
-    // Voice dictation for the "Project details" box (where supported).
+    // Voice recorder for the "Project details" box: record / pause / listen back,
+    // then the audio rides on this enquiry as a voice_note attachment.
     const messageEl = document.getElementById("message");
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (messageEl && SR) {
-      const SR_LANGS = { en: "en-GH", fr: "fr-FR", es: "es-ES", pt: "pt-BR", ar: "ar-SA", zh: "zh-CN",
-        de: "de-DE", nl: "nl-NL", it: "it-IT", ru: "ru-RU", hi: "hi-IN", sw: "sw-KE", tw: "ak-GH" };
-      const dictBtn = document.createElement("button");
-      dictBtn.type = "button";
-      dictBtn.className = "msg-mic";
-      dictBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>';
+    const SR_LANGS = { en: "en-GH", fr: "fr-FR", es: "es-ES", pt: "pt-BR", ar: "ar-SA", zh: "zh-CN",
+      de: "de-DE", nl: "nl-NL", it: "it-IT", ru: "ru-RU", hi: "hi-IN", sw: "sw-KE", tw: "ak-GH" };
+    if (messageEl) {
       const field = messageEl.closest(".form-field") || messageEl.parentNode;
+      const T = (k) => (window.I18N && I18N.t ? I18N.t(k) : k);
+      const canRec = !!(window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+      const VOICE_MIME = canRec
+        ? ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"]
+            .find((m) => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || ""
+        : "";
+      const VOICE_EXT = VOICE_MIME.indexOf("mp4") > -1 ? "m4a" : VOICE_MIME.indexOf("ogg") > -1 ? "ogg" : "webm";
+      const CAN_PAUSE = canRec && "pause" in MediaRecorder.prototype;
+
+      const micBtn = document.createElement("button");
+      micBtn.type = "button";
+      micBtn.className = "msg-mic";
+      micBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>';
       field.classList.add("form-field--voice");
-      field.appendChild(dictBtn);
-      const setAria = (k) => dictBtn.setAttribute("aria-label", (window.I18N && I18N.t) ? I18N.t(k) : k);
-      setAria("Dictate your message");
-      document.addEventListener("i18n-applied", () => { if (!rec) setAria("Dictate your message"); });
-      let rec = null;
-      dictBtn.addEventListener("click", () => {
-        if (rec) { try { rec.stop(); } catch (e) {} return; }
-        rec = new SR();
-        rec.lang = SR_LANGS[(window.I18N && window.I18N.lang) || "en"] || "en-GH";
-        rec.continuous = true;
-        rec.interimResults = true;
-        let base = messageEl.value;
-        if (base && !/\s$/.test(base)) base += " ";
-        const show = (final, interim) => {
-          messageEl.value = base + final + (interim ? (final ? " " : "") + interim : "");
+      // The mic stays anchored to the textarea corner while the recorder bar sits below it.
+      const wrap = document.createElement("div");
+      wrap.className = "msg-wrap";
+      field.insertBefore(wrap, messageEl);
+      wrap.appendChild(messageEl);
+      wrap.appendChild(micBtn);
+      const bar = document.createElement("div");
+      bar.className = "chat-widget__voice msg-voice";
+      bar.hidden = true;
+      field.appendChild(bar);
+      const IDLE_LABEL = canRec ? "Record a voice message" : "Dictate your message";
+      const setAria = (k) => micBtn.setAttribute("aria-label", T(k));
+      const setListening = (on) => micBtn.classList.toggle("listening", !!on);
+      setAria(IDLE_LABEL);
+      document.addEventListener("i18n-applied", () => { if (phase === "idle") setAria(IDLE_LABEL); });
+
+      // The recording is attached to the enquiry through this file input, which only
+      // lives in the form while an audio clip is actually attached.
+      const fileInp = document.createElement("input");
+      fileInp.type = "file";
+      fileInp.name = "voice_note";
+      fileInp.hidden = true;
+      fileInp.setAttribute("aria-hidden", "true");
+      fileInp.tabIndex = -1;
+
+      let stream = null, recorder = null, chunks = [], blob = null, url = null;
+      let timer = null, secs = 0, phase = "idle";
+      let audioCtx = null, analyser = null, meterRaf = 0, sr = null;
+
+      const fmtTime = () => Math.floor(secs / 60) + ":" + String(secs % 60).padStart(2, "0");
+      const METER_HTML = '<span class="voice-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>';
+      function vhtml(h) { bar.innerHTML = h; bar.hidden = false; if (window.I18N && I18N.lang !== "en") I18N.translateNode(bar); }
+      function freezeMeter() { if (meterRaf) { cancelAnimationFrame(meterRaf); meterRaf = 0; } }
+      function stopMeter() { freezeMeter(); if (audioCtx) { try { audioCtx.close(); } catch (e) {} audioCtx = null; analyser = null; } }
+      function meterDraw() {
+        if (!analyser) return;
+        const data = new Uint8Array(analyser.frequencyBinCount);
+        const draw = () => {
+          if (!analyser) return;
+          analyser.getByteTimeDomainData(data);
+          let sum = 0;
+          for (const v of data) { const d = (v - 128) / 128; sum += d * d; }
+          const lvl = Math.min(1, Math.sqrt(sum / data.length) * 3.2);
+          bar.querySelectorAll(".voice-meter i").forEach((b, i) => {
+            const h = Math.max(0.12, Math.min(1, lvl * (0.55 + Math.abs(Math.sin(i * 1.7 + performance.now() / 220)) * 0.9)));
+            b.style.transform = "scaleY(" + h + ")";
+          });
+          meterRaf = requestAnimationFrame(draw);
         };
-        rec.onresult = (ev) => {
-          let final = "", interim = "";
-          for (const r of ev.results) { if (r.isFinal) final += r[0].transcript.trim() + " "; else interim += r[0].transcript; }
-          show(final.trim(), interim);
+        draw();
+      }
+      function startMeter() {
+        try {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC || !stream) return;
+          audioCtx = new AC();
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 512;
+          audioCtx.createMediaStreamSource(stream).connect(analyser);
+          meterDraw();
+        } catch (e) { audioCtx = null; analyser = null; }
+      }
+      function stopSpeech() { if (sr) { try { sr.stop(); } catch (e) {} } }
+      function startSpeech() {
+        if (!SR) return;
+        try {
+          sr = new SR();
+          sr.lang = SR_LANGS[(window.I18N && window.I18N.lang) || "en"] || "en-GH";
+          sr.continuous = true;
+          sr.interimResults = true;
+          const base = messageEl.value;
+          if (base && !/\s$/.test(base)) { messageEl.value = base + " "; }
+          const prefix = messageEl.value;
+          sr.onresult = (ev) => {
+            let final = "", interim = "";
+            for (const r of ev.results) { if (r.isFinal) final += r[0].transcript.trim() + " "; else interim += r[0].transcript; }
+            messageEl.value = prefix + final.trim() + (interim ? (final ? " " : "") + interim : "");
+          };
+          sr.onerror = () => {};
+          sr.onend = () => { sr = null; if (!canRec) { setListening(false); setAria(IDLE_LABEL); } };
+          sr.start();
+        } catch (e) { sr = null; }
+      }
+      function cleanup() {
+        if (timer) { clearInterval(timer); timer = null; }
+        stopSpeech();
+        stopMeter();
+        if (stream) { stream.getTracks().forEach((tr) => tr.stop()); stream = null; }
+      }
+      function discard() {
+        cleanup();
+        blob = null; chunks = [];
+        if (url) { URL.revokeObjectURL(url); url = null; }
+        detachFile();
+        phase = "idle";
+        bar.hidden = true;
+        bar.textContent = "";
+        setListening(false);
+        setAria(IDLE_LABEL);
+      }
+      function barError(msg) {
+        phase = "review";
+        vhtml('<span class="voice-error">' + T(msg) + '</span><button type="button" class="btn btn--ghost voice-btn" id="msgDismiss">' + T("Cancel") + "</button>");
+        document.getElementById("msgDismiss").addEventListener("click", discard);
+      }
+      function recBar(paused) {
+        vhtml('<span class="voice-dot' + (paused ? " voice-dot--paused" : "") + '" aria-hidden="true"></span><span class="voice-time">' + fmtTime() + "</span>" + METER_HTML +
+          (paused
+            ? '<button type="button" class="btn btn--primary voice-btn" id="msgResume">' + T("Resume") + '</button><button type="button" class="btn btn--ghost voice-btn" id="msgStop">' + T("Stop") + "</button>"
+            : (CAN_PAUSE ? '<button type="button" class="btn btn--ghost voice-btn" id="msgPause">' + T("Pause") + "</button>" : "") + '<button type="button" class="btn btn--primary voice-btn" id="msgStop">' + T("Stop") + "</button>") +
+          '<span class="voice-hint">' + T("Tap Stop when you're done") + "</span>");
+        const p = document.getElementById("msgPause");
+        if (p) p.addEventListener("click", pauseRecording);
+        const rz = document.getElementById("msgResume");
+        if (rz) rz.addEventListener("click", resumeRecording);
+        document.getElementById("msgStop").addEventListener("click", stopRecording);
+        setListening(!paused);
+        setAria("Stop recording");
+      }
+      function tickTimer() {
+        timer = setInterval(() => {
+          secs += 1;
+          const el = bar.querySelector(".voice-time");
+          if (el) el.textContent = fmtTime();
+        }, 1000);
+      }
+      function barReview() {
+        phase = "review";
+        url = URL.createObjectURL(blob);
+        vhtml('<span class="voice-hint voice-hint--top">' + T("Listen it back, then tap Send") + '</span><audio controls preload="metadata" class="voice-audio" src="' + url + '"></audio><button type="button" class="btn btn--primary voice-btn" id="msgAttach">' + T("Done") + '</button><button type="button" class="btn btn--ghost voice-btn" id="msgRedo">' + T("Try again") + '</button><button type="button" class="btn btn--ghost voice-btn" id="msgCancel">' + T("Cancel") + "</button>");
+        document.getElementById("msgAttach").addEventListener("click", barAttached);
+        document.getElementById("msgRedo").addEventListener("click", () => { discard(); startRecording(); });
+        document.getElementById("msgCancel").addEventListener("click", () => { const keep = messageEl.value; discard(); messageEl.value = keep; });
+        setListening(false);
+        setAria(IDLE_LABEL);
+      }
+      function barAttached() {
+        phase = "attached";
+        attachFile();
+        vhtml('<span class="voice-busy">' + T("Voice attached to your enquiry") + '</span><audio controls preload="metadata" class="voice-audio" src="' + url + '"></audio>' +
+          '<a class="btn btn--ghost voice-btn" download="brownhub-voice-message.' + VOICE_EXT + '" href="' + url + '">' + T("Download audio") + '</a><button type="button" class="btn btn--ghost voice-btn" id="msgRemove">' + T("Remove") + "</button>");
+        document.getElementById("msgRemove").addEventListener("click", () => { const keep = messageEl.value; discard(); messageEl.value = keep; });
+        setListening(false);
+        setAria(IDLE_LABEL);
+      }
+      function attachFile() {
+        if (!blob) return;
+        try {
+          const file = new File([blob], "project-details-voice." + VOICE_EXT, { type: blob.type || VOICE_MIME || "audio/webm" });
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          fileInp.files = dt.files;
+          if (fileInp.parentNode !== contactForm) contactForm.appendChild(fileInp);
+          contactForm.enctype = "multipart/form-data";
+        } catch (e) { detachFile(); /* DataTransfer unsupported — the enquiry still sends without audio */ }
+      }
+      function detachFile() {
+        fileInp.value = "";
+        if (fileInp.parentNode) fileInp.parentNode.removeChild(fileInp);
+        contactForm.enctype = "application/x-www-form-urlencoded";
+      }
+      async function startRecording() {
+        micBtn.disabled = true;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        } catch (e) {
+          micBtn.disabled = false;
+          barError("Microphone access was blocked. Allow it in your browser settings, then try again.");
+          return;
+        }
+        micBtn.disabled = false;
+        chunks = [];
+        try { recorder = new MediaRecorder(stream, VOICE_MIME ? { mimeType: VOICE_MIME } : {}); }
+        catch (e) { recorder = new MediaRecorder(stream); }
+        let finished = false;
+        const finish = () => {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          micBtn.disabled = false;
+          if (!blob || !blob.size) { barError("The recording came out empty. Please try again."); return; }
+          barReview();
         };
-        const done = () => { rec = null; dictBtn.classList.remove("listening"); setAria("Dictate your message"); };
-        rec.onend = done;
-        rec.onerror = done;
-        dictBtn.classList.add("listening");
-        setAria("Stop dictating");
-        try { rec.start(); } catch (e) { done(); }
+        recorder.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+        recorder.onstop = () => { blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" }); finish(); };
+        recorder.onerror = () => { blob = null; finish(); };
+        secs = 0;
+        phase = "recording";
+        recBar(false);
+        startSpeech();
+        startMeter();
+        tickTimer();
+        recorder.start(250);
+      }
+      function pauseRecording() {
+        if (!recorder || recorder.state !== "recording") return;
+        try { recorder.pause(); } catch (e) { return; }
+        phase = "paused";
+        if (timer) { clearInterval(timer); timer = null; }
+        stopSpeech();
+        freezeMeter();
+        recBar(true);
+      }
+      function resumeRecording() {
+        if (!recorder || recorder.state !== "paused") return;
+        try { recorder.resume(); } catch (e) { return; }
+        phase = "recording";
+        tickTimer();
+        startSpeech();
+        recBar(false);
+        meterDraw();
+      }
+      function stopRecording() {
+        if (timer) { clearInterval(timer); timer = null; }
+        stopSpeech();
+        if (recorder && recorder.state !== "inactive") recorder.stop();
+      }
+      micBtn.addEventListener("click", () => {
+        if (!canRec) {
+          if (!SR) return;
+          if (sr) { stopSpeech(); return; }
+          startSpeech();
+          setListening(true);
+          setAria("Stop dictating");
+          return;
+        }
+        if (phase === "recording" || phase === "paused") { stopRecording(); return; }
+        discard();
+        startRecording();
       });
+      contactForm.addEventListener("reset", () => { if (phase !== "idle") discard(); });
+      if (!canRec && !SR) micBtn.hidden = true;
     }
   }
 
