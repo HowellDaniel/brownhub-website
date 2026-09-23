@@ -40,7 +40,8 @@
     if (root.nodeType !== 1 || root.tagName === "SCRIPT" || root.tagName === "STYLE" || root.id === "lang-select") return;
     for (var i = 0; i < ATTRS.length; i++) {
       var a = ATTRS[i];
-      if (root.hasAttribute(a)) {
+      // Empty at scan time does not mean absent forever: the modals fill their attrs on open.
+      if (root.hasAttribute(a) && trimKey(root.getAttribute(a) || "")) {
         var m = seenAttr.get(root);
         if (!m) { m = {}; seenAttr.set(root, m); }
         if (!m[a]) { m[a] = 1; record(null, root, a); }
@@ -88,7 +89,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=26")
+    return fetch("i18n/" + code + ".json?v=27")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }

@@ -295,3 +295,21 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
   .shot,.filter__btn{transition:none}
   .shot:hover{transform:none}
 }
+
+/* Portfolio lightbox */
+.shot{position:relative;cursor:pointer}
+.shot:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.shot__zoom{position:absolute;top:.55rem;right:.55rem;width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:rgba(5,8,12,.66);color:#fff;opacity:0;transform:scale(.86);transition:opacity .18s,transform .18s;pointer-events:none}
+.shot:hover .shot__zoom,.shot:focus-visible .shot__zoom{opacity:1;transform:scale(1)}
+@media (hover:none){.shot__zoom{opacity:.9;transform:none}}
+.modal--shot .modal__card{max-width:880px}
+.modal--shot .modal__img{max-height:40vh;object-fit:contain;background:rgba(0,0,0,.28)}
+.modal--shot .modal__body{padding:1.2rem 1.3rem 1.45rem}
+@media (min-width:720px){
+  .modal--shot .modal__card{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);align-items:stretch;max-height:min(88vh,760px)}
+  .modal--shot .modal__img{max-height:none;height:100%;width:100%}
+  .modal--shot .modal__body{overflow-y:auto}
+}
+@media (prefers-reduced-motion:reduce){
+  .shot__zoom{transition:none}
+}
