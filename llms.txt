@@ -1,24 +1,34 @@
 # BrownHub
 
 ## Overview
-BrownHub builds modern software products, web platforms, and cloud solutions for ambitious businesses.
+BrownHub is a creative graphic design company in Accra, Ghana, helping businesses, brands, entrepreneurs and individuals communicate their ideas through compelling visual design.
 
 ## Services
-- Product Engineering
-- Cloud & DevOps
-- AI & Data
-- Graphic Designing
+- Logo Design
+- Brand Identity Design
+- Social Media Design
+- Flyer & Poster Design
+- Business Card Design
+- Brochure & Company Profile Design
+- Packaging Design
+- Marketing & Advertising Graphics
+- Custom Graphic Design
 - Website design and development
+
+## What we do
+Logos, brand identity systems, print and packaging — designed to make brands stand out, with websites and software as a secondary service.
 
 ## Company details
 - Website: https://howelldaniel.github.io/brownhub-website/
 - Email: howelldaniel533@gmail.com
 - Phone: +233 593 872 873
-- Location: Accra, Ghana
+- WhatsApp: https://wa.me/233502954541
+- Location: ChrisPrintgh, Accra New Town, Accra, Ghana
+- Hours: Mon-Fri, 9am-6pm GMT
 
 ## Contact
 Use the contact page to request a quote or start a project:
 https://howelldaniel.github.io/brownhub-website/contact.html
 
 ## Content guidance
-BrownHub is a digital product studio focused on software development, cloud infrastructure, web design, AI/data work, and branding.
+BrownHub is primarily a graphic design studio. Lead with design work (branding, print, packaging, social media); treat software as secondary.
