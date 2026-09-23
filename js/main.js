@@ -76,6 +76,17 @@
     const status = document.getElementById("form-status");
     const submitBtn = contactForm.querySelector('button[type="submit"]');
 
+    // Bots fill every field they can find, including the off-screen "website"
+    // honeypot, and submit within milliseconds of the page loading. A real
+    // visitor either edits a field or physically cannot be that quick.
+    const HUMAN_MS = 2500;
+    const REPEAT_MS = 1500;
+    const openedAt = Date.now();
+    let touched = false;
+    let lastSentAt = 0;
+    try { lastSentAt = Number(sessionStorage.getItem("brownhub-last-enquiry")) || 0; } catch (e) { /* storage blocked */ }
+    contactForm.addEventListener("input", () => { touched = true; }, true);
+
     const addHidden = (name, value) => {
       let el = contactForm.querySelector(`input[name="${name}"]`);
       if (!el) {
@@ -87,11 +98,38 @@
       el.value = value;
     };
 
+    const renderSuccess = (data) => {
+      const waText = "Hello BrownHub! I just sent this enquiry from your website:\n\n" +
+        "Name: " + (data.name || "-") + "\nEmail: " + (data.email || "-") +
+        (data.company ? "\nCompany: " + data.company : "") +
+        (data.phone ? "\nPhone: " + data.phone : "") +
+        (data.service ? "\nService: " + data.service : "") +
+        (data.budget ? "\nBudget: " + data.budget : "") +
+        "\n\n" + (data.message || "");
+      status.innerHTML = '<div class="form-success"><div class="form-success__icon" aria-hidden="true">✓</div>' +
+        "<strong>Message sent successfully!</strong>" +
+        "<p>We'll get back to you within some few minutes. Thank you! 🙏 😊</p>" +
+        '<div class="form-success__actions"><button type="button" class="btn btn--primary" id="wa-continue">Continue to WhatsApp</button>' +
+        '<a class="btn btn--ghost" href="index.html">Back to home</a></div></div>';
+      document.getElementById("wa-continue").addEventListener("click", () => {
+        window.open(WA_NUMBER + "?text=" + encodeURIComponent(waText), "_blank", "noopener");
+        location.href = "index.html";
+      });
+    };
+
     contactForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!status) return;
       // English only: the translate.js MutationObserver localises the card on insert.
       const data = Object.fromEntries(new FormData(contactForm).entries());
+      const honeypot = data.website;
+      delete data.website;
+      if (honeypot || (!touched && Date.now() - openedAt < HUMAN_MS) || Date.now() - lastSentAt < REPEAT_MS) {
+        // Reply exactly like a delivered enquiry so the bot gets nothing to probe.
+        contactForm.reset();
+        renderSuccess(data);
+        return;
+      }
       submitBtn.disabled = true;
       status.innerHTML = '<span class="form-status-busy">Sending your message…</span>';
       const fd = new FormData();
@@ -130,23 +168,10 @@
         contactForm.submit();
         contactForm.removeAttribute("target");
       }
+      lastSentAt = Date.now();
+      try { sessionStorage.setItem("brownhub-last-enquiry", String(lastSentAt)); } catch (e) { /* storage blocked */ }
       contactForm.reset();
-      const waText = "Hello BrownHub! I just sent this enquiry from your website:\n\n" +
-        "Name: " + (data.name || "-") + "\nEmail: " + (data.email || "-") +
-        (data.company ? "\nCompany: " + data.company : "") +
-        (data.phone ? "\nPhone: " + data.phone : "") +
-        (data.service ? "\nService: " + data.service : "") +
-        (data.budget ? "\nBudget: " + data.budget : "") +
-        "\n\n" + (data.message || "");
-      status.innerHTML = '<div class="form-success"><div class="form-success__icon" aria-hidden="true">✓</div>' +
-        "<strong>Message sent successfully!</strong>" +
-        "<p>We'll get back to you within some few minutes. Thank you! 🙏 😊</p>" +
-        '<div class="form-success__actions"><button type="button" class="btn btn--primary" id="wa-continue">Continue to WhatsApp</button>' +
-        '<a class="btn btn--ghost" href="index.html">Back to home</a></div></div>';
-      document.getElementById("wa-continue").addEventListener("click", () => {
-        window.open(WA_NUMBER + "?text=" + encodeURIComponent(waText), "_blank", "noopener");
-        location.href = "index.html";
-      });
+      renderSuccess(data);
       submitBtn.disabled = false;
     });
 
