@@ -170,6 +170,8 @@
       }
       lastSentAt = Date.now();
       try { sessionStorage.setItem("brownhub-last-enquiry", String(lastSentAt)); } catch (e) { /* storage blocked */ }
+      // A signed-in client also gets this enquiry in their own request history.
+      if (window.BHAccounts) window.BHAccounts.record(data);
       contactForm.reset();
       renderSuccess(data);
       submitBtn.disabled = false;
