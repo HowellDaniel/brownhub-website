@@ -28,15 +28,15 @@
     },
     {
       keys: ["where", "address", "location", "office", "visit", "find you", "based"],
-      html: `We're in Accra, Ghana — work address: ChrisPrintgh, Accra New Town, Greater Accra. Our location map is on the <a href="contact.html">contact page</a>.`
+      html: `We're in Accra, Ghana — studio and print pickup at ChrisPrintgh, Accra New Town, Greater Accra. Our location map is on the <a href="contact.html">contact page</a>.`
     },
     {
       keys: ["hours", "open", "closed", "available", "weekend"],
       html: `We're open Mon–Fri, 9am–6pm GMT. Messages sent outside those hours (here or on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a>) get answered the next working day.`
     },
     {
-      keys: ["how long", "turnaround", "deadline", "delivery", "deliver", "when will", "rush", "urgent"],
-      html: `Typical turnaround: flyers &amp; banners 1–3 days, logos &amp; branding about a week, websites 1–3 weeks depending on page count. Rush job? Ask on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a> and we'll confirm what's possible.`
+      keys: ["how long", "turnaround", "deadline", "delivery", "deliver", "when will", "rush", "urgent", "fast"],
+      html: `Typical turnaround: logos 2–4 days, full brand identity about a week, flyers, posters and social media kits 1–3 days, books and company profiles depend on page count. Rush job? Ask on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a> and we'll confirm what's possible.`
     },
     {
       keys: ["order", "buy", "purchase", "book", "place an order"],
@@ -44,42 +44,54 @@
     },
     {
       keys: ["price", "cost", "quote", "how much", "charge", "fee", "budget"],
-      html: `Prices depend on scope — pages, sizes, materials and deadline. Send the details on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a> or by email and you'll get a quick quote; design jobs are usually quoted the same day.`
+      html: `Prices depend on scope — number of items, sizes, quantity and deadline. Send the details on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a> or by email and you'll get a free consultation and a clear quote; design jobs are usually quoted the same day.`
     }
   ];
 
   const topicIntents = [
     {
       keys: ["thank", "thanks", "appreciate"],
-      html: "Anytime! Anything else I can help with — websites, design work, ordering or prices?"
+      html: "Anytime! Anything else I can help with — logos, branding, print work, social media designs, prices or ordering?"
     },
     {
-      keys: ["catalog", "catalogue", "product", "item", "print", "printing", "flyer", "banner", "pull up", "pull-up", "frame", "abs board", "book design", "funeral"],
-      html: `Browse every print &amp; design piece in our <a href="catalog.html">website catalog</a> — tap any item to see details and order right here. The catalog is also on <a href="${WA_CATALOG}" target="_blank" rel="noopener">WhatsApp</a>.`
+      keys: ["logo", "brand", "branding", "identity", "guidelines", "stationery"],
+      html: `We design logos and complete brand identities: logo concepts, colour palette, typography, brand guidelines and reusable brand assets. Details on the <a href="services.html">services page</a>, and we can start from a <a href="contact.html">short brief</a>.`
     },
     {
-      keys: ["graphic", "design", "logo", "brand", "branding", "poster", "card", "artwork"],
-      html: `Our graphic design studio handles logos &amp; branding, flyers, banners, pull-up stands, frames, book covers and print-ready artwork. See samples in the <a href="catalog.html">catalog</a> and the full list on the <a href="services.html">services page</a>.`
+      keys: ["social", "instagram", "facebook", "tiktok", "post", "posts", "ad", "advert", "advertis", "campaign", "banner"],
+      html: `Social media design packs cover posts, stories, cover images, ad creatives and campaign banners — sized for each platform and matched to your brand. See samples in the <a href="catalog.html">catalog</a> or on the <a href="services.html">services page</a>.`
     },
     {
-      keys: ["website", "web site", "site", "web", "landing", "portfolio", "ecommerce", "e-commerce", "responsive", "domain", "hosting", "page"],
-      html: `We build responsive business websites, landing pages, portfolios and web apps — fast, mobile-first and easy to maintain. Details on the <a href="services.html">services page</a>; tell me your idea here or on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a> for a quote.`
+      keys: ["packaging", "label", "box", "sticker", "mockup"],
+      html: `Packaging design covers boxes, labels, wrappers, stickers and product mockups that make a brand recognisable on the shelf. Send the artwork size or a photo of the product and we'll quote it — or use the <a href="contact.html">contact form</a>.`
+    },
+    {
+      keys: ["catalog", "catalogue", "product", "item", "print", "printing", "flyer", "poster", "pull up", "pull-up", "frame", "abs board", "book design", "funeral", "card", "brochure"],
+      html: `Browse every print &amp; design piece in our <a href="catalog.html">website catalog</a> — flyers, posters, business cards, brochures, pull-up stands, ABS boards, frames and book design. Tap any item to see details and order right here. The catalog is also on <a href="${WA_CATALOG}" target="_blank" rel="noopener">WhatsApp</a>.`
+    },
+    {
+      keys: ["graphic", "design", "artist", "artwork", "illustration"],
+      html: `Our design studio handles logos &amp; brand identity, social media and advertising graphics, flyers and posters, business cards, brochures and company profiles, packaging, book covers and inside layout, plus custom work to your brief. See samples in the <a href="catalog.html">catalog</a> and the full list on the <a href="services.html">services page</a>.`
+    },
+    {
+      keys: ["website", "web site", "site", "web", "landing", "portfolio", "ecommerce", "e-commerce", "responsive", "domain", "hosting", "page", "software", "app"],
+      html: `We also build websites and software for brands that need them — business sites, landing pages, portfolios and web apps, designed and built in-house. Details on the <a href="services.html">services page</a>; tell me your idea here or on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a> for a quote.`
     },
     {
       keys: ["help", "what can you do", "assist", "options"],
-      html: "I give quick answers on our website development and graphic design work: services, catalog items, prices, turnaround, ordering and how to reach the team. Try a button below."
+      html: "I give quick answers on our design work: services, catalog items, prices, turnaround, ordering, print-ready files and how to reach the team. Try a button below."
     },
     {
       keys: ["hi", "hello", "hey", "good morning", "good afternoon", "good evening"],
-      html: "Hello! Great to see you. Ask me anything about our website development or graphic design work — or tap a button below to get started."
+      html: "Hello! Great to see you. Ask me anything about our graphic design and branding work — logos, brand identity, print, social media and packaging — or tap a button below to get started."
     }
   ];
 
-  const fallback = `I didn't quite catch that. I'm best at quick answers on <strong>website projects</strong> and <strong>graphic design work</strong> — services, catalog items, prices, turnaround, ordering. Or reach a human on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a>.`;
+  const fallback = `I didn't quite catch that. I'm best at quick answers on <strong>graphic design</strong> and <strong>branding</strong> — logos, brand identity, flyers, business cards, brochures, packaging, social media and print-ready files. Or reach a human on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a>.`;
 
-  const greeting = `Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>website development</strong> and <strong>graphic design</strong> work. What can I help with?`;
+  const greeting = `Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?`;
 
-  const defaultChips = ["Website services", "Graphic design", "Catalog items", "Get a quote", "Talk to a human"];
+  const defaultChips = ["Logo & branding", "Social media design", "Catalog items", "Get a quote", "Talk to a human"];
 
   function bestOf(list, t) {
     let best = null, bestScore = 0;
@@ -514,6 +526,6 @@
   });
   if (!canRecord) {
     micBtn.disabled = true;
-    micBtn.title = "Voice recording is not supported in this browser";
+    micBtn.title = T("Voice recording is not supported in this browser");
   }
 })();

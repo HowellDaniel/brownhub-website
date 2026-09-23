@@ -269,3 +269,29 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
   /* only the product grid has enough items to fill a fourth column */
   .cards--3:has(.product-card){ grid-template-columns: repeat(4, minmax(0,1fr)) }
 }
+
+/* ===== Design-first additions: portfolio gallery, category filter, section footers ===== */
+#why,#portfolio{scroll-margin-top:5.5rem}
+.section__more{display:flex;flex-wrap:wrap;gap:.9rem;justify-content:center;margin-top:clamp(1.8rem,3vw,2.9rem)}
+.filter{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-bottom:clamp(1.5rem,2.6vw,2.4rem)}
+.filter__btn{font-family:inherit;font-size:.85rem;font-weight:600;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:.55rem 1.15rem;cursor:pointer;transition:.18s}
+.filter__btn:hover{color:var(--text);border-color:var(--accent)}
+.filter__btn.is-active{background:var(--accent);border-color:var(--accent);color:#fff}
+.filter__btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(200px,25vw,320px),1fr));gap:clamp(.9rem,1.6vw,1.5rem)}
+.shot{margin:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:.2s}
+.shot:hover{border-color:var(--accent);transform:translateY(-3px)}
+.shot img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.shot figcaption{padding:.9rem 1.05rem 1.1rem}
+.shot h3{font-size:.98rem;line-height:1.35;margin:0 0 .25rem}
+.shot figcaption span{font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted)}
+.shot[hidden]{display:none}
+.service-shot{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+@media (max-width:520px){
+  .shots{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+  .shot figcaption{padding:.7rem .8rem .85rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .shot,.filter__btn{transition:none}
+  .shot:hover{transform:none}
+}

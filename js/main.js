@@ -63,7 +63,9 @@
           auto = tr("I'd like to order:") + " " + tr(item);
           message.value = auto;
         }
-        if (service) service.value = "Graphic Designing";
+        if (service && [].some.call(service.options, (o) => o.value === "Custom Graphic Design")) {
+          service.value = "Custom Graphic Design";
+        }
       };
       setPrefill();
       document.addEventListener("i18n-applied", setPrefill);
@@ -132,6 +134,7 @@
       const waText = "Hello BrownHub! I just sent this enquiry from your website:\n\n" +
         "Name: " + (data.name || "-") + "\nEmail: " + (data.email || "-") +
         (data.company ? "\nCompany: " + data.company : "") +
+        (data.phone ? "\nPhone: " + data.phone : "") +
         (data.service ? "\nService: " + data.service : "") +
         (data.budget ? "\nBudget: " + data.budget : "") +
         "\n\n" + (data.message || "");
@@ -147,7 +150,7 @@
       submitBtn.disabled = false;
     });
 
-    // Voice recorder for the "Project details" box: record / pause / listen back,
+    // Voice recorder for the "Project description" box: record / pause / listen back,
     // then the audio rides on this enquiry as a voice_note attachment.
     const messageEl = document.getElementById("message");
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
