@@ -364,11 +364,11 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
    hairline, the inner bottom edge and the highlight that follows the pointer are
    what read as the thickness of the glass. */
 :root{--glass-blur:26px;--glass-hair:rgba(255,255,255,.34);--glass-hair-soft:rgba(255,255,255,.26);
-  --glass-sheen:rgba(255,255,255,.08);--glass-edge:rgba(255,255,255,.12);--glass-glow:rgba(255,255,255,.15);
+  --glass-sheen:rgba(255,255,255,.08);--glass-edge:rgba(255,255,255,.12);--glass-glow:rgba(255,255,255,.08);
   --glass-veil:rgba(5,8,12,0);--glass-veil-on:rgba(5,8,12,.32);--glass-drop:0 12px 26px -20px rgba(0,0,0,.75);
   --glass-ctl-bg:rgba(255,255,255,.08);--glass-ctl-hair:rgba(255,255,255,.26)}
 html[data-theme="light"]{--glass-hair:rgba(255,255,255,.95);--glass-hair-soft:rgba(255,255,255,.75);
-  --glass-sheen:rgba(255,255,255,.5);--glass-edge:rgba(26,34,45,.14);--glass-glow:rgba(255,255,255,.8);
+  --glass-sheen:rgba(255,255,255,.5);--glass-edge:rgba(26,34,45,.14);--glass-glow:rgba(255,255,255,.42);
   --glass-veil:rgba(255,255,255,0);--glass-veil-on:rgba(255,255,255,.5);--glass-drop:0 12px 26px -20px rgba(26,34,45,.35);
   --glass-ctl-bg:rgba(26,34,45,.05);--glass-ctl-hair:rgba(26,34,45,.18)}
 .site-header{position:sticky;top:0;z-index:100;isolation:isolate;background:none;border-bottom:0;
@@ -381,7 +381,7 @@ html[data-theme="light"]{--glass-hair:rgba(255,255,255,.95);--glass-hair-soft:rg
   backdrop-filter:blur(var(--glass-blur)) saturate(1.75) brightness(1.05)}
 .site-header::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
   transition:opacity .5s ease;
-  background:radial-gradient(12rem 6.5rem at var(--gx) var(--gy),var(--glass-glow),rgba(255,255,255,0) 70%),
+  background:radial-gradient(9rem 5rem at var(--gx) var(--gy),var(--glass-glow),rgba(255,255,255,0) 70%),
     linear-gradient(180deg,rgba(255,255,255,0) 58%,var(--glass-sheen))}
 .site-header.is-glass-hot::after{opacity:1}
 .site-header .nav{position:relative;z-index:1}
@@ -413,10 +413,10 @@ html[data-theme="light"]{--glass-hair:rgba(255,255,255,.95);--glass-hair-soft:rg
    Fields and small controls take the fill without the compositing blur, so text
    read at close range stays crisp. */
 :root{--glass-fill:rgba(27,34,44,.62);--glass-fill-alt:rgba(21,26,33,.62);--glass-fill-hair:rgba(255,255,255,.16);
-  --glass-inset:inset 0 1px 0 rgba(255,255,255,.1);--glass-glow-card:rgba(255,255,255,.1);
+  --glass-inset:inset 0 1px 0 rgba(255,255,255,.1);--glass-glow-card:rgba(255,255,255,.055);
   --glass-sheen-grad:linear-gradient(180deg,var(--glass-sheen),rgba(255,255,255,0) 58%)}
 html[data-theme="light"]{--glass-fill:rgba(255,255,255,.66);--glass-fill-alt:rgba(255,255,255,.56);--glass-fill-hair:rgba(26,34,45,.13);
-  --glass-inset:inset 0 1px 0 rgba(255,255,255,.9);--glass-glow-card:rgba(255,255,255,.62)}
+  --glass-inset:inset 0 1px 0 rgba(255,255,255,.9);--glass-glow-card:rgba(255,255,255,.34)}
 :is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.chat-widget__panel,.shot,.form-success,.btn--ghost,.filter__btn),.faq details,.chat-widget__chips button{
   background-color:var(--glass-fill);background-image:var(--glass-sheen-grad);border-color:var(--glass-fill-hair);
   box-shadow:var(--glass-inset);-webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6)}
@@ -436,7 +436,7 @@ html[data-theme="light"]{--glass-fill:rgba(255,255,255,.66);--glass-fill-alt:rgb
 .hero__card{isolation:isolate;--gx:50%;--gy:-60%}
 :is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success)::after,.faq details::after{
   content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;border-radius:inherit;
-  transition:opacity .45s ease;background:radial-gradient(11rem 7rem at var(--gx) var(--gy),var(--glass-glow-card),rgba(255,255,255,0) 70%)}
+  transition:opacity .45s ease;background:radial-gradient(9rem 6rem at var(--gx) var(--gy),var(--glass-glow-card),rgba(255,255,255,0) 70%)}
 :is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success):hover::after,.faq details:hover::after{opacity:1}
 .modal__close{z-index:2}
 /* A dialog sits on a dark scrim, so in the light theme its frost needs more white
