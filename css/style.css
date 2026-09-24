@@ -318,8 +318,8 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
 .hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;pointer-events:none;opacity:0}
 
 /* ---- Client accounts: nav entry, sign-up/login panel, request history ---- */
-.nav__link--acct{background:none;border:1px solid var(--border);border-radius:999px;color:var(--text-muted);font-family:inherit;cursor:pointer;white-space:nowrap}
-@media (min-width:841px){.nav__link--acct{padding:.45rem 1rem;font-size:.9rem;font-weight:600}.nav__link--acct:hover{border-color:var(--accent);color:var(--accent)}}
+.nav__link--acct{padding:0;border:none;background:none;font-family:inherit;cursor:pointer;white-space:nowrap}
+.nav__link--acct:hover,.nav__link--acct:focus-visible{color:var(--text)}
 @media (max-width:840px){.nav__menu .nav__link--acct{text-align:left;width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}}
 .modal--acct .modal__card{max-width:480px}
 .acct-lede{margin:.2rem 0 1.1rem;font-size:.9rem;line-height:1.5;color:var(--text-muted);max-width:46ch;overflow-wrap:anywhere}
