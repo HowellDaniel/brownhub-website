@@ -55,6 +55,12 @@
     return el;
   }
 
+  // For strings that go into a URL or an attribute rather than the page, where
+  // the MutationObserver never reaches.
+  function T(s) {
+    return window.I18N && window.I18N.t ? window.I18N.t(s) : s;
+  }
+
   function el(tag, cls, text) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
@@ -173,8 +179,15 @@
     }).catch(function () { quote(item); });
   }
 
-  function card(item, priced) {
-    var c = el("div", "card card--pay");
+  // The order text is built before the dictionary has arrived, so each link is
+  // refreshed when translate.js reports that a language has been applied.
+  var waLinks = [];
+
+  function orderHref(a, item) {
+    a.href = WA + "?text=" + encodeURIComponent(T("I'd like to order:") + " " + T(item.name));
+  }
+
+  function card(item, priced) {    var c = el("div", "card card--pay");
     c.appendChild(el("h3", null, item.name));
     if (item.term) c.appendChild(el("p", "pay-term", item.term));
     // An unpriced card says nothing about money: the button already asks for a
@@ -183,10 +196,20 @@
       c.appendChild(el("p", "pay-price")).appendChild(el("strong", null, money(item.price)));
       c.appendChild(el("p", "pay-methods", "Card, bank or mobile money"));
     }
+    var actions = el("div", "pay-actions");
     var b = el("button", "btn " + (priced ? "btn--primary" : "btn--ghost"), priced ? "Pay now" : "Ask for a price");
     b.type = "button";
     b.addEventListener("click", function () { buy(item); });
-    c.appendChild(b);
+    actions.appendChild(b);
+    // WhatsApp is where this studio actually closes jobs, so the card offers it
+    // whether or not a card terminal is wired up yet.
+    var w = el("a", "btn btn--ghost btn--sm", "Order this on WhatsApp");
+    w.target = "_blank";
+    w.rel = "noopener";
+    waLinks.push({ a: w, item: item });
+    orderHref(w, item);
+    actions.appendChild(w);
+    c.appendChild(actions);
     return c;
   }
 
@@ -242,6 +265,10 @@
   function init() {
     emailRow = mount("email");
     noteEl = mount("note");
+    // The card-details promise is only true once a Paystack key exists, and the
+    // line ships hidden so it never flashes on ahead of this script.
+    var secure = mount("secure");
+    if (secure) secure.hidden = !PK_KEY;
     renderInto(mount("packages"), PACKAGES);
     renderInto(mount("slots"), SLOTS);
     renderTools();
@@ -251,6 +278,9 @@
       var inp = emailRow.querySelector("input");
       if (known && inp && !inp.value) inp.value = known;
     }
+    document.addEventListener("i18n-applied", function () {
+      waLinks.forEach(function (l) { orderHref(l.a, l.item); });
+    });
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
