@@ -322,6 +322,15 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
 .nav__link--acct:hover,.nav__link--acct:focus-visible{color:var(--text)}
 @media (max-width:840px){.nav__menu .nav__link--acct{display:block;width:auto;padding:.6rem 0;line-height:1.6;text-align:left}}
 .modal--acct .modal__card{max-width:480px}
+/* Anchored drop-down: the card leaves the grid and hangs under its nav item. */
+.modal--acct.is-drop{place-items:start}
+.modal--acct.is-drop .modal__backdrop{background:rgba(5,8,12,.35)}
+.modal--acct.is-drop .modal__card{position:absolute;max-width:none;overflow-y:auto;border-radius:14px}
+.acct-filter{display:flex;align-items:center;gap:.6rem;margin:0 0 1rem;padding:.55rem .7rem;background:var(--bg-alt);border:1px solid var(--border);border-radius:12px}
+.acct-filter label{font-size:.8rem;font-weight:600;color:var(--text-muted);white-space:nowrap}
+.acct-filter select{flex:1;min-width:0;padding:.45rem .55rem;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:inherit;font-size:16px;cursor:pointer}
+.acct-filter select:focus{outline:none;border-color:var(--accent)}
+@media (max-width:840px){.acct-filter select{min-height:44px}}
 .acct-lede{margin:.2rem 0 1.1rem;font-size:.9rem;line-height:1.5;color:var(--text-muted);max-width:46ch;overflow-wrap:anywhere}
 .acct-tabs{display:flex;gap:.3rem;margin-bottom:1.1rem;padding:.25rem;background:var(--bg-alt);border:1px solid var(--border);border-radius:999px}
 .acct-tab{flex:1;padding:.5rem .5rem;border:none;border-radius:999px;background:none;color:var(--text-muted);font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;transition:.2s}
@@ -348,4 +357,4 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
 .acct-pill--delivered{border-color:rgba(60,160,105,.6);color:#3fae72}
 .acct-pill--closed{opacity:.7}
 [data-theme="light"] .acct-pill--delivered{color:#1f7a4d;border-color:rgba(31,122,77,.45)}
-@media (max-width:640px){.acct-item__actions .btn{flex:1 1 auto}.acct-item__actions .btn,.acct-tab,#acct-logout{min-height:44px}}
+@media (max-width:840px){.acct-item__actions .btn{flex:1 1 auto}.acct-item__actions .btn,.acct-tab,#acct-logout{min-height:44px}}

@@ -454,5 +454,12 @@
  "An account with that email already exists. Try logging in.": "Account a ɛwɔ saa email no wɔ hɔ dedaw. Sɔ hyɛ mu bio.",
  "We couldn't reach the account service. Check your connection and try again.": "Yɛntumi ankaa account nnwuma no ho. Hwɛ ɔkwan a wobɛfa so no na bɔ ho mmɔden bio.",
  "A design project": "Nanhoni ɔproject bi",
- "I'm sending this again:": "Meresom eyi bio:"
+ "I'm sending this again:": "Meresom eyi bio:",
+ "Period": "Ber",
+ "Any time": "Ber biara",
+ "Last day": "Apotobire 24 a atwa nkyira",
+ "Last week": "Nna 7 a atwa nkyira",
+ "Last month": "Nna 30 a atwa nkyira",
+ "Last year": "Mfim 12 a atwa nkyira",
+ "No requests in that period. Try a wider range.": "Nnsrɛbɛn biara nni saa no mu. Sɔ bere tenten biara hwɛ."
 }

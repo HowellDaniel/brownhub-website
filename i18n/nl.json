@@ -454,5 +454,12 @@
  "An account with that email already exists. Try logging in.": "Er bestaat al een account met dit e-mailadres. Probeer in te loggen.",
  "We couldn't reach the account service. Check your connection and try again.": "We konden de accountservice niet bereiken. Controleer je verbinding en probeer het opnieuw.",
  "A design project": "Een ontwerpproject",
- "I'm sending this again:": "Ik stuur dit opnieuw:"
+ "I'm sending this again:": "Ik stuur dit opnieuw:",
+ "Period": "Periode",
+ "Any time": "Alle tijd",
+ "Last day": "Laatste 24 uur",
+ "Last week": "Afgelopen 7 dagen",
+ "Last month": "Afgelopen 30 dagen",
+ "Last year": "Afgelopen 12 maanden",
+ "No requests in that period. Try a wider range.": "Geen aanvragen in die periode. Probeer een bredere periode."
 }

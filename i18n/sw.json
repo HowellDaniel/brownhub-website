@@ -454,5 +454,12 @@
  "An account with that email already exists. Try logging in.": "Akaunti yenye barua pepe hiyo ipo tayari. Jaribu kuingia.",
  "We couldn't reach the account service. Check your connection and try again.": "Hatuwezi kufikia huduma ya akaunti. Angalia muunganisho wako kisha ujaribu tena.",
  "A design project": "Mradi wa ubuni",
- "I'm sending this again:": "Ninatuma hii tena:"
+ "I'm sending this again:": "Ninatuma hii tena:",
+ "Period": "Kipindi",
+ "Any time": "Muda wowote",
+ "Last day": "Saa 24 zilizopita",
+ "Last week": "Siku 7 zilizopita",
+ "Last month": "Siku 30 zilizopita",
+ "Last year": "Miezi 12 iliyopita",
+ "No requests in that period. Try a wider range.": "Hakuna maombi katika kipindi hicho. Jaribu kipindi kikubwa zaidi."
 }

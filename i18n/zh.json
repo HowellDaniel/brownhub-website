@@ -454,5 +454,12 @@
  "An account with that email already exists. Try logging in.": "该邮箱已经注册过账号，请尝试登录。",
  "We couldn't reach the account service. Check your connection and try again.": "暂时连不上账号服务，请检查网络后重试。",
  "A design project": "设计项目",
- "I'm sending this again:": "我把这条需求再发一次："
+ "I'm sending this again:": "我把这条需求再发一次：",
+ "Period": "时间段",
+ "Any time": "任意时间",
+ "Last day": "最近 24 小时",
+ "Last week": "最近 7 天",
+ "Last month": "最近 30 天",
+ "Last year": "最近 12 个月",
+ "No requests in that period. Try a wider range.": "该时间段内没有请求。请选择更长的时间范围。"
 }

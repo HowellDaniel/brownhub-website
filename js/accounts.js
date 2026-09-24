@@ -24,6 +24,14 @@
     delivered: "Delivered",
     closed: "Closed"
   };
+  // Rolling windows, newest first, so "Last week" means the past 7 days.
+  var PERIODS = [
+    ["all", "Any time", 0],
+    ["day", "Last day", 24 * 3600e3],
+    ["week", "Last week", 7 * 24 * 3600e3],
+    ["month", "Last month", 30 * 24 * 3600e3],
+    ["year", "Last year", 365 * 24 * 3600e3]
+  ];
   var LOCALES = {
     en: "en-GB", fr: "fr-FR", es: "es-ES", pt: "pt-BR", ar: "ar-EG", zh: "zh-CN",
     de: "de-DE", nl: "nl-NL", it: "it-IT", ru: "ru-RU", hi: "hi-IN", sw: "sw-KE", tw: "ak-GH"
@@ -89,19 +97,23 @@
   var SB_API_KEY = SB_KEY.trim();
   var configured = /^https:\/\/[a-z0-9-]+\.supabase\.[a-z]{2,}$/i.test(SB_API_URL) && isPublishable(SB_API_KEY);
 
-  var navLi, modal, tabs, form, noteEl, nameField, nameInp, emailInp, passInp;
+  var navLi, modal, card, tabs, form, noteEl, nameField, nameInp, emailInp, passInp;
   var submitBtn, lede, titleEl, authView, historyView, who, list, empty, logoutBtn, tabLogin, tabSignup;
-  var client = null, sdkPromise = null, session = null, rows = [], mode = "login", busy = false, opener = null;
+  var filterSel, trigger;
+  var client = null, sdkPromise = null, session = null, rows = [], shown = [], mode = "login", busy = false, opener = null;
+  var period = "all";
 
   if (configured) build();
 
   function build() {
     navLi = el("li");
-    var btn = el("button", "nav__link nav__link--acct", "My requests");
-    btn.id = "acct-open";
-    btn.type = "button";
-    btn.setAttribute("aria-haspopup", "dialog");
-    navLi.appendChild(btn);
+    trigger = el("button", "nav__link nav__link--acct", "My requests");
+    trigger.id = "acct-open";
+    trigger.type = "button";
+    trigger.setAttribute("aria-haspopup", "dialog");
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.setAttribute("aria-controls", "acct-modal");
+    navLi.appendChild(trigger);
     var menu = document.getElementById("nav-menu");
     if (menu) {
       var cta = menu.querySelector(".nav__link--cta");
@@ -138,6 +150,10 @@
           '<div id="acct-history" hidden>' +
             '<div class="acct-user"><span id="acct-who"></span>' +
               '<button type="button" class="btn btn--ghost btn--sm" id="acct-logout">Log out</button></div>' +
+            '<div class="acct-filter" id="acct-filter-wrap">' +
+              '<label for="acct-filter" id="acct-filter-label">Period</label>' +
+              '<select id="acct-filter"></select>' +
+            '</div>' +
             '<ul class="acct-list" id="acct-list"></ul>' +
             '<p class="acct-empty" id="acct-empty">No requests yet. Send an enquiry and it will appear here.</p>' +
           '</div>' +
@@ -146,6 +162,7 @@
     document.body.appendChild(modal);
 
     var $ = function (id) { return document.getElementById(id); };
+    card = modal.querySelector(".modal__card");
     tabs = $("acct-tabs"); form = $("acct-form"); noteEl = $("acct-note");
     nameField = $("acct-name-field"); nameInp = $("acct-name");
     emailInp = $("acct-email"); passInp = $("acct-pass");
@@ -153,25 +170,84 @@
     authView = form; historyView = $("acct-history"); who = $("acct-who");
     list = $("acct-list"); empty = $("acct-empty"); logoutBtn = $("acct-logout");
     tabLogin = $("acct-tab-login"); tabSignup = $("acct-tab-signup");
+    filterSel = $("acct-filter");
 
-    btn.addEventListener("click", openModal);
+    buildFilter();
+    trigger.addEventListener("click", togglePanel);
     tabLogin.addEventListener("click", function () { setMode("login"); });
     tabSignup.addEventListener("click", function () { setMode("signup"); });
     form.addEventListener("submit", submit);
     logoutBtn.addEventListener("click", logout);
     list.addEventListener("click", onListClick);
+    filterSel.addEventListener("change", function () {
+      period = filterSel.value || "all";
+      paintHistory();
+    });
     [].forEach.call(modal.querySelectorAll("[data-close-acct]"), function (b) {
       b.addEventListener("click", closeModal);
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
     });
+    window.addEventListener("resize", function () {
+      if (modal.classList.contains("open")) positionPanel();
+    });
+    window.addEventListener("scroll", function () {
+      if (modal.classList.contains("open")) positionPanel();
+    }, true);
+
     // Dates follow the visitor's language, so a language switch repaints the list.
     document.addEventListener("i18n-applied", function () {
+      buildFilter();
       if (modal.classList.contains("open")) paintHistory();
     });
 
-    window.BHAccounts = { open: openModal, signedIn: function () { return !!session; }, record: record };
+    window.BHAccounts = { open: openPanel, signedIn: function () { return !!session; }, record: record };
+  }
+
+  // ---- dropdown panel --------------------------------------------------------
+
+  function togglePanel() {
+    if (modal.classList.contains("open")) closeModal(); else openPanel();
+  }
+
+  // On wide screens the nav is a horizontal bar, so the panel hangs under its
+  // item. Up to 840px the nav becomes the stacked burger menu, so the panel goes
+  // back to being a centred sheet instead of anchoring to a hidden item.
+  function isDrop() {
+    return window.matchMedia("(min-width: 841px)").matches;
+  }
+
+  function positionPanel() {
+    var drop = isDrop();
+    modal.classList.toggle("is-drop", drop);
+    if (!drop || !trigger) {
+      card.style.top = card.style.left = card.style.width = card.style.maxHeight = "";
+      return;
+    }
+    var r = trigger.getBoundingClientRect();
+    var gap = 10;
+    var w = Math.min(430, Math.max(320, window.innerWidth - 32));
+    var left = Math.min(Math.max(16, r.right - w), Math.max(16, window.innerWidth - w - 16));
+    card.style.width = w + "px";
+    card.style.left = left + "px";
+    card.style.top = (r.bottom + gap) + "px";
+    card.style.maxHeight = Math.max(260, window.innerHeight - r.bottom - gap - 16) + "px";
+  }
+
+  function buildFilter() {
+    if (!filterSel) return;
+    var label = document.getElementById("acct-filter-label");
+    if (label) txt(label, "Period");
+    filterSel.textContent = "";
+    PERIODS.forEach(function (p) {
+      var o = el("option", null, null);
+      o.value = p[0];
+      o.appendChild(document.createTextNode(t(p[1])));
+      if (p[0] === period) o.selected = true;
+      filterSel.appendChild(o);
+    });
+    filterSel.value = period;
   }
 
   // ---- Supabase --------------------------------------------------------------
@@ -239,7 +315,7 @@
         .select("created_at,name,email,company,phone,service,budget,message,status")
         .eq("user_id", session.user.id)
         .order("created_at", { ascending: false })
-        .limit(30);
+        .limit(200);
     }).then(function (res) {
       if (res.error) throw res.error;
       rows = res.data || [];
@@ -311,19 +387,33 @@
     who.textContent = "";
     who.appendChild(document.createTextNode("Signed in as"));
     who.appendChild(document.createTextNode(" " + (session && session.user ? session.user.email : "")));
+    buildFilter();
     paintHistory();
   }
 
+  function periodMs() {
+    for (var i = 0; i < PERIODS.length; i++) { if (PERIODS[i][0] === period) return PERIODS[i][2]; }
+    return 0;
+  }
+
   function paintHistory() {
-    if (!rows.length) {
-      list.textContent = "";
+    var cut = periodMs();
+    var now = Date.now();
+    shown = cut ? rows.filter(function (r) {
+      var at = new Date(r.created_at).getTime();
+      return !isNaN(at) && now - at <= cut;
+    }) : rows.slice();
+
+    list.textContent = "";
+    if (!shown.length) {
       empty.hidden = false;
-      txt(empty, "No requests yet. Send an enquiry and it will appear here.");
+      txt(empty, rows.length
+        ? "No requests in that period. Try a wider range."
+        : "No requests yet. Send an enquiry and it will appear here.");
       return;
     }
     empty.hidden = true;
-    list.textContent = "";
-    rows.forEach(function (r, i) { list.appendChild(rowItem(r, i)); });
+    shown.forEach(function (r, i) { list.appendChild(rowItem(r, i)); });
   }
 
   function fmtDate(iso) {
@@ -380,10 +470,12 @@
     });
   }
 
-  function openModal() {
+  function openPanel() {
     opener = document.activeElement;
     modal.classList.add("open");
+    trigger.setAttribute("aria-expanded", "true");
     document.body.style.overflow = "hidden";
+    positionPanel();
     if (session) showHistory(); else showAuth();
     restore().then(function (s) {
       if (!s) return;
@@ -395,6 +487,8 @@
 
   function closeModal() {
     modal.classList.remove("open");
+    modal.classList.remove("is-drop");
+    trigger.setAttribute("aria-expanded", "false");
     document.body.style.overflow = "";
     if (opener && opener.focus) opener.focus();
   }
@@ -461,6 +555,8 @@
     loadSdk().then(function () { return sb().auth.signOut(); }).catch(function () {}).then(function () {
       session = null;
       rows = [];
+      shown = [];
+      period = "all";
       setBusy(false);
       showAuth();
       setMode("login");
@@ -480,7 +576,7 @@
   function onListClick(e) {
     var btn = e.target.closest ? e.target.closest("[data-act]") : null;
     if (!btn) return;
-    var r = rows[Number(btn.getAttribute("data-i"))];
+    var r = shown[Number(btn.getAttribute("data-i"))];
     if (!r) return;
     if (btn.getAttribute("data-act") === "copy") {
       navigator.clipboard.writeText(copyText(r)).then(function () {

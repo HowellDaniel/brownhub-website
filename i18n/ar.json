@@ -454,5 +454,12 @@
  "An account with that email already exists. Try logging in.": "يوجد حساب بهذا البريد الإلكتروني بالفعل. جرّب تسجيل الدخول.",
  "We couldn't reach the account service. Check your connection and try again.": "لم نتمكن من الوصول إلى خدمة الحسابات. تحقّق من اتصالك وحاول مرة أخرى.",
  "A design project": "مشروع تصميم",
- "I'm sending this again:": "أرسل هذا مرة أخرى:"
+ "I'm sending this again:": "أرسل هذا مرة أخرى:",
+ "Period": "الفترة",
+ "Any time": "أي وقت",
+ "Last day": "آخر 24 ساعة",
+ "Last week": "آخر 7 أيام",
+ "Last month": "آخر 30 يوماً",
+ "Last year": "آخر 12 شهراً",
+ "No requests in that period. Try a wider range.": "لا توجد طلبات في تلك الفترة. جرّب مدى أوسع."
 }

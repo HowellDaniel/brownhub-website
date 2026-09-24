@@ -454,5 +454,12 @@
  "An account with that email already exists. Try logging in.": "इस ईमेल से अकाउंट पहले से मौजूद है। लॉग इन करके देखें।",
  "We couldn't reach the account service. Check your connection and try again.": "हम अकाउंट सेवा तक नहीं पहुंच पाए। अपना कनेक्शन जांचें और दोबारा कोशिश करें।",
  "A design project": "डिज़ाइन प्रोजेक्ट",
- "I'm sending this again:": "मैं यह दोबारा भेज रहा हूँ:"
+ "I'm sending this again:": "मैं यह दोबारा भेज रहा हूँ:",
+ "Period": "अवधि",
+ "Any time": "किसी भी समय",
+ "Last day": "पिछले 24 घंटे",
+ "Last week": "पिछले 7 दिन",
+ "Last month": "पिछले 30 दिन",
+ "Last year": "पिछले 12 महीने",
+ "No requests in that period. Try a wider range.": "इस अवधि में कोई अनुरोध नहीं है। कोई बड़ी अवधि चुनें।"
 }

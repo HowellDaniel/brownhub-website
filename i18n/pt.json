@@ -454,5 +454,12 @@
  "An account with that email already exists. Try logging in.": "Já existe uma conta com esse e-mail. Tente entrar.",
  "We couldn't reach the account service. Check your connection and try again.": "Não foi possível conectar ao serviço de contas. Verifique sua conexão e tente novamente.",
  "A design project": "Um projeto de design",
- "I'm sending this again:": "Estou reenviando esta solicitação:"
+ "I'm sending this again:": "Estou reenviando esta solicitação:",
+ "Period": "Período",
+ "Any time": "Qualquer período",
+ "Last day": "Últimas 24 h",
+ "Last week": "Últimos 7 dias",
+ "Last month": "Últimos 30 dias",
+ "Last year": "Últimos 12 meses",
+ "No requests in that period. Try a wider range.": "Nenhuma solicitação nesse período. Tente um intervalo mais amplo."
 }

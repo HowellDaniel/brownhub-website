@@ -454,5 +454,12 @@
  "An account with that email already exists. Try logging in.": "Аккаунт с таким адресом уже существует. Попробуйте войти.",
  "We couldn't reach the account service. Check your connection and try again.": "Не удалось связаться со службой аккаунтов. Проверьте подключение и попробуйте ещё раз.",
  "A design project": "Дизайн-проект",
- "I'm sending this again:": "Отправляю это снова:"
+ "I'm sending this again:": "Отправляю это снова:",
+ "Period": "Период",
+ "Any time": "За всё время",
+ "Last day": "Последние 24 часа",
+ "Last week": "Последние 7 дней",
+ "Last month": "Последние 30 дней",
+ "Last year": "Последние 12 месяцев",
+ "No requests in that period. Try a wider range.": "Нет запросов за этот период. Попробуйте более широкий диапазон."
 }
