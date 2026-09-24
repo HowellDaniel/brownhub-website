@@ -8,8 +8,8 @@
   //    have no email sender yet), or set up SMTP if you want confirmation mails.
   // 4. Project Settings -> API Data -> copy the Project URL and the publishable
   //    key into the two lines below, then commit.
-  var SB_URL = ""; // e.g. "https://abcdefgh1234567.supabase.co"
-  var SB_KEY = ""; // the PUBLISHABLE (anon) key only — never the service_role key
+  var SB_URL = "https://rmvyrfqyxgupwuzxadyx.supabase.co";
+  var SB_KEY = "sb_publishable_nfq7_vW3ajNQtMb0dq0BpQ_4I1CZM6x"; // publishable (anon) key: public by design, RLS guards the data
   // =============================================================================
 
   // Same-origin copy of @supabase/supabase-js 2.117.1 (sha256 dff1e545…a567),

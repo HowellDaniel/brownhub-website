@@ -1,7 +1,6 @@
 -- BrownHub client request history — paste this whole file into the Supabase SQL editor and Run.
 -- Clients can only ever read or write their own rows; nobody can read another client's enquiries.
-
-create extension if not exists pgcrypto with schema extensions;
+-- gen_random_uuid() is built into Postgres 13+, so no extension is needed here.
 
 create table if not exists public.requests (
   id          uuid primary key default gen_random_uuid(),
@@ -43,3 +42,7 @@ create policy "clients insert own requests"
 
 revoke all on table public.requests from anon;
 grant select, insert on table public.requests to authenticated;
+
+-- Run this last to confirm it worked; it should print "requests".
+select to_regclass('public.requests') as created,
+       (select count(*) from pg_policies where tablename = 'requests') as policies;
