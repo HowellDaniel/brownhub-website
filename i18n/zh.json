@@ -461,5 +461,16 @@
  "Last week": "最近 7 天",
  "Last month": "最近 30 天",
  "Last year": "最近 12 个月",
- "No requests in that period. Try a wider range.": "该时间段内没有请求。请选择更长的时间范围。"
+ "No requests in that period. Try a wider range.": "该时间段内没有请求。请选择更长的时间范围。",
+ "Forgot password?": "忘记密码？",
+ "Back to log in": "返回登录",
+ "Send reset link": "发送重置链接",
+ "Save new password": "保存新密码",
+ "Set a new password": "设置新密码",
+ "New password": "新密码",
+ "Enter your email and we'll send you a link to choose a new password.": "请输入您的邮箱，我们会发送一个链接让您设置新密码。",
+ "Choose a new password for your account.": "为您的账号选择一个新密码。",
+ "If that email has an account with us, a reset link is on its way. Open it, then return here to choose a new password.": "如果该邮箱已注册账号，重置链接已经发出。请打开链接，再回到这里设置新密码。",
+ "Choose a password you haven't used before.": "请选择一个您从未使用过的密码。",
+ "Too many reset emails right now. Please wait a while and try again.": "重置邮件发送过于频繁，请稍后再试。"
 }

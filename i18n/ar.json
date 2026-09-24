@@ -461,5 +461,16 @@
  "Last week": "آخر 7 أيام",
  "Last month": "آخر 30 يوماً",
  "Last year": "آخر 12 شهراً",
- "No requests in that period. Try a wider range.": "لا توجد طلبات في تلك الفترة. جرّب مدى أوسع."
+ "No requests in that period. Try a wider range.": "لا توجد طلبات في تلك الفترة. جرّب مدى أوسع.",
+ "Forgot password?": "نسيت كلمة المرور؟",
+ "Back to log in": "العودة إلى تسجيل الدخول",
+ "Send reset link": "إرسال رابط إعادة التعيين",
+ "Save new password": "حفظ كلمة المرور الجديدة",
+ "Set a new password": "تعيين كلمة مرور جديدة",
+ "New password": "كلمة المرور الجديدة",
+ "Enter your email and we'll send you a link to choose a new password.": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لاختيار كلمة مرور جديدة.",
+ "Choose a new password for your account.": "اختر كلمة مرور جديدة لحسابك.",
+ "If that email has an account with us, a reset link is on its way. Open it, then return here to choose a new password.": "إذا كان لهذا البريد حساب لدينا، فرابط إعادة التعيين في طريقه إليك. افتحه ثم عد إلى هنا لاختيار كلمة مرور جديدة.",
+ "Choose a password you haven't used before.": "اختر كلمة مرور لم تستخدمها من قبل.",
+ "Too many reset emails right now. Please wait a while and try again.": "تم إرسال رسائل كثيرة لإعادة التعيين الآن. انتظر قليلًا ثم حاول مجددًا."
 }

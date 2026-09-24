@@ -461,5 +461,16 @@
  "Last week": "Últimos 7 días",
  "Last month": "Últimos 30 días",
  "Last year": "Últimos 12 meses",
- "No requests in that period. Try a wider range.": "No hay solicitudes en ese período. Prueba un rango más amplio."
+ "No requests in that period. Try a wider range.": "No hay solicitudes en ese período. Prueba un rango más amplio.",
+ "Forgot password?": "¿Olvidaste tu contraseña?",
+ "Back to log in": "Volver a iniciar sesión",
+ "Send reset link": "Enviar enlace de recuperación",
+ "Save new password": "Guardar la contraseña nueva",
+ "Set a new password": "Define una contraseña nueva",
+ "New password": "Contraseña nueva",
+ "Enter your email and we'll send you a link to choose a new password.": "Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.",
+ "Choose a new password for your account.": "Elige una contraseña nueva para tu cuenta.",
+ "If that email has an account with us, a reset link is on its way. Open it, then return here to choose a new password.": "Si ese correo tiene una cuenta con nosotros, el enlace de recuperación está de camino. Ábrelo y vuelve aquí para elegir una contraseña nueva.",
+ "Choose a password you haven't used before.": "Elige una contraseña que no hayas usado antes.",
+ "Too many reset emails right now. Please wait a while and try again.": "Ahora mismo hay demasiados correos de recuperación. Espera un rato e inténtalo de nuevo."
 }

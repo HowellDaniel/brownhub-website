@@ -461,5 +461,16 @@
  "Last week": "7 derniers jours",
  "Last month": "30 derniers jours",
  "Last year": "12 derniers mois",
- "No requests in that period. Try a wider range.": "Aucune demande sur cette période. Essayez une période plus large."
+ "No requests in that period. Try a wider range.": "Aucune demande sur cette période. Essayez une période plus large.",
+ "Forgot password?": "Mot de passe oublié ?",
+ "Back to log in": "Retour à la connexion",
+ "Send reset link": "Envoyer le lien de réinitialisation",
+ "Save new password": "Enregistrer le nouveau mot de passe",
+ "Set a new password": "Définir un nouveau mot de passe",
+ "New password": "Nouveau mot de passe",
+ "Enter your email and we'll send you a link to choose a new password.": "Saisissez votre e-mail : nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+ "Choose a new password for your account.": "Choisissez un nouveau mot de passe pour votre compte.",
+ "If that email has an account with us, a reset link is on its way. Open it, then return here to choose a new password.": "Si cet e-mail correspond à un compte chez nous, un lien de réinitialisation arrive. Ouvrez-le, puis revenez ici choisir un nouveau mot de passe.",
+ "Choose a password you haven't used before.": "Choisissez un mot de passe que vous n'avez jamais utilisé.",
+ "Too many reset emails right now. Please wait a while and try again.": "Trop d'e-mails de réinitialisation pour le moment. Patientez un instant, puis réessayez."
 }

@@ -461,5 +461,16 @@
  "Last week": "पिछले 7 दिन",
  "Last month": "पिछले 30 दिन",
  "Last year": "पिछले 12 महीने",
- "No requests in that period. Try a wider range.": "इस अवधि में कोई अनुरोध नहीं है। कोई बड़ी अवधि चुनें।"
+ "No requests in that period. Try a wider range.": "इस अवधि में कोई अनुरोध नहीं है। कोई बड़ी अवधि चुनें।",
+ "Forgot password?": "पासवर्ड भूल गए?",
+ "Back to log in": "लॉग इन पर वापस जाएँ",
+ "Send reset link": "रीसेट लिंक भेजें",
+ "Save new password": "नया पासवर्ड सेव करें",
+ "Set a new password": "नया पासवर्ड सेट करें",
+ "New password": "नया पासवर्ड",
+ "Enter your email and we'll send you a link to choose a new password.": "अपना ईमेल दर्ज करें; हम आपको नया पासवर्ड चुनने का लिंक भेज देंगे।",
+ "Choose a new password for your account.": "अपने अकाउंट के लिए नया पासवर्ड चुनें।",
+ "If that email has an account with us, a reset link is on its way. Open it, then return here to choose a new password.": "अगर इस ईमेल से हमारे पास अकाउंट है, रीसेट लिंक भेज दिया गया है। उसे खोलें, फिर नया पासवर्ड चुनने के लिए यहाँ लौटें।",
+ "Choose a password you haven't used before.": "ऐसा पासवर्ड चुनें जो आपने पहले कभी इस्तेमाल न किया हो।",
+ "Too many reset emails right now. Please wait a while and try again.": "अभी बहुत अधिक रीसेट ईमेल भेजे गए हैं। कुछ देर रुकें और फिर कोशिश करें।"
 }

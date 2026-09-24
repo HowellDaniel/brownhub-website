@@ -461,5 +461,16 @@
  "Last week": "Nna 7 a atwa nkyira",
  "Last month": "Nna 30 a atwa nkyira",
  "Last year": "Mfim 12 a atwa nkyira",
- "No requests in that period. Try a wider range.": "Nnsrɛbɛn biara nni saa no mu. Sɔ bere tenten biara hwɛ."
+ "No requests in that period. Try a wider range.": "Nnsrɛbɛn biara nni saa no mu. Sɔ bere tenten biara hwɛ.",
+ "Forgot password?": "Wo frɛ wo paswɔdeɛ?",
+ "Back to log in": "San hyɛ mu",
+ "Send reset link": "Soma link a ɛsesa paswɔdeɛ",
+ "Save new password": "Sie paswɔdeɛ foforɔ no",
+ "Set a new password": "Yɛ paswɔdeɛ foforɔ",
+ "New password": "Paswɔdeɛ foforɔ",
+ "Enter your email and we'll send you a link to choose a new password.": "Fa wo email hyɛ mu na yɛnsoma wo link a so wobɛfa asiya paswɔdeɛ foforɔ.",
+ "Choose a new password for your account.": "Fi asiya paswɔdeɛ foforɔ ma wo account.",
+ "If that email has an account with us, a reset link is on its way. Open it, then return here to choose a new password.": "Sɛ saa email no wɔ account yɛn nkyɛn a, link a ɛsesa paswɔdeɛ wɔ berɛ so. Bue no, na san bra ha fi asiya paswɔdeɛ foforɔ.",
+ "Choose a password you haven't used before.": "Fi asiya paswɔdeɛ a woanna di dwuma nkyɛn da.",
+ "Too many reset emails right now. Please wait a while and try again.": "Email a ɛsesa paswɔdeɛ dɔe pii seesei. Tɛn kakra na sɔ bio."
 }

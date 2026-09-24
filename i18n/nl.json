@@ -461,5 +461,16 @@
  "Last week": "Afgelopen 7 dagen",
  "Last month": "Afgelopen 30 dagen",
  "Last year": "Afgelopen 12 maanden",
- "No requests in that period. Try a wider range.": "Geen aanvragen in die periode. Probeer een bredere periode."
+ "No requests in that period. Try a wider range.": "Geen aanvragen in die periode. Probeer een bredere periode.",
+ "Forgot password?": "Wachtwoord vergeten?",
+ "Back to log in": "Terug naar inloggen",
+ "Send reset link": "Link voor opnieuw instellen sturen",
+ "Save new password": "Nieuw wachtwoord opslaan",
+ "Set a new password": "Stel een nieuw wachtwoord in",
+ "New password": "Nieuw wachtwoord",
+ "Enter your email and we'll send you a link to choose a new password.": "Vul je e-mailadres in, dan sturen we je een link om een nieuw wachtwoord te kiezen.",
+ "Choose a new password for your account.": "Kies een nieuw wachtwoord voor je account.",
+ "If that email has an account with us, a reset link is on its way. Open it, then return here to choose a new password.": "Als dit e-mailadres een account bij ons heeft, is de link voor opnieuw instellen onderweg. Open de link en kom hier terug om een nieuw wachtwoord te kiezen.",
+ "Choose a password you haven't used before.": "Kies een wachtwoord dat je nog nooit gebruikt hebt.",
+ "Too many reset emails right now. Please wait a while and try again.": "Op dit moment te veel links voor opnieuw instellen. Wacht even en probeer het opnieuw."
 }

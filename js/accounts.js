@@ -44,8 +44,25 @@
     "A user with that email address already exists.": "An account with that email already exists. Try logging in.",
     "Password should be at least 8 characters": "Use at least 8 characters for your password.",
     "Unable to validate user with provided password": "Use at least 8 characters for your password.",
+    "New password should be different from the old password.": "Choose a password you haven't used before.",
+    "Email rate limit exceeded": "Too many reset emails right now. Please wait a while and try again.",
     "Network request failed": "We couldn't reach the account service. Check your connection and try again.",
     "Failed to fetch": "We couldn't reach the account service. Check your connection and try again."
+  };
+
+  // The form doubles as the sign-in, sign-up and two reset steps, so each mode
+  // keeps its own wording in these tables rather than in branching code.
+  var SUBMIT_LABEL = {
+    login: "Log in",
+    signup: "Create my account",
+    forgot: "Send reset link",
+    newpass: "Save new password"
+  };
+  var LEDES = {
+    login: "Sign up to keep a record of every request you send us, and re-order any of them in one tap.",
+    signup: "Sign up to keep a record of every request you send us, and re-order any of them in one tap.",
+    forgot: "Enter your email and we'll send you a link to choose a new password.",
+    newpass: "Choose a new password for your account."
   };
 
   // The enquiry form works whether or not accounts are configured, so expose the
@@ -98,10 +115,13 @@
   var configured = /^https:\/\/[a-z0-9-]+\.supabase\.[a-z]{2,}$/i.test(SB_API_URL) && isPublishable(SB_API_KEY);
 
   var navLi, modal, card, tabs, form, noteEl, nameField, nameInp, emailInp, passInp;
+  var passField, passLabel, linkBtn, emailField;
   var submitBtn, lede, titleEl, authView, historyView, who, list, empty, logoutBtn, tabLogin, tabSignup;
   var filterSel, trigger;
   var client = null, sdkPromise = null, session = null, rows = [], shown = [], mode = "login", busy = false, opener = null;
   var period = "all";
+  // True between opening a reset link and saving the new password it authorises.
+  var resetting = false;
 
   if (configured) build();
 
@@ -140,10 +160,11 @@
           '<form id="acct-form" novalidate>' +
             '<label class="acct-field" id="acct-name-field" hidden>Name' +
               '<input type="text" id="acct-name" autocomplete="name" placeholder="Your name"></label>' +
-            '<label class="acct-field">Email' +
+            '<label class="acct-field" id="acct-email-field">Email' +
               '<input type="email" id="acct-email" autocomplete="email" placeholder="you@example.com" required></label>' +
-            '<label class="acct-field">Password' +
+            '<label class="acct-field" id="acct-pass-field"><span id="acct-pass-label">Password</span>' +
               '<input type="password" id="acct-pass" autocomplete="current-password" placeholder="At least 8 characters" required></label>' +
+            '<button type="button" class="acct-link" id="acct-link" hidden>Forgot password?</button>' +
             '<button type="submit" class="btn btn--primary btn--block" id="acct-submit">Log in</button>' +
             '<p class="acct-note" id="acct-note" role="status" aria-live="polite"></p>' +
           '</form>' +
@@ -166,6 +187,8 @@
     tabs = $("acct-tabs"); form = $("acct-form"); noteEl = $("acct-note");
     nameField = $("acct-name-field"); nameInp = $("acct-name");
     emailInp = $("acct-email"); passInp = $("acct-pass");
+    emailField = $("acct-email-field");
+    passField = $("acct-pass-field"); passLabel = $("acct-pass-label"); linkBtn = $("acct-link");
     submitBtn = $("acct-submit"); lede = $("acct-lede"); titleEl = $("acct-title");
     authView = form; historyView = $("acct-history"); who = $("acct-who");
     list = $("acct-list"); empty = $("acct-empty"); logoutBtn = $("acct-logout");
@@ -176,6 +199,14 @@
     trigger.addEventListener("click", togglePanel);
     tabLogin.addEventListener("click", function () { setMode("login"); });
     tabSignup.addEventListener("click", function () { setMode("signup"); });
+    linkBtn.addEventListener("click", function () {
+      if (busy) return;
+      // In login this link opens the reset form; there it (and the recovery view)
+      // is the only way back, so the same control carries both labels.
+      resetting = false;
+      setMode(mode === "login" ? "forgot" : "login");
+      emailInp.focus();
+    });
     form.addEventListener("submit", submit);
     logoutBtn.addEventListener("click", logout);
     list.addEventListener("click", onListClick);
@@ -203,6 +234,7 @@
     });
 
     window.BHAccounts = { open: openPanel, signedIn: function () { return !!session; }, record: record };
+    catchRecovery();
   }
 
   // ---- dropdown panel --------------------------------------------------------
@@ -259,7 +291,7 @@
       });
       client.auth.onAuthStateChange(function (event, s) {
         session = s;
-        if (event === "SIGNED_OUT") { rows = []; showAuth(); }
+        if (event === "SIGNED_OUT") { rows = []; resetting = false; showAuth(); }
       });
     }
     return client;
@@ -351,7 +383,8 @@
     logoutBtn.disabled = busy;
     tabLogin.disabled = busy;
     tabSignup.disabled = busy;
-    txt(submitBtn, busy ? "Please wait…" : (mode === "signup" ? "Create my account" : "Log in"));
+    linkBtn.disabled = busy;
+    txt(submitBtn, busy ? "Please wait…" : SUBMIT_LABEL[mode]);
   }
 
   function note(msg) { txt(noteEl, msg || ""); }
@@ -359,30 +392,45 @@
   function setMode(next) {
     mode = next;
     var signup = mode === "signup";
+    var forgot = mode === "forgot";
+    var newpass = mode === "newpass";
+    var switching = forgot || newpass;
     nameField.hidden = !signup;
-    tabs.hidden = false;
-    tabLogin.classList.toggle("is-active", !signup);
-    tabSignup.classList.toggle("is-active", signup);
-    tabLogin.setAttribute("aria-pressed", signup ? "false" : "true");
-    tabSignup.setAttribute("aria-pressed", signup ? "true" : "false");
-    passInp.setAttribute("autocomplete", signup ? "new-password" : "current-password");
-    passInp.placeholder = signup ? "At least 8 characters" : "Your password";
-    if (!busy) txt(submitBtn, signup ? "Create my account" : "Log in");
+    // The reset ask needs an address only; the new password needs nothing but itself.
+    passField.hidden = forgot;
+    emailField.hidden = newpass;
+    tabs.hidden = switching;
+    if (!switching) {
+      tabLogin.classList.toggle("is-active", !signup);
+      tabSignup.classList.toggle("is-active", signup);
+      tabLogin.setAttribute("aria-pressed", signup ? "false" : "true");
+      tabSignup.setAttribute("aria-pressed", signup ? "true" : "false");
+    }
+    linkBtn.hidden = signup;
+    txt(linkBtn, mode === "login" ? "Forgot password?" : "Back to log in");
+    txt(passLabel, newpass ? "New password" : "Password");
+    passInp.setAttribute("autocomplete", signup || newpass ? "new-password" : "current-password");
+    passInp.placeholder = signup || newpass ? "At least 8 characters" : "Your password";
+    txt(lede, LEDES[mode]);
+    txt(titleEl, newpass ? "Set a new password" : "My requests");
+    if (!busy) txt(submitBtn, SUBMIT_LABEL[mode]);
     note("");
   }
 
   function showAuth() {
+    // A recovery session that has been dropped must not strand the panel on the
+    // new-password form, which only makes sense while one is live.
+    if (!resetting && mode === "newpass") mode = "login";
     authView.hidden = false;
     historyView.hidden = true;
     setMode(mode);
-    txt(lede, "Sign up to keep a record of every request you send us, and re-order any of them in one tap.");
-    txt(titleEl, "My requests");
   }
 
   function showHistory() {
     authView.hidden = true;
     historyView.hidden = false;
     tabs.hidden = true;
+    txt(titleEl, "My requests");
     txt(lede, "Requests you sent from this account, newest first.");
     who.textContent = "";
     who.appendChild(document.createTextNode("Signed in as"));
@@ -476,13 +524,13 @@
     trigger.setAttribute("aria-expanded", "true");
     document.body.style.overflow = "hidden";
     positionPanel();
-    if (session) showHistory(); else showAuth();
+    if (session && !resetting) showHistory(); else showAuth();
     restore().then(function (s) {
-      if (!s) return;
+      if (!s || resetting) return;
       showHistory();
       refresh();
     });
-    (session ? logoutBtn : emailInp).focus();
+    (resetting ? passInp : session ? logoutBtn : emailInp).focus();
   }
 
   function closeModal() {
@@ -512,15 +560,34 @@
     if (busy) return;
     var mail = emailInp.value.trim();
     var pass = passInp.value;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { note("Enter a valid email address."); emailInp.focus(); return; }
-    if (mode === "signup" ? pass.length < 8 : !pass) {
-      note(mode === "signup" ? "Use at least 8 characters for your password." : "Enter your password.");
-      passInp.focus();
-      return;
+    var minPass = mode === "signup" || mode === "newpass";
+    if (mode !== "newpass" && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { note("Enter a valid email address."); emailInp.focus(); return; }
+    if (mode !== "forgot") {
+      if (minPass ? pass.length < 8 : !pass) {
+        note(minPass ? "Use at least 8 characters for your password." : "Enter your password.");
+        passInp.focus();
+        return;
+      }
     }
     setBusy(true);
     note("");
     loadSdk().then(function () {
+      if (mode === "forgot") {
+        return sb().auth.resetPasswordForEmail(mail, { redirectTo: recoveryTarget() }).then(function (res) {
+          if (res.error) throw res.error;
+          setBusy(false);
+          // Same reply whether or not the address is registered, so the form can't be probed.
+          note("If that email has an account with us, a reset link is on its way. Open it, then return here to choose a new password.");
+        });
+      }
+      if (mode === "newpass") {
+        return sb().auth.updateUser({ password: pass }).then(function (res) {
+          if (res.error) throw res.error;
+          if (res.data && res.data.session) session = res.data.session;
+          resetting = false;
+          return afterIn();
+        });
+      }
       if (mode === "signup") {
         return sb().auth.signUp({
           email: mail,
@@ -557,10 +624,40 @@
       rows = [];
       shown = [];
       period = "all";
+      resetting = false;
       setBusy(false);
       showAuth();
       setMode("login");
       note("You are signed out.");
+    });
+  }
+
+  // ---- password recovery -----------------------------------------------------
+
+  // The mail lands back on the page the client was reading; accounts.js is on all
+  // five, so any of them finishes the flow. Query and hash are dropped because
+  // Supabase matches this against its own redirect allowlist.
+  function recoveryTarget() {
+    return location.origin + location.pathname;
+  }
+
+  // Implicit flow (this project's default) puts "type=recovery" in the fragment,
+  // which never reaches the server; PKCE would put a one-time code in the query.
+  function isRecoveryLink() {
+    return /(?:[#&?])type=recovery(?:&|$)/.test(location.href) || /[?&]code=[^&]+/.test(location.search);
+  }
+
+  function catchRecovery() {
+    if (!isRecoveryLink()) return;
+    resetting = true;
+    loadSdk().then(function () { return sb().auth.getSession(); }).then(function (res) {
+      var s = res && res.data && res.data.session;
+      if (!s) { resetting = false; return; }
+      session = s;
+      setMode("newpass");
+      openPanel();
+    }).catch(function () {
+      resetting = false;
     });
   }
 

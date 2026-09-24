@@ -461,5 +461,16 @@
  "Last week": "Последние 7 дней",
  "Last month": "Последние 30 дней",
  "Last year": "Последние 12 месяцев",
- "No requests in that period. Try a wider range.": "Нет запросов за этот период. Попробуйте более широкий диапазон."
+ "No requests in that period. Try a wider range.": "Нет запросов за этот период. Попробуйте более широкий диапазон.",
+ "Forgot password?": "Забыли пароль?",
+ "Back to log in": "Вернуться к входу",
+ "Send reset link": "Отправить ссылку для сброса",
+ "Save new password": "Сохранить новый пароль",
+ "Set a new password": "Задайте новый пароль",
+ "New password": "Новый пароль",
+ "Enter your email and we'll send you a link to choose a new password.": "Введите адрес электронной почты — мы отправим ссылку, чтобы вы выбрали новый пароль.",
+ "Choose a new password for your account.": "Выберите новый пароль для вашего аккаунта.",
+ "If that email has an account with us, a reset link is on its way. Open it, then return here to choose a new password.": "Если на этот адрес есть аккаунт, ссылка для сброса уже в пути. Откройте её и вернитесь сюда, чтобы задать новый пароль.",
+ "Choose a password you haven't used before.": "Выберите пароль, который вы ещё не использовали.",
+ "Too many reset emails right now. Please wait a while and try again.": "Сейчас слишком много писем для сброса. Подождите немного и попробуйте снова."
 }

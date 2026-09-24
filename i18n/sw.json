@@ -461,5 +461,16 @@
  "Last week": "Siku 7 zilizopita",
  "Last month": "Siku 30 zilizopita",
  "Last year": "Miezi 12 iliyopita",
- "No requests in that period. Try a wider range.": "Hakuna maombi katika kipindi hicho. Jaribu kipindi kikubwa zaidi."
+ "No requests in that period. Try a wider range.": "Hakuna maombi katika kipindi hicho. Jaribu kipindi kikubwa zaidi.",
+ "Forgot password?": "Umesahau nenosiri?",
+ "Back to log in": "Rudi kuingia",
+ "Send reset link": "Tuma kiungo cha kubadilisha nenosiri",
+ "Save new password": "Hifadhi nenosiri jipya",
+ "Set a new password": "Weka nenosiri jipya",
+ "New password": "Nenosiri jipya",
+ "Enter your email and we'll send you a link to choose a new password.": "Andika barua pepe yako, tutakutumia kiungo cha kuchagua nenosiri jipya.",
+ "Choose a new password for your account.": "Chagua nenosiri jipya kwa akaunti yako.",
+ "If that email has an account with us, a reset link is on its way. Open it, then return here to choose a new password.": "Ikiwa barua pepe hiyo ina akaunti nasi, kiungo cha kubadilisha nenosiri kimetumwa. Fungua, kisha rudi hapa kuchagua nenosiri jipya.",
+ "Choose a password you haven't used before.": "Chagua nenosiri ambalo hujawahi kutumia.",
+ "Too many reset emails right now. Please wait a while and try again.": "Barua pepe za kubadilisha nenosiri ni nyingi sana sasa hivi. Subiri kitambo kisha ujaribu tena."
 }
