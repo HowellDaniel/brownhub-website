@@ -443,3 +443,25 @@ html[data-theme="light"]{--glass-fill:rgba(255,255,255,.66);--glass-fill-alt:rgb
    to read as glass rather than as grey. */
 html[data-theme="light"] :is(.modal__card,.chat-widget__panel){--glass-fill:rgba(255,255,255,.88)}
 @media (prefers-reduced-motion:reduce){:is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success)::after,.faq details::after{transition:none}}
+
+/* ---- The page behind the glass ----
+   Frost only reads as frost when something moves behind it, so the page carries a
+   slow colour field, and the wide bands become lit shelves of the same pane rather
+   than flat blocks of grey. No compositing blur here: these layers span the whole
+   viewport, where a blur would cost far more than it is worth. */
+:root{--amb-1:rgba(224,138,60,.17);--amb-2:rgba(64,116,196,.13);--amb-3:rgba(224,138,60,.10);
+  --glass-band:rgba(255,255,255,.05);--glass-chip:rgba(255,255,255,.07)}
+html[data-theme="light"]{--amb-1:rgba(224,138,60,.14);--amb-2:rgba(64,116,196,.10);--amb-3:rgba(224,138,60,.08);
+  --glass-band:rgba(26,34,45,.038);--glass-chip:rgba(26,34,45,.05)}
+body::before{content:"";position:fixed;inset:-18% -12%;z-index:-1;pointer-events:none;
+  background:radial-gradient(38rem 26rem at 14% 6%,var(--amb-1),transparent 70%),
+    radial-gradient(34rem 24rem at 88% 24%,var(--amb-2),transparent 72%),
+    radial-gradient(42rem 30rem at 50% 98%,var(--amb-3),transparent 70%);
+  animation:amb-drift 38s ease-in-out infinite alternate}
+@keyframes amb-drift{to{transform:translate3d(2.5%,-2%,0) scale(1.07)}}
+.section--alt,.site-footer,.cta{background-color:var(--glass-band);background-image:var(--glass-sheen-grad)}
+.site-footer{border-top-color:var(--glass-fill-hair)}
+:is(.chat-widget__head,.chat-widget__voice){background-color:var(--glass-chip);border-color:var(--glass-fill-hair)}
+/* Status pills keep their own coloured edge; they only gain the glass fill. */
+.acct-pill{background-color:var(--glass-chip)}
+@media (prefers-reduced-motion:reduce){body::before{animation:none}}
