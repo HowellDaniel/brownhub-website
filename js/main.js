@@ -44,6 +44,22 @@
     thicken();
   }
 
+  // The same highlight rides the glass panes; the selector mirrors the ::after
+  // group in style.css, and CSS fades it in on :hover without any help from us.
+  const GLASS_PANES = ".card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success,.faq details";
+  let paneFrame;
+  document.addEventListener("pointermove", (e) => {
+    if (e.pointerType === "touch") return;
+    const pane = e.target.closest && e.target.closest(GLASS_PANES);
+    if (!pane) return;
+    cancelAnimationFrame(paneFrame);
+    paneFrame = requestAnimationFrame(() => {
+      const r = pane.getBoundingClientRect();
+      pane.style.setProperty("--gx", `${((e.clientX - r.left) / Math.max(r.width, 1)) * 100}%`);
+      pane.style.setProperty("--gy", `${((e.clientY - r.top) / Math.max(r.height, 1)) * 100}%`);
+    });
+  }, { passive: true });
+
   document.querySelectorAll("[data-count]").forEach((el) => {
     const target = parseInt(el.dataset.count, 10);
     const observer = new IntersectionObserver((entries) => {

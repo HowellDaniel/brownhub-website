@@ -400,8 +400,46 @@ html[data-theme="light"]{--glass-hair:rgba(255,255,255,.95);--glass-hair-soft:rg
   -webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7)}}
 /* Without compositing the bar falls back to the flat opaque header it had before. */
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  :root,html[data-theme="light"]{--glass-fill:var(--surface);--glass-fill-alt:var(--bg-alt)}
   .site-header::before{background:var(--bg);box-shadow:0 1px 0 var(--border)}
   .site-header::after{display:none}
   .site-header .nav__menu{background:var(--bg)}
 }
 @media (prefers-reduced-motion:reduce){.site-header::after,.site-header .nav__link--cta,.site-header .lang-select,.site-header .theme-toggle{transition:none}}
+
+/* ---- Liquid glass on every shape ----
+   The bar's pane at card scale: a translucent fill that samples what sits behind
+   it, a lit top edge, and on the large panes a highlight that trails the pointer.
+   Fields and small controls take the fill without the compositing blur, so text
+   read at close range stays crisp. */
+:root{--glass-fill:rgba(27,34,44,.62);--glass-fill-alt:rgba(21,26,33,.62);--glass-fill-hair:rgba(255,255,255,.16);
+  --glass-inset:inset 0 1px 0 rgba(255,255,255,.1);--glass-glow-card:rgba(255,255,255,.1);
+  --glass-sheen-grad:linear-gradient(180deg,var(--glass-sheen),rgba(255,255,255,0) 58%)}
+html[data-theme="light"]{--glass-fill:rgba(255,255,255,.66);--glass-fill-alt:rgba(255,255,255,.56);--glass-fill-hair:rgba(26,34,45,.13);
+  --glass-inset:inset 0 1px 0 rgba(255,255,255,.9);--glass-glow-card:rgba(255,255,255,.62)}
+:is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.chat-widget__panel,.shot,.form-success,.btn--ghost,.filter__btn),.faq details,.chat-widget__chips button{
+  background-color:var(--glass-fill);background-image:var(--glass-sheen-grad);border-color:var(--glass-fill-hair);
+  box-shadow:var(--glass-inset);-webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6)}
+:is(.more-item,.chat-msg--bot,.acct-item,.acct-filter,.acct-tabs,.msg-voice,.chat-widget__mic),.footer-social a,.acct-field input,.acct-filter select,.form-field input,.form-field select,.form-field textarea{
+  background-color:var(--glass-fill);border-color:var(--glass-fill-hair);box-shadow:var(--glass-inset)}
+:is(.more-item,.chat-msg--bot,.acct-item,.acct-filter,.acct-tabs,.msg-voice){background-color:var(--glass-fill-alt)}
+:is(.hero__card,.chat-widget__panel,.modal__card){box-shadow:var(--glass-inset),var(--shadow)}
+:is(.btn--primary,.avatar,.step__num,.chat-widget__toggle,.msg-mic,.form-success__icon,.chat-msg--user,.modal__close,.shot__zoom),.chat-widget__form button{
+  background-image:var(--glass-sheen-grad);box-shadow:inset 0 1px 0 var(--glass-hair),0 6px 16px -9px rgba(0,0,0,.5)}
+:is(.filter__btn.is-active,.acct-tab.is-active){background-image:var(--glass-sheen-grad);box-shadow:inset 0 1px 0 var(--glass-hair)}
+/* These states repaint with the `background` shorthand, which would drop the sheen. */
+:is(.btn--primary:hover,.chat-widget__toggle:hover,.chat-widget__toggle:focus-visible,.msg-mic:hover,.footer-social a:hover,.footer-social a:focus-visible,.form-success__icon,.acct-tab.is-active,.filter__btn.is-active,.chat-widget__chips button:hover){background-image:var(--glass-sheen-grad)}
+.form-success,.chat-widget__chips button{border-color:var(--accent)}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--accent)}
+:is(.card,.feature,.step,.product-card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success),.faq details{position:relative;isolation:isolate;--gx:50%;--gy:-60%}
+/* The hero cards are already absolutely placed; they only need the highlight vars. */
+.hero__card{isolation:isolate;--gx:50%;--gy:-60%}
+:is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success)::after,.faq details::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;border-radius:inherit;
+  transition:opacity .45s ease;background:radial-gradient(11rem 7rem at var(--gx) var(--gy),var(--glass-glow-card),rgba(255,255,255,0) 70%)}
+:is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success):hover::after,.faq details:hover::after{opacity:1}
+.modal__close{z-index:2}
+/* A dialog sits on a dark scrim, so in the light theme its frost needs more white
+   to read as glass rather than as grey. */
+html[data-theme="light"] :is(.modal__card,.chat-widget__panel){--glass-fill:rgba(255,255,255,.88)}
+@media (prefers-reduced-motion:reduce){:is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success)::after,.faq details::after{transition:none}}
