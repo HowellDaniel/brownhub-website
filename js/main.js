@@ -15,6 +15,35 @@
     });
   }
 
+  // Liquid glass: the bar's specular highlight trails the pointer across it and
+  // the frost thickens once content scrolls underneath.
+  const header = document.querySelector(".site-header");
+  if (header) {
+    let glassFrame;
+    const moveGlow = (x, y) => {
+      cancelAnimationFrame(glassFrame);
+      glassFrame = requestAnimationFrame(() => {
+        const r = header.getBoundingClientRect();
+        header.style.setProperty("--gx", `${((x - r.left) / Math.max(r.width, 1)) * 100}%`);
+        header.style.setProperty("--gy", `${((y - r.top) / Math.max(r.height, 1)) * 100}%`);
+      });
+    };
+    header.addEventListener("pointerenter", (e) => {
+      if (e.pointerType === "touch") return;
+      moveGlow(e.clientX, e.clientY);
+      header.classList.add("is-glass-hot");
+    });
+    header.addEventListener("pointermove", (e) => {
+      if (e.pointerType === "touch") return;
+      moveGlow(e.clientX, e.clientY);
+    }, { passive: true });
+    header.addEventListener("pointerleave", () => header.classList.remove("is-glass-hot"));
+    const thicken = () => header.classList.toggle("is-glass-scrolled", window.scrollY > 8);
+    window.addEventListener("scroll", thicken, { passive: true });
+    window.addEventListener("resize", thicken, { passive: true });
+    thicken();
+  }
+
   document.querySelectorAll("[data-count]").forEach((el) => {
     const target = parseInt(el.dataset.count, 10);
     const observer = new IntersectionObserver((entries) => {

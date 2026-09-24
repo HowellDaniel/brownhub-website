@@ -358,3 +358,50 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
 .acct-pill--closed{opacity:.7}
 [data-theme="light"] .acct-pill--delivered{color:#1f7a4d;border-color:rgba(31,122,77,.45)}
 @media (max-width:840px){.acct-item__actions .btn{flex:1 1 auto}.acct-item__actions .btn,.acct-tab,#acct-logout{min-height:44px}}
+
+/* ---- Liquid glass nav bar -------------------------------------------------
+   A single frosted layer samples whatever scrolls underneath it; the lit top
+   hairline, the inner bottom edge and the highlight that follows the pointer are
+   what read as the thickness of the glass. */
+:root{--glass-blur:26px;--glass-hair:rgba(255,255,255,.34);--glass-hair-soft:rgba(255,255,255,.26);
+  --glass-sheen:rgba(255,255,255,.08);--glass-edge:rgba(255,255,255,.12);--glass-glow:rgba(255,255,255,.15);
+  --glass-veil:rgba(5,8,12,0);--glass-veil-on:rgba(5,8,12,.32);--glass-drop:0 12px 26px -20px rgba(0,0,0,.75);
+  --glass-ctl-bg:rgba(255,255,255,.08);--glass-ctl-hair:rgba(255,255,255,.26)}
+html[data-theme="light"]{--glass-hair:rgba(255,255,255,.95);--glass-hair-soft:rgba(255,255,255,.75);
+  --glass-sheen:rgba(255,255,255,.5);--glass-edge:rgba(26,34,45,.14);--glass-glow:rgba(255,255,255,.8);
+  --glass-veil:rgba(255,255,255,0);--glass-veil-on:rgba(255,255,255,.5);--glass-drop:0 12px 26px -20px rgba(26,34,45,.35);
+  --glass-ctl-bg:rgba(26,34,45,.05);--glass-ctl-hair:rgba(26,34,45,.18)}
+.site-header{position:sticky;top:0;z-index:100;isolation:isolate;background:none;border-bottom:0;
+  backdrop-filter:none;-webkit-backdrop-filter:none;--gx:50%;--gy:-60%}
+.site-header.is-glass-scrolled{--glass-blur:34px;--glass-veil:var(--glass-veil-on)}
+.site-header::before{content:"";position:absolute;inset:0;z-index:-1;border-top:1px solid var(--glass-hair);
+  background-color:var(--header-bg);background-image:linear-gradient(180deg,var(--glass-sheen),rgba(255,255,255,0) 46%),linear-gradient(var(--glass-veil),var(--glass-veil));
+  box-shadow:inset 0 -1px 0 var(--glass-edge),0 1px 0 var(--border),var(--glass-drop);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.75) brightness(1.05);
+  backdrop-filter:blur(var(--glass-blur)) saturate(1.75) brightness(1.05)}
+.site-header::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;
+  transition:opacity .5s ease;
+  background:radial-gradient(12rem 6.5rem at var(--gx) var(--gy),var(--glass-glow),rgba(255,255,255,0) 70%),
+    linear-gradient(180deg,rgba(255,255,255,0) 58%,var(--glass-sheen))}
+.site-header.is-glass-hot::after{opacity:1}
+.site-header .nav{position:relative;z-index:1}
+.site-header .nav__link--cta{border:1px solid var(--glass-hair-soft);
+  background:linear-gradient(180deg,var(--glass-sheen),rgba(255,255,255,0) 58%),var(--accent);
+  box-shadow:inset 0 1px 0 var(--glass-hair),0 6px 16px -9px rgba(0,0,0,.6);
+  -webkit-backdrop-filter:blur(8px) saturate(1.5);backdrop-filter:blur(8px) saturate(1.5)}
+.site-header .nav__link--cta:hover{box-shadow:inset 0 1px 0 var(--glass-hair),0 0 0 3px rgba(224,138,60,.18),0 8px 20px -10px rgba(0,0,0,.6)}
+.site-header .lang-select{background-color:var(--glass-ctl-bg);border-color:var(--glass-ctl-hair);
+  box-shadow:inset 0 1px 0 var(--glass-hair);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.site-header .theme-toggle{background-color:var(--glass-ctl-bg);border-color:var(--glass-ctl-hair);
+  box-shadow:inset 0 1px 0 var(--glass-hair),0 6px 16px -10px rgba(0,0,0,.55);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+@media (max-width:840px){.site-header .nav__menu{background:var(--header-bg);border-bottom:1px solid var(--border);
+  box-shadow:inset 0 1px 0 var(--glass-hair),0 20px 34px -24px rgba(0,0,0,.7);
+  -webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7)}}
+/* Without compositing the bar falls back to the flat opaque header it had before. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .site-header::before{background:var(--bg);box-shadow:0 1px 0 var(--border)}
+  .site-header::after{display:none}
+  .site-header .nav__menu{background:var(--bg)}
+}
+@media (prefers-reduced-motion:reduce){.site-header::after,.site-header .nav__link--cta,.site-header .lang-select,.site-header .theme-toggle{transition:none}}
