@@ -173,6 +173,8 @@
     }
     say("");
     loadPk().then(function () {
+      // setup() only builds the checkout frame in hiding; openIframe() is what the
+      // buyer actually sees, so a missing call leaves the button doing nothing.
       window.PaystackPop.setup({
         key: PK_LIVE,
         channels: CHANNELS,
@@ -183,7 +185,7 @@
         metadata: { custom_fields: [{ display_name: "Item", variable_name: "bh_item", value: item.name }] },
         callback: function (res) { paid(item, res); },
         onClose: function () { say("Payment not completed. Try again, or send us the brief and we will quote it."); }
-      });
+      }).openIframe();
     }).catch(function () { quote(item); });
   }
 
