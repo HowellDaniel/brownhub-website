@@ -9,6 +9,13 @@
   // Paystack's hosted checkout frame, fetched on the first tap of a pay button so
   // a visitor who never buys never downloads a third-party script.
   var PK_SRC = "https://js.paystack.co/v1/inline.js";
+  // Ways a buyer can pay in the popup. Ghana options are card, mobile_money and
+  // bank_transfer; Paystack hides any channel the account has not switched on.
+  var CHANNELS = ["card", "mobile_money", "bank_transfer"];
+  // Anything that is not a public key is treated as no key. This is the guard that
+  // keeps a pasted sk_... secret from being published to the whole internet, since
+  // this file is served to every visitor.
+  var PK_LIVE = /^pk_[a-z0-9_]+$/i.test(PK_KEY.trim()) ? PK_KEY.trim() : "";
 
   // ===== 2. What the studio sells, priced in Ghana cedis ======================
   // A price of 0 means "the studio has not set one yet": that card then asks for
@@ -157,7 +164,7 @@
     // Ask for an email only once there is actually a payment to make: the receipt
     // field stays hidden while nothing is priced, so checking it first would send
     // visitors to an input they cannot see.
-    if (!PK_KEY || !item.price) { quote(item); return; }
+    if (!PK_LIVE || !item.price) { quote(item); return; }
     var mail = emailOf();
     if (!mail || mail.indexOf("@") < 1) {
       say("Add your email first, so we can send the receipt.");
@@ -167,7 +174,8 @@
     say("");
     loadPk().then(function () {
       window.PaystackPop.setup({
-        key: PK_KEY,
+        key: PK_LIVE,
+        channels: CHANNELS,
         email: mail,
         amount: Math.round(item.price * 100),
         currency: CURRENCY,
@@ -216,8 +224,8 @@
   function renderInto(host, items) {
     if (!host) return;
     host.textContent = "";
-    items.forEach(function (i) { host.appendChild(card(i, i.price > 0 && !!PK_KEY)); });
-    if (emailRow && items.some(function (i) { return i.price > 0 && PK_KEY; })) emailRow.hidden = false;
+    items.forEach(function (i) { host.appendChild(card(i, i.price > 0 && !!PK_LIVE)); });
+    if (emailRow && items.some(function (i) { return i.price > 0 && PK_LIVE; })) emailRow.hidden = false;
   }
 
   function mount(name) { return document.querySelector('[data-store="' + name + '"]'); }
@@ -268,7 +276,7 @@
     // The card-details promise is only true once a Paystack key exists, and the
     // line ships hidden so it never flashes on ahead of this script.
     var secure = mount("secure");
-    if (secure) secure.hidden = !PK_KEY;
+    if (secure) secure.hidden = !PK_LIVE;
     renderInto(mount("packages"), PACKAGES);
     renderInto(mount("slots"), SLOTS);
     renderTools();
@@ -290,6 +298,6 @@
     packages: PACKAGES,
     slots: SLOTS,
     pay: buy,
-    configured: function () { return !!PK_KEY; }
+    configured: function () { return !!PK_LIVE; }
   };
 })();
