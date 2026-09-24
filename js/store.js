@@ -148,13 +148,16 @@
   }
 
   function buy(item) {
+    // Ask for an email only once there is actually a payment to make: the receipt
+    // field stays hidden while nothing is priced, so checking it first would send
+    // visitors to an input they cannot see.
+    if (!PK_KEY || !item.price) { quote(item); return; }
     var mail = emailOf();
     if (!mail || mail.indexOf("@") < 1) {
       say("Add your email first, so we can send the receipt.");
-      if (emailRow) { var inp = emailRow.querySelector("input"); if (inp) inp.focus(); }
+      if (emailRow) { emailRow.hidden = false; var inp = emailRow.querySelector("input"); if (inp) inp.focus(); }
       return;
     }
-    if (!PK_KEY || !item.price) { quote(item); return; }
     say("");
     loadPk().then(function () {
       window.PaystackPop.setup({
