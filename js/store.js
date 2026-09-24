@@ -21,20 +21,22 @@
   // A price of 0 means "the studio has not set one yet": that card then asks for
   // a quote instead of taking money, so the site never advertises a figure that
   // nobody priced. Put a number in and the pay button appears on its own.
+  // Placeholder figures the owner approved as payable on 2026-09-24; changing one
+  // here changes what Paystack charges, so refund any order placed at the old rate.
   var PACKAGES = [
-    { id: "logo", name: "Logo & Brand Identity", price: 0 },
-    { id: "social", name: "Social Media & Advertising", price: 0 },
-    { id: "print", name: "Flyers, Posters & Print", price: 0 },
-    { id: "packaging", name: "Packaging Design", price: 0 }
+    { id: "logo", name: "Logo & Brand Identity", price: 1200 },
+    { id: "social", name: "Social Media & Advertising", price: 450 },
+    { id: "print", name: "Flyers, Posters & Print", price: 300 },
+    { id: "packaging", name: "Packaging Design", price: 800 }
   ];
 
   // ===== 3. Sponsored slots ===================================================
   // Selling placement on this site to other businesses. Same pay button, and the
   // term shown under the price.
   var SLOTS = [
-    { id: "catalog-top", name: "Top of the catalog", price: 0, term: "30 days" },
-    { id: "catalog-mid", name: "Middle of the catalog", price: 0, term: "30 days" },
-    { id: "home-banner", name: "Home page banner", price: 0, term: "30 days" }
+    { id: "catalog-top", name: "Top of the catalog", price: 250, term: "30 days" },
+    { id: "catalog-mid", name: "Middle of the catalog", price: 150, term: "30 days" },
+    { id: "home-banner", name: "Home page banner", price: 400, term: "30 days" }
   ];
 
   // ===== 4. Tools we recommend ================================================
@@ -197,7 +199,8 @@
     a.href = WA + "?text=" + encodeURIComponent(T("I'd like to order:") + " " + T(item.name));
   }
 
-  function card(item, priced) {    var c = el("div", "card card--pay");
+  function card(item, priced) {
+    var c = el("div", "card card--pay");
     c.appendChild(el("h3", null, item.name));
     if (item.term) c.appendChild(el("p", "pay-term", item.term));
     // An unpriced card says nothing about money: the button already asks for a
