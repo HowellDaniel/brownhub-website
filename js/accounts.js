@@ -97,7 +97,8 @@
   window.BHAccounts = {
     record: function () {},
     open: function () {},
-    signedIn: function () { return false; }
+    signedIn: function () { return false; },
+    email: function () { return ""; }
   };
 
   function en(s) { return window.I18N && window.I18N.en ? window.I18N.en(s) : s; }
@@ -301,7 +302,12 @@
       if (modal.classList.contains("open")) paintHistory();
     });
 
-    window.BHAccounts = { open: openPanel, signedIn: function () { return !!session; }, record: record };
+    window.BHAccounts = {
+      open: openPanel,
+      signedIn: function () { return !!session; },
+      email: function () { return session && session.user ? session.user.email : ""; },
+      record: record
+    };
     catchRecovery();
   }
 
