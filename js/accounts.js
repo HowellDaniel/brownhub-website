@@ -159,11 +159,11 @@
           '</div>' +
           '<form id="acct-form" novalidate>' +
             '<label class="acct-field" id="acct-name-field" hidden>Name' +
-              '<input type="text" id="acct-name" autocomplete="name" placeholder="Your name"></label>' +
+              '<input type="text" id="acct-name" name="name" autocomplete="name" placeholder="Your name"></label>' +
             '<label class="acct-field" id="acct-email-field">Email' +
-              '<input type="email" id="acct-email" autocomplete="email" placeholder="you@example.com" required></label>' +
+              '<input type="email" id="acct-email" name="email" autocomplete="email" placeholder="you@example.com" required></label>' +
             '<label class="acct-field" id="acct-pass-field"><span id="acct-pass-label">Password</span>' +
-              '<input type="password" id="acct-pass" autocomplete="current-password" placeholder="At least 8 characters" required></label>' +
+              '<input type="password" id="acct-pass" name="password" autocomplete="current-password" placeholder="At least 8 characters" required></label>' +
             '<button type="button" class="acct-link" id="acct-link" hidden>Forgot password?</button>' +
             '<button type="submit" class="btn btn--primary btn--block" id="acct-submit">Log in</button>' +
             '<p class="acct-note" id="acct-note" role="status" aria-live="polite"></p>' +
@@ -197,14 +197,16 @@
 
     buildFilter();
     trigger.addEventListener("click", togglePanel);
-    tabLogin.addEventListener("click", function () { setMode("login"); });
+    tabLogin.addEventListener("click", function () { setMode("login"); offerFill(); });
     tabSignup.addEventListener("click", function () { setMode("signup"); });
     linkBtn.addEventListener("click", function () {
       if (busy) return;
       // In login this link opens the reset form; there it (and the recovery view)
       // is the only way back, so the same control carries both labels.
       resetting = false;
-      setMode(mode === "login" ? "forgot" : "login");
+      var next = mode === "login" ? "forgot" : "login";
+      setMode(next);
+      if (next === "login") offerFill();
       emailInp.focus();
     });
     form.addEventListener("submit", submit);
@@ -424,6 +426,9 @@
     authView.hidden = false;
     historyView.hidden = true;
     setMode(mode);
+    // Opening the panel is a tap of the visitor's own, which is what the browser
+    // wants before it will offer a saved password.
+    if (mode === "login") offerFill();
   }
 
   function showHistory() {
@@ -555,6 +560,41 @@
     return refresh();
   }
 
+  // ---- browser autofill --------------------------------------------------------
+  // Password managers look for named fields inside a form that really posts, and
+  // this one posts nothing, so hand the pair over explicitly: store() once it has
+  // worked, get() when the panel opens. Absent API (Firefox, old Safari) just means
+  // the visitor keeps typing by hand, so every call here is best-effort.
+  var credsOk = !!(window.PasswordCredential && navigator.credentials);
+
+  function saveCreds(id, secret) {
+    if (!credsOk || !id || !secret) return;
+    // store() answers asynchronously, so a rejected password manager (Chrome on a
+    // profile with saving switched off, for one) must be swallowed here, not just
+    // by the try block around the call.
+    try {
+      navigator.credentials.store(new window.PasswordCredential({ id: id, password: secret })).catch(function () {});
+    } catch (e) {}
+  }
+
+  var fillAskedAt = 0;
+
+  function offerFill() {
+    if (!credsOk || !navigator.credentials.get) return;
+    // One click can paint the auth view twice (logout, then the SIGNED_OUT reply),
+    // and two asks in a row would pop the browser's picker at the visitor twice.
+    var now = Date.now();
+    if (now - fillAskedAt < 900) return;
+    fillAskedAt = now;
+    try {
+      navigator.credentials.get({ password: true, mediation: "optional" }).then(function (c) {
+        if (!c || !c.id || busy || mode !== "login") return;
+        if (emailInp.value.trim() !== c.id) emailInp.value = c.id;
+        if (c.password && !passInp.value) passInp.value = c.password;
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
   function submit(e) {
     e.preventDefault();
     if (busy) return;
@@ -585,6 +625,8 @@
           if (res.error) throw res.error;
           if (res.data && res.data.session) session = res.data.session;
           resetting = false;
+          // The email box is hidden in this step, so take the address from the session.
+          saveCreds(session && session.user ? session.user.email : mail, pass);
           return afterIn();
         });
       }
@@ -597,7 +639,10 @@
         }).then(function (res) {
           if (res.error) throw res.error;
           session = res.data && res.data.session ? res.data.session : null;
-          if (session) return afterIn();
+          if (session) {
+            saveCreds(mail, pass);
+            return afterIn();
+          }
           // Same reply whether or not the address is new, so the form can't be probed.
           setBusy(false);
           setMode("login");
@@ -608,6 +653,7 @@
       return sb().auth.signInWithPassword({ email: mail, password: pass }).then(function (res) {
         if (res.error) throw res.error;
         session = res.data.session;
+        saveCreds(mail, pass);
         return afterIn();
       });
     }).catch(function (err) {
@@ -626,8 +672,10 @@
       period = "all";
       resetting = false;
       setBusy(false);
+      // showAuth paints whatever `mode` holds, so set it first and it also gets
+      // to offer the saved password.
+      mode = "login";
       showAuth();
-      setMode("login");
       note("You are signed out.");
     });
   }
