@@ -320,7 +320,7 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
 /* ---- Client accounts: nav entry, sign-up/login panel, request history ---- */
 .nav__link--acct{padding:0;border:none;background:none;font-family:inherit;cursor:pointer;white-space:nowrap}
 .nav__link--acct:hover,.nav__link--acct:focus-visible{color:var(--text)}
-@media (max-width:840px){.nav__menu .nav__link--acct{text-align:left;width:-webkit-fit-content;width:-moz-fit-content;width:fit-content}}
+@media (max-width:840px){.nav__menu .nav__link--acct{display:block;width:auto;padding:.6rem 0;line-height:1.6;text-align:left}}
 .modal--acct .modal__card{max-width:480px}
 .acct-lede{margin:.2rem 0 1.1rem;font-size:.9rem;line-height:1.5;color:var(--text-muted);max-width:46ch;overflow-wrap:anywhere}
 .acct-tabs{display:flex;gap:.3rem;margin-bottom:1.1rem;padding:.25rem;background:var(--bg-alt);border:1px solid var(--border);border-radius:999px}
