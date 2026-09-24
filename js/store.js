@@ -5,7 +5,7 @@
   // paystack.com -> Dashboard -> Settings -> API keys & webhooks -> Public Key.
   // Only the pk_... key belongs in this file. The sk_... secret can move money
   // and issue refunds, so it must never be pasted here or shipped in a page.
-  var PK_KEY = "";
+  var PK_KEY = "pk_live_b3a14638fa5e88c6988d25666ae9bc20864fc28f";
   // Paystack's hosted checkout frame, fetched on the first tap of a pay button so
   // a visitor who never buys never downloads a third-party script.
   var PK_SRC = "https://js.paystack.co/v1/inline.js";
@@ -275,10 +275,12 @@
   function init() {
     emailRow = mount("email");
     noteEl = mount("note");
-    // The card-details promise is only true once a Paystack key exists, and the
-    // line ships hidden so it never flashes on ahead of this script.
+    // The card-details promise is only worth making when a key exists *and*
+    // something carries a price; the line ships hidden so it never flashes on
+    // ahead of this script.
+    var payable = !!PK_LIVE && PACKAGES.concat(SLOTS).some(function (i) { return i.price > 0; });
     var secure = mount("secure");
-    if (secure) secure.hidden = !PK_LIVE;
+    if (secure) secure.hidden = !payable;
     renderInto(mount("packages"), PACKAGES);
     renderInto(mount("slots"), SLOTS);
     renderTools();
