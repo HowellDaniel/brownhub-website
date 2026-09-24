@@ -205,7 +205,7 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
   --pad-block: clamp(3.25rem, 6vw, 6.5rem);
 }
 .container{
-  max-width: 1680px;
+  max-width: 1320px;
   padding-left: max(var(--gutter), env(safe-area-inset-left,0px));
   padding-right: max(var(--gutter), env(safe-area-inset-right,0px));
 }
