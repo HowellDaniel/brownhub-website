@@ -46,6 +46,16 @@
     "Unable to validate user with provided password": "Use at least 8 characters for your password.",
     "New password should be different from the old password.": "Choose a password you haven't used before.",
     "Email rate limit exceeded": "Too many reset emails right now. Please wait a while and try again.",
+    "Phone number is invalid": "Enter your number with its country code, like +233 59 387 2873.",
+    "The phone number is already in use.": "That number is already on another account. Use the number you signed up with, or write to us.",
+    "Invalid token": "That code doesn't match. Check the text message and try again.",
+    "Token has expired": "That code has expired. Ask for a new one.",
+    "Too many requests": "You've asked for a few codes just now. Wait a minute and try again.",
+    "For security purposes, you can only request this once every 60 seconds": "You've asked for a few codes just now. Wait a minute and try again.",
+    "SMS rate limit exceeded": "Too many codes sent right now. Please wait a minute and try again.",
+    "Error sending out the SMS": "We couldn't text that number just now. Your account is open — try again later.",
+    "Unable to send SMS": "We couldn't text that number just now. Your account is open — try again later.",
+    "New phone number is the same as current phone number": "We already have that number. Enter the 6-digit code we texted.",
     "Network request failed": "We couldn't reach the account service. Check your connection and try again.",
     "Failed to fetch": "We couldn't reach the account service. Check your connection and try again."
   };
@@ -56,13 +66,30 @@
     login: "Log in",
     signup: "Create my account",
     forgot: "Send reset link",
-    newpass: "Save new password"
+    newpass: "Save new password",
+    phone: "Send me the code",
+    verify: "Confirm my number"
   };
   var LEDES = {
     login: "Sign up to keep a record of every request you send us, and re-order any of them in one tap.",
     signup: "Sign up to keep a record of every request you send us, and re-order any of them in one tap.",
     forgot: "Enter your email and we'll send you a link to choose a new password.",
-    newpass: "Choose a new password for your account."
+    newpass: "Choose a new password for your account.",
+    phone: "Give us the number to text your 6-digit code to, and we'll send one now.",
+    verify: "We've texted a 6-digit code to this number. Enter it to confirm it."
+  };
+  // The one control that gets a different label at almost every step.
+  var LINK_LABEL = {
+    login: "Forgot password?",
+    forgot: "Back to log in",
+    newpass: "Back to log in",
+    phone: "Skip for now",
+    verify: "Send another code"
+  };
+  var TITLES = {
+    newpass: "Set a new password",
+    phone: "Confirm your number",
+    verify: "Confirm your number"
   };
 
   // The enquiry form works whether or not accounts are configured, so expose the
@@ -115,13 +142,17 @@
   var configured = /^https:\/\/[a-z0-9-]+\.supabase\.[a-z]{2,}$/i.test(SB_API_URL) && isPublishable(SB_API_KEY);
 
   var navLi, modal, card, tabs, form, noteEl, nameField, nameInp, emailInp, passInp;
-  var passField, passLabel, linkBtn, emailField;
+  var passField, passLabel, linkBtn, link2Btn, emailField, phoneField, phoneInp, codeField, codeInp;
+  var verifyBar, verifyMsg, verifyBtn, telLine, statusEl;
   var submitBtn, lede, titleEl, authView, historyView, who, list, empty, logoutBtn, tabLogin, tabSignup;
   var filterSel, trigger;
   var client = null, sdkPromise = null, session = null, rows = [], shown = [], mode = "login", busy = false, opener = null;
   var period = "all";
   // True between opening a reset link and saving the new password it authorises.
   var resetting = false;
+  // The number a code is live for. Held apart from the input so re-sending can't be
+  // aimed at a number the client has since typed over.
+  var pendingPhone = "";
 
   if (configured) build();
 
@@ -162,15 +193,28 @@
               '<input type="text" id="acct-name" name="name" autocomplete="name" placeholder="Your name"></label>' +
             '<label class="acct-field" id="acct-email-field">Email' +
               '<input type="email" id="acct-email" name="email" autocomplete="email" placeholder="you@example.com" required></label>' +
+            '<label class="acct-field" id="acct-phone-field" hidden>Phone number' +
+              '<input type="tel" id="acct-phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="+233 59 387 2873"></label>' +
+            // The number the code went to, shown on its own so no sentence has to be
+            // rebuilt around a value the translator can't match.
+            '<p class="acct-tel" id="acct-tel" hidden></p>' +
+            '<label class="acct-field" id="acct-code-field" hidden>6-digit code' +
+              '<input type="text" id="acct-code" name="code" class="acct-code" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9 ]*" maxlength="8" placeholder="123456"></label>' +
             '<label class="acct-field" id="acct-pass-field"><span id="acct-pass-label">Password</span>' +
               '<input type="password" id="acct-pass" name="password" autocomplete="current-password" placeholder="At least 8 characters" required></label>' +
             '<button type="button" class="acct-link" id="acct-link" hidden>Forgot password?</button>' +
+            '<button type="button" class="acct-link" id="acct-link2" hidden>Use another number</button>' +
             '<button type="submit" class="btn btn--primary btn--block" id="acct-submit">Log in</button>' +
             '<p class="acct-note" id="acct-note" role="status" aria-live="polite"></p>' +
           '</form>' +
           '<div id="acct-history" hidden>' +
             '<div class="acct-user"><span id="acct-who"></span>' +
               '<button type="button" class="btn btn--ghost btn--sm" id="acct-logout">Log out</button></div>' +
+            '<div class="acct-verify" id="acct-verify" hidden>' +
+              '<span id="acct-verify-msg"></span>' +
+              '<button type="button" class="btn btn--primary btn--sm" id="acct-verify-btn">Verify now</button>' +
+            '</div>' +
+            '<p class="acct-note" id="acct-status" hidden></p>' +
             '<div class="acct-filter" id="acct-filter-wrap">' +
               '<label for="acct-filter" id="acct-filter-label">Period</label>' +
               '<select id="acct-filter"></select>' +
@@ -189,6 +233,11 @@
     emailInp = $("acct-email"); passInp = $("acct-pass");
     emailField = $("acct-email-field");
     passField = $("acct-pass-field"); passLabel = $("acct-pass-label"); linkBtn = $("acct-link");
+    link2Btn = $("acct-link2");
+    phoneField = $("acct-phone-field"); phoneInp = $("acct-phone");
+    codeField = $("acct-code-field"); codeInp = $("acct-code");
+    verifyBar = $("acct-verify"); verifyMsg = $("acct-verify-msg"); verifyBtn = $("acct-verify-btn");
+    telLine = $("acct-tel"); statusEl = $("acct-status");
     submitBtn = $("acct-submit"); lede = $("acct-lede"); titleEl = $("acct-title");
     authView = form; historyView = $("acct-history"); who = $("acct-who");
     list = $("acct-list"); empty = $("acct-empty"); logoutBtn = $("acct-logout");
@@ -199,15 +248,32 @@
     trigger.addEventListener("click", togglePanel);
     tabLogin.addEventListener("click", function () { setMode("login"); offerFill(); });
     tabSignup.addEventListener("click", function () { setMode("signup"); });
+    // The same control carries a different job at every step, so its behaviour is
+    // read off `mode` rather than being fixed at bind time.
     linkBtn.addEventListener("click", function () {
-      if (busy) return;
-      // In login this link opens the reset form; there it (and the recovery view)
-      // is the only way back, so the same control carries both labels.
+      if (busy || linkBtn.disabled) return;
+      if (mode === "verify") { sendCode(pendingPhone || phoneOf()); return; }
+      if (mode === "phone") { leaveVerify(); return; }
       resetting = false;
       var next = mode === "login" ? "forgot" : "login";
       setMode(next);
       if (next === "login") offerFill();
       emailInp.focus();
+    });
+    link2Btn.addEventListener("click", function () {
+      if (busy || mode !== "verify") return;
+      phoneInp.value = pendingPhone;
+      setMode("phone");
+      phoneInp.focus();
+    });
+    verifyBtn.addEventListener("click", function () {
+      if (busy) return;
+      // The reminder lives in the request list, so taking the offer has to bring the
+      // form back on screen as well as changing its step.
+      showStep();
+      phoneInp.value = phoneInp.value || phoneOf();
+      setMode("phone");
+      phoneInp.focus();
     });
     form.addEventListener("submit", submit);
     logoutBtn.addEventListener("click", logout);
@@ -293,7 +359,7 @@
       });
       client.auth.onAuthStateChange(function (event, s) {
         session = s;
-        if (event === "SIGNED_OUT") { rows = []; resetting = false; showAuth(); }
+        if (event === "SIGNED_OUT") { rows = []; resetting = false; pendingPhone = ""; disarmResend(); showAuth(); }
       });
     }
     return client;
@@ -385,22 +451,38 @@
     logoutBtn.disabled = busy;
     tabLogin.disabled = busy;
     tabSignup.disabled = busy;
-    linkBtn.disabled = busy;
+    verifyBtn.disabled = busy;
+    link2Btn.disabled = busy;
+    paintResend();
     txt(submitBtn, busy ? "Please wait…" : SUBMIT_LABEL[mode]);
   }
 
-  function note(msg) { txt(noteEl, msg || ""); }
+  // The note sits inside the sign-in form, so a message written while the request
+  // list is on screen would be invisible. Both views carry one and note() fills
+  // both; whichever view the client is looking at is the one that reads.
+  function note(msg) {
+    txt(noteEl, msg || "");
+    txt(statusEl, msg || "");
+    statusEl.hidden = !msg;
+  }
 
   function setMode(next) {
     mode = next;
     var signup = mode === "signup";
     var forgot = mode === "forgot";
     var newpass = mode === "newpass";
-    var switching = forgot || newpass;
+    var verify = mode === "verify";
+    // Both phone steps are side trips: neither wants the address, the password or
+    // the login/sign-up tabs on screen with it.
+    var telStep = mode === "phone" || verify;
+    var switching = forgot || newpass || telStep;
     nameField.hidden = !signup;
     // The reset ask needs an address only; the new password needs nothing but itself.
-    passField.hidden = forgot;
-    emailField.hidden = newpass;
+    passField.hidden = forgot || telStep;
+    emailField.hidden = newpass || telStep;
+    phoneField.hidden = !(signup || mode === "phone");
+    codeField.hidden = !verify;
+    telLine.hidden = !verify;
     tabs.hidden = switching;
     if (!switching) {
       tabLogin.classList.toggle("is-active", !signup);
@@ -409,20 +491,27 @@
       tabSignup.setAttribute("aria-pressed", signup ? "true" : "false");
     }
     linkBtn.hidden = signup;
-    txt(linkBtn, mode === "login" ? "Forgot password?" : "Back to log in");
+    link2Btn.hidden = !verify;
+    // The resend lock is only meaningful on the code step, so each step has to
+    // repaint it: the link was armed while `mode` still said "signup".
+    paintResend();
+    txt(linkBtn, LINK_LABEL[mode] || "");
+    txt(link2Btn, "Use another number");
     txt(passLabel, newpass ? "New password" : "Password");
     passInp.setAttribute("autocomplete", signup || newpass ? "new-password" : "current-password");
     passInp.placeholder = signup || newpass ? "At least 8 characters" : "Your password";
     txt(lede, LEDES[mode]);
-    txt(titleEl, newpass ? "Set a new password" : "My requests");
+    txt(titleEl, TITLES[mode] || "My requests");
     if (!busy) txt(submitBtn, SUBMIT_LABEL[mode]);
     note("");
   }
 
   function showAuth() {
     // A recovery session that has been dropped must not strand the panel on the
-    // new-password form, which only makes sense while one is live.
+    // new-password form, which only makes sense while one is live. The two phone
+    // steps need an account to attach a number to, so they go the same way.
     if (!resetting && mode === "newpass") mode = "login";
+    if (!session && (mode === "phone" || mode === "verify")) { mode = "login"; pendingPhone = ""; }
     authView.hidden = false;
     historyView.hidden = true;
     setMode(mode);
@@ -437,6 +526,7 @@
     tabs.hidden = true;
     txt(titleEl, "My requests");
     txt(lede, "Requests you sent from this account, newest first.");
+    paintVerifyBar();
     who.textContent = "";
     who.appendChild(document.createTextNode("Signed in as"));
     who.appendChild(document.createTextNode(" " + (session && session.user ? session.user.email : "")));
@@ -523,19 +613,25 @@
     });
   }
 
+  // A reset link or a texted code holds the panel on its own step; jumping to the
+  // history list would strand the visitor halfway through either one.
+  function detour() {
+    return resetting || mode === "verify" || mode === "phone";
+  }
+
   function openPanel() {
     opener = document.activeElement;
     modal.classList.add("open");
     trigger.setAttribute("aria-expanded", "true");
     document.body.style.overflow = "hidden";
     positionPanel();
-    if (session && !resetting) showHistory(); else showAuth();
+    if (session && !detour()) showHistory(); else showAuth();
     restore().then(function (s) {
-      if (!s || resetting) return;
+      if (!s || detour()) return;
       showHistory();
       refresh();
     });
-    (resetting ? passInp : session ? logoutBtn : emailInp).focus();
+    (resetting ? passInp : mode === "verify" ? codeInp : mode === "phone" ? phoneInp : session ? logoutBtn : emailInp).focus();
   }
 
   function closeModal() {
@@ -595,11 +691,174 @@
     } catch (e) {}
   }
 
+  // ---- phone verification ------------------------------------------------------
+  // Supabase only accepts E.164, while most clients type their number the way it is
+  // spoken. A leading 0 is the Ghanaian trunk code the studio's clients use, so it
+  // becomes +233; anything else has to arrive with its country code.
+  function phoneE164(raw) {
+    var r = String(raw || "").trim();
+    var s = r.replace(/\D/g, "");
+    var plus = r.charAt(0) === "+";
+    // Without a "+" there is nothing to tell us which country the number belongs to,
+    // except the spoken Ghana form, whose leading 0 is the trunk code for +233. Any
+    // other bare run of digits is refused rather than texted to a wrong destination.
+    if (!plus && !/^0\d{8,9}$/.test(s) && !/^233\d{7,12}$/.test(s)) return "";
+    if (!plus && /^0/.test(s)) s = "233" + s.slice(1);
+    return /^\d{8,15}$/.test(s) ? "+" + s : "";
+  }
+
+  function phoneOf() {
+    return session && session.user ? session.user.phone || "" : "";
+  }
+
+  function unconfirmed() {
+    return !!(session && session.user) && !session.user.phone_confirmed_at;
+  }
+
+  // Supabase texts one code per number per minute, so the resend link has to sit the
+  // gap out rather than fire and come back with an error.
+  var codeAt = 0;
+  var codeTimer = null;
+
+  function resendLocked() { return Date.now() - codeAt < 60000; }
+
+  function paintResend() {
+    linkBtn.disabled = busy || (mode === "verify" && resendLocked());
+  }
+
+  function armResendLock() {
+    codeAt = Date.now();
+    if (codeTimer) clearTimeout(codeTimer);
+    // One timer for the whole gap: the resend link is the only thing that changes at the end.
+    codeTimer = setTimeout(function () { codeTimer = null; paintResend(); }, 61000);
+    paintResend();
+  }
+
+  function disarmResend() {
+    codeAt = 0;
+    if (codeTimer) { clearTimeout(codeTimer); codeTimer = null; }
+  }
+
+  // Attach the number to the signed-in account, which is what asks Supabase to text
+  // the code. If the text cannot go out the account is still usable — the number is
+  // on file and the reminder in the history view offers another try.
+  function sendCode(number) {
+    var tel = phoneE164(number);
+    if (!tel) {
+      note("Enter your number with its country code, like +233 59 387 2873.");
+      phoneInp.focus();
+      return;
+    }
+    if (!session) { setMode("login"); note("Log in first, then we can text you a code."); return; }
+    pendingPhone = tel;
+    setBusy(true);
+    note("");
+    var same = phoneOf() === tel;
+    loadSdk().then(function () {
+      var auth = sb().auth;
+      // Re-sending to a number already on file has to go through /resend, because
+      // setting the same number again is an error rather than a no-op.
+      if (same) return auth.resend({ phone: tel, type: "phone_change" });
+      return auth.updateUser({ phone: tel }).then(function (res) {
+        // An earlier text may have failed after the number was stored, and the
+        // session copy of the account would not know. The refusal says so, and
+        // /resend is the only route left that will produce a code.
+        if (res && res.error && /same as current phone number/i.test(res.error.message || "")) {
+          return auth.resend({ phone: tel, type: "phone_change" });
+        }
+        return res;
+      });
+    }).then(function (res) {
+      if (res && res.error) throw res.error;
+      // The account now carries the number, so adopt that copy: the next code
+      // request can go straight to /resend instead of being refused first.
+      if (res && res.data && res.data.user && session) session.user = res.data.user;
+      setBusy(false);
+      armResendLock();
+      codeInp.value = "";
+      telLine.textContent = tel;
+      showStep();
+      setMode("verify");
+      codeInp.focus();
+    }).catch(function (err) {
+      setBusy(false);
+      phoneInp.value = tel;
+      // The note sits inside the form, so a failed text has to bring the number step
+      // back on screen rather than speak from behind the request list.
+      showStep();
+      setMode("phone");
+      note(errText(err));
+    });
+  }
+
+  // Every step is the same form; only which of the panel's two views is on screen moves.
+  function showStep() {
+    authView.hidden = false;
+    historyView.hidden = true;
+  }
+
+  function confirmCode() {
+    var code = codeInp.value.replace(/\D/g, "");
+    if (!/^\d{6}$/.test(code)) {
+      note("Enter the 6 digits from the text message.");
+      codeInp.focus();
+      return;
+    }
+    if (!pendingPhone) { sendCode(phoneOf()); return; }
+    setBusy(true);
+    note("");
+    loadSdk().then(function () {
+      return sb().auth.verifyOtp({ phone: pendingPhone, token: code, type: "phone_change" }).then(function (res) {
+        if (res.error) throw res.error;
+        return sb().auth.getUser();
+      });
+    }).then(function (res) {
+      var u = res && res.data && res.data.user;
+      if (u && session) session.user = u;
+      setBusy(false);
+      pendingPhone = "";
+      disarmResend();
+      showHistory();
+      note("Your number is confirmed.");
+      return refresh();
+    }).catch(function (err) {
+      setBusy(false);
+      note(errText(err));
+    });
+  }
+
+  // Verification is deliberately optional, so leaving it must land the client back
+  // where they came from rather than on a dead end. The reminder bar in the request
+  // list is what keeps the offer alive afterwards, so no message is needed here.
+  function leaveVerify() {
+    pendingPhone = "";
+    // Whatever the last step had to say is done with; the reminder bar is what
+    // keeps the offer alive from here.
+    note("");
+    if (session) showHistory();
+    else { setMode("login"); offerFill(); }
+  }
+
+  function paintVerifyBar() {
+    var ok = !unconfirmed();
+    verifyBar.hidden = !session || ok;
+    if (verifyBar.hidden) return;
+    txt(verifyMsg, phoneOf()
+      ? "We haven't confirmed this number yet."
+      : "Add your number so we can text you about your requests.");
+    txt(verifyBtn, phoneOf() ? "Try again" : "Add number");
+  }
+
   function submit(e) {
     e.preventDefault();
     if (busy) return;
     var mail = emailInp.value.trim();
     var pass = passInp.value;
+    var telRaw = phoneInp.value;
+    // The two phone steps ask for neither address nor password, so they branch out
+    // before those checks rather than beside them.
+    if (mode === "phone") { sendCode(telRaw); return; }
+    if (mode === "verify") { confirmCode(); return; }
     var minPass = mode === "signup" || mode === "newpass";
     if (mode !== "newpass" && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) { note("Enter a valid email address."); emailInp.focus(); return; }
     if (mode !== "forgot") {
@@ -608,6 +867,13 @@
         passInp.focus();
         return;
       }
+    }
+    // The number stays optional, but a half-typed one is worth flagging now rather
+    // than losing it silently after the account is made.
+    if (mode === "signup" && telRaw.trim() && !phoneE164(telRaw)) {
+      note("Enter your number with its country code, like +233 59 387 2873.");
+      phoneInp.focus();
+      return;
     }
     setBusy(true);
     note("");
@@ -631,6 +897,7 @@
         });
       }
       if (mode === "signup") {
+        var tel = phoneE164(telRaw);
         return sb().auth.signUp({
           email: mail,
           password: pass,
@@ -641,7 +908,11 @@
           session = res.data && res.data.session ? res.data.session : null;
           if (session) {
             saveCreds(mail, pass);
-            return afterIn();
+            afterIn();
+            // A number given at sign-up is worth a code straight away. The account is
+            // open either way, so a text that cannot go out costs nothing.
+            if (tel) sendCode(tel);
+            return null;
           }
           // Same reply whether or not the address is new, so the form can't be probed.
           setBusy(false);
@@ -671,6 +942,8 @@
       shown = [];
       period = "all";
       resetting = false;
+      pendingPhone = "";
+      disarmResend();
       setBusy(false);
       // showAuth paints whatever `mode` holds, so set it first and it also gets
       // to offer the saved password.
