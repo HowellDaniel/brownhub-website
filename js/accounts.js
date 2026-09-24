@@ -12,7 +12,9 @@
   var SB_KEY = ""; // the PUBLISHABLE (anon) key only — never the service_role key
   // =============================================================================
 
-  var SDK_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.min.js";
+  // Same-origin copy of @supabase/supabase-js 2.117.1 (sha256 dff1e545…a567),
+  // fetched from the npm tarball's dist/umd/supabase.js and served from the site.
+  var SDK_URL = "js/vendor/supabase-2.117.1.js";
   var MSG_MAX = 4000;
 
   var STATUS = {
@@ -64,9 +66,12 @@
     return n;
   }
 
-  // A service_role key would hand anyone the whole database, so it is rejected here.
+  // A secret key would hand anyone the whole database, so only the public browser
+  // key is accepted: the new "sb_publishable_…" format or the legacy anon JWT.
   function isPublishable(key) {
-    if (key.length < 30 || key.indexOf("eyJ") !== 0) return false;
+    if (key.length < 30 || /^sb_secret_/i.test(key)) return false;
+    if (/^sb_(publishable|anon)_/i.test(key)) return true;
+    if (key.indexOf("eyJ") !== 0) return false;
     try {
       var claims = JSON.parse(atob(key.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
       return claims.role !== "service_role";
@@ -76,10 +81,13 @@
   }
 
   if (SB_KEY && !isPublishable(SB_KEY)) {
-    console.error("BrownHub accounts: that is a secret/service_role key. Use the publishable (anon) key — it is safe in public code because row-level security guards the data.");
+    console.error("BrownHub accounts: that looks like a secret key. Use the publishable (anon) key — it is safe in public code because row-level security guards the data.");
   }
 
-  var configured = /^https:\/\/[a-z0-9-]+\.supabase\.(co|in)$/i.test(SB_URL) && isPublishable(SB_KEY);
+  // Values are pasted by hand, so tolerate stray spaces and a trailing slash.
+  var SB_API_URL = SB_URL.trim().replace(/\/+$/, "");
+  var SB_API_KEY = SB_KEY.trim();
+  var configured = /^https:\/\/[a-z0-9-]+\.supabase\.[a-z]{2,}$/i.test(SB_API_URL) && isPublishable(SB_API_KEY);
 
   var navLi, modal, tabs, form, noteEl, nameField, nameInp, emailInp, passInp;
   var submitBtn, lede, titleEl, authView, historyView, who, list, empty, logoutBtn, tabLogin, tabSignup;
@@ -170,7 +178,7 @@
 
   function sb() {
     if (!client) {
-      client = window.supabase.createClient(SB_URL, SB_KEY, {
+      client = window.supabase.createClient(SB_API_URL, SB_API_KEY, {
         auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
       });
       client.auth.onAuthStateChange(function (event, s) {
