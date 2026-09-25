@@ -101,7 +101,8 @@
     record: function () {},
     open: function () {},
     signedIn: function () { return false; },
-    email: function () { return ""; }
+    email: function () { return ""; },
+    ask: function () { return Promise.reject(new Error("The assistant is not switched on yet.")); }
   };
 
   function en(s) { return window.I18N && window.I18N.en ? window.I18N.en(s) : s; }
@@ -144,6 +145,27 @@
   var SB_API_URL = SB_URL.trim().replace(/\/+$/, "");
   var SB_API_KEY = SB_KEY.trim();
   var configured = /^https:\/\/[a-z0-9-]+\.supabase\.[a-z]{2,}$/i.test(SB_API_URL) && isPublishable(SB_API_KEY);
+
+  // The chat assistant is an Edge Function in this same project, which is why the
+  // call lives here: this file owns the project URL and the public key. The model
+  // key never touches the browser, so a visitor can only ever ask questions.
+  function ask(question, lang, prices) {
+    if (!configured) return Promise.reject(new Error("Accounts are not configured on this site."));
+    return fetch(SB_API_URL + "/functions/v1/brownhub-assistant", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        apikey: SB_API_KEY,
+        Authorization: "Bearer " + SB_API_KEY
+      },
+      body: JSON.stringify({ q: question, lang: lang, prices: prices || [] })
+    }).then(function (res) {
+      return res.json().catch(function () { throw new Error("The assistant sent back nothing readable."); }).then(function (data) {
+        if (!res.ok || !data || !data.answer) throw new Error((data && data.error) || "The assistant did not answer.");
+        return data.answer;
+      });
+    });
+  }
 
   var navLi, modal, card, tabs, form, noteEl, nameField, nameInp, emailInp, passInp;
   var passField, passLabel, linkBtn, link2Btn, emailField, phoneField, phoneInp, codeField, codeInp;
@@ -309,7 +331,8 @@
       open: openPanel,
       signedIn: function () { return !!session; },
       email: function () { return session && session.user ? session.user.email : ""; },
-      record: record
+      record: record,
+      ask: ask
     };
     catchRecovery();
   }

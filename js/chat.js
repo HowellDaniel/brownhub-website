@@ -102,13 +102,28 @@
     return best;
   }
 
-  function answer(text) {
+  function matchIntent(text) {
     // Visitors may type (or we may prefill) in their own language: map known
     // translated strings back to their English source before keyword scoring.
     const src = (window.I18N && window.I18N.en) ? window.I18N.en(text) : text;
     const t = src.toLowerCase();
     const hit = bestOf(questionIntents, t) || bestOf(topicIntents, t);
-    return hit ? hit.html : fallback;
+    return hit ? hit.html : null;
+  }
+
+  // A question the written intents do not cover goes to the studio's assistant,
+  // which is grounded in the site's own facts and reads the live price list off
+  // the store. It answers in the visitor's language, so it bypasses the
+  // dictionary entirely rather than being looked up in it.
+  function askModel(question) {
+    const ask = window.BHAccounts && window.BHAccounts.ask;
+    if (typeof ask !== "function") return Promise.reject(new Error("No assistant is wired up."));
+    const prices = (window.BHStore && window.BHStore.offers) ? window.BHStore.offers() : [];
+    const lang = (window.I18N && window.I18N.lang) || "en";
+    return Promise.race([
+      ask(question, lang, prices),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("The assistant took too long.")), 25000))
+    ]);
   }
 
   // Let other scripts (catalog "Order now via chat") send a message with a
@@ -133,6 +148,18 @@
     for (const h of botHistory) if (h.el.isConnected) h.el.innerHTML = T(h.src);
   });
 
+  // Model output is text from a network, not markup we wrote, so it is never
+  // handed to innerHTML. It also arrives already translated, so it stays out of
+  // botHistory and is not re-rendered when the visitor changes language.
+  function addPlain(text) {
+    const el = document.createElement("div");
+    el.className = "chat-msg chat-msg--bot";
+    el.textContent = text;
+    messages.appendChild(el);
+    scrollDown();
+    return el;
+  }
+
   function typingBubble() {
     const el = document.createElement("div");
     el.className = "chat-msg chat-msg--bot chat-msg--typing";
@@ -153,17 +180,28 @@
     }
   }
 
-  function send(text, routeAs) {    const clean = text.trim();
+  function send(text, routeAs) {
+    const clean = text.trim();
     if (!clean) return;
     addMsg(clean, "user");
     renderChips([]);
     const bubble = typingBubble();
-    setTimeout(() => {
+    const replyWith = (html) => {
       bubble.remove();
-      addMsg(answer(routeAs || clean), "bot");
+      addMsg(html, "bot");
       renderChips(defaultChips);
       focusInput();
-    }, 550 + Math.random() * 450);
+    };
+    // The written answers are instant, cost nothing and have been read over, so
+    // they always win when one fits. The assistant only ever sees what they miss.
+    const known = matchIntent(routeAs || clean);
+    if (known) { setTimeout(() => replyWith(known), 550 + Math.random() * 450); return; }
+    askModel(clean).then((reply) => {
+      bubble.remove();
+      addPlain(reply);
+      renderChips(defaultChips);
+      focusInput();
+    }).catch(() => replyWith(fallback));
   }
 
   let greeted = false;

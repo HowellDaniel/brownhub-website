@@ -305,6 +305,11 @@
     packages: PACKAGES,
     slots: SLOTS,
     pay: buy,
-    configured: function () { return !!PK_LIVE; }
+    configured: function () { return !!PK_LIVE; },
+    // The chat assistant quotes prices, and a second copy of the rate card would
+    // drift from what the pay button charges, so it reads them from here.
+    offers: function () {
+      return PACKAGES.concat(SLOTS).filter(function (i) { return i.price > 0; });
+    }
   };
 })();
