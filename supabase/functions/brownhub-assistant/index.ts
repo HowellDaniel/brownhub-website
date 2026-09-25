@@ -15,9 +15,9 @@
 // which Supabase accepts for it. The slug cannot be renamed later: it is taken
 // from the name field on the create page, before anything is typed into it.
 
-// Both origins serve the site after the brownhub283.com cutover: GitHub leaves the
-// old Pages URL answering 200 rather than redirecting, so its chat must keep working.
-const SITES = ["https://www.brownhub283.com", "https://howelldaniel.github.io"];
+// GitHub now 301s the old Pages URL to the custom domain, so a browser can never
+// present howelldaniel.github.io as the origin of a request from this site.
+const SITES = ["https://www.brownhub283.com"];
 // Anything the model may be asked costs money or attention, so both are capped.
 const MAX_QUERY = 600;
 const MAX_PRICES = 20;
@@ -26,11 +26,11 @@ const PER_MINUTE = 8;
 const DAY_WINDOW = 86_400_000;
 const PER_DAY = 120;
 
-// Only the site's own origins, plus a local server for testing this wiring.
+// Every cross-origin POST carries an Origin a browser cannot forge, and a script
+// that sends none is not a browser — so this is what keeps strangers off the paid
+// model key. The site's own chat always sends the origin above.
 function allowed(origin: string | null): boolean {
-  if (!origin) return true; // curl, and native apps that send no Origin
-  if (SITES.includes(origin)) return true;
-  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  return origin !== null && SITES.includes(origin);
 }
 
 // Best effort, and deliberately so: an Edge isolate is short-lived and there is
