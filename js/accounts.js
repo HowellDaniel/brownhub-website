@@ -46,7 +46,7 @@
     "Unable to validate user with provided password": "Use at least 8 characters for your password.",
     "New password should be different from the old password.": "Choose a password you haven't used before.",
     "Email rate limit exceeded": "Too many reset emails right now. Please wait a while and try again.",
-    "Phone number is invalid": "Enter your number with its country code, like +233 59 387 2873.",
+    "Phone number is invalid": "Enter your number with its country code, like +233 50 000 0000.",
     "The phone number is already in use.": "That number is already on another account. Use the number you signed up with, or write to us.",
     "Invalid token": "That code doesn't match. Check the text message and try again.",
     "Token has expired": "That code has expired. Ask for a new one.",
@@ -220,7 +220,7 @@
             '<label class="acct-field" id="acct-email-field">Email' +
               '<input type="email" id="acct-email" name="email" autocomplete="email" placeholder="you@example.com" required></label>' +
             '<label class="acct-field" id="acct-phone-field" hidden>Phone number' +
-              '<input type="tel" id="acct-phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="+233 59 387 2873"></label>' +
+              '<input type="tel" id="acct-phone" name="phone" autocomplete="tel" inputmode="tel" placeholder="+233 50 000 0000"></label>' +
             // The number the code went to, shown on its own so no sentence has to be
             // rebuilt around a value the translator can't match.
             '<p class="acct-tel" id="acct-tel" hidden></p>' +
@@ -810,7 +810,7 @@
     if (!smsReady) return;
     var tel = phoneE164(number);
     if (!tel) {
-      note("Enter your number with its country code, like +233 59 387 2873.");
+      note("Enter your number with its country code, like +233 50 000 0000.");
       phoneInp.focus();
       return;
     }
@@ -936,7 +936,7 @@
     // The number stays optional, but a half-typed one is worth flagging now rather
     // than losing it silently after the account is made.
     if (mode === "signup" && telRaw.trim() && !phoneE164(telRaw)) {
-      note("Enter your number with its country code, like +233 59 387 2873.");
+      note("Enter your number with its country code, like +233 50 000 0000.");
       phoneInp.focus();
       return;
     }
