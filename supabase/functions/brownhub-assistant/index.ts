@@ -15,7 +15,9 @@
 // which Supabase accepts for it. The slug cannot be renamed later: it is taken
 // from the name field on the create page, before anything is typed into it.
 
-const SITE = "https://howelldaniel.github.io";
+// Both origins serve the site after the brownhub283.com cutover: GitHub leaves the
+// old Pages URL answering 200 rather than redirecting, so its chat must keep working.
+const SITES = ["https://www.brownhub283.com", "https://howelldaniel.github.io"];
 // Anything the model may be asked costs money or attention, so both are capped.
 const MAX_QUERY = 600;
 const MAX_PRICES = 20;
@@ -27,7 +29,7 @@ const PER_DAY = 120;
 // Only the site's own origins, plus a local server for testing this wiring.
 function allowed(origin: string | null): boolean {
   if (!origin) return true; // curl, and native apps that send no Origin
-  if (origin === SITE) return true;
+  if (SITES.includes(origin)) return true;
   return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
 }
 
