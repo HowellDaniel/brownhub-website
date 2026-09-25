@@ -35,9 +35,28 @@
 // two-segment code text is a worse experience than a shorter sentence.
 
 const GATEWAY = "https://sms.arkesel.com/api/v2/sms/send";
-// Supabase gives up on a hook after 5 seconds and retries it three times, so a
-// slow Arkesel would otherwise be charged for two or three identical texts.
+// Supabase gives up on a hook after 5 seconds and retries it three times, so this
+// stops asking Arkesel before that deadline turns a slow send into a duplicate one.
 const TIMEOUT = 4_000;
+// A retry carries the *identical* body — same number, same code — so acting on it
+// again would charge a second text for one client action. One number+code pair is
+// dispatched once per window and any repeat is answered as already delivered.
+// Definitive refusals (no credit, rejected number) are a 200 to Supabase and so are
+// never retried; only a timeout or transport error brings a second call here.
+const RETRY_WINDOW = 90_000;
+const acted = new Map<string, number>();
+
+function firstAttempt(key: string): boolean {
+  const now = Date.now();
+  const seen = acted.get(key);
+  if (seen !== undefined && now - seen < RETRY_WINDOW) return false;
+  acted.set(key, now);
+  if (acted.size > 500) {
+    for (const [k, at] of acted) if (now - at >= RETRY_WINDOW) acted.delete(k);
+  }
+  return true;
+}
+
 // Same tolerance the webhook libraries use.
 const CLOCK_SKEW = 5 * 60;
 
@@ -137,6 +156,14 @@ Deno.serve(async (req) => {
   const key = Deno.env.get("ARKSEL_API_KEY") || "";
   const sender = Deno.env.get("ARKSEL_SENDER") || "";
   if (!key || !sender) return fail(500, "ARKSEL_API_KEY or ARKSEL_SENDER is not set on this project", "Text messaging is not set up yet.");
+
+  // Marked before the request rather than after it: the send that this call is
+  // waiting on may well succeed even if we time out reading it, and the whole point
+  // is to spend one message per code.
+  if (!firstAttempt(phone + "|" + otp)) {
+    console.log(`send-sms: repeat call for ${phone.slice(0, 7)}… with the same code, answered without a second text`);
+    return new Response(null, { status: 204 });
+  }
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT);
