@@ -41,13 +41,15 @@ const TIMEOUT = 4_000;
 // Same tolerance the webhook libraries use.
 const CLOCK_SKEW = 5 * 60;
 
-function fail(httpCode: number, text: string): Response {
-  // Supabase's dispatcher only reads the status today — any non-2xx becomes
-  // "Unexpected status code returned from hook" for the visitor — so this body is
-  // for the project's own function logs, and keeps the detail out of the client.
+// Supabase reads a failure out of the *body of a 200*: `{"error":{http_code,message}}`
+// is what reaches the visitor. Any other status is replaced by its own generic
+// "Invalid payload sent to hook", which is why this returns 200 too. `detail` is the
+// vendor-grade reason for the logs; `forVisitor` is what a stranger gets to read.
+function fail(httpCode: number, detail: string, forVisitor: string): Response {
+  console.log(`send-sms ${httpCode}: ${detail}`);
   return new Response(
-    JSON.stringify({ error: { http_code: httpCode, message: `Failed to send SMS: ${text}` } }),
-    { status: httpCode, headers: { "content-type": "application/json" } }
+    JSON.stringify({ error: { http_code: httpCode, message: forVisitor } }),
+    { status: 200, headers: { "content-type": "application/json" } }
   );
 }
 
@@ -101,27 +103,40 @@ async function signedBySupabase(req: Request, raw: string): Promise<boolean> {
 
 Deno.serve(async (req) => {
   const raw = await req.text();
-  let body: { user?: { phone?: string | null }; sms?: { otp?: string } };
+  let body: {
+    user?: { phone?: string | null };
+    sms?: { otp?: string; phone?: string; sms_type?: string };
+  };
   try {
     body = JSON.parse(raw);
   } catch {
-    return fail(400, "expected a JSON body from Supabase");
+    return fail(400, `expected JSON, got ${raw.length} bytes of ${req.headers.get("content-type")}`, "The verification request was malformed.");
   }
 
   if (!(await signedBySupabase(req, raw))) {
-    return fail(401, "the request is not signed by this project");
+    return fail(401, "rejected an unsigned or wrongly signed call", "This endpoint only answers Supabase.");
   }
 
-  const phone = (body.user && body.user.phone) || "";
+  // GoTrue always fills sms.phone, but sends user only when one already exists,
+  // so the number is read from the sms object first. It also hands it over without
+  // its leading "+", which Arkesel would read as a different country, so put it back.
+  const given = ((body.sms && body.sms.phone) || (body.user && body.user.phone) || "").trim();
+  const phone = /^[+]?[1-9]\d{6,14}$/.test(given) ? (given.charAt(0) === "+" ? given : "+" + given) : "";
   const otp = (body.sms && body.sms.otp) || "";
   // Rejecting here rather than letting the gateway decide: a bad number must not
   // cost money, and a caller Supabase did not sign for must not reach Arkesel at all.
-  if (!/^\+[1-9]\d{6,14}$/.test(phone)) return fail(400, `unusable phone number ${JSON.stringify(phone)}`);
-  if (!/^\d{4,8}$/.test(otp)) return fail(400, "unusable one-time code");
+  if (!phone) {
+    return fail(400, `unusable phone ${JSON.stringify(given)} in a body with keys ${Object.keys(body)}`,
+      "That phone number is not in a form we can text.");
+  }
+  if (!/^\d{4,8}$/.test(otp)) {
+    return fail(400, `unusable code of ${otp.length} characters in a body with keys ${Object.keys(body)}`,
+      "The verification code was missing.");
+  }
 
   const key = Deno.env.get("ARKSEL_API_KEY") || "";
   const sender = Deno.env.get("ARKSEL_SENDER") || "";
-  if (!key || !sender) return fail(500, "ARKSEL_API_KEY or ARKSEL_SENDER is not set on this project");
+  if (!key || !sender) return fail(500, "ARKSEL_API_KEY or ARKSEL_SENDER is not set on this project", "Text messaging is not set up yet.");
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT);
@@ -142,7 +157,7 @@ Deno.serve(async (req) => {
     });
     sent = await res.text();
   } catch (e) {
-    return fail(502, `could not reach Arkesel: ${(e as Error).name}`);
+    return fail(502, `could not reach Arkesel: ${(e as Error).name}`, "The text-message service did not answer in time.");
   } finally {
     clearTimeout(timer);
   }
@@ -156,11 +171,12 @@ Deno.serve(async (req) => {
     /* keep the response text for the message below */
   }
   if (!res.ok || parsed.status !== "success" || parsed.data === undefined) {
-    return fail(res.status === 402 ? 429 : 502, `${res.status} ${sent.slice(0, 200)}`);
+    return fail(res.status === 402 ? 429 : 502, `Arkesel ${res.status}: ${sent.slice(0, 200)}`,
+      res.status === 402 ? "BrownHub is out of text-message credit." : "The message could not be sent.");
   }
   const invalid = (parsed.data as { [k: string]: unknown })["invalid numbers"];
   if (Array.isArray(invalid) && invalid.length) {
-    return fail(400, `Arkesel rejected the number: ${sent.slice(0, 200)}`);
+    return fail(400, `Arkesel rejected the number: ${sent.slice(0, 200)}`, "Your network refused the message. Try again or reach us on WhatsApp.");
   }
 
   return new Response(null, { status: 204 });
