@@ -55,6 +55,9 @@
     "SMS rate limit exceeded": "Too many codes sent right now. Please wait a minute and try again.",
     "Error sending out the SMS": "We couldn't text that number just now. Your account is open — try again later.",
     "Unable to send SMS": "We couldn't text that number just now. Your account is open — try again later.",
+    // What Supabase answers when the project has no SMS provider wired up. Left raw
+    // it prints GoTrue's internals to the client.
+    "Unable to get SMS provider": "We couldn't text that number just now. Your account is open — try again later.",
     "New phone number is the same as current phone number": "We already have that number. Enter the 6-digit code we texted.",
     "Network request failed": "We couldn't reach the account service. Check your connection and try again.",
     "Failed to fetch": "We couldn't reach the account service. Check your connection and try again."
@@ -746,8 +749,8 @@
   }
 
   // Attach the number to the signed-in account, which is what asks Supabase to text
-  // the code. If the text cannot go out the account is still usable — the number is
-  // on file and the reminder in the history view offers another try.
+  // the code. A text that cannot go out rejects the whole update, so the number is
+  // not left half-saved: the reminder bar simply asks for it again.
   function sendCode(number) {
     var tel = phoneE164(number);
     if (!tel) {
