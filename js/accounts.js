@@ -334,6 +334,7 @@
       record: record,
       ask: ask
     };
+    checkSms();
     catchRecovery();
   }
 
@@ -512,7 +513,7 @@
     // The reset ask needs an address only; the new password needs nothing but itself.
     passField.hidden = forgot || telStep;
     emailField.hidden = newpass || telStep;
-    phoneField.hidden = !(signup || mode === "phone");
+    phoneField.hidden = !((signup || mode === "phone") && smsReady);
     codeField.hidden = !verify;
     telLine.hidden = !verify;
     tabs.hidden = switching;
@@ -652,6 +653,9 @@
   }
 
   function openPanel() {
+    // Re-ask each time the panel opens, so switching the provider on in the
+    // dashboard lights the phone steps up without anyone reloading the page.
+    checkSms();
     opener = document.activeElement;
     modal.classList.add("open");
     trigger.setAttribute("aria-expanded", "true");
@@ -724,6 +728,32 @@
   }
 
   // ---- phone verification ------------------------------------------------------
+  // A code can only be texted while the project has a live SMS provider behind an
+  // enabled Phone provider, and the panel must not offer a text it cannot send.
+  // The project itself is the only witness, so ask it once per page load. A probe
+  // that fails to answer leaves the feature on rather than switching off something
+  // that works, and the next panel open asks again.
+  var smsReady = false;
+  var smsPending = false;
+
+  function checkSms() {
+    if (!configured || smsPending) return;
+    smsPending = true;
+    fetch(SB_API_URL + "/auth/v1/settings", { headers: { apikey: SB_API_KEY } })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (data) {
+        smsPending = false;
+        if (!data || !data.external) return;
+        var on = !!data.external.phone;
+        if (on === smsReady) return;
+        smsReady = on;
+        // The step the client is looking at may have just appeared or gone away.
+        paintVerifyBar();
+        if (modal.classList.contains("open") && !busy && !noteEl.textContent) setMode(mode);
+      })
+      .catch(function () { smsPending = false; });
+  }
+
   // Supabase only accepts E.164, while most clients type their number the way it is
   // spoken. A leading 0 is the Ghanaian trunk code the studio's clients use, so it
   // becomes +233; anything else has to arrive with its country code.
@@ -775,6 +805,9 @@
   // the code. A text that cannot go out rejects the whole update, so the number is
   // not left half-saved: the reminder bar simply asks for it again.
   function sendCode(number) {
+    // Nothing can text a code while the provider is off, and every way into this
+    // function is already hidden in that state.
+    if (!smsReady) return;
     var tel = phoneE164(number);
     if (!tel) {
       note("Enter your number with its country code, like +233 59 387 2873.");
@@ -873,7 +906,7 @@
 
   function paintVerifyBar() {
     var ok = !unconfirmed();
-    verifyBar.hidden = !session || ok;
+    verifyBar.hidden = !session || ok || !smsReady;
     if (verifyBar.hidden) return;
     txt(verifyMsg, phoneOf()
       ? "We haven't confirmed this number yet."
