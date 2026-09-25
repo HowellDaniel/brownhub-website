@@ -5,6 +5,7 @@ Allow: /services.html
 Allow: /catalog.html
 Allow: /about.html
 Allow: /contact.html
+Allow: /privacy.html
 
 # Optional: allow common AI crawlers to read the site content.
 User-agent: GPTBot
