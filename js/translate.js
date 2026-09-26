@@ -7,14 +7,17 @@
      orthography, which collect() deliberately skips. */
   var GROUPS = [
     ["Ghana and the region", [["en", "English"], ["tw", "Twi"]]],
-    ["Africa and the Middle East", [["sw", "Kiswahili"], ["ar", "العربية"], ["he", "עברית"], ["fa", "فارسی"]]],
+    ["Africa and the Middle East", [["sw", "Kiswahili"], ["ar", "العربية"], ["he", "עברית"],
+      ["fa", "فارسی"], ["af", "Afrikaans"]]],
     ["Europe", [["fr", "Français"], ["de", "Deutsch"], ["es", "Español"], ["pt", "Português"],
       ["it", "Italiano"], ["nl", "Nederlands"], ["el", "Ελληνικά"], ["sv", "Svenska"],
-      ["da", "Dansk"], ["pl", "Polski"], ["cs", "Čeština"], ["hu", "Magyar"],
-      ["ru", "Русский"], ["uk", "Українська"], ["tr", "Türkçe"]]],
+      ["da", "Dansk"], ["fi", "Suomi"], ["pl", "Polski"], ["cs", "Čeština"],
+      ["sk", "Slovenčina"], ["hu", "Magyar"], ["ro", "Română"], ["bg", "Български"],
+      ["sr", "Српски"], ["hr", "Hrvatski"], ["ru", "Русский"], ["uk", "Українська"],
+      ["tr", "Türkçe"]]],
     ["Asia", [["zh", "简体中文"], ["ja", "日本語"], ["ko", "한국어"], ["vi", "Tiếng Việt"],
-      ["th", "ไทย"], ["id", "Bahasa Indonesia"], ["ms", "Bahasa Melayu"],
-      ["hi", "हिन्दी"], ["ur", "اردو"]]]
+      ["th", "ไทย"], ["id", "Bahasa Indonesia"], ["ms", "Bahasa Melayu"], ["tl", "Tagalog"],
+      ["bn", "বাংলা"], ["ta", "தமிழ்"], ["hi", "हिन्दी"], ["ur", "اردو"]]]
   ];
   var LANGS = [];
   var CODES = {};
@@ -33,7 +36,9 @@
     greek: "el", swedish: "sv", danish: "da", czech: "cs", hungarian: "hu",
     polish: "pl", ukrainian: "uk", russian: "ru", turkish: "tr", chinese: "zh",
     japanese: "ja", korean: "ko", vietnamese: "vi", thai: "th", malay: "ms",
-    hindi: "hi", urdu: "ur" };
+    hindi: "hi", urdu: "ur", afrikaans: "af", serbian: "sr", bulgarian: "bg",
+    croatian: "hr", slovak: "sk", finnish: "fi", romanian: "ro", bengali: "bn",
+    tamil: "ta", tagalog: "tl", filipino: "tl" };
   var ATTRS = ["placeholder", "title", "alt", "aria-label"];
   var dicts = {};
   var rmaps = {};
@@ -123,7 +128,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=46")
+    return fetch("i18n/" + code + ".json?v=47")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }
