@@ -87,7 +87,15 @@
     notice.appendChild(inner);
     doc.body.appendChild(notice);
   }
-  const hideNotice = () => { if (notice) notice.classList.add("is-gone"); };
+  const hideNotice = () => { if (notice) { notice.classList.add("is-gone"); publishHeight(); } };
+
+  /* The language sheet is pinned to the lower half of the screen, so it has to
+     stop above this notice or its last rows can never be reached. */
+  function publishHeight() {
+    if (!notice) return;
+    const h = notice.classList.contains("is-gone") ? 0 : Math.round(notice.getBoundingClientRect().height);
+    doc.documentElement.style.setProperty("--cookie-h", h + "px");
+  }
 
   /* ---------- preferences centre ---------- */
   let modal, lastFocus;
@@ -200,6 +208,9 @@
     buildNotice();
     void notice.offsetWidth;            /* commit the hidden frame, or it cannot slide up */
     notice.classList.add("is-in");
+    publishHeight();
+    if (window.ResizeObserver) new ResizeObserver(publishHeight).observe(notice);
+    else window.addEventListener("resize", publishHeight);
   }
 
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", init);

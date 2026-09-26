@@ -21,9 +21,14 @@
   ];
   var LANGS = [];
   var CODES = {};
+  var NAMES = {};
   GROUPS.forEach(function (g) {
-    g[1].forEach(function (l) { LANGS.push(l); CODES[l[0]] = 1; });
+    g[1].forEach(function (l) { LANGS.push(l); CODES[l[0]] = 1; NAMES[l[0]] = l[1]; });
   });
+  /* The pane's own label for the visitor's device languages. It is painted by
+     buildLocale(), which sits outside collect(), so it has to be translated by
+     hand every time the page is re-applied. */
+  var SUGGEST = "Suggested for you";
   /* Written right to left, so the page has to mirror with the text. */
   var RTL = { ar: 1, he: 1, fa: 1, ur: 1, ps: 1, sd: 1, ku: 1, dv: 1 };
   /* Older or broader tags that mean a language we can serve: browsers still
@@ -46,7 +51,7 @@
   var seen = new WeakSet();
   var seenAttr = new WeakMap();
   var current = "en";
-  var localeBtn = null, localeName = null, localePanel = null;
+  var localeBtn = null, localeName = null, localePanel = null, suggestHead = null;
 
   function trimKey(s) { return s ? s.trim() : ""; }
 
@@ -128,7 +133,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=47")
+    return fetch("i18n/" + code + ".json?v=48")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }
@@ -218,31 +223,42 @@
         '<span class="locale__name">English</span>' +
         '<svg class="locale__caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>' +
       "</button>" +
-      '<div class="locale__panel" id="locale-list"></div>';
+      '<div class="locale__panel" id="locale-list" role="group" aria-label="Languages"></div>';
 
     localeBtn = host.querySelector(".locale__btn");
     localeName = host.querySelector(".locale__name");
     localePanel = host.querySelector("#locale-list");
 
-    GROUPS.forEach(function (g) {
+    /* One column per run, so the whole list is on screen instead of behind a
+       scroll; the device's own languages lead it when we can serve any. */
+    var runs = GROUPS.slice();
+    var prefs = prefCodes();
+    if (prefs.length) {
+      runs = [[SUGGEST, prefs.map(function (c) { return [c, NAMES[c]]; })]].concat(runs);
+    }
+    runs.forEach(function (g, gi) {
+      var col = document.createElement("div");
+      col.className = "locale__col" + (prefs.length && gi === 0 ? " locale__col--suggest" : "");
+      col.setAttribute("role", "group");
+      col.setAttribute("aria-labelledby", "locale-g" + gi);
       var head = document.createElement("p");
       head.className = "locale__group";
+      head.id = "locale-g" + gi;
       head.textContent = g[0];
-      localePanel.appendChild(head);
+      if (prefs.length && gi === 0) suggestHead = head;
+      col.appendChild(head);
       g[1].forEach(function (l) {
         var b = document.createElement("button");
         b.type = "button";
         b.className = "locale__opt";
         b.setAttribute("data-code", l[0]);
-        b.setAttribute("role", "option");
-        b.setAttribute("aria-selected", "false");
+        b.setAttribute("aria-current", "false");
         b.textContent = l[1];
         b.addEventListener("click", function () { apply(l[0]); close(); localeBtn.focus(); });
-        localePanel.appendChild(b);
+        col.appendChild(b);
       });
+      localePanel.appendChild(col);
     });
-    localePanel.setAttribute("role", "listbox");
-    localePanel.setAttribute("aria-label", "Languages");
     localePanel.addEventListener("keydown", function (e) {
       var opts = Array.prototype.slice.call(localePanel.querySelectorAll(".locale__opt"));
       var at = opts.indexOf(document.activeElement);
@@ -265,6 +281,7 @@
     });
     document.addEventListener("i18n-applied", function () {
       if (localeBtn) localeBtn.setAttribute("aria-label", t("Choose language"));
+      if (suggestHead) suggestHead.textContent = t(SUGGEST);
     });
     sync();
   }
@@ -287,7 +304,6 @@
       var on = b.getAttribute("data-code") === current;
       b.classList.toggle("is-current", on);
       b.setAttribute("aria-current", on ? "true" : "false");
-      b.setAttribute("aria-selected", on ? "true" : "false");
     });
   }
 
@@ -307,16 +323,23 @@
     return "";
   }
 
+  // Every language the device asks for that we can actually serve, in the order
+  // it lists them. English is left out: it is what the page already is.
+  function prefCodes() {
+    var prefs = (navigator.languages && navigator.languages.length)
+      ? navigator.languages : [navigator.language || ""];
+    var out = [], taken = {};
+    for (var i = 0; i < prefs.length; i++) {
+      var hit = resolve(prefs[i]);
+      if (hit && hit !== "en" && !taken[hit]) { taken[hit] = 1; out.push(hit); }
+    }
+    return out;
+  }
+
   // The whole preferred-language list, not just its first entry: a Ghanaian
   // browser commonly offers [en, tw] and Twi is the one worth serving.
   function firstPref() {
-    var prefs = (navigator.languages && navigator.languages.length)
-      ? navigator.languages : [navigator.language || ""];
-    for (var i = 0; i < prefs.length; i++) {
-      var hit = resolve(prefs[i]);
-      if (hit) return hit;
-    }
-    return "en";
+    return prefCodes()[0] || "en";
   }
 
   function init() {

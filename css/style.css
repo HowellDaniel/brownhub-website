@@ -1381,7 +1381,7 @@ html[data-theme="light"] .cookie-modal__card{--glass-fill:rgba(255,255,255,.94)}
 .legal__note a{color:var(--accent);font-weight:600}
 
 /* ---------- Locale groups ---------- */
-/* The panel is a listbox in four labelled runs; the heading must not read as a
+/* The panel is a set of labelled runs; the heading must not read as a
    choice. Sticky keeps the group name visible while the list scrolls. */
 .locale__group{position:sticky;top:0;z-index:1;margin:var(--t-2) 0 2px;padding:5px 10px;overflow:hidden;
   background:var(--surface);color:var(--text-muted);font-size:11px;font-weight:700;
@@ -1417,3 +1417,27 @@ html[dir="rtl"] .cookie-switch__track::after{left:auto;right:3px}
 html[dir="rtl"] .cookie-switch input:checked+.cookie-switch__track::after{transform:translateX(-20px)}
 html[dir="rtl"] .legal__note{border-left:0;border-right:var(--t-bw2) solid var(--accent);
   border-radius:var(--t-r) 0 0 var(--t-r)}
+
+/* ---------- Language pane: the whole list at once ----------
+   Forty entries do not fit a 420px column, and a client should not have to scroll
+   blindly to find their own language. The flyout spreads one column per run so the
+   full list is on screen, and a phone gets a near-full-height sheet with two runs
+   side by side. Each column scrolls on its own so a long run cannot push the others
+   out of sight; the sticky headings keep naming it as you go. */
+.locale.is-open .locale__panel{display:flex;align-items:flex-start;gap:var(--t-2);
+  width:max-content;max-width:min(82vw,880px);max-height:calc(100vh - 104px - var(--cookie-h,0px));overflow:hidden}
+.locale__col{flex:0 1 auto;min-width:154px;max-height:inherit;overflow-y:auto;
+  overscroll-behavior:contain;scrollbar-width:thin}
+.locale__col+.locale__col{padding-left:var(--t-2);border-inline-start:var(--t-bw) solid var(--border)}
+.locale__col--suggest .locale__group{color:var(--accent)}
+/* No colour rule here for the options: any two-class override would tie with
+   .locale__opt.is-current and, being later, silence the current-language accent. */
+@media (max-width:860px){
+  .locale.is-open .locale__panel{position:fixed;inset:56px 8px auto 8px;display:flex;flex-wrap:wrap;
+    width:auto;max-width:none;max-height:calc(100vh - 68px - var(--cookie-h,0px));overflow-y:auto}
+  .locale__col{flex:1 1 calc(50% - var(--t-2));min-width:0;max-height:none;overflow:visible}
+  .locale__col+.locale__col{padding-left:0;border-inline-start:0}
+  /* Two runs side by side leaves no room for "Africa and the Middle East" on a
+     line of its own, and an ellipsis hides the run the visitor is scanning for. */
+  .locale__group{white-space:normal;text-overflow:clip}
+}
