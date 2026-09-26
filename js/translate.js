@@ -268,11 +268,37 @@
       opts[(at + step + opts.length) % opts.length].focus();
     });
 
+    /* How wide the pane has to be for the whole list to be visible at once. The row
+       height is measured from a real option rather than assumed, and the column count
+       is capped by what fits across the screen — past that the pane scrolls, which is
+       still better than a language nobody can reach. Mirrors the --locale-col-w the
+       panel's own width calc uses. */
+    function fitColumns() {
+      var opts = localePanel.querySelectorAll(".locale__opt");
+      var heads = localePanel.querySelectorAll(".locale__group");
+      if (!opts.length) return;
+      var st = getComputedStyle(localePanel);
+      var row = opts[0].offsetHeight || 34;
+      var head = (heads[0] && heads[0].offsetHeight) || 28;
+      var colW = parseFloat(st.getPropertyValue("--locale-col-w")) || 154;
+      var gap = parseFloat(st.columnGap) || 12;
+      var pad = (parseFloat(st.paddingLeft) || 0) + (parseFloat(st.paddingRight) || 0);
+      var notice = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--cookie-h")) || 0;
+      var perCol = Math.max(4, Math.floor((innerHeight - 104 - notice - pad - head) / row));
+      var widest = Math.max(2, Math.floor((Math.min(innerWidth * 0.94, 1040) - pad + gap) / (colW + gap)));
+      localePanel.style.setProperty("--locale-cols",
+        String(Math.max(2, Math.min(Math.ceil((opts.length + heads.length) / perCol), widest))));
+    }
+
     localeBtn.addEventListener("click", function () {
       var willOpen = !host.classList.contains("is-open");
       host.classList.toggle("is-open", willOpen);
       localeBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+      if (willOpen) fitColumns();
     });
+    window.addEventListener("resize", function () {
+      if (host.classList.contains("is-open")) fitColumns();
+    }, { passive: true });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") close();
     });

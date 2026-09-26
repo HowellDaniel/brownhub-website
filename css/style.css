@@ -1420,19 +1420,29 @@ html[dir="rtl"] .legal__note{border-left:0;border-right:var(--t-bw2) solid var(-
 
 /* ---------- Language pane: the whole list at once ----------
    Forty entries do not fit a 420px column, and a client should not have to scroll
-   blindly to find their own language. The flyout spreads one column per run so the
-   full list is on screen, and a phone gets a near-full-height sheet with two runs
-   side by side. Each column scrolls on its own so a long run cannot push the others
-   out of sight; the sticky headings keep naming it as you go. */
-.locale.is-open .locale__panel{display:flex;align-items:flex-start;gap:var(--t-2);
-  width:max-content;max-width:min(82vw,880px);max-height:calc(100vh - 104px - var(--cookie-h,0px));overflow:hidden}
-.locale__col{flex:0 1 auto;min-width:154px;max-height:inherit;overflow-y:auto;
-  overscroll-behavior:contain;scrollbar-width:thin}
-.locale__col+.locale__col{padding-left:var(--t-2);border-inline-start:var(--t-bw) solid var(--border)}
+   blindly to find their own language. The flyout balances them across as many
+   columns as the viewport needs; a phone gets a near-full-height sheet with two
+   runs side by side, and the sticky headings keep naming a run as you go. */
+/* One balanced multi-column flow, not one column per run: with a run of twenty-one
+   European entries the old layout hid eight of them behind a scroll inside that one
+   column, which reads as "my language is missing". js/translate.js counts how many
+   rows the viewport can hold and publishes --locale-cols, so the panel grows
+   sideways until every language is on screen at once. */
+.locale.is-open .locale__panel{display:block;--locale-col-w:154px;columns:var(--locale-cols,4);column-gap:var(--t-2);
+  width:calc(var(--locale-cols,4) * var(--locale-col-w) + (var(--locale-cols,4) - 1) * var(--t-2) + var(--t-1) * 2 + var(--t-bw) * 2);
+  max-width:94vw;max-height:calc(100vh - 104px - var(--cookie-h,0px));overflow:auto}
+.locale__col{break-inside:auto;max-height:none;overflow:visible;padding:0}
+.locale__col+.locale__col{padding-left:0;border-inline-start:0}
+/* A heading that lands alone at the foot of a column names nothing, and a language
+   split across two columns is worse than one pushed to the next. */
+.locale__group{break-after:avoid}
+.locale__opt{break-inside:avoid}
 .locale__col--suggest .locale__group{color:var(--accent)}
 /* No colour rule here for the options: any two-class override would tie with
    .locale__opt.is-current and, being later, silence the current-language accent. */
 @media (max-width:860px){
+  /* A flex container is not a multi-column container, so the sheet below keeps its
+     own two-up arrangement and --locale-cols simply does nothing here. */
   .locale.is-open .locale__panel{position:fixed;inset:56px 8px auto 8px;display:flex;flex-wrap:wrap;
     width:auto;max-width:none;max-height:calc(100vh - 68px - var(--cookie-h,0px));overflow-y:auto}
   .locale__col{flex:1 1 calc(50% - var(--t-2));min-width:0;max-height:none;overflow:visible}
