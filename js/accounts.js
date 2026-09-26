@@ -200,9 +200,9 @@
     } else {
       var menu = document.getElementById("nav-menu");
       if (menu) {
-        var cta = menu.querySelector(".nav__link--cta");
-        // Sit just before the Contact call-to-action, whatever whitespace follows it.
-        menu.insertBefore(navLi, cta ? cta.parentNode : null);
+        var last = menu.querySelector('a[href="contact.html"]');
+        // Sit just before Contact, the menu's last entry, whatever whitespace follows it.
+        menu.insertBefore(navLi, last ? last.parentNode : null);
       }
     }
 

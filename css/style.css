@@ -84,7 +84,6 @@ body{-webkit-tap-highlight-color:rgba(var(--accent-rgb),.18)}
   .split{gap:2rem}
   .nav__menu{padding-bottom:calc(1.5rem + env(safe-area-inset-bottom,0px))}
   .nav__menu .nav__link{display:block;padding:.6rem 0;font-size:1.05rem}
-  .nav__menu .nav__link--cta{display:inline-block;padding:.6rem 1.2rem;margin-top:.25rem}
   .modal{padding:.75rem;place-items:end center}
   .modal__card{max-width:100%;border-radius:18px;max-height:calc(100vh - 1.5rem);max-height:calc(100dvh - 1.5rem)}
   .modal__img{max-height:210px}
@@ -399,11 +398,6 @@ html[data-theme="light"]{--glass-hair:rgba(255,255,255,.95);--glass-hair-soft:rg
     linear-gradient(180deg,rgba(255,255,255,0) 58%,var(--glass-sheen))}
 .site-header.is-glass-hot::after{opacity:1}
 .site-header .nav{position:relative;z-index:1}
-.site-header .nav__link--cta{border:1px solid var(--glass-hair-soft);
-  background:linear-gradient(180deg,var(--glass-sheen),rgba(255,255,255,0) 58%),var(--accent-fill);
-  box-shadow:inset 0 1px 0 var(--glass-hair),0 6px 16px -9px rgba(0,0,0,.6);
-  -webkit-backdrop-filter:blur(8px) saturate(1.5);backdrop-filter:blur(8px) saturate(1.5)}
-.site-header .nav__link--cta:hover{box-shadow:inset 0 1px 0 var(--glass-hair),0 0 0 3px rgba(var(--accent-rgb),.18),0 8px 20px -10px rgba(0,0,0,.6)}
 .site-header .lang-select{background-color:var(--glass-ctl-bg);border-color:var(--glass-ctl-hair);
   box-shadow:inset 0 1px 0 var(--glass-hair);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .site-header .theme-toggle{background-color:var(--glass-ctl-bg);border-color:var(--glass-ctl-hair);
@@ -419,7 +413,7 @@ html[data-theme="light"]{--glass-hair:rgba(255,255,255,.95);--glass-hair-soft:rg
   .site-header::after{display:none}
   .site-header .nav__menu{background:var(--bg)}
 }
-@media (prefers-reduced-motion:reduce){.site-header::after,.site-header .nav__link--cta,.site-header .lang-select,.site-header .theme-toggle{transition:none}}
+@media (prefers-reduced-motion:reduce){.site-header::after,.site-header .lang-select,.site-header .theme-toggle{transition:none}}
 
 /* ---- Liquid glass on every shape ----
    The bar's pane at card scale: a translucent fill that samples what sits behind
@@ -553,7 +547,6 @@ h1,h2,h3{letter-spacing:-.03em;font-weight:750}
 .nav__link::after{content:"";position:absolute;left:0;right:100%;bottom:-.15rem;height:2px;border-radius:2px;background:var(--accent-fill);transition:right .34s var(--ease-out)}
 .nav__link:hover::after,.nav__link:focus-visible::after{right:0}
 .nav__link--active::after{right:0;background:var(--accent-2)}
-.nav__link--cta::after{display:none}
 .nav__progress{position:absolute;left:0;bottom:-1px;height:2px;width:100%;transform:scaleX(var(--p,0));transform-origin:left;background:linear-gradient(90deg,var(--accent-fill),var(--accent-2));opacity:.9}
 @media (min-width:641px){
   .site-header.is-scrolled{--nav-h:58px}
