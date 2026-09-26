@@ -112,7 +112,7 @@ they have sent, filters them by period, lets them re-order one, reset a password
 optionally add a phone number.
 
 THE SITE ITSELF
-It is offered in thirty languages chosen from a menu at the top of the page, and it has a
+It is offered in forty languages chosen from a menu at the top of the page, and it has a
 privacy policy page. Voice notes recorded in the chat or on the Project details form are
 emailed to the studio.
 
@@ -192,11 +192,15 @@ Deno.serve(async (req) => {
   const code = /^[a-z]{2}$/.test(String(body.lang ?? "")) ? String(body.lang) : "en";
   const LANGUAGE: Record<string, string> = {
     en: "English", tw: "Twi", sw: "Swahili", ar: "Arabic", he: "Hebrew", fa: "Persian",
+    af: "Afrikaans",
     fr: "French", de: "German", es: "Spanish", pt: "Portuguese", it: "Italian",
-    nl: "Dutch", el: "Greek", sv: "Swedish", da: "Danish", pl: "Polish", cs: "Czech",
-    hu: "Hungarian", ru: "Russian", uk: "Ukrainian", tr: "Turkish", zh: "Simplified Chinese",
-    ja: "Japanese", ko: "Korean", vi: "Vietnamese", th: "Thai", id: "Indonesian",
-    ms: "Malay", hi: "Hindi", ur: "Urdu"
+    nl: "Dutch", el: "Greek", sv: "Swedish", da: "Danish", fi: "Finnish",
+    pl: "Polish", cs: "Czech", sk: "Slovak", hu: "Hungarian", ro: "Romanian",
+    bg: "Bulgarian", sr: "Serbian", hr: "Croatian", ru: "Russian", uk: "Ukrainian",
+    tr: "Turkish",
+    zh: "Simplified Chinese", ja: "Japanese", ko: "Korean", vi: "Vietnamese",
+    th: "Thai", id: "Indonesian", ms: "Malay", tl: "Tagalog",
+    bn: "Bengali", ta: "Tamil", hi: "Hindi", ur: "Urdu"
   };
   const model = Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash-lite";
 
