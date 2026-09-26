@@ -11,6 +11,10 @@
   const doc = document;
   const grid = doc.getElementById("reviews-grid");
   const empty = doc.getElementById("reviews-empty");
+  const scoreEl = doc.getElementById("reviews-score");
+  const avgEl = doc.getElementById("reviews-avg");
+  const starsEl = doc.getElementById("reviews-stars");
+  const countEl = doc.getElementById("reviews-count");
   if (!grid) return;
 
   const STAR = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3.2l2.75 5.6 6.15.9-4.45 4.3 1.05 6.1L12 17.2l-5.5 2.9 1.05-6.1L3.1 9.7l6.15-.9L12 3.2Z"/></svg>';
@@ -50,6 +54,19 @@
     grid.innerHTML = items.map(card).join("");
     grid.hidden = false;
     if (empty) empty.hidden = true;
+    score(items);
+  }
+
+  /* The headline number is the average of the stars clients actually left, so a
+     band where nobody rated their job shows no score rather than a made-up one. */
+  function score(items) {
+    const rated = items.filter((r) => Number(r.rating) > 0);
+    if (!rated.length || !scoreEl) return;
+    const avg = rated.reduce((sum, r) => sum + Number(r.rating), 0) / rated.length;
+    avgEl.textContent = avg.toFixed(1);
+    starsEl.innerHTML = stars(Math.round(avg));
+    countEl.textContent = String(rated.length);
+    scoreEl.hidden = false;
   }
 
   // no-cache: the owner adds entries by editing this file, and a returning
@@ -59,4 +76,24 @@
     .then((r) => (r.ok ? r.json() : []))
     .then((d) => render(Array.isArray(d) ? d : d.reviews))
     .catch(() => render([]));
+
+  /* The client wall is the same promise in another shape: a name appears here only
+     because the client allowed it, so an empty file leaves the band shut rather than
+     filling it with companies we have never met. */
+  const wall = doc.getElementById("companies");
+  const wallItems = doc.getElementById("companies-items");
+  if (wall && wallItems) {
+    fetch("data/companies.json", { cache: "no-cache" })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((d) => {
+        const list = (Array.isArray(d) ? d : (d && d.companies) || []).filter((c) => c && c.name);
+        if (!list.length) return;
+        wallItems.innerHTML = list.map((c) =>
+          '<div class="company"><strong>' + esc(c.name) + "</strong>" +
+          (c.sector ? "<span>" + esc(c.sector) + "</span>" : "") + "</div>").join("");
+        wall.hidden = false;
+        if (window.BROWNHUB_FLOW) window.BROWNHUB_FLOW.refresh();
+      })
+      .catch(() => {});
+  }
 })();
