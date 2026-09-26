@@ -491,10 +491,10 @@
 
     const style = document.createElement("style");
     style.textContent = `
-      .interactive-background { position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; background:radial-gradient(circle at var(--pointer-x,50%) var(--pointer-y,35%),rgba(224,138,60,.14),transparent 28rem),radial-gradient(circle at 85% 15%,rgba(73,126,181,.12),transparent 24rem); }
+      .interactive-background { position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; background:radial-gradient(circle at var(--pointer-x,50%) var(--pointer-y,35%),rgba(238,51,56,.14),transparent 28rem),radial-gradient(circle at 85% 15%,rgba(73,126,181,.12),transparent 24rem); }
       .interactive-background::before,.interactive-background::after { content:""; position:absolute; width:22rem; height:22rem; border-radius:50%; filter:blur(70px); opacity:.16; animation:brownhub-float 14s ease-in-out infinite alternate; }
-      .interactive-background::before { left:8%; top:18%; background:#e08a3c; }
-      .interactive-background::after { right:8%; bottom:12%; background:#477eb5; animation-delay:-6s; }
+      .interactive-background::before { left:8%; top:18%; background:#ee3338; }
+      .interactive-background::after { right:8%; bottom:12%; background:#b17d40; animation-delay:-6s; }
       @keyframes brownhub-float { from { transform:translate3d(-2rem,1rem,0) scale(.9); } to { transform:translate3d(2rem,-2rem,0) scale(1.1); } }
       .hero__card { will-change:transform; }
       .hero__card--1 { animation:hero-card-float-one 5s ease-in-out infinite; }
