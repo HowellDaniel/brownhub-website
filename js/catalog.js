@@ -118,4 +118,61 @@
       }
     }, 350);
   });
+
+  // The nav search deep-links here as catalog.html?q=term, so the grid filters
+  // itself on load and the field mirrors whatever the URL says.
+  var filterForm = document.getElementById("catalog-search");
+  var filterInput = document.getElementById("catalog-filter-input");
+  var filterClear = document.getElementById("catalog-filter-clear");
+  var emptyEl = document.getElementById("catalog-empty");
+
+  function words(term) {
+    return (term || "").toLowerCase().trim().split(/\s+/).filter(Boolean);
+  }
+
+  function matches(card, list) {
+    // dataset holds the English source and textContent the rendered language, so
+    // a visitor searching in either one hits the same card.
+    var hay = (card.dataset.name + " " + (card.dataset.catlabel || "") + " " +
+      (card.dataset.desc || "") + " " + card.textContent).toLowerCase();
+    for (var i = 0; i < list.length; i++) if (hay.indexOf(list[i]) === -1) return false;
+    return true;
+  }
+
+  function applyFilter(term, remember) {
+    var list = words(term);
+    var shown = 0;
+    cards.forEach(function (card) {
+      var ok = !list.length || matches(card, list);
+      card.hidden = !ok;
+      if (ok) shown++;
+    });
+    if (filterClear) filterClear.hidden = !list.length;
+    if (emptyEl) emptyEl.hidden = shown !== 0;
+    if (remember !== false) {
+      try {
+        var u = new URL(location.href);
+        if (list.length) u.searchParams.set("q", term.trim());
+        else u.searchParams.delete("q");
+        history.replaceState(history.state, "", u);
+      } catch (e) {}
+    }
+  }
+
+  if (filterForm && filterInput) {
+    filterForm.addEventListener("submit", function (e) { e.preventDefault(); });
+    filterInput.addEventListener("input", function () { applyFilter(filterInput.value); });
+    if (filterClear) {
+      filterClear.addEventListener("click", function () {
+        filterInput.value = "";
+        filterInput.focus();
+        applyFilter("");
+      });
+    }
+    var seeded = new URLSearchParams(location.search).get("q");
+    if (seeded) {
+      filterInput.value = seeded;
+      applyFilter(seeded, false);
+    }
+  }
 })();

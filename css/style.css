@@ -630,3 +630,101 @@ html[data-theme="light"] .filter__btn{color:var(--accent)}
   .hero::after{animation:none}
   html{scroll-behavior:auto}
 }
+
+/* ==========================================================================
+   Nav search, login pill, social rail and catalog filter — same twilio.com
+   idiom: a dropdown pinned under the header with hairline-separated groups,
+   a secondary outline pill beside the primary one, and bordered rounded-square
+   social buttons whose ink flips on hover.
+   ========================================================================== */
+
+/* Search trigger mirrors the theme toggle so the nav ends in a pair of pills
+   plus a pair of round icon buttons, not three one-off shapes. */
+.nav__search{flex:none;width:40px;height:40px;margin-left:1.1rem;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);display:grid;place-items:center;cursor:pointer;transition:border-color .2s,color .2s,background .2s}
+.nav__search:hover,.nav__search[aria-expanded="true"]{border-color:var(--accent-fill);color:var(--accent);background:rgba(var(--accent-fill-rgb),.10)}
+.nav__search:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.18)}
+
+.search{position:absolute;left:0;right:0;top:100%;z-index:95;padding:.4rem 1.25rem 0}
+.search__panel{max-width:min(46rem,100%);margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:0 20px 44px -20px rgba(0,0,0,.6);padding:.85rem .9rem .95rem;opacity:0;translate:0 -8px;transition:opacity .2s var(--ease-out),translate .3s var(--ease-out)}
+.search.is-open .search__panel{opacity:1;translate:0 0}
+.search__field{display:flex;align-items:center;gap:.6rem;padding:.55rem .55rem .55rem .8rem;border:1px solid var(--border);border-radius:12px;background:var(--bg);transition:border-color .2s,box-shadow .2s}
+.search__field:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.16)}
+.search__glass{flex:none;color:var(--text-muted);transition:color .2s}
+.search__field:focus-within .search__glass{color:var(--accent)}
+.search__field input{flex:1;min-width:0;border:none;background:none;color:var(--text);font-family:inherit;font-size:1.02rem;outline:none}
+.search__field input::placeholder{color:var(--text-muted)}
+.search__clear{flex:none;width:28px;height:28px;border-radius:50%;border:none;background:var(--bg-alt);color:var(--text-muted);font-size:1.2rem;line-height:1;cursor:pointer;transition:background .2s,color .2s}
+.search__clear:hover{background:rgba(var(--accent-fill-rgb),.2);color:var(--accent)}
+.search__chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
+.search__chip{font-family:inherit;font-size:.82rem;font-weight:600;color:var(--accent);background:rgba(var(--accent-fill-rgb),.13);border:1px solid rgba(var(--accent-fill-rgb),.52);border-radius:999px;padding:.32rem .85rem;cursor:pointer;transition:background .22s,color .22s,border-color .22s}
+.search__chip:hover,.search__chip:focus-visible{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff;outline:none}
+.search__list{margin-top:.45rem;max-height:min(52vh,26rem);overflow-y:auto}
+.search__group{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:.7rem .55rem .3rem}
+.search__group:not(:first-child){margin-top:.4rem;border-top:1px solid var(--border)}
+.search__hit{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.55rem;border-radius:10px;color:var(--text);transition:background .18s}
+.search__hit:hover{background:var(--bg-alt);color:var(--text)}
+.search__item[aria-selected="true"] .search__hit{background:rgba(var(--accent-fill-rgb),.14)}
+.search__hit-t{font-size:.95rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.search__hit-g{flex:none;font-size:.76rem;color:var(--text-muted)}
+.search__none{padding:.9rem .55rem;font-size:.92rem;color:var(--text-muted)}
+
+/* Login as twilio's secondary button: outline pill sitting directly before the
+   filled one, both clearing at the same height. */
+.nav__link--acct{padding:.5rem 1.1rem;border:1px solid var(--border);border-radius:999px;background:none;font-weight:600;color:var(--text);transition:border-color .22s,color .22s,background .22s}
+.nav__link--acct:hover,.nav__link--acct:focus-visible,.nav__link--acct[aria-expanded="true"]{border-color:var(--accent-fill);color:var(--accent);background:rgba(var(--accent-fill-rgb),.10)}
+.nav__link--acct:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(var(--accent-rgb),.18)}
+@media (max-width:840px){
+  .nav__menu .nav__link--acct{display:block;width:auto;padding:.6rem 0;border:none;border-radius:0;background:none;font-weight:500;text-align:left}
+}
+html.js-scroll .modal.open .modal__card{animation:modal-in .3s var(--ease-out) both}
+@keyframes modal-in{from{opacity:0;translate:0 12px;scale:.98}to{opacity:1;translate:0 0;scale:1}}
+.acct-field input:focus,.acct-filter select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.16)}
+
+/* Social: bordered rounded squares with a variable ink, footer row and a rail
+   parked on the right edge of wide screens. */
+.footer-social a{width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:none;color:var(--text-muted);display:grid;place-items:center;transition:color .2s,border-color .2s,background .2s,translate .2s}
+.footer-social a:hover,.footer-social a:focus-visible{color:#fff;border-color:var(--accent-fill);background:var(--accent-fill);translate:0 -2px;outline:none}
+.social-rail{display:none;position:fixed;right:clamp(.9rem,2vw,1.8rem);top:50%;transform:translateY(-50%);z-index:60;flex-direction:column;gap:.5rem}
+.social-rail__btn{position:relative;width:42px;height:42px;border-radius:12px;border:1px solid var(--border);background:rgba(var(--bg-rgb),.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--text-muted);display:grid;place-items:center;transition:color .2s,border-color .2s,background .2s,translate .2s}
+.social-rail__btn:hover,.social-rail__btn:focus-visible{color:#fff;border-color:var(--accent-fill);background:var(--accent-fill);translate:0 -2px;outline:none}
+.social-rail__btn svg{width:18px;height:18px}
+.social-rail__label{position:absolute;right:calc(100% + .5rem);top:50%;transform:translateY(-50%);max-width:0;overflow:hidden;opacity:0;white-space:nowrap;font-size:.8rem;font-weight:600;padding:.25rem .6rem;border:1px solid var(--border);border-radius:8px;background:rgba(var(--bg-rgb),.85);color:var(--text);transition:max-width .3s var(--ease-out),opacity .25s}
+.social-rail__btn:hover .social-rail__label,.social-rail__btn:focus-visible .social-rail__label{max-width:13rem;opacity:1}
+@media (min-width:1240px) and (min-height:700px){.social-rail{display:flex}}
+
+/* Catalog filter: the same search field, inlined into the grid's head. */
+.catalog-search{display:flex;align-items:center;gap:.6rem;max-width:30rem;margin:0 auto 1.6rem;padding:.5rem .5rem .5rem .9rem;border:1px solid var(--border);border-radius:999px;background:var(--surface);transition:border-color .2s,box-shadow .2s}
+.catalog-search:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.16)}
+.catalog-search svg{flex:none;color:var(--text-muted)}
+.catalog-search input{flex:1;min-width:0;border:none;background:none;color:var(--text);font-family:inherit;font-size:.98rem;outline:none}
+.catalog-search input::placeholder{color:var(--text-muted)}
+.catalog-search__clear{flex:none;min-width:2.1rem;height:2.1rem;padding:0 .7rem;border:none;border-radius:999px;background:rgba(var(--accent-fill-rgb),.13);color:var(--accent);font-family:inherit;font-size:.78rem;font-weight:700;cursor:pointer;transition:background .2s,color .2s}
+.catalog-search__clear:hover{background:var(--accent-fill);color:#fff}
+.catalog-count{margin:-.9rem 0 1.8rem;text-align:center;font-size:.85rem;color:var(--text-muted)}
+.product-card[hidden]{display:none}
+.service-row{scroll-margin-top:calc(var(--nav-h) + 1.5rem)}
+
+/* One ink per tab: the nav keeps exactly the same items and only the active
+   colour moves when you click through, alternating the two brand inks so that
+   no two neighbours read the same. */
+body[data-nav="home"],body[data-nav="catalog"],body[data-nav="contact"],body[data-nav="404"]{--nav-ink:var(--accent-fill)}
+body[data-nav="services"],body[data-nav="about"],body[data-nav="privacy"]{--nav-ink:var(--accent-2)}
+.nav__link--active{color:var(--nav-ink,var(--text))}
+.nav__link--active::after{background:var(--nav-ink,var(--accent-2))}
+.nav__progress{background:linear-gradient(90deg,var(--nav-ink,var(--accent-fill)),var(--accent-2))}
+html.js-scroll .nav__link--active::after{animation:nav-ink-in .5s var(--ease-out) both}
+@keyframes nav-ink-in{from{right:100%}to{right:0}}
+@media (max-width:640px){
+  .nav__search{width:38px;height:38px;margin-left:.55rem}
+  .search{padding:.4rem .75rem 0}
+  .search__list{max-height:44vh}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .search__panel{opacity:1;translate:none;transition:none}
+  html.js-scroll .modal.open .modal__card{animation:none}
+  .footer-social a:hover,.social-rail__btn:hover{translate:none}
+  html.js-scroll .nav__link--active::after{animation:none}
+  .search__chip,.search__hit,.social-rail__label{transition:none}
+}
+
