@@ -112,7 +112,7 @@ they have sent, filters them by period, lets them re-order one, reset a password
 optionally add a phone number.
 
 THE SITE ITSELF
-It is offered in 13 languages chosen from a menu at the top of the page, and it has a
+It is offered in thirty languages chosen from a menu at the top of the page, and it has a
 privacy policy page. Voice notes recorded in the chat or on the Project details form are
 emailed to the studio.
 
@@ -191,9 +191,12 @@ Deno.serve(async (req) => {
   // because a bare "tw" is not something every model reads as Twi.
   const code = /^[a-z]{2}$/.test(String(body.lang ?? "")) ? String(body.lang) : "en";
   const LANGUAGE: Record<string, string> = {
-    en: "English", fr: "French", es: "Spanish", pt: "Portuguese", ar: "Arabic",
-    zh: "Chinese", de: "German", nl: "Dutch", it: "Italian", ru: "Russian",
-    hi: "Hindi", sw: "Swahili", tw: "Twi"
+    en: "English", tw: "Twi", sw: "Swahili", ar: "Arabic", he: "Hebrew", fa: "Persian",
+    fr: "French", de: "German", es: "Spanish", pt: "Portuguese", it: "Italian",
+    nl: "Dutch", el: "Greek", sv: "Swedish", da: "Danish", pl: "Polish", cs: "Czech",
+    hu: "Hungarian", ru: "Russian", uk: "Ukrainian", tr: "Turkish", zh: "Simplified Chinese",
+    ja: "Japanese", ko: "Korean", vi: "Vietnamese", th: "Thai", id: "Indonesian",
+    ms: "Malay", hi: "Hindi", ur: "Urdu"
   };
   const model = Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash-lite";
 

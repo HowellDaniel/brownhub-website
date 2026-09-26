@@ -7,10 +7,14 @@
      orthography, which collect() deliberately skips. */
   var GROUPS = [
     ["Ghana and the region", [["en", "English"], ["tw", "Twi"]]],
-    ["Africa and the Middle East", [["sw", "Kiswahili"], ["ar", "العربية"]]],
-    ["Europe", [["fr", "Français"], ["es", "Español"], ["pt", "Português"], ["de", "Deutsch"],
-      ["nl", "Nederlands"], ["it", "Italiano"], ["ru", "Русский"]]],
-    ["Asia", [["zh", "简体中文"], ["hi", "हिन्दी"]]]
+    ["Africa and the Middle East", [["sw", "Kiswahili"], ["ar", "العربية"], ["he", "עברית"], ["fa", "فارسی"]]],
+    ["Europe", [["fr", "Français"], ["de", "Deutsch"], ["es", "Español"], ["pt", "Português"],
+      ["it", "Italiano"], ["nl", "Nederlands"], ["el", "Ελληνικά"], ["sv", "Svenska"],
+      ["da", "Dansk"], ["pl", "Polski"], ["cs", "Čeština"], ["hu", "Magyar"],
+      ["ru", "Русский"], ["uk", "Українська"], ["tr", "Türkçe"]]],
+    ["Asia", [["zh", "简体中文"], ["ja", "日本語"], ["ko", "한국어"], ["vi", "Tiếng Việt"],
+      ["th", "ไทย"], ["id", "Bahasa Indonesia"], ["ms", "Bahasa Melayu"],
+      ["hi", "हिन्दी"], ["ur", "اردو"]]]
   ];
   var LANGS = [];
   var CODES = {};
@@ -24,8 +28,12 @@
      target has no dictionary are ignored by resolve(), so this table only ever
      grows as dictionaries land. */
   var ALIAS = { ak: "tw", aka: "tw", akan: "tw", twi: "tw", swahili: "sw",
-    arabic: "ar", french: "fr", spanish: "es", portuguese: "pt", german: "de",
-    dutch: "nl", italian: "it", russian: "ru", chinese: "zh", hindi: "hi" };
+    arabic: "ar", hebrew: "he", farsi: "fa", persian: "fa", french: "fr",
+    spanish: "es", portuguese: "pt", german: "de", dutch: "nl", italian: "it",
+    greek: "el", swedish: "sv", danish: "da", czech: "cs", hungarian: "hu",
+    polish: "pl", ukrainian: "uk", russian: "ru", turkish: "tr", chinese: "zh",
+    japanese: "ja", korean: "ko", vietnamese: "vi", thai: "th", malay: "ms",
+    hindi: "hi", urdu: "ur" };
   var ATTRS = ["placeholder", "title", "alt", "aria-label"];
   var dicts = {};
   var rmaps = {};
@@ -115,7 +123,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=45")
+    return fetch("i18n/" + code + ".json?v=46")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }
