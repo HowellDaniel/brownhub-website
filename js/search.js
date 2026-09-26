@@ -40,7 +40,10 @@
     { g: "Catalog", t: "Book Design (Inside and Cover)", h: "catalog.html?q=Book%20Design%20%28Inside%20and%20Cover%29", k: "book cover inside layout typesetting manuscript" },
     { g: "Catalog", t: "ABS Board", h: "catalog.html?q=ABS%20Board", k: "abs board foam signage portrait display" },
 
-    { g: "Pages", t: "Privacy policy", h: "privacy.html", k: "privacy policy data legal cookies" }
+    { g: "Pages", t: "Privacy policy", h: "privacy.html", k: "privacy policy data personal information" },
+    { g: "Pages", t: "Legal", h: "legal.html", k: "legal terms of business contract payment ownership cancellation" },
+    { g: "Pages", t: "Security", h: "security.html", k: "security safety password otp payment data protection report a problem" },
+    { g: "Pages", t: "Cookie preferences", h: "", act: "cookie", k: "cookie consent analytics advertising necessary preferences" }
   ];
 
   var CHIPS = ["Logo Design", "Brand Identity Design", "Flyer", "Packaging Design", "Business Card Design"];
@@ -181,6 +184,11 @@
         var acct = doc.getElementById("acct-open");
         if (acct) acct.click();
         else window.location.href = "contact.html";
+      } else if (e.act === "cookie") {
+        /* the preference centre is built by cookies.js on every page */
+        ev.preventDefault();
+        close();
+        doc.dispatchEvent(new CustomEvent("bh-cookie-open"));
       } else {
         close();
       }

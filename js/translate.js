@@ -1,9 +1,31 @@
 (function () {
   "use strict";
 
-  var LANGS = [["en", "English"], ["fr", "Français"], ["es", "Español"], ["pt", "Português"],
-    ["ar", "العربية"], ["zh", "简体中文"], ["de", "Deutsch"], ["nl", "Nederlands"],
-    ["it", "Italiano"], ["ru", "Русский"], ["hi", "हिन्दी"], ["sw", "Kiswahili"], ["tw", "Twi"]];
+  /* Groups rather than an alphabetical wall: the point is that a visitor finds
+     their own language by eye. Each code owns a file in i18n/, and a language
+     added to a dictionary has to be added here too. Endonyms stay in their own
+     orthography, which collect() deliberately skips. */
+  var GROUPS = [
+    ["Ghana and the region", [["en", "English"], ["tw", "Twi"]]],
+    ["Africa and the Middle East", [["sw", "Kiswahili"], ["ar", "العربية"]]],
+    ["Europe", [["fr", "Français"], ["es", "Español"], ["pt", "Português"], ["de", "Deutsch"],
+      ["nl", "Nederlands"], ["it", "Italiano"], ["ru", "Русский"]]],
+    ["Asia", [["zh", "简体中文"], ["hi", "हिन्दी"]]]
+  ];
+  var LANGS = [];
+  var CODES = {};
+  GROUPS.forEach(function (g) {
+    g[1].forEach(function (l) { LANGS.push(l); CODES[l[0]] = 1; });
+  });
+  /* Written right to left, so the page has to mirror with the text. */
+  var RTL = { ar: 1, he: 1, fa: 1, ur: 1, ps: 1, sd: 1, ku: 1, dv: 1 };
+  /* Older or broader tags that mean a language we can serve: browsers still
+     report Akan as "ak"/"aka", and a ?lang= word can arrive in full. Keys whose
+     target has no dictionary are ignored by resolve(), so this table only ever
+     grows as dictionaries land. */
+  var ALIAS = { ak: "tw", aka: "tw", akan: "tw", twi: "tw", swahili: "sw",
+    arabic: "ar", french: "fr", spanish: "es", portuguese: "pt", german: "de",
+    dutch: "nl", italian: "it", russian: "ru", chinese: "zh", hindi: "hi" };
   var ATTRS = ["placeholder", "title", "alt", "aria-label"];
   var dicts = {};
   var rmaps = {};
@@ -39,7 +61,9 @@
     }
     if (root.nodeType !== 1 || root.tagName === "SCRIPT" || root.tagName === "STYLE") return;
   // Language names stay in their own orthography, and the picker paints them itself.
-  if (root.id === "lang-select" || root.id === "locale-list" || root.className === "locale__name") return;
+  if (root.id === "lang-select" || root.id === "locale-list") return;
+  if (root.classList && (root.className === "locale__name" || root.className === "locale__group" ||
+      root.classList.contains("locale__opt"))) return;
     for (var i = 0; i < ATTRS.length; i++) {
       var a = ATTRS[i];
       // Empty at scan time does not mean absent forever: the modals fill their attrs on open.
@@ -91,7 +115,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=42")
+    return fetch("i18n/" + code + ".json?v=45")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }
@@ -111,7 +135,17 @@
     try { document.dispatchEvent(new Event("i18n-applied")); } catch (e) {}
   }
 
+  function setDir(code) {
+    var root = document.documentElement;
+    if (RTL[code]) root.setAttribute("dir", "rtl");
+    else root.removeAttribute("dir");
+  }
+
   function apply(code) {
+    // A stale or hand-typed code cannot be trusted: it would announce a language
+    // in <html lang> that no dictionary is able to fill.
+    if (!CODES[code]) code = "en";
+    setDir(code);
     if (code === "en") {
       current = "en";
       records.forEach(function (r) {
@@ -126,8 +160,15 @@
         current = code;
         records.forEach(function (r) { translateRecord(r, dict); });
         applyMeta(dict);
+        // sync() runs after `current` moves; before this promise settles the
+        // button is still naming the language the visitor has just left.
+        sync();
         announce();
-      }).catch(function () { return; });
+      }).catch(function () {
+        setDir("en");
+        try { localStorage.removeItem("brownhub-lang"); } catch (e) {}
+        if (current !== "en") apply("en");
+      });
     }
     document.documentElement.setAttribute("lang", code);
     try { localStorage.setItem("brownhub-lang", code); } catch (e) {}
@@ -170,14 +211,32 @@
     localeName = host.querySelector(".locale__name");
     localePanel = host.querySelector("#locale-list");
 
-    LANGS.forEach(function (l) {
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "locale__opt";
-      b.setAttribute("data-code", l[0]);
-      b.textContent = l[1];
-      b.addEventListener("click", function () { apply(l[0]); close(); localeBtn.focus(); });
-      localePanel.appendChild(b);
+    GROUPS.forEach(function (g) {
+      var head = document.createElement("p");
+      head.className = "locale__group";
+      head.textContent = g[0];
+      localePanel.appendChild(head);
+      g[1].forEach(function (l) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "locale__opt";
+        b.setAttribute("data-code", l[0]);
+        b.setAttribute("role", "option");
+        b.setAttribute("aria-selected", "false");
+        b.textContent = l[1];
+        b.addEventListener("click", function () { apply(l[0]); close(); localeBtn.focus(); });
+        localePanel.appendChild(b);
+      });
+    });
+    localePanel.setAttribute("role", "listbox");
+    localePanel.setAttribute("aria-label", "Languages");
+    localePanel.addEventListener("keydown", function (e) {
+      var opts = Array.prototype.slice.call(localePanel.querySelectorAll(".locale__opt"));
+      var at = opts.indexOf(document.activeElement);
+      var step = e.key === "ArrowDown" ? 1 : e.key === "ArrowUp" ? -1 : 0;
+      if (!step || at < 0) return;
+      e.preventDefault();
+      opts[(at + step + opts.length) % opts.length].focus();
     });
 
     localeBtn.addEventListener("click", function () {
@@ -211,11 +270,40 @@
     var name = "English";
     for (var i = 0; i < LANGS.length; i++) if (LANGS[i][0] === current) name = LANGS[i][1];
     localeName.textContent = name;
-    Array.prototype.forEach.call(localePanel.children, function (b) {
+    Array.prototype.forEach.call(localePanel.querySelectorAll(".locale__opt"), function (b) {
       var on = b.getAttribute("data-code") === current;
       b.classList.toggle("is-current", on);
       b.setAttribute("aria-current", on ? "true" : "false");
+      b.setAttribute("aria-selected", on ? "true" : "false");
     });
+  }
+
+  // Fold any browser or query tag onto a code we can serve: exact, then aliased,
+  // then the subtags of a region tag such as "es-419" or "zh-Hans-CN".
+  function resolve(tag) {
+    var t = String(tag || "").trim().toLowerCase().replace(/_/g, "-");
+    if (!t) return "";
+    var parts = t.split("-");
+    for (var i = 0; i < parts.length; i++) {
+      if (CODES[parts[i]]) return parts[i];
+      var alias = ALIAS[parts[i]];
+      if (alias && CODES[alias]) return alias;
+    }
+    if (CODES[t]) return t;
+    if (ALIAS[t] && CODES[ALIAS[t]]) return ALIAS[t];
+    return "";
+  }
+
+  // The whole preferred-language list, not just its first entry: a Ghanaian
+  // browser commonly offers [en, tw] and Twi is the one worth serving.
+  function firstPref() {
+    var prefs = (navigator.languages && navigator.languages.length)
+      ? navigator.languages : [navigator.language || ""];
+    for (var i = 0; i < prefs.length; i++) {
+      var hit = resolve(prefs[i]);
+      if (hit) return hit;
+    }
+    return "en";
   }
 
   function init() {
@@ -227,34 +315,30 @@
 
     collect(document.body);
 
-    var saved = "en";
+    // Three sources, highest first: the address, the choice this browser already
+    // recorded, then the operating system's language list. A ?lang= link is what
+    // a shared or indexed address promises, so it wins and stays remembered.
+    var wanted = "en";
     try {
-      saved = localStorage.getItem("brownhub-lang") || "";
-      if (!saved) {
-        // Walk the visitor's whole preferred-language list, not just the first one.
-        var prefs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || "en"];
-        for (var pi = 0; pi < prefs.length; pi++) {
-          var code = String(prefs[pi] || "").slice(0, 2).toLowerCase();
-          if (code === "ak") code = "tw";
-          if (LANGS.some(function (l) { return l[0] === code; })) { saved = code; break; }
-        }
-      }
+      var q = new URLSearchParams(window.location.search).get("lang");
+      wanted = resolve(q) || resolve(localStorage.getItem("brownhub-lang")) || firstPref();
     } catch (e) {}
-
-    if (saved && saved !== "en") apply(saved);
+    if (wanted !== "en") apply(wanted);
 
     var pending = [];
-    var raf = null;
+    var timer = null;
     new MutationObserver(function (muts) {
       muts.forEach(function (m) {
         for (var i = 0; i < m.addedNodes.length; i++) pending.push(m.addedNodes[i]);
       });
-      if (!pending.length || raf) return;
-      raf = requestAnimationFrame(function () {
-        raf = null;
+      if (!pending.length || timer) return;
+      // A timeout, not an animation frame: modals injected while the tab is in
+      // the background would otherwise wait until the visitor looks back.
+      timer = setTimeout(function () {
+        timer = null;
         var nodes = pending; pending = [];
         nodes.forEach(function (n) { window.I18N.translateNode(n); });
-      });
+      }, 80);
     }).observe(document.body, { childList: true, subtree: true });
   }
 
