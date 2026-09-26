@@ -1,0 +1,4 @@
+{
+  "_how_to_add": "Append one object to \"reviews\" per client, exactly as they wrote it. Only publish quotes from people who completed an order and agreed to be named. Fields: quote (their words), name, role (optional), service (optional), date YYYY-MM (optional), rating 1-5 (optional).",
+  "reviews": []
+}

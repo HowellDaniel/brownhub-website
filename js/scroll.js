@@ -11,10 +11,11 @@
   root.classList.add("js-scroll");
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const FRAMES = ".shot, .product-card, .map-card";
+  const FRAMES = ".shot, .product-card, .map-card, .exp__card";
   const RISES = ".section__head, .stats__item, .card, .feature, .step, .panel, .split > div, " +
-    ".contact-info__card, .catalog-cta, .filter, .cta__inner, .page-hero p, .legal > *";
-  const DRIFT = [[".hero__orb", -46], [".hero__card", -20], [".shot img", -30], [".product-card img", -22]];
+    ".contact-info__card, .catalog-cta, .filter, .cta__inner, .page-hero p, .legal > *, .review, .reviews-empty";
+  const DRIFT = [[".hero__orb", -46], [".hero__card", -20], [".shot img", -30], [".product-card img", -22],
+    [".exp__card img", -26]];
 
   /* ---------- nav: condense + scroll-progress hairline ---------- */
   const header = doc.querySelector(".site-header");

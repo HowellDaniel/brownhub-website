@@ -46,7 +46,7 @@
 
   // The same highlight rides the glass panes; the selector mirrors the ::after
   // group in style.css, and CSS fades it in on :hover without any help from us.
-  const GLASS_PANES = ".card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success,.faq details";
+  const GLASS_PANES = ".card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success,.faq details,.review,.reviews-empty";
   let paneFrame;
   document.addEventListener("pointermove", (e) => {
     if (e.pointerType === "touch") return;
