@@ -288,6 +288,19 @@
       var widest = Math.max(2, Math.floor((Math.min(innerWidth * 0.94, 1040) - pad + gap) / (colW + gap)));
       localePanel.style.setProperty("--locale-cols",
         String(Math.max(2, Math.min(Math.ceil((opts.length + heads.length) / perCol), widest))));
+      anchor();
+    }
+
+    /* The sheet is pinned to the viewport, so the script has to say where: under
+       the button, and pulled back inside the window when the button sits near the
+       right edge. The width only exists after --locale-cols has been read, hence
+       the offsetWidth in between. */
+    function anchor() {
+      var a = localeBtn.getBoundingClientRect();
+      localePanel.style.setProperty("--locale-top", Math.round(a.bottom + 6) + "px");
+      var w = localePanel.offsetWidth;
+      localePanel.style.setProperty("--locale-left",
+        String(Math.max(8, Math.round(Math.min(a.left, innerWidth - w - 8)))) + "px");
     }
 
     localeBtn.addEventListener("click", function () {
@@ -298,6 +311,17 @@
     });
     window.addEventListener("resize", function () {
       if (host.classList.contains("is-open")) fitColumns();
+    }, { passive: true });
+    /* Scrolling collapses the top row away, which would leave the desktop sheet
+       hanging over nothing — so it shuts with the row that holds its trigger.
+       The narrow sheet is pinned to the window rather than to the button, so
+       momentum scrolling there must leave it alone. */
+    window.addEventListener("scroll", function () {
+      if (!host.classList.contains("is-open")) return;
+      if (!matchMedia("(min-width:861px)").matches) return;
+      var header = host.closest(".site-header");
+      if (header && header.classList.contains("is-scrolled")) close();
+      else anchor();
     }, { passive: true });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") close();

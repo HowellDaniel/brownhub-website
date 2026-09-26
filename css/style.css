@@ -1558,3 +1558,18 @@ html[dir="rtl"] .flow--live .flow__items{animation-name:flow-right}
   .tl{grid-template-columns:minmax(0,1fr);gap:var(--t-1)}
   .tl__date{padding-block-start:0}
 }
+
+/* ==========================================================================
+   THE LANGUAGE SHEET ON WIDE SCREENS
+   .topnav keeps overflow:hidden so the row can collapse to nothing once the page
+   scrolls, but that same clip swallowed the sheet: the panel is a descendant of
+   the row, so all forty languages were cut away below its 44px and the button
+   looked dead. The narrow-screen rule already escaped this by going fixed; the
+   desktop now does the same, anchored by --locale-top/--locale-left, which only
+   js/translate.js can publish because only it knows where the button landed.
+   ========================================================================== */
+@media (min-width:861px){
+  .locale.is-open .locale__panel{position:fixed;inset-inline-start:auto;inset-inline-end:auto;
+    top:var(--locale-top,56px);left:var(--locale-left,12px);right:auto;
+    max-height:calc(100vh - var(--locale-top,56px) - 16px - var(--cookie-h,0px))}
+}
