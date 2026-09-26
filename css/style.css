@@ -728,3 +728,424 @@ html.js-scroll .nav__link--active::after{animation:nav-ink-in .5s var(--ease-out
   .search__chip,.search__hit,.social-rail__label{transition:none}
 }
 
+
+/* ==========================================================================
+   TWILIO LAYOUT SYSTEM — the site-wide re-skin onto twilio.com's own design
+   system. Their CSS ships on a 62.5% root (1rem = 10px), so every value below
+   is converted to px against this site's 16px base rather than copied as rem.
+   Adopted from their clientlib-site + clientlib shipped rules:
+     spacing 8/12/16/24/32/48/64/96/128, radii 2/4/10/20/50, borders 1/2,
+     shadow-card 0 8px 24px rgba(.1), container 1400px with a 32px gutter,
+     ink #000D25 / paper / gray-50 #F3F4F7 / gray-100 #DDE0E6 bands,
+     buttons as 50px pills carrying a 2px inset ring, 12->14px small labels.
+   Brand inks stay BrownHub's own red and gold: twilio's primary is blue and the
+   logo's reds (#EE3338 / #B17D40) are the approved accents, so only the
+   structure, neutrals, scale and rhythm come from twilio.
+   ========================================================================== */
+:root{
+  --t-1:8px;--t-2:12px;--t-3:16px;--t-4:24px;--t-5:32px;--t-6:48px;--t-7:64px;--t-8:96px;--t-9:128px;
+  --t-r-sm:2px;--t-r:4px;--t-r-lg:10px;--t-r-xl:20px;--t-r-pill:50px;
+  --t-bw:1px;--t-bw2:2px;
+  --t-band:clamp(56px,8.5vw,112px);
+  --t-gutter:clamp(20px,4vw,32px);
+  --t-gap:var(--t-4);
+  --t-shadow:0 8px 24px rgba(2,8,26,.10);
+  --t-shadow-strong:0 14px 34px rgba(2,8,26,.16);
+  /* type: twilio's marketing scale, h1 32->40->48, h2 28->40, body 14->16 */
+  --t-h1:clamp(32px,5vw,48px);--t-h1-lh:1.18;
+  --t-h2:clamp(26px,3.6vw,40px);--t-h2-lh:1.28;
+  --t-h3:clamp(18px,1.6vw,20px);
+  --t-body:16px;--t-body-lh:1.65;
+  --t-small:14px;--t-small-lh:1.5;
+  --t-eyebrow:14px;
+  --max-w:1400px;
+}
+
+/* --- neutrals: twilio's ink / paper / gray-50 / gray-100 ramps.
+   The dark ramp is bound to :root as well as the attribute so the paint before
+   theme.js runs is the new ink navy rather than the old near-black. */
+html[data-theme="light"]{
+  --bg:#ffffff;--bg-alt:#f3f4f7;--surface:#ffffff;--border:#dde0e6;
+  --text:#000d25;--text-muted:#55617e;
+  --accent:#c42129;--accent-fill:#c42129;--accent-fill-hover:#a81c23;--accent-2:#8a5e2b;
+  --accent-rgb:196,33,41;--accent-fill-rgb:196,33,41;--accent-2-rgb:138,94,43;--bg-rgb:255,255,255;
+  --ink-band:#000d25;--ink-band-alt:#0a1638;
+  --header-bg:rgba(255,255,255,.86);
+  --shadow:var(--t-shadow);
+}
+:root,html[data-theme="dark"]{
+  --bg:#000d25;--bg-alt:#0a1638;--surface:#111f45;--border:#24335e;
+  --text:#dde0e6;--text-muted:#93a0be;
+  --accent:#f4565c;--accent-fill:#d92b32;--accent-fill-hover:#c8242b;--accent-2:#c89b5f;
+  --accent-rgb:244,86,92;--accent-fill-rgb:217,43,50;--accent-2-rgb:200,155,95;--bg-rgb:0,13,37;
+  --ink-band:#0a1638;--ink-band-alt:#000d25;
+  --header-bg:rgba(0,13,37,.82);
+  --shadow:0 14px 34px rgba(0,0,0,.45);
+}
+
+/* --- base type: twilio sets titles at 700 with tight negative tracking --- */
+body{font-size:var(--t-body);line-height:var(--t-body-lh)}
+h1,h2,h3,h4{letter-spacing:-.02em;font-weight:700}
+h3,h4{letter-spacing:-.01em;font-weight:600}
+.hero h1{font-size:var(--t-h1);line-height:var(--t-h1-lh);letter-spacing:-.03em;margin-bottom:var(--t-3)}
+.hero__sub{font-size:clamp(17px,1.9vw,20px);line-height:1.5;color:var(--text-muted);max-width:38rem;margin-bottom:var(--t-4)}
+.hero__eyebrow{font-size:var(--t-eyebrow);font-weight:600;letter-spacing:0;text-transform:none;color:var(--accent-2);margin-bottom:var(--t-2)}
+.page-hero h1{font-size:var(--t-h1);line-height:var(--t-h1-lh)}
+.page-hero p{font-size:clamp(16px,1.6vw,18px);color:var(--text-muted)}
+.section__head h2{font-size:var(--t-h2);line-height:var(--t-h2-lh);margin-bottom:var(--t-2)}
+.section__head p{font-size:clamp(15px,1.5vw,18px);line-height:1.6}
+.card h3,.feature h3,.step h3,.product-card h3{font-size:var(--t-h3);line-height:1.35;margin-bottom:.45rem}
+.card p,.feature p,.step p,.product-card p{font-size:15px;line-height:1.6}
+
+/* --- container + band rhythm: 1400px shell, 32px gutter, 48px grid gap --- */
+.container{max-width:var(--max-w);padding-left:var(--t-gutter);padding-right:var(--t-gutter)}
+.section{padding:var(--t-band) 0}
+.section--alt{background:var(--bg-alt)}
+.section__head{max-width:none;text-align:left;margin:0 0 var(--t-5)}
+.section__head p{max-width:44rem}
+.section__head--split{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--t-4);align-items:end}
+.cards{gap:var(--t-gap)}
+/* Gated to desktop: below 901px the older responsive rules stack these rows,
+   and an ungated repeat() here would beat them and squeeze the cards narrow. */
+@media (min-width:901px){
+  .cards--4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .cards--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cards--2{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+.stats{padding:var(--t-6) 0}
+
+/* --- full-bleed ink band: twilio's hero and footer both sit on --color-ink --- */
+.band--ink{background:var(--ink-band);color:#dde0e6;
+  --text:#dde0e6;--text-muted:#93a0be;--surface:#111f45;--border:#24335e;--bg-alt:#0a1638;--bg:#000d25;
+  --bg-rgb:0,13,37;--accent:#f4565c;--accent-rgb:244,86,92;--shadow:0 14px 34px rgba(0,0,0,.45)}
+html[data-theme="light"] .band--ink{--accent-2:#c89b5f;--accent-2-rgb:200,155,95}
+.hero{background:var(--ink-band);color:#dde0e6;
+  --text:#dde0e6;--text-muted:#93a0be;--surface:#111f45;--border:#24335e;--bg-alt:#0a1638;--bg:#000d25;
+  --bg-rgb:0,13,37;--accent:#f4565c;--accent-rgb:244,86,92;--accent-2:#c89b5f;--accent-2-rgb:200,155,95;
+  --shadow:0 14px 34px rgba(0,0,0,.45)}
+.cta{background:var(--ink-band);color:#dde0e6;padding:var(--t-band) 0;text-align:left;
+  --text:#dde0e6;--text-muted:#93a0be;--bg-alt:#0a1638;--bg:#000d25;--accent:#f4565c;--accent-rgb:244,86,92;--accent-2:#c89b5f}
+.cta__inner{max-width:56rem}
+.cta__inner h2{font-size:var(--t-h2);line-height:var(--t-h2-lh);margin-bottom:var(--t-2)}
+
+/* --- buttons: twilio's 50px pills with a 2px inset ring, no lift on hover --- */
+.btn{border-radius:var(--t-r-pill);font-size:15px;line-height:24px;font-weight:500;padding:var(--t-1) var(--t-4);
+  transition:background-color .3s,color .3s,border-color .3s,box-shadow .3s}
+.btn--primary{background:var(--accent-fill);color:#fff;box-shadow:inset 0 0 0 var(--t-bw2) var(--accent-fill)}
+.btn--primary:hover{background:var(--accent-fill-hover);box-shadow:inset 0 0 0 var(--t-bw2) var(--accent-fill-hover);transform:none}
+.btn--ghost{background:transparent;color:var(--accent);border-color:transparent;box-shadow:inset 0 0 0 var(--t-bw2) var(--accent)}
+.btn--ghost:hover{color:var(--accent);background:rgba(var(--accent-rgb),.08);box-shadow:inset 0 0 0 var(--t-bw2) var(--accent);transform:none}
+.btn--lg{padding:var(--t-2) var(--t-5);font-size:16px}
+.btn:focus-visible{outline:var(--t-bw2) dotted var(--accent);outline-offset:2px}
+.btn--sm{padding:6px var(--t-3);font-size:var(--t-small)}
+.card__link{display:inline-flex;align-items:center;gap:.4em;color:var(--accent);font-weight:600;font-size:var(--t-small);
+  border-bottom:var(--t-bw) solid currentColor;border-radius:0;padding-bottom:2px;margin-top:var(--t-2)}
+.card__link:hover{color:var(--accent-fill)}
+html.js-scroll .card__link{border-bottom-width:var(--t-bw)}
+
+/* --- cards: flat surface, 1px gray border, 10px radius, shadow-card on hover --- */
+.card,.feature,.step,.product-card,.contact-info__card,.map-card,.catalog-cta,.faq details,.more-item,
+.modal__card,.acct-item,.acct-filter,.visual,.panel{border:var(--t-bw) solid var(--border);border-radius:var(--t-r-lg);
+  background:var(--surface);box-shadow:none}
+.card,.feature,.step{padding:var(--t-4)}
+.card:hover,.feature:hover{border-color:var(--border);transform:none;box-shadow:var(--t-shadow)}
+.product-card:hover{transform:none;box-shadow:var(--t-shadow-strong)}
+.card--center .icon-tile,.card--center .card__icon{margin-inline:auto}
+.section__more{display:flex;flex-wrap:wrap;gap:var(--t-2);margin-top:var(--t-5)}
+.faq details{border-radius:var(--t-r-lg);padding:0 var(--t-4)}
+.faq summary{font-size:17px;font-weight:600;letter-spacing:-.01em}
+.step{text-align:left}
+.step__num{width:40px;height:40px;border-radius:var(--t-r-pill);font-size:15px;font-weight:600;margin-bottom:var(--t-3)}
+html.js-scroll .card:hover,html.js-scroll .feature:hover{box-shadow:var(--t-shadow);translate:0}
+
+/* --- icon tiles: a tinted 48px square holding a 24px line icon --- */
+.card__icon,.icon-tile,.catalog-cta__icon{width:48px;height:48px;margin:0 0 var(--t-3);border-radius:var(--t-r-lg);
+  display:grid;place-items:center;color:var(--accent);background:rgba(var(--accent-rgb),.10);
+  border:var(--t-bw) solid rgba(var(--accent-rgb),.22);font-size:0;transition:background .3s,color .3s,border-color .3s}
+.card__icon svg,.icon-tile svg,.catalog-cta__icon svg{width:24px;height:24px}
+.catalog-cta__icon{width:64px;height:64px;margin-inline:auto}
+.catalog-cta__icon svg{width:30px;height:30px}
+.card:hover .card__icon,.card:hover .icon-tile,.feature:hover .icon-tile{background:var(--accent-fill);color:#fff;
+  border-color:var(--accent-fill)}
+.icon-inline{width:18px;height:18px;vertical-align:-3px;color:var(--accent);margin-right:.4em}
+
+/* --- fields: 4px radius, 1px border, 2px focus ring (twilio form idiom) --- */
+.form-field label,.acct-field{font-size:var(--t-small);font-weight:600;letter-spacing:0;color:var(--text)}
+.form-field input,.form-field select,.form-field textarea,.acct-field input,.acct-filter select{
+  border-radius:var(--t-r);border:var(--t-bw) solid var(--border);background:var(--surface);padding:10px var(--t-3);
+  transition:border-color .3s,box-shadow .3s}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus,.acct-field input:focus{
+  outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.16)}
+.form-field input:hover,.form-field textarea:hover,.form-field select:hover{border-color:var(--text-muted)}
+
+/* --- footer: sits on the ink band with 14px link lists, like twilio's global footer --- */
+.site-footer{background:var(--ink-band);color:#dde0e6;border-top:0;padding:var(--t-7) 0 var(--t-4);
+  --text:#dde0e6;--text-muted:#93a0be;--border:#24335e;--accent:#f4565c;--accent-rgb:244,86,92;--bg-alt:#0a1638;--bg:#000d25}
+.footer__grid{gap:var(--t-5);margin-bottom:var(--t-5)}
+@media (min-width:901px){.footer__grid{grid-template-columns:1.6fr repeat(3,minmax(0,1fr))}}
+.site-footer h4{font-size:var(--t-small);font-weight:600;letter-spacing:0;text-transform:none;color:#fff;margin-bottom:var(--t-3)}
+.site-footer ul li{margin-bottom:.6rem}
+.site-footer a{font-size:var(--t-small);color:#dde0e6;transition:color .3s}
+.site-footer a:hover{color:var(--accent)}
+.footer__tag{font-size:var(--t-small);color:var(--text-muted);margin-top:var(--t-2);max-width:32rem}
+.footer__bottom{padding-top:var(--t-4);font-size:var(--t-small);border-top:var(--t-bw) solid var(--border)}
+.footer-social a{background:rgba(221,224,230,.06);border-color:rgba(221,224,230,.24);color:#dde0e6}
+.footer-social a:hover{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
+html.js-scroll .footer__grid .cmp-accordion__summary,html.js-scroll .site-footer h4{color:#fff}
+
+/* ==========================================================================
+   TWILIO MEDIA — photo cards that play like a clip.
+   twilio runs no <video> on these pages: a Lottie clip autoplays while the card
+   is in view, freezes when it leaves, and hover swaps a second frame with a
+   300ms crossfade under an ink overlay. Same read here without extra assets:
+   the first time a card is seen it plays one gentle drift, hovering loops it,
+   a progress rail sweeps under the frame while it plays, and the ink gradient
+   (their .card-gradient at 188deg) fades in over the photo.
+   ========================================================================== */
+.media{position:relative;display:block;overflow:hidden;background:var(--bg-alt);
+  aspect-ratio:var(--media-ar,16/9);border-bottom-left-radius:inherit;border-bottom-right-radius:inherit}
+.media img{width:100%;height:100%;max-width:none;object-fit:cover;display:block}
+.shot .media,.service-row__visual{--media-ar:4/3}
+.product-card .media{--media-ar:1/1}
+html.js-scroll [data-rv="frame"] .media>img{clip-path:inset(0 0 100% 0);transition:clip-path .95s var(--ease-out) calc(var(--rv-i,0)*80ms)}
+html.js-scroll [data-rv="frame"].is-in .media>img{clip-path:inset(0 0 0 0)}
+
+/* the ink overlay that makes the frame read as a paused video */
+.media::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .18s ease;
+  background:linear-gradient(188deg,rgba(0,0,0,0) 36%,rgba(0,0,0,.52))}
+.shot:hover .media::before,.shot:focus-visible .media::before,
+.product-card:hover .media::before,.product-card:focus-visible .media::before{opacity:1}
+
+/* progress rail: 3px along the bottom edge of the frame, fills while the clip runs */
+.media::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;z-index:3;pointer-events:none;
+  opacity:0;transform:scaleX(0);transform-origin:left;
+  background:linear-gradient(90deg,var(--accent-fill),var(--accent-2))}
+
+@keyframes bh-clip-intro{from{transform:translate3d(0,0,0)}to{transform:translate3d(-1.6%,1.2%,0)}}
+@keyframes bh-clip-loop{0%{transform:translate3d(0,0,0)}33%{transform:translate3d(-2.2%,1.5%,0)}
+  66%{transform:translate3d(1.9%,-1.4%,0)}100%{transform:translate3d(0,0,0)}}
+@keyframes bh-scrub{0%{opacity:.95;transform:scaleX(0)}92%{opacity:.95}100%{opacity:0;transform:scaleX(1)}}
+
+html.js-scroll .shot.is-in .media>img,html.js-scroll .product-card.is-in .media>img{
+  animation:bh-clip-intro 2.6s ease-out 1}
+html.js-scroll .shot:hover .media>img,html.js-scroll .shot:focus-visible .media>img,
+html.js-scroll .product-card:hover .media>img,html.js-scroll .product-card:focus-visible .media>img{
+  animation:bh-clip-loop 13s ease-in-out infinite}
+html.js-scroll .shot:hover .media::after,html.js-scroll .shot:focus-visible .media::after,
+html.js-scroll .product-card:hover .media::after,html.js-scroll .product-card:focus-visible .media::after{
+  animation:bh-scrub 13s linear infinite}
+
+/* twilio's play badge: a 12px triangle in a white disc that grows on hover */
+.shot__zoom{top:50%;left:50%;right:auto;bottom:auto;margin:0;translate:-50% -50%;width:56px;height:56px;z-index:4;
+  background:#fff;color:#000d25;border:0;opacity:0;transform:none;scale:.86;transition:opacity .2s ease,scale .28s var(--ease-out)}
+.shot:hover .shot__zoom,.shot:focus-visible .shot__zoom{opacity:1;scale:1.16}
+.shot__zoom svg{width:22px;height:22px;display:block;margin-left:2px}
+
+@media (prefers-reduced-motion:reduce){
+  .media::before,.media::after,.shot__zoom{transition:none}
+  html.js-scroll .shot .media>img,html.js-scroll .product-card .media>img,
+  .media::after{animation:none}
+  .media::after{opacity:0}
+}
+
+/* ---- Services artwork: the SVG mocks the build script wrote, painted with the
+   brand inks so every panel follows the theme it is standing in. ---- */
+.service-row__visual{display:grid;place-items:center;overflow:hidden;padding:var(--t-5);
+  background:var(--bg-alt);border:var(--t-bw) solid var(--border);border-radius:var(--t-r-lg);position:relative}
+.visual{display:grid;place-items:center;gap:var(--t-3);width:100%;height:100%;position:relative;
+  border:0;background:none;box-shadow:none;padding:0}
+.mock{width:min(100%,340px);height:auto}
+.mk-a{fill:var(--accent-fill)}
+.mk-b{fill:var(--accent-2)}
+.mk-c{fill:currentColor;opacity:.16}
+.mk-line{fill:none;stroke:currentColor;stroke-width:6;opacity:.3}
+.visual .mk-a,.visual .mk-c,.visual .mk-line{transition:opacity .3s}
+.service-row:hover .mk-a{opacity:.92}
+.visual__cap{position:absolute;left:var(--t-3);bottom:var(--t-3);padding:4px 10px;border-radius:var(--t-r-pill);
+  font-size:var(--t-small);font-weight:600;color:var(--text-muted);background:rgba(var(--bg-rgb),.72);
+  border:var(--t-bw) solid var(--border)}
+.service-shot{width:100%;height:100%;max-width:none;object-fit:cover;aspect-ratio:16/9;border:0;border-radius:0;box-shadow:none}
+
+/* ---- Icon tiles at twilio's three sizes: 40 in dense lists, 48 default, 64 feature ---- */
+.icon-tile--sm,.mega .icon-tile{width:40px;height:40px}
+.icon-tile--sm svg,.mega .icon-tile svg{width:20px;height:20px}
+.icon-tile--lg{width:64px;height:64px}
+.icon-tile--lg svg{width:28px;height:28px}
+
+/* ==========================================================================
+   TWILIO HEADER — two rows, like twilio.com/en-us: a 44px utility bar that
+   scrolls away, an 80px main row with the logo pushed to the left edge of the
+   free space, and a full-width mega panel that hangs below it. Their panel has
+   no shadow at all — only a 1px bottom rule — and opens by max-height, which
+   is why the transition below reads as slow and calm rather than as a pop.
+   ========================================================================== */
+.topnav{max-height:44px;overflow:hidden;background:var(--bg-alt);border-bottom:var(--t-bw) solid var(--border);
+  transition:max-height .45s var(--ease-out),opacity .3s ease,visibility 0s}
+.topnav__inner{display:flex;align-items:center;justify-content:space-between;gap:var(--t-3);min-height:44px}
+.site-header.is-scrolled .topnav{max-height:0;opacity:0;visibility:hidden;border-bottom-color:transparent;
+  transition:max-height .45s var(--ease-out),opacity .25s ease,visibility 0s .45s}
+.topnav__links{display:flex;align-items:center;gap:var(--t-3)}
+.topnav__links .nav__link--acct,.topnav__link{font-size:var(--t-small);font-weight:500;color:var(--text-muted);
+  padding:4px 2px;border:0;background:none;cursor:pointer;font-family:inherit}
+.topnav__links .nav__link--acct:hover,.topnav__link:hover{color:var(--accent)}
+
+/* the main row: logo left, links and the action cluster right */
+.nav{height:80px}
+.nav__logo{margin-right:auto}
+.nav__menu{gap:var(--t-4)}
+.nav__actions{display:flex;align-items:center;gap:var(--t-1);flex:none;margin-left:var(--t-4)}
+.nav__item--mega{display:flex;align-items:center;gap:2px}
+.nav__caret{display:none;place-items:center;width:22px;height:22px;padding:0;border:0;border-radius:50%;
+  background:none;color:var(--text-muted);cursor:pointer;transition:color .3s,background-color .3s}
+html.js-nav .nav__caret{display:grid}
+.nav__caret:hover,.nav__caret[aria-expanded="true"]{color:var(--accent);background:rgba(var(--accent-rgb),.12)}
+
+/* locale picker: globe + endonym + chevron, with a bordered flyout under it */
+.locale{position:relative}
+.locale__btn{display:inline-flex;align-items:center;gap:.5em;padding:6px var(--t-1);border:0;border-radius:var(--t-r);
+  background:none;color:var(--text-muted);font-family:inherit;font-size:var(--t-small);font-weight:500;cursor:pointer;
+  transition:color .3s,background-color .3s}
+.locale__btn:hover,.locale__btn[aria-expanded="true"]{color:var(--text);background:rgba(var(--accent-rgb),.07)}
+.locale__caret{transition:rotate .3s ease}
+.locale.is-open .locale__caret{rotate:180deg}
+.locale__panel{position:absolute;top:calc(100% + 6px);inset-inline-start:0;z-index:130;display:none;
+  min-width:216px;max-height:min(58vh,420px);overflow:auto;padding:var(--t-1);
+  background:var(--surface);border:var(--t-bw) solid var(--border);border-radius:var(--t-r-lg);
+  box-shadow:var(--t-shadow-strong)}
+.locale.is-open .locale__panel{display:block}
+.locale__opt{display:flex;align-items:center;justify-content:space-between;gap:var(--t-2);width:100%;
+  padding:8px 10px;border:0;border-radius:var(--t-r);background:none;color:var(--text-muted);
+  font-family:inherit;font-size:var(--t-small);text-align:start;cursor:pointer;transition:background-color .2s,color .2s}
+.locale__opt:hover{background:var(--bg-alt);color:var(--text)}
+.locale__opt:focus-visible{outline:var(--t-bw2) solid var(--accent);outline-offset:-2px}
+.locale__opt.is-current{color:var(--accent);font-weight:700}
+.locale__opt.is-current::after{content:"\2713";font-weight:700}
+
+/* mega panel */
+.mega{position:absolute;left:0;right:0;top:100%;max-height:0;overflow:hidden;opacity:0;visibility:hidden;
+  background:var(--surface);border-bottom:var(--t-bw) solid var(--border);box-shadow:none;
+  transition:max-height 1s ease-in-out,opacity .5s ease,visibility 0s 1s}
+.site-header.is-mega-open .mega{max-height:1000rem;opacity:1;visibility:visible;transition:max-height 1s ease-in-out,opacity .5s ease}
+.mega__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,.85fr);
+  gap:var(--t-6);padding-block:var(--t-6) var(--t-7)}
+.mega__head{font-size:var(--t-small);font-weight:700;letter-spacing:0;color:var(--text-muted);
+  margin-bottom:var(--t-2)}
+.mega__col ul{display:grid;gap:2px}
+.mega__row a{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:var(--t-2);
+  padding:var(--t-1);border-radius:var(--t-r-lg);transition:background-color .25s ease}
+.mega__row .icon-tile{margin:0}
+.mega__row a:hover{background:var(--bg-alt)}
+.mega__title{display:block;font-size:var(--t-small);font-weight:600;color:var(--text);line-height:1.4}
+.mega__desc{display:block;font-size:13px;line-height:1.45;color:var(--text-muted)}
+.mega__rail{display:flex}
+.mega__card{flex:1;display:grid;align-content:start;gap:var(--t-2);padding:var(--t-4);
+  background:var(--bg-alt);border:var(--t-bw) solid var(--border);border-radius:var(--t-r-lg)}
+.mega__card .mega__head{margin:0}
+.mega__card p{font-size:var(--t-small);line-height:1.55;color:var(--text-muted)}
+.mega__card .btn{justify-self:start;margin-top:var(--t-1)}
+.mega__card .card__link{margin-top:var(--t-1)}
+
+@media (max-width:1180px){.mega__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--t-5)}
+  .mega__rail{grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){.topnav,.mega,.locale__caret{transition:none}}
+
+/* the drawer, the condensed row and the story rail all key off the real header height */
+@media (max-width:900px){.mega{display:none}.nav{height:72px}html.js-nav .nav__caret{display:none}}
+@media (max-width:640px){
+  .nav__menu{inset:var(--nav-h,116px) 0 auto 0}
+  .nav{height:64px}
+  .nav__actions{margin-left:var(--t-2)}
+  .topnav__inner{gap:var(--t-2);padding-left:var(--t-2);padding-right:var(--t-2)}
+  .site-header .theme-toggle{width:40px;height:40px}
+}
+@media (max-width:430px){.site-header .logo-img{height:32px}.topnav__links .nav__link--acct{font-size:13px}}
+@media (max-width:840px){
+  .locale__btn,.topnav__links .nav__link--acct{min-height:44px}
+  .topnav{max-height:52px}.topnav__inner{min-height:52px}
+  .locale__opt{min-height:44px}
+}
+
+/* ==========================================================================
+   TWILIO BAND ARRANGEMENT — the home page reads the way twilio.com does:
+   a heading that parks beside its list instead of sitting on top of it, wide
+   gutters between the two columns, and a closing band that splits the
+   statement from the actions.
+   ========================================================================== */
+.story__grid{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:var(--t-8) var(--t-6);align-items:start}
+.story__aside{position:sticky;top:calc(var(--nav-h,80px) + var(--t-4));display:grid;justify-items:start;gap:var(--t-3)}
+.story__aside .section__head{margin-bottom:0}
+.story__aside .card__link{margin-top:0}
+.story__list{gap:var(--t-3)}
+@media (max-width:991px){.story__grid{grid-template-columns:1fr;gap:var(--t-5)}.story__aside{position:static}}
+
+.section__head--split .card__link{justify-self:end;white-space:nowrap;margin-top:var(--t-1)}
+@media (max-width:640px){.section__head--split{grid-template-columns:1fr}.section__head--split .card__link{justify-self:start}}
+
+.faq__grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:var(--t-8) var(--t-6);align-items:start}
+.faq-band__main .section__head{margin-bottom:var(--t-4)}
+.rail-card{position:sticky;top:calc(var(--nav-h,80px) + var(--t-4))}
+.rail-card .card{display:grid;justify-items:start;gap:var(--t-2);padding:var(--t-5)}
+.rail-card h3{font-size:var(--t-h3);margin:0}
+.rail-card p{font-size:var(--t-small);line-height:1.55;color:var(--text-muted)}
+.rail-card .btn{margin-top:var(--t-1)}
+@media (max-width:991px){.faq__grid{grid-template-columns:1fr;gap:var(--t-5)}.rail-card{position:static}}
+
+.cta__inner{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.5fr);gap:var(--t-5) var(--t-6);align-items:end;max-width:72rem}
+.cta__actions{display:flex;flex-wrap:wrap;gap:var(--t-2)}
+.cta__actions .btn{max-width:100%}
+html.js-scroll .cta__actions .btn--ghost{color:var(--accent)}
+html.js-scroll .cta__inner{text-align:left}
+@media (max-width:900px){.cta__inner{grid-template-columns:1fr;align-items:start}}
+
+/* ==========================================================================
+   TWILIO INTERIOR ARRANGEMENT — interior heroes, contact, legal, 404
+   ========================================================================== */
+
+/* every twilio interior page opens left-aligned, not centred */
+.page-hero .container{text-align:left}
+.page-hero h1{margin-bottom:var(--t-3)}
+.page-hero p{margin:0;max-width:48rem}
+.page-hero p+p{margin-top:var(--t-3)}
+
+/* a shared horizontal action cluster for heroes and the 404 */
+.actionrow{display:flex;flex-wrap:wrap;gap:var(--t-2);margin-top:var(--t-5)}
+
+/* about: the story list carries prose blocks under the sticky headline */
+.story__list h3{font-size:var(--t-h3);margin:var(--t-5) 0 var(--t-2)}
+.story__list h3:first-child{margin-top:0}
+.story__list p{color:var(--text-muted);line-height:1.7;max-width:62ch}
+.story__list p+p{margin-top:var(--t-3)}
+
+/* ---- contact: the form is one flat card, the details a sticky rail ---- */
+.contact-form{padding:var(--t-5);background:var(--surface);border:var(--t-bw) solid var(--border);border-radius:var(--t-r-lg);box-shadow:none}
+@media (min-width:901px){
+  .contact-grid{grid-template-columns:minmax(0,1.4fr) minmax(0,.6fr);align-items:start;gap:var(--t-7)}
+  .contact-info{position:sticky;top:calc(var(--nav-h,80px) + var(--t-4))}
+}
+.contact-info{display:grid;gap:var(--t-2)}
+.contact-info__card{margin:0;padding:var(--t-4)}
+.contact-info__card h3{font-size:var(--t-small);font-weight:600;letter-spacing:0;text-transform:none;
+  color:var(--text-muted);margin-bottom:var(--t-1)}
+.contact-info__card p{font-size:15px;line-height:1.6}
+.contact-info__card a{font-weight:600}
+
+/* ---- legal: contents rail beside the policy copy ---- */
+@media (min-width:901px){
+  .legal-wrap{display:grid;grid-template-columns:220px minmax(0,1fr);gap:var(--t-7);align-items:start}
+  .legal__nav{position:sticky;top:calc(var(--nav-h,80px) + var(--t-4))}
+}
+.legal__nav h2{font-size:var(--t-small);font-weight:600;color:var(--text-muted);margin-bottom:var(--t-2)}
+.legal__nav ul{display:grid;gap:2px}
+.legal__nav a{display:block;padding:.4rem .6rem;border-radius:var(--t-r);font-size:var(--t-small);
+  color:var(--text-muted);transition:background-color .2s,color .2s}
+.legal__nav a:hover,.legal__nav a:focus-visible{background:var(--bg-alt);color:var(--text)}
+.legal{max-width:46rem}
+
+/* ---- 404: the code is the artwork ---- */
+.notfound__code{display:block;font-size:clamp(72px,11vw,150px);line-height:.9;font-weight:700;
+  letter-spacing:-.04em;color:var(--accent);margin-bottom:var(--t-4)}
+
+/* ---- sign-in: twilio's flat 480px card, no glass, one rule ---- */
+.modal--acct .modal__card,.modal--acct.is-drop .modal__card{border-radius:var(--t-r-lg);box-shadow:var(--t-shadow-strong);border:var(--t-bw) solid var(--border)}
+.modal--acct .modal__body{padding:var(--t-6) var(--t-5) var(--t-5)}
+.legal h2{scroll-margin-top:calc(var(--nav-h,124px) + var(--t-3))}

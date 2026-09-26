@@ -191,11 +191,19 @@
     trigger.setAttribute("aria-expanded", "false");
     trigger.setAttribute("aria-controls", "acct-modal");
     navLi.appendChild(trigger);
-    var menu = document.getElementById("nav-menu");
-    if (menu) {
-      var cta = menu.querySelector(".nav__link--cta");
-      // Sit just before the Contact call-to-action, whatever whitespace follows it.
-      menu.insertBefore(navLi, cta ? cta.parentNode : null);
+    // twilio keeps account access in the utility row above the main nav; older
+    // pages without that row fall back to the end of the menu.
+    var slot = document.getElementById("topnav-slot");
+    if (slot) {
+      trigger.classList.add("topnav__link");
+      slot.appendChild(navLi);
+    } else {
+      var menu = document.getElementById("nav-menu");
+      if (menu) {
+        var cta = menu.querySelector(".nav__link--cta");
+        // Sit just before the Contact call-to-action, whatever whitespace follows it.
+        menu.insertBefore(navLi, cta ? cta.parentNode : null);
+      }
     }
 
     modal = el("div", "modal modal--acct");

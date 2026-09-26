@@ -11,7 +11,7 @@
   var seen = new WeakSet();
   var seenAttr = new WeakMap();
   var current = "en";
-  var selectEl = null;
+  var localeBtn = null, localeName = null, localePanel = null;
 
   function trimKey(s) { return s ? s.trim() : ""; }
 
@@ -37,7 +37,9 @@
       if (!seen.has(root)) { seen.add(root); record(root, null, null); }
       return;
     }
-    if (root.nodeType !== 1 || root.tagName === "SCRIPT" || root.tagName === "STYLE" || root.id === "lang-select") return;
+    if (root.nodeType !== 1 || root.tagName === "SCRIPT" || root.tagName === "STYLE") return;
+  // Language names stay in their own orthography, and the picker paints them itself.
+  if (root.id === "lang-select" || root.id === "locale-list" || root.className === "locale__name") return;
     for (var i = 0; i < ATTRS.length; i++) {
       var a = ATTRS[i];
       // Empty at scan time does not mean absent forever: the modals fill their attrs on open.
@@ -89,7 +91,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=40")
+    return fetch("i18n/" + code + ".json?v=41")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }
@@ -129,7 +131,7 @@
     }
     document.documentElement.setAttribute("lang", code);
     try { localStorage.setItem("brownhub-lang", code); } catch (e) {}
-    if (selectEl) selectEl.value = code;
+    sync();
   }
 
   window.I18N = {
@@ -152,47 +154,72 @@
     }
   };
 
-  function buildSelect() {
-    var nav = document.querySelector(".nav");
-    if (!nav || document.getElementById("lang-select")) return;
+  function buildLocale() {
+    var host = document.getElementById("locale");
+    if (!host || host.firstChild) return;
 
-    var style = document.createElement("style");
-    style.textContent =
-      ".lang-select{-webkit-appearance:none;appearance:none;flex:none;" +
-      "background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23d92b32' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\");" +
-      "background-repeat:no-repeat;background-position:right .6rem center;" +
-      "background-color:transparent;background-clip:padding-box;" +
-      "border:1.5px solid var(--accent);border-radius:999px;color:var(--text-muted);font-family:inherit;" +
-      "font-size:0.95rem;font-weight:500;padding:.3rem 1.8rem .3rem .85rem;margin-left:1.1rem;cursor:pointer;" +
-      "transition:color .2s,box-shadow .2s}" +
-      ".lang-select:hover,.lang-select:focus{color:var(--text);outline:none;box-shadow:0 0 0 3px rgba(var(--accent-rgb),.18)}" +
-      ".lang-select option{color:var(--text);background:var(--surface)}" +
-      "@media (max-width:640px){.lang-select{font-size:.75rem;padding:.25rem 1.35rem .25rem .45rem;margin-left:.45rem;background-position:right .35rem center;max-width:7.4rem}" +
-      ".site-header .theme-toggle{margin-left:.5rem;width:40px;height:40px}}" +
-      "@media (max-width:430px){.lang-select{max-width:6.4rem;font-size:.72rem}.site-header .logo-img{height:32px}}";
-    document.head.appendChild(style);
+    host.innerHTML =
+      '<button class="locale__btn" type="button" aria-expanded="false" aria-controls="locale-list" aria-label="Choose language">' +
+        '<svg class="locale__globe" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3.2 9.6h17.6M3.2 14.4h17.6M12 3a15.5 15.5 0 0 1 0 18M12 3a15.5 15.5 0 0 0 0 18"/></svg>' +
+        '<span class="locale__name">English</span>' +
+        '<svg class="locale__caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg>' +
+      "</button>" +
+      '<div class="locale__panel" id="locale-list"></div>';
 
-    selectEl = document.createElement("select");
-    selectEl.className = "lang-select";
-    selectEl.id = "lang-select";
-    selectEl.setAttribute("aria-label", t("Choose language"));
-    document.addEventListener("i18n-applied", function () {
-      if (selectEl) selectEl.setAttribute("aria-label", t("Choose language"));
-    });
+    localeBtn = host.querySelector(".locale__btn");
+    localeName = host.querySelector(".locale__name");
+    localePanel = host.querySelector("#locale-list");
+
     LANGS.forEach(function (l) {
-      var o = document.createElement("option");
-      o.value = l[0];
-      o.textContent = l[1];
-      selectEl.appendChild(o);
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "locale__opt";
+      b.setAttribute("data-code", l[0]);
+      b.textContent = l[1];
+      b.addEventListener("click", function () { apply(l[0]); close(); localeBtn.focus(); });
+      localePanel.appendChild(b);
     });
-    selectEl.addEventListener("change", function () { apply(selectEl.value); });
 
-    var toggle = document.querySelector(".theme-toggle");
-    nav.insertBefore(selectEl, toggle || nav.firstChild);
+    localeBtn.addEventListener("click", function () {
+      var willOpen = !host.classList.contains("is-open");
+      host.classList.toggle("is-open", willOpen);
+      localeBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") close();
+    });
+    document.addEventListener("pointerdown", function (e) {
+      if (!host.contains(e.target)) close();
+    });
+    document.addEventListener("i18n-applied", function () {
+      if (localeBtn) localeBtn.setAttribute("aria-label", t("Choose language"));
+    });
+    sync();
+  }
+
+  function close() {
+    if (!localeBtn) return;
+    var host = localeBtn.parentNode;
+    host.classList.remove("is-open");
+    localeBtn.setAttribute("aria-expanded", "false");
+  }
+
+  // The current language is written the way its speakers write it, so the label
+  // and every option are excluded from translation by collect().
+  function sync() {
+    if (!localeBtn) return;
+    var name = "English";
+    for (var i = 0; i < LANGS.length; i++) if (LANGS[i][0] === current) name = LANGS[i][1];
+    localeName.textContent = name;
+    Array.prototype.forEach.call(localePanel.children, function (b) {
+      var on = b.getAttribute("data-code") === current;
+      b.classList.toggle("is-current", on);
+      b.setAttribute("aria-current", on ? "true" : "false");
+    });
   }
 
   function init() {
-    buildSelect();
+    buildLocale();
 
     records.metaTitle = document.title;
     var md = document.querySelector('meta[name="description"]');

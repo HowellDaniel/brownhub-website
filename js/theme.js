@@ -14,7 +14,7 @@
       meta.name = "theme-color";
       document.head.appendChild(meta);
     }
-    meta.setAttribute("content", theme === "light" ? "#f6f7f9" : "#0e1116");
+    meta.setAttribute("content", theme === "light" ? "#ffffff" : "#000d25");
   }
 
   let saved = null;
