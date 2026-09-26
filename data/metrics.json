@@ -1,0 +1,19 @@
+{
+  "_how_to_add": "Everything in this file is published as a fact about the studio, so a number belongs here only once it is true. metrics: value is the real count, label the words under it, note one short line of proof. A metric left as \"value\": null is never rendered, which is how the two business figures below wait without showing a made-up placeholder — type a real number and it counts up on its own. milestones: date is a day we can point to in our own records, title and text one line each. The English words double as the translation keys, so a rewritten line falls back to English in every other language until it is added again to i18n/*.json.",
+  "metrics": [
+    { "value": 9, "label": "Design services", "note": "Listed one by one on the services page." },
+    { "value": 7, "label": "Catalog items", "note": "Photographed from finished work." },
+    { "value": 40, "label": "Languages", "note": "Every page rewritten by hand." },
+    { "value": null, "label": "Projects delivered", "note": "Counted from our own records." },
+    { "value": null, "label": "Clients served", "note": "Separate businesses, not repeat orders." }
+  ],
+  "milestones": [
+    { "date": "17 Sep 2026", "title": "The first site goes up", "text": "Catalog, FAQ and a chat assistant, live on day one." },
+    { "date": "20 Sep 2026", "title": "The catalog comes onto the site", "text": "Items open in the page, ordered through the assistant." },
+    { "date": "20 Sep 2026", "title": "Translated by hand", "text": "Hand-written dictionaries replace a translate proxy." },
+    { "date": "23 Sep 2026", "title": "Clients get an account", "text": "A login that holds each client's own requests." },
+    { "date": "24 Sep 2026", "title": "Bookable and payable online", "text": "Four services payable by card or mobile money." },
+    { "date": "25 Sep 2026", "title": "Our own address", "text": "The site moves to brownhub283.com." },
+    { "date": "26 Sep 2026", "title": "Forty languages", "text": "Every page rewritten into forty languages." }
+  ]
+}

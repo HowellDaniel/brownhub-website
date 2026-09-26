@@ -1514,3 +1514,47 @@ html[dir="rtl"] .flow--live .flow__items{animation-name:flow-right}
 .chat-widget__toggle:hover::before,.chat-widget__toggle:focus-visible::before{opacity:.9}
 @keyframes robot-halo{0%,100%{scale:.9;opacity:.34}50%{scale:1.08;opacity:.72}}
 @media (prefers-reduced-motion:reduce){.chat-widget__toggle::before{animation:none}.chat-widget__toggle::after,.chat-widget__panel::after{transition:none}}
+
+/* ==========================================================================
+   THE NUMBERS BAND AND THE MILESTONE TIMELINE
+   Both are rendered from data/metrics.json, so the layout never knows how many
+   figures the studio has actually counted: the grid takes its column count from
+   the width on offer, so three numbers fill the shell as comfortably as five.
+   The timeline draws its rail as a logical inline border, which is what lets the
+   whole thing mirror for Arabic and Urdu without a second rule anywhere.
+   ========================================================================== */
+.kpi__grid{display:grid;gap:var(--t-gap);grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+.kpi{display:grid;gap:var(--t-2);align-content:start;justify-items:start;padding:var(--t-5) var(--t-4)}
+/* the frosted pane the review cards already use, so a fourth card joining later
+   arrives looking like the rest of the site rather than like a table cell */
+:is(.kpi){background-color:var(--glass-fill);background-image:var(--glass-sheen-grad);
+  border:var(--t-bw) solid var(--glass-fill-hair);border-radius:var(--t-r-lg);box-shadow:var(--glass-inset);
+  -webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);
+  position:relative;isolation:isolate;--gx:50%;--gy:-60%}
+:is(.kpi)::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;border-radius:inherit;
+  transition:opacity .45s ease;
+  background:radial-gradient(9rem 6rem at var(--gx) var(--gy),var(--glass-glow-card),rgba(255,255,255,0) 70%)}
+:is(.kpi):hover::after{opacity:1}
+/* tabular figures so a card does not twitch sideways while it counts up */
+.kpi__num{font-size:var(--t-fs-display);line-height:1;letter-spacing:var(--t-display-ls);
+  font-weight:var(--t-fw-bold);color:var(--accent-2);font-variant-numeric:tabular-nums}
+.kpi__label{font-size:var(--t-fs-50);margin:0}
+.kpi__note{font-size:var(--t-fs-30);color:var(--text-muted);margin:0;max-width:32ch}
+
+.timeline{list-style:none;max-width:58rem}
+.tl{display:grid;grid-template-columns:clamp(84px,14vw,132px) minmax(0,1fr);gap:0 var(--t-4);
+  align-items:start;padding-block:var(--t-3)}
+.tl__date{font-size:var(--t-fs-20);font-weight:var(--t-fw-semi);letter-spacing:.04em;text-transform:uppercase;
+  color:var(--accent);padding-block-start:var(--t-3)}
+.tl__body{position:relative;border-inline-start:var(--t-bw2) solid var(--border);
+  padding-inline-start:var(--t-4);padding-block-end:var(--t-4)}
+/* the newest entry has nothing below it to reach, so its rail stops there */
+.tl:last-child .tl__body{border-inline-start-color:transparent}
+.tl__body::before{content:"";position:absolute;top:var(--t-3);inset-inline-start:calc(-1 * var(--t-bw2) - 5px);
+  width:10px;height:10px;rotate:45deg;border-radius:var(--t-r-sm);background:var(--accent-fill)}
+.tl__title{font-size:var(--t-fs-55);margin:0 0 var(--t-1)}
+.tl__text{font-size:var(--t-fs-30);color:var(--text-muted);margin:0;max-width:62ch}
+@media (max-width:640px){
+  .tl{grid-template-columns:minmax(0,1fr);gap:var(--t-1)}
+  .tl__date{padding-block-start:0}
+}

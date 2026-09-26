@@ -46,7 +46,7 @@
 
   // The same highlight rides the glass panes; the selector mirrors the ::after
   // group in style.css, and CSS fades it in on :hover without any help from us.
-  const GLASS_PANES = ".card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success,.faq details,.review,.reviews-empty,.chat-widget__panel,.chat-widget__toggle";
+  const GLASS_PANES = ".card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success,.faq details,.review,.reviews-empty,.chat-widget__panel,.chat-widget__toggle,.kpi";
   let paneFrame;
   document.addEventListener("pointermove", (e) => {
     if (e.pointerType === "touch") return;
@@ -60,23 +60,46 @@
     });
   }, { passive: true });
 
-  document.querySelectorAll("[data-count]").forEach((el) => {
-    const target = parseInt(el.dataset.count, 10);
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-        const start = performance.now();
-        const tick = (now) => {
-          const progress = Math.min((now - start) / 1200, 1);
-          el.textContent = Math.round(target * progress);
-          if (progress < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      });
-    }, { threshold: 0.4 });
-    observer.observe(el);
-  });
+  /* Count-up: a figure holds at zero and runs to its data-count the first time it
+     scrolls into view. Numbers rendered after a fetch join through
+     BROWNHUB_COUNT.watch rather than needing the page reloaded, and easing keeps
+     the last few counts slow enough to read. Someone who asked for less motion is
+     handed the finished number. */
+  const counted = new WeakSet();
+  const COUNT_MS = 1400;
+  const writeCount = (el, v) => { el.textContent = v.toLocaleString(); };
+  const runCount = (el) => {
+    const target = Number(el.dataset.count);
+    if (!isFinite(target)) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return writeCount(el, target);
+    const start = performance.now();
+    const tick = (now) => {
+      const p = Math.min((now - start) / COUNT_MS, 1);
+      writeCount(el, Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+  const countIO = "IntersectionObserver" in window
+    ? new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          countIO.unobserve(e.target);
+          runCount(e.target);
+        });
+      }, { threshold: 0.4 })
+    : null;
+  const watchCounts = (root) => {
+    (root || document).querySelectorAll("[data-count]").forEach((el) => {
+      if (counted.has(el)) return;
+      counted.add(el);
+      if (!countIO) return writeCount(el, Number(el.dataset.count));
+      writeCount(el, 0);
+      countIO.observe(el);
+    });
+  };
+  watchCounts(document);
+  window.BROWNHUB_COUNT = { watch: watchCounts };
 
   // Add the brand explicitly in the navigation so it remains visible even if
   // the image has transparent space or the stylesheet has logo constraints.
