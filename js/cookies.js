@@ -16,7 +16,7 @@
     {
       id: "necessary",
       name: "Strictly necessary",
-      desc: "Always on. Your chosen language, the dark or light theme and a signed-in client session are kept in your own browser so the site can remember them. Without them the pages still load, but they forget you between visits.",
+      desc: "Always on. Your chosen language, the dark or light theme and a signed-in client session are kept in your own browser so the site can remember them. Without them the pages still load, but they forget you between visits. A random code the chat assistant uses to keep your conversation in one thread is stored the same way.",
       locked: true
     },
     {

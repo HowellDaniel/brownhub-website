@@ -24,7 +24,7 @@
   <meta name="twitter:image" content="https://www.brownhub283.com/images/og-image.jpg">
   <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="preload" href="fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=62">
+  <link rel="stylesheet" href="css/style.css?v=63">
   <script src="js/theme.js"></script><script src="js/player.js?v=1"></script><script src="js/voice.js?v=1"></script>
 </head>
 <body data-nav="security">
@@ -103,15 +103,15 @@
         <p>Submissions that trip those checks are dropped silently; the sender still sees a confirmation, so a bot gets no signal about what stopped it.</p>
         <p>The upload fields accept audio files of a bounded size and type. Nothing you send there is published anywhere on the site.</p>
         <h2 id="6">The chat assistant</h2>
-        <p>The assistant in the corner answers from a written fact sheet about this studio. Your message travels to a single server-side function, which forwards it to the model and returns the answer. The key for that model lives in the function's configuration on the server, never in the browser, and the function refuses requests that arrive from any site other than this one.</p>
+        <p>The assistant in the corner answers from a written fact sheet about this studio. Your message travels to a single server-side function, which forwards it to the model and returns the answer. The key for that model lives in the function's configuration on the server, never in the browser, and the function refuses requests that arrive from any site other than this one. Each question and its answer are also filed in a log the studio can read, under a random code for your browser rather than your name; the database rule that accepts those entries lets a browser write and never lets it read.</p>
         <p>It is still a third-party AI service. Ask it about prices, lead times and what we do; do not type an address book, a password or anything you would not send in an email.</p>
         <h2 id="7">What this site keeps on your device</h2>
-        <p>Your chosen language, the dark or light theme, the state of your sign-in session, and your cookie choice. That is the whole list, and you can inspect or clear it in your browser at any time.</p>
+        <p>Your chosen language, the dark or light theme, the state of your sign-in session, your cookie choice, and a random code that ties the chat assistant's answers to one conversation. That is the whole list, and you can inspect or clear it in your browser at any time.</p>
         <p>The <a href="privacy.html" data-cookie-preferences>Cookie preferences</a> window records what is allowed. Accepting or rejecting changes only what is stored in your own browser, and rejecting non-essential categories does not remove any part of the site.</p>
         <h2 id="8">What we never store</h2>
         <p>Card numbers, PINs, CVV codes, bank passwords, online-banking credentials, account passwords in readable form, or one-time codes. Not in a database, not in an email, not in a chat log.</p>
         <h2 id="9">Third parties involved</h2>
-        <p>GitHub Pages serves the pages. Supabase provides sign-in and request history. Paystack processes payments. FormSubmit relays the contact form and the voice notes. An SMS provider delivers verification codes. A large-language-model provider answers the chat assistant through our own relay. Each of them is bound by its own privacy policy and terms, and this page names them so that nothing is passed off as happening &ldquo;in the cloud&rdquo;.</p>
+        <p>GitHub Pages serves the pages. Supabase provides sign-in, request history and the chat log. Paystack processes payments. FormSubmit relays the contact form and the voice notes. An SMS provider delivers verification codes. A large-language-model provider answers the chat assistant through our own relay. Each of them is bound by its own privacy policy and terms, and this page names them so that nothing is passed off as happening &ldquo;in the cloud&rdquo;.</p>
         <h2 id="10">Reporting a security problem</h2>
         <p>If you find a weakness on this site, or you believe a BrownHub account or a message from us is not what it claims to be, write to <a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a> with the word <em>security</em> in the subject line. Please send it to us directly rather than posting it publicly, so there is time to fix it first.</p>
         <p>You can also reach the studio on WhatsApp at <a href="https://wa.me/233535583460" target="_blank" rel="noopener">+233 53 558 3460</a>, or read how personal details are handled in the <a href="privacy.html">privacy policy</a> and the working terms on the <a href="legal.html">legal page</a>.</p>
@@ -197,7 +197,7 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=24"></script><script src="js/translate.js?v=62"></script>
+  <script src="js/main.js?v=24"></script><script src="js/translate.js?v=63"></script>
 
   <div class="chat-widget">
     <button class="chat-widget__toggle" id="chatToggle" aria-expanded="false" aria-controls="chatPanel" title="Chat with our robotic assistant">
@@ -225,9 +225,9 @@
     </div>
   </div>
 
-  <script src="js/chat.js?v=20"></script><script src="js/accounts.js?v=16"></script>
+  <script src="js/chat.js?v=22"></script><script src="js/accounts.js?v=17"></script>
   <script src="js/scroll.js?v=3"></script>
-  <script src="js/nav.js?v=2"></script><script src="js/search.js?v=3"></script><script src="js/cookies.js?v=3"></script><script src="js/social.js?v=1"></script>
+  <script src="js/nav.js?v=2"></script><script src="js/search.js?v=3"></script><script src="js/cookies.js?v=4"></script><script src="js/social.js?v=1"></script>
 
 </body>
 </html>

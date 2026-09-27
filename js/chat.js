@@ -180,32 +180,59 @@
     }
   }
 
+  // The archive holds what an answer says, not how it is marked up, so the written
+  // intents are stripped back to sentences before they are filed.
+  function plainText(html) {
+    const el = document.createElement("div");
+    el.innerHTML = html;
+    return (el.textContent || "").replace(/\s+/g, " ").trim();
+  }
+
+  function logExchange(question, answer, source) {
+    const log = window.BHAccounts && window.BHAccounts.logChat;
+    if (typeof log !== "function") return;
+    log({
+      q: question,
+      a: answer,
+      source: source,
+      page: location.pathname,
+      lang: (window.I18N && window.I18N.lang) || "en"
+    });
+  }
+
   function send(text, routeAs) {
     const clean = text.trim();
     if (!clean) return;
     addMsg(clean, "user");
     renderChips([]);
     const bubble = typingBubble();
-    const replyWith = (html) => {
+    const replyWith = (html, source) => {
       bubble.remove();
       addMsg(html, "bot");
       renderChips(defaultChips);
       focusInput();
+      logExchange(clean, plainText(html), source);
     };
     // The written answers are instant, cost nothing and have been read over, so
     // they always win when one fits. The assistant only ever sees what they miss.
     const known = matchIntent(routeAs || clean);
-    if (known) { setTimeout(() => replyWith(known), 550 + Math.random() * 450); return; }
+    if (known) { setTimeout(() => replyWith(known, "intent"), 550 + Math.random() * 450); return; }
     askModel(clean).then((reply) => {
       bubble.remove();
       addPlain(reply);
       renderChips(defaultChips);
       focusInput();
-    }).catch(() => replyWith(fallback));
+      logExchange(clean, reply, "model");
+    }).catch(() => replyWith(fallback, "fallback"));
   }
 
   let greeted = false;
-  function openChat() {
+  // `auto` marks the opening the assistant did for itself, which must not move
+  // focus: a keyboard user's tab order stays where it was and a phone keeps its
+  // on-screen keyboard shut until the visitor taps the field.
+  function openChat(auto) {
+    hideTeaser();
+    markSeen();
     panel.hidden = false;
     toggle.setAttribute("aria-expanded", "true");
     if (!greeted) {
@@ -217,7 +244,7 @@
         renderChips(defaultChips);
       }, 600);
     }
-    focusInput();
+    if (!auto) focusInput();
   }
 
   function closeChat() {
@@ -236,6 +263,60 @@
     send(input.value);
     input.value = "";
   });
+
+  // ---- It speaks first, the way a front desk does --------------------------------
+  // Once per visit the assistant puts a line beside its own icon and then opens the
+  // panel by itself, so a client who never thinks to press the button is still
+  // asked. Closing the bubble, or the panel, is taken as an answer: it is never
+  // offered again in that tab.
+  const SEEN_KEY = "brownhub-chat-asked";
+  const TEASE_TEXT = "Hi there! Any question about design, print or prices?";
+  let teaserEl = null, teaseTimer = 0;
+
+  function seenThisVisit() {
+    try { return sessionStorage.getItem(SEEN_KEY) === "1"; } catch (e) { return true; }
+  }
+  function markSeen() {
+    try { sessionStorage.setItem(SEEN_KEY, "1"); } catch (e) {}
+  }
+  function hideTeaser() {
+    if (teaseTimer) { clearTimeout(teaseTimer); teaseTimer = 0; }
+    if (teaserEl) { teaserEl.remove(); teaserEl = null; }
+  }
+  function showTeaser() {
+    if (teaserEl || !panel.hidden || seenThisVisit()) return;
+    const box = document.createElement("div");
+    box.className = "chat-widget__teaser";
+    const bubble = document.createElement("button");
+    bubble.type = "button";
+    bubble.className = "chat-widget__teaser-text";
+    bubble.textContent = TEASE_TEXT;
+    bubble.addEventListener("click", () => openChat());
+    const x = document.createElement("button");
+    x.type = "button";
+    x.className = "chat-widget__teaser-close";
+    x.setAttribute("aria-label", "Close chat");
+    x.innerHTML = "&times;";
+    // Pressing the cross is "not now", so it ends the offer for the whole visit.
+    x.addEventListener("click", () => { hideTeaser(); markSeen(); });
+    box.appendChild(bubble);
+    box.appendChild(x);
+    // Written in English on purpose: translate.js watches the page and picks up a
+    // node it has not seen before, so this bubble follows the visitor's language
+    // and re-translates when they change it, same as the panel's own messages.
+    panel.parentElement.insertBefore(box, panel);
+    teaserEl = box;
+    teaseTimer = setTimeout(hideTeaser, 12000);
+  }
+
+  function start() {
+    if (seenThisVisit()) return;
+    setTimeout(showTeaser, 1500);
+    setTimeout(() => {
+      if (!seenThisVisit() && panel.hidden) openChat(true);
+    }, 4500);
+  }
+  start();
 
   // ---- Voice notes: for visitors who cannot type, record and email the message ----
   const voiceBar = document.createElement("div");

@@ -102,6 +102,7 @@
     open: function () {},
     signedIn: function () { return false; },
     email: function () { return ""; },
+    logChat: function () {},
     ask: function () { return Promise.reject(new Error("The assistant is not switched on yet.")); }
   };
 
@@ -165,6 +166,53 @@
         return data.answer;
       });
     });
+  }
+
+  // ---- chat transcripts ------------------------------------------------------
+  // The studio keeps what the assistant was asked so it can see what clients want.
+  // A transcript is anonymous: this id is random, minted in the visitor's own
+  // browser for nothing else, and the row carries no name, email, phone number, IP
+  // address or cookie. The database only lets a browser insert, never read.
+  var VISITOR_KEY = "brownhub-chat-id";
+
+  function visitorId() {
+    var id = "";
+    try {
+      id = window.localStorage.getItem(VISITOR_KEY) || "";
+      if (!/^[a-z0-9-]{8,40}$/i.test(id)) {
+        id = Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+        window.localStorage.setItem(VISITOR_KEY, id);
+      }
+    } catch (e) {
+      // Private browsing with storage switched off: one conversation, one id, gone
+      // with the tab. Logging still works because PostgREST takes the value as text.
+      id = "anon-" + Math.random().toString(36).slice(2, 10);
+    }
+    return id;
+  }
+
+  // This is a plain REST write rather than an SDK call on purpose: the SDK is
+  // ~100 KB and only loads for someone who opens the account panel, while every
+  // visitor can chat. Prefer=minimal keeps the response empty.
+  function logChat(row) {
+    if (!configured || !row || !row.q) return;
+    fetch(SB_API_URL + "/rest/v1/chat_logs", {
+      method: "POST",
+      headers: {
+        apikey: SB_API_KEY,
+        Authorization: "Bearer " + SB_API_KEY,
+        "content-type": "application/json",
+        Prefer: "return=minimal"
+      },
+      body: JSON.stringify({
+        visitor_id: visitorId(),
+        page: String(row.page || "").slice(0, 200),
+        lang: String(row.lang || "en").slice(0, 8),
+        question: String(row.q).slice(0, 500),
+        answer: String(row.a || "").slice(0, 2000),
+        source: row.source === "model" || row.source === "fallback" ? row.source : "intent"
+      })
+    })["catch"](function () { /* a lost transcript loses nothing for the visitor */ });
   }
 
   var navLi, modal, card, tabs, form, noteEl, nameField, nameInp, emailInp, passInp;
@@ -340,6 +388,7 @@
       signedIn: function () { return !!session; },
       email: function () { return session && session.user ? session.user.email : ""; },
       record: record,
+      logChat: logChat,
       ask: ask
     };
     checkSms();

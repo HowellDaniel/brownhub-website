@@ -1573,3 +1573,48 @@ html[dir="rtl"] .flow--live .flow__items{animation-name:flow-right}
     top:var(--locale-top,56px);left:var(--locale-left,12px);right:auto;
     max-height:calc(100vh - var(--locale-top,56px) - 16px - var(--cookie-h,0px))}
 }
+
+/* ==========================================================================
+   THE ASSISTANT OPENS ITSELF, AND THE PANEL GOES BACK ABOVE ITS OWN BUTTON
+   Kendall's assistant never waits to be noticed, so js/chat.js now offers a
+   teaser bubble and opens the panel by itself. Both live in .chat-widget, which
+   is fixed to the bottom-right corner and shrink-wraps to the launcher, so each
+   is anchored to that corner and grows leftwards and upwards from it.
+
+   Building on the launcher also exposed an older fault: the glass pass set
+   .chat-widget__panel to position:relative, which silently cancelled the
+   absolute anchoring it had carried since the first commit. The panel fell into
+   the document flow, so opening the chat pushed the launcher to the top-left of
+   a suddenly 400px-wide box and the two overlapped. The positions are restored
+   here, after that rule, with the same isolation the highlight needs.
+   ========================================================================== */
+@media (min-width:641px){
+  .chat-widget__panel{position:absolute;right:0;bottom:calc(100% + .85rem)}
+}
+@media (max-width:640px){
+  .chat-widget__panel{position:fixed}
+}
+.chat-widget__teaser{position:absolute;right:0;bottom:calc(100% + .85rem);z-index:1;
+  display:flex;align-items:flex-start;gap:.45rem;width:min(272px,calc(100vw - 3.5rem));
+  padding:.7rem .5rem .7rem .85rem;border:var(--t-bw,1px) solid var(--glass-fill-hair);
+  border-radius:16px 16px 4px 16px;color:var(--text);
+  background-color:var(--glass-fill);box-shadow:var(--glass-inset),var(--shadow);
+  -webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);
+  animation:teaser-in .4s cubic-bezier(.22,1,.36,1) both}
+/* Both buttons are reset to plain text: the bubble should read as one thing said,
+   not as a row of controls. */
+.chat-widget__teaser-text{flex:1;min-width:0;border:0;background:none;padding:0;margin:0;
+  font:inherit;font-size:var(--t-fs-30,.9rem);line-height:1.5;text-align:start;
+  color:var(--text);cursor:pointer;transition:color .2s}
+.chat-widget__teaser-text:hover,.chat-widget__teaser-text:focus-visible{color:var(--accent)}
+.chat-widget__teaser-close{flex:none;width:28px;height:28px;border:0;border-radius:50%;
+  background:none;color:var(--text-muted);font-size:1.2rem;line-height:1;cursor:pointer;
+  transition:color .2s,background-color .2s}
+.chat-widget__teaser-close:hover,.chat-widget__teaser-close:focus-visible{
+  color:var(--text);background-color:var(--glass-fill-alt)}
+@keyframes teaser-in{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+@media (max-width:640px){
+  .chat-widget__teaser{width:min(300px,calc(100vw - 3rem));bottom:calc(100% + 1rem)}
+  .chat-widget__teaser-close{width:36px;height:36px;font-size:1.35rem}
+}
+@media (prefers-reduced-motion:reduce){.chat-widget__teaser{animation:none}}
