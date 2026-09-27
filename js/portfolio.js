@@ -2,7 +2,7 @@
   const shots = Array.prototype.slice.call(document.querySelectorAll(".shot"));
   if (!shots.length) return;
 
-  const WA = "https://wa.me/233535583460";
+  const WA = "https://wa.me/233502954541";
   const ORDER_PREFIX = "I want to order:";
 
   const filter = document.querySelector(".filter");
