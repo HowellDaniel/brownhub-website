@@ -55,7 +55,8 @@
       ["Banners & signage", "Pull-up stands, backdrops and ABS boards.", "catalog.html?q=Banners", "banner"],
       ["Frames & awards", "Plaques, certificates and framed photos.", "catalog.html?q=Frames", "frame"],
       ["Print & marketing", "Flyers, cards and printed marketing sets.", "catalog.html?q=Print", "printer"],
-      ["Book design", "Covers and inside pages, set and printed.", "catalog.html?q=Book", "bag"]
+      ["Book design", "Covers and inside pages, set and printed.", "catalog.html?q=Book", "bag"],
+      ["Branded merchandise", "T-shirts, tags, mugs and printed gifts.", "catalog.html?q=Branded", "bag"]
     ]}
   ];
 

@@ -90,10 +90,14 @@ Logos 2-4 days. Full brand identity about a week. Flyers, posters and social med
 arranged over WhatsApp.
 
 CATALOG ITEMS ON THE SITE
-ABS Board, All Types of Frames, Book Design (Inside and Cover), Flyer, Funeral Banner,
-Other Food Flyers, Pull Up Design Backdrop and Printing, Sample of Printing. Catalog items
-are not priced on the page: their price is confirmed on WhatsApp from sizes, quantity and
-deadline.
+ABS Board, All Types of Frames, Book Design (Inside and Cover), Flag Designing & Printing,
+Flyer, Food & Drinks Flyers, Funeral Banner, Funeral Poster & Invitation Cards, Funeral Rosettes
+and Designs, Handkerchief, ID Tags & Lanyards, More Food Flyers, Other Flyers, Other Food
+Flyers, Paper Bags Mugs & Flasks, Product Labels Printing, Pull Up Design Backdrop and
+Printing, Sample of Printing, T-Shirts & Caps, Winners' Chapel International Flyer. Catalog
+items are not priced on the page: their price is confirmed on WhatsApp from sizes, quantity and
+deadline. Merchandise such as t-shirts, caps, tags, mugs and flasks is printed with the
+client's own logo or artwork.
 
 GETTING IN TOUCH
 WhatsApp +233 50 295 4541 (wa.me/233502954541) is the fastest route, and it is the line the
