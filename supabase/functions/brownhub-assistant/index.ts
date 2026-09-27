@@ -91,8 +91,9 @@ arranged over WhatsApp.
 
 CATALOG ITEMS ON THE SITE
 ABS Board, All Types of Frames, Book Design (Inside and Cover), Flyer, Funeral Banner,
-Pull Up Design Backdrop and Printing, Sample of Printing. Catalog items are not priced
-on the page: their price is confirmed on WhatsApp from sizes, quantity and deadline.
+Other Food Flyers, Pull Up Design Backdrop and Printing, Sample of Printing. Catalog items
+are not priced on the page: their price is confirmed on WhatsApp from sizes, quantity and
+deadline.
 
 GETTING IN TOUCH
 WhatsApp +233 50 295 4541 (wa.me/233502954541) is the fastest route, and it is the line the

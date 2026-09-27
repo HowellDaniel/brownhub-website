@@ -39,6 +39,7 @@
     { g: "Catalog", t: "Funeral Banner", h: "catalog.html?q=Funeral%20Banner", k: "funeral banner memorial commemorative cloth" },
     { g: "Catalog", t: "Book Design (Inside and Cover)", h: "catalog.html?q=Book%20Design%20%28Inside%20and%20Cover%29", k: "book cover inside layout typesetting manuscript" },
     { g: "Catalog", t: "ABS Board", h: "catalog.html?q=ABS%20Board", k: "abs board foam signage portrait display" },
+    { g: "Catalog", t: "Other Food Flyers", h: "catalog.html?q=Other%20Food%20Flyers", k: "food flyer restaurant menu joint eating promo" },
 
     { g: "Pages", t: "Privacy policy", h: "privacy.html", k: "privacy policy data personal information" },
     { g: "Pages", t: "Legal", h: "legal.html", k: "legal terms of business contract payment ownership cancellation" },
