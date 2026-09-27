@@ -257,6 +257,8 @@
   const VOICE_EXT = VOICE_MIME.indexOf("mp4") > -1 ? "m4a" : VOICE_MIME.indexOf("ogg") > -1 ? "ogg" : "webm";
   const CAN_PAUSE = typeof MediaRecorder !== "undefined" && "pause" in MediaRecorder.prototype;
   let stream = null, recorder = null, chunks = [], blob = null;
+  // The same recording in a container the studio can open: see js/voice.js.
+  let out = null, outUrl = null;
   let timer = null, secs = 0, phase = "idle", transcript = "", transcriptBase = "";
   let audioCtx = null, analyser = null, meterRaf = 0, voiceUrl = null, emailConfirmed = false;
 
@@ -303,9 +305,10 @@
     if (stream) { stream.getTracks().forEach((tr) => tr.stop()); stream = null; }
   }
   function showIdle() {
-    phase = "idle"; blob = null; chunks = []; transcript = ""; transcriptBase = "";
+    phase = "idle"; blob = null; out = null; chunks = []; transcript = ""; transcriptBase = "";
     BHPlayer.stop();
     if (voiceUrl) { URL.revokeObjectURL(voiceUrl); voiceUrl = null; }
+    if (outUrl) { URL.revokeObjectURL(outUrl); outUrl = null; }
     voiceBar.hidden = true;
     voiceBar.textContent = "";
     micLabel("Record a voice message");
@@ -386,8 +389,13 @@
     document.getElementById("voiceDone").addEventListener("click", showIdle);
   }
   function barBusy(msg) { vhtml('<span class="voice-busy">' + T(msg) + "</span>"); }
+  // The saved copy is the playable one, so a desktop client can drop it into
+  // WhatsApp Web by hand where the share sheet is not available.
   function dlHtml() {
-    return voiceUrl ? '<a class="btn btn--ghost voice-btn" download="brownhub-voice-message.' + VOICE_EXT + '" href="' + voiceUrl + '">' + T("Download audio") + "</a>" : "";
+    const src = (out && outUrl) || voiceUrl;
+    if (!src) return "";
+    return '<a class="btn btn--ghost voice-btn" download="brownhub-voice-message.' +
+      (out ? out.ext : VOICE_EXT) + '" href="' + src + '">' + T("Download audio") + "</a>";
   }
   function barError(msg) {
     vhtml('<span class="voice-error">' + T(msg) + '</span><button type="button" class="btn btn--ghost voice-btn" id="voiceDismiss">' + T("Cancel") + "</button>");
@@ -417,6 +425,7 @@
       micBtn.disabled = false;
       if (!blob || !blob.size) { barError("The recording came out empty. Please try again."); return; }
       barReview();
+      convert();
     };
     recorder.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
     recorder.onstop = () => { blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" }); finish(); };
@@ -445,9 +454,52 @@
     if (recorder && recorder.state !== "inactive") recorder.stop();
   }
 
+  /* Runs while the visitor listens back, so the playable copy is usually ready
+     well before Send. The review player keeps the original clip — swapping its
+     source mid-listen would restart it — and only what leaves the browser is
+     normalised. A recording discarded in the meantime is dropped here. */
+  function convert() {
+    const src = blob;
+    if (!window.BHWVoice) return;
+    window.BHWVoice.playable(src).then((o) => {
+      if (blob !== src) return;
+      out = o;
+      if (outUrl) URL.revokeObjectURL(outUrl);
+      outUrl = URL.createObjectURL(o.blob);
+      if (phase === "sent") barSent();
+    });
+  }
+
+  // The File every channel is given: converted audio when it exists, the raw clip
+  // otherwise, so a failed conversion can never cost the studio the message.
+  function voiceFile(name) {
+    const use = out || { blob: blob, ext: VOICE_EXT, mime: blob && blob.type };
+    return new File([use.blob], name + "." + use.ext, { type: use.mime || use.blob.type || "audio/webm" });
+  }
+
+  /* A browser only hands a file to another app while the tap that asked for it is
+     still the live gesture, so this runs at the very top of Send — after the
+     email await the right would be gone. Phones only: a desktop has no WhatsApp
+     installed to share into. Whenever this does nothing, the "Continue to
+     WhatsApp" button in the sent bar is the same hand-off one tap later. */
+  function quickShare() {
+    if (!out || !out.converted || !navigator.canShare) return;
+    if (!matchMedia("(pointer: coarse)").matches) return;
+    let file = null;
+    try { file = voiceFile("brownhub-voice-message"); } catch (e) { return; }
+    if (!navigator.canShare({ files: [file] })) return;
+    navigator.share({
+      title: "BrownHub voice message",
+      text: "Hello BrownHub! Here is my voice message from your website" +
+        (transcript ? ". Transcript: " + transcript : "") + ". My page: " + location.href,
+      files: [file]
+    }).catch(() => { /* dismissed — the sent bar still offers the button */ });
+  }
+
   async function sendVoice() {
     if (!blob) return;
     BHPlayer.stop();
+    quickShare();
     phase = "sending";
     voiceBar.hidden = false;
     barBusy("Sending your voice message…");
@@ -455,7 +507,7 @@
     emailConfirmed = false;
     try {
       const fd = new FormData();
-      fd.append("voice_note", new File([blob], "voice-message." + VOICE_EXT, { type: blob.type || VOICE_MIME || "audio/webm" }));
+      fd.append("voice_note", voiceFile("voice-message"));
       fd.append("transcript", transcript || "(no automatic transcript)");
       fd.append("_subject", "Voice message from the BrownHub website");
       fd.append("page", location.href);
@@ -481,7 +533,7 @@
   // the visitor sees the success bar either way — the WhatsApp note stays honest.
   function fallbackVoicePost() {
     try {
-      const file = new File([blob], "voice-message." + VOICE_EXT, { type: blob.type || VOICE_MIME || "audio/webm" });
+      const file = voiceFile("voice-message");
       let form = document.getElementById("voice-email-form");
       if (!form) {
         form = document.createElement("form");
@@ -544,7 +596,7 @@
         " I am sending the audio here. My page: " + location.href;
     try {
       if (blob && navigator.canShare) {
-        const file = new File([blob], "brownhub-voice-message." + VOICE_EXT, { type: blob.type || VOICE_MIME || "audio/webm" });
+        const file = voiceFile("brownhub-voice-message");
         if (navigator.canShare({ files: [file] })) {
           await navigator.share({ title: "BrownHub voice message", text: note, files: [file] });
           showIdle();

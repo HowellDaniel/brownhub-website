@@ -293,6 +293,9 @@
       fileInp.tabIndex = -1;
 
       let stream = null, recorder = null, chunks = [], blob = null, url = null;
+      // The playable copy of the same clip, built by js/voice.js while the visitor
+      // listens back: the enquiry email and the saved file both use it.
+      let out = null, outUrl = null;
       let timer = null, secs = 0, phase = "idle";
       let audioCtx = null, analyser = null, meterRaf = 0, sr = null;
 
@@ -360,8 +363,9 @@
         cleanup();
         BHPlayer.stop();
         detachFile();
-        blob = null; chunks = [];
+        blob = null; chunks = []; out = null;
         if (url) { URL.revokeObjectURL(url); url = null; }
+        if (outUrl) { URL.revokeObjectURL(outUrl); outUrl = null; }
         phase = "idle";
         bar.hidden = true;
         bar.textContent = "";
@@ -409,16 +413,39 @@
         phase = "attached";
         attachFile();
         vhtml('<span class="voice-busy">' + T("Voice attached to your enquiry") + "</span>" + BHPlayer.html(url) +
-          '<a class="btn btn--ghost voice-btn" download="brownhub-voice-message.' + VOICE_EXT + '" href="' + url + '">' + T("Download audio") + '</a><button type="button" class="btn btn--ghost voice-btn" id="msgRemove">' + T("Remove") + "</button>");
+          dlHtml() + '<button type="button" class="btn btn--ghost voice-btn" id="msgRemove">' + T("Remove") + "</button>");
         BHPlayer.mount(bar);
         document.getElementById("msgRemove").addEventListener("click", () => { const keep = messageEl.value; discard(); messageEl.value = keep; });
         setListening(false);
         setAria(IDLE_LABEL);
       }
+      // The saved copy is the playable one, so it can also be attached by hand in
+      // WhatsApp Web or a mail client instead of going through the form.
+      function dlHtml() {
+        const src = (out && outUrl) || url;
+        if (!src) return "";
+        return '<a class="btn btn--ghost voice-btn" download="brownhub-voice-message.' +
+          (out ? out.ext : VOICE_EXT) + '" href="' + src + '">' + T("Download audio") + "</a>";
+      }
+      /* Runs while the visitor listens back, so the copy is ready by the time the
+         enquiry goes out. The player keeps the original clip — re-pointing it
+         mid-listen would restart it — and only what leaves the page changes. */
+      function convert() {
+        const src = blob;
+        if (!window.BHWVoice) return;
+        window.BHWVoice.playable(src).then((o) => {
+          if (blob !== src) return;
+          out = o;
+          if (outUrl) URL.revokeObjectURL(outUrl);
+          outUrl = URL.createObjectURL(o.blob);
+          if (phase === "attached") barAttached();
+        });
+      }
       function attachFile() {
         if (!blob) return;
         try {
-          const file = new File([blob], "project-details-voice." + VOICE_EXT, { type: blob.type || VOICE_MIME || "audio/webm" });
+          const use = out || { blob: blob, ext: VOICE_EXT, mime: blob.type };
+          const file = new File([use.blob], "project-details-voice." + use.ext, { type: use.mime || use.blob.type || "audio/webm" });
           const dt = new DataTransfer();
           dt.items.add(file);
           fileInp.files = dt.files;
@@ -452,6 +479,7 @@
           micBtn.disabled = false;
           if (!blob || !blob.size) { barError("The recording came out empty. Please try again."); return; }
           barReview();
+          convert();
         };
         recorder.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
         recorder.onstop = () => { blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" }); finish(); };
