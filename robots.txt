@@ -1,3 +1,14 @@
+# Every rule here is an allow. Nothing on this site is closed to a crawler:
+# there is no admin path, no staging area and nothing behind a login that a
+# search engine should not see, so an explicit Disallow would only be a way to
+# break our own indexing by accident.
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
 User-agent: *
 Allow: /
 Allow: /index.html
@@ -6,6 +17,8 @@ Allow: /catalog.html
 Allow: /about.html
 Allow: /contact.html
 Allow: /privacy.html
+Allow: /legal.html
+Allow: /security.html
 
 # Optional: allow common AI crawlers to read the site content.
 User-agent: GPTBot
