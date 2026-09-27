@@ -140,7 +140,7 @@
     }
 
     const FORM_EMAIL = "https://formsubmit.co/ajax/howelldaniel533@gmail.com";
-    const WA_NUMBER = "https://wa.me/233502954541";
+    const WA_NUMBER = "https://wa.me/233535583460";
     const status = document.getElementById("form-status");
     const submitBtn = contactForm.querySelector('button[type="submit"]');
 

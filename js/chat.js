@@ -8,8 +8,8 @@
   const input = document.getElementById("chatInput");
   if (!toggle || !panel || !messages) return;
 
-  const WA = "https://wa.me/233502954541";
-  const WA_CATALOG = "https://wa.me/c/233502954541";
+  const WA = "https://wa.me/233535583460";
+  const WA_CATALOG = "https://wa.me/c/233535583460";
   const VOICE_EMAIL = "https://formsubmit.co/ajax/howelldaniel533@gmail.com";
   const VOICE_FORM = "https://formsubmit.co/howelldaniel533@gmail.com";
 
@@ -24,7 +24,7 @@
   const questionIntents = [
     {
       keys: ["human", "agent", "real person", "talk to someone", "speak to someone", "call you", "phone", "email", "whatsapp", "contact"],
-      html: `You can reach the team directly: call or WhatsApp <a href="tel:+233502954543">+233 50 295 4543</a>, email <a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a>, or chat on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a>. The <a href="contact.html">contact form</a> works too.`
+      html: `You can reach the team directly: call <a href="tel:+233553980791">+233 55 398 0791</a> or WhatsApp <a href="${WA}" target="_blank" rel="noopener">+233 53 558 3460</a>, email <a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a>. The <a href="contact.html">contact form</a> works too.`
     },
     {
       keys: ["where", "address", "location", "office", "visit", "find you", "based"],

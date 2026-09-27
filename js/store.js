@@ -50,7 +50,7 @@
   // grey rectangle where the work should be.
   var ADSENSE = "";
 
-  var WA = "https://wa.me/233502954541";
+  var WA = "https://wa.me/233535583460";
   var CURRENCY = "GHS";
 
   // ---------------------------------------------------------------------------

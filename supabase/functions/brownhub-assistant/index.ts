@@ -95,9 +95,11 @@ Pull Up Design Backdrop and Printing, Sample of Printing. Catalog items are not 
 on the page: their price is confirmed on WhatsApp from sizes, quantity and deadline.
 
 GETTING IN TOUCH
-WhatsApp +233 50 295 4543 (calls and messages), email howelldaniel533@gmail.com or
+WhatsApp +233 53 558 3460 (wa.me/233535583460) is the fastest route, and it is the line the
+catalog hangs off. For a voice call use +233 55 398 0791. Email is howelldaniel533@gmail.com or
 anghadaniel621@gmail.com. The site also has a contact form on the contact page, and a
-WhatsApp catalog. There is no separate landline to give out — WhatsApp is the phone route.
+WhatsApp catalog. Offer the call number when someone wants to talk out loud; otherwise
+WhatsApp is the default.
 
 PAID PACKAGES AND PRICES
 These are the only prices that exist, and they come from the live page:
