@@ -92,3 +92,45 @@ select to_regclass('public.requests') AS requests,
        (select count(*) from pg_policies where tablename = 'requests') as request_policies,
        to_regclass('public.chat_logs') as chat_logs,
        (select count(*) from pg_policies where tablename = 'chat_logs') as chat_policies;
+
+
+-- ============================================================================
+-- payments — what Paystack's liveWebhookUrl writes (added 2026-09-28)
+--
+-- The site's own checkout only knows a payment happened if the buyer's browser is
+-- still open when Paystack closes its frame. This table is the other half: Paystack
+-- posts every charge straight to the paystack-webhook Edge Function, which verifies
+-- the HMAC-SHA512 signature and files one row here. Nothing on the site reads it,
+-- which is why there are no policies: the only writer is the function, holding the
+-- service role key that bypasses row level security anyway.
+--
+-- Run through the dashboard query API (SQL editor) or:
+--   curl -X POST -H "Authorization: Bearer $(cat /tmp/bh_tok)" \
+--     -H "Content-Type: application/json" --data-binary @body.json \
+--     https://api.supabase.com/v1/projects/rmvyrfqyxgupwuzxadyx/database/query
+-- ============================================================================
+
+create table if not exists public.payments (
+  id bigint generated always as identity primary key,
+  reference text not null,
+  event text not null,
+  amount_kobo bigint,
+  currency text,
+  channel text,
+  status text,
+  customer_email text,
+  item text,
+  paid_at timestamptz,
+  received_at timestamptz not null default now()
+);
+
+-- Paystack redelivers an event it did not like the answer to; this key is what the
+-- function's on_conflict=reference,event upsert leans on, so a retry files once.
+create unique index if not exists payments_reference_event_key
+  on public.payments (reference, event);
+
+alter table public.payments enable row level security;
+revoke all on table public.payments from anon, authenticated;
+
+-- Proof it is closed: this must return both counts as zero.
+select (select count(*) from pg_policies where tablename = 'payments') as payments_policies;
