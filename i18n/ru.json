@@ -739,5 +739,11 @@
  "Install the BrownHub app": "Установить приложение BrownHub",
  "Install": "Установить",
  "Not now": "Не сейчас",
- "On iPhone: tap Share, then Add to Home Screen.": "На iPhone: нажмите «Поделиться», затем «На экран Домой»."
+ "On iPhone: tap Share, then Add to Home Screen.": "На iPhone: нажмите «Поделиться», затем «На экран Домой».",
+ "Or pay by bank transfer": "Или оплатите банковским переводом",
+ "Bank": "Банк",
+ "Account name": "Имя владельца счёта",
+ "Account number": "Номер счёта",
+ "Tell us on WhatsApp once you have sent it.": "Напишите нам в WhatsApp, когда отправите перевод.",
+ "I have sent a bank transfer.": "Я отправил банковский перевод."
 }

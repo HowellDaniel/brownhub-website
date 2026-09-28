@@ -739,5 +739,11 @@
  "Install the BrownHub app": "Installeer de BrownHub-app",
  "Install": "Installeren",
  "Not now": "Niet nu",
- "On iPhone: tap Share, then Add to Home Screen.": "Op de iPhone: tik op «Delen» en daarna «Voeg toe aan beginscherm»."
+ "On iPhone: tap Share, then Add to Home Screen.": "Op de iPhone: tik op «Delen» en daarna «Voeg toe aan beginscherm».",
+ "Or pay by bank transfer": "Of betaal via bankoverschrijving",
+ "Bank": "Bank",
+ "Account name": "Naam rekeninghouder",
+ "Account number": "Rekeningnummer",
+ "Tell us on WhatsApp once you have sent it.": "Laat het ons weten op WhatsApp zodra u heeft betaald.",
+ "I have sent a bank transfer.": "Ik heb een bankoverschrijving gedaan."
 }

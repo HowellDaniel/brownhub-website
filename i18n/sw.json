@@ -739,5 +739,11 @@
  "Install the BrownHub app": "Sakinisha programu ya BrownHub",
  "Install": "Sakinisha",
  "Not now": "Sio sasa",
- "On iPhone: tap Share, then Add to Home Screen.": "Kwenye iPhone: gonga «Shiriki», kisha «Ongeza kwenye Skrini ya Nyumbani»."
+ "On iPhone: tap Share, then Add to Home Screen.": "Kwenye iPhone: gonga «Shiriki», kisha «Ongeza kwenye Skrini ya Nyumbani».",
+ "Or pay by bank transfer": "Au lipa kwa uhamisho wa benki",
+ "Bank": "Benki",
+ "Account name": "Jina la akaunti",
+ "Account number": "Nambari ya akaunti",
+ "Tell us on WhatsApp once you have sent it.": "Tujulishe kwenye WhatsApp ukishatuma.",
+ "I have sent a bank transfer.": "Nimetuma uhamisho wa benki."
 }

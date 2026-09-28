@@ -1677,3 +1677,18 @@ html[data-theme="light"] .modal__gal-count{background:rgba(255,251,247,.75);colo
 #product-modal .modal__img{object-fit:contain;max-height:min(58vh,470px);background:rgba(0,0,0,.3)}
 html[data-theme="light"] #product-modal .modal__img{background:var(--bg-alt)}
 @media (max-width:600px){#product-modal .modal__img{max-height:46vh}}
+
+/* The studio's own account, offered beside the prices it pays for. Paystack's
+   transfer tab can only show a one-time number belonging to a partner bank, so
+   a buyer who wants to send money to BrownHub reads it here instead. */
+.pay-bank{display:flex;flex-direction:column;gap:.9rem;align-items:flex-start;width:100%;margin-top:1.6rem;padding:1.15rem 1.3rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.pay-bank__title{margin:0;font-size:.78rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted)}
+.pay-bank__rows{display:grid;grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));gap:.8rem 1.6rem;width:100%}
+.pay-bank__row{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:.6rem;row-gap:.15rem}
+.pay-bank__k{grid-column:1/-1;font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted)}
+.pay-bank__v{grid-column:1;font-size:1rem;font-weight:600;color:var(--text);overflow-wrap:anywhere}
+.pay-bank__num{font-family:ui-monospace,SFMono-Regular,monospace;letter-spacing:.05em}
+.pay-bank__copy{grid-column:2;padding:.3rem .62rem;font-size:.74rem;font-weight:600;color:var(--text-muted);background:transparent;border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:.2s}
+.pay-bank__copy:hover{border-color:var(--accent);color:var(--text)}
+.pay-bank__note{margin:0}
+@media (max-width:640px){.pay-bank__copy{grid-column:1/-1;justify-self:start}}

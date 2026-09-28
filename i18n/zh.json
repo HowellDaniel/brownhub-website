@@ -739,5 +739,11 @@
  "Install the BrownHub app": "安装 BrownHub 应用",
  "Install": "安装",
  "Not now": "暂不",
- "On iPhone: tap Share, then Add to Home Screen.": "在 iPhone 上：点按“共享”，然后选择“添加到主屏幕”。"
+ "On iPhone: tap Share, then Add to Home Screen.": "在 iPhone 上：点按“共享”，然后选择“添加到主屏幕”。",
+ "Or pay by bank transfer": "或者通过银行转账付款",
+ "Bank": "银行",
+ "Account name": "账户名称",
+ "Account number": "账号",
+ "Tell us on WhatsApp once you have sent it.": "转账后请在 WhatsApp 上告诉我们。",
+ "I have sent a bank transfer.": "我已经完成了银行转账。"
 }

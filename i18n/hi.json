@@ -739,5 +739,11 @@
  "Install the BrownHub app": "BrownHub ऐप इंस्टॉल करें",
  "Install": "इंस्टॉल करें",
  "Not now": "अभी नहीं",
- "On iPhone: tap Share, then Add to Home Screen.": "iPhone पर: «शेयर» टैप करें, फिर «होम स्क्रीन पर जोड़ें» चुनें।"
+ "On iPhone: tap Share, then Add to Home Screen.": "iPhone पर: «शेयर» टैप करें, फिर «होम स्क्रीन पर जोड़ें» चुनें।",
+ "Or pay by bank transfer": "या बैंक ट्रांसफ़र से भुगतान करें",
+ "Bank": "बैंक",
+ "Account name": "खाते का नाम",
+ "Account number": "खाता संख्या",
+ "Tell us on WhatsApp once you have sent it.": "भेजने के बाद हमें WhatsApp पर बताइए।",
+ "I have sent a bank transfer.": "मैंने बैंक ट्रांसफ़र भेजा है।"
 }

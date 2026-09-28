@@ -739,5 +739,11 @@
  "Install the BrownHub app": "Instale o app da BrownHub",
  "Install": "Instalar",
  "Not now": "Agora não",
- "On iPhone: tap Share, then Add to Home Screen.": "No iPhone: toque em «Compartilhar» e depois «Adicionar à Tela de Início»."
+ "On iPhone: tap Share, then Add to Home Screen.": "No iPhone: toque em «Compartilhar» e depois «Adicionar à Tela de Início».",
+ "Or pay by bank transfer": "Ou pague por transferência bancária",
+ "Bank": "Banco",
+ "Account name": "Titular da conta",
+ "Account number": "Número da conta",
+ "Tell us on WhatsApp once you have sent it.": "Avise-nos no WhatsApp depois de enviar.",
+ "I have sent a bank transfer.": "Enviei uma transferência bancária."
 }
