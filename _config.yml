@@ -1,0 +1,4 @@
+# Jekyll skips dot-prefixed paths on GitHub Pages, so /.well-known/ — which Apple
+# Pay reads to verify this domain — has to be pulled back in explicitly.
+include:
+  - ".well-known"
