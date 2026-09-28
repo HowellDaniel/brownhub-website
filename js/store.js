@@ -9,9 +9,11 @@
   // Paystack's hosted checkout frame, fetched on the first tap of a pay button so
   // a visitor who never buys never downloads a third-party script.
   var PK_SRC = "https://js.paystack.co/v1/inline.js";
-  // Ways a buyer can pay in the popup. Ghana options are card, mobile_money and
-  // bank_transfer; Paystack hides any channel the account has not switched on.
-  var CHANNELS = ["card", "mobile_money", "bank_transfer"];
+  // Ways a buyer can pay in the popup. Ghana rails are card, mobile_money and
+  // bank_transfer; apple_pay is the fourth, and it only appears for a visitor on an
+  // Apple device once Paystack has verified this domain — the checkout also hides
+  // any channel the account has not switched on, so listing one costs nothing.
+  var CHANNELS = ["card", "mobile_money", "bank_transfer", "apple_pay"];
   // Anything that is not a public key is treated as no key. This is the guard that
   // keeps a pasted sk_... secret from being published to the whole internet, since
   // this file is served to every visitor.
