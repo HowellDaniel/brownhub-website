@@ -290,7 +290,7 @@
     var wrap = el("div", "pay-xfer");
     wrap.setAttribute("role", "dialog");
     wrap.setAttribute("aria-modal", "true");
-    wrap.setAttribute("aria-label", T("Pay by bank transfer"));
+    wrap.setAttribute("aria-label", T("Transfer to our own bank account"));
     var back = el("div", "pay-xfer__backdrop");
     back.addEventListener("click", closeXfer);
     wrap.appendChild(back);
@@ -300,7 +300,11 @@
     close.type = "button";
     close.addEventListener("click", closeXfer);
     box.appendChild(close);
-    box.appendChild(el("p", "pay-xfer__title", "Pay by bank transfer"));
+    box.appendChild(el("p", "pay-xfer__title", "Transfer to our own bank account"));
+    // Two transfer routes now exist on this site and they must not read alike: this
+    // panel carries the studio's standing account, while the tab inside Paystack's
+    // checkout mints a different number that dies with that one transaction.
+    box.appendChild(el("p", "pay-xfer__who", "These are the studio's own account details. The Bank Transfer tab inside the Paystack checkout shows a different number that works for one payment only."));
     var lead = el("p", "pay-xfer__item");
     lead.appendChild(el("span", null, item.name));
     lead.appendChild(el("strong", null, money(item.price)));
@@ -366,7 +370,7 @@
     // quote, and a repeated line would read like a missing price.
     if (priced) {
       c.appendChild(el("p", "pay-price")).appendChild(el("strong", null, money(item.price)));
-      c.appendChild(el("p", "pay-methods", "Card, mobile money or bank transfer"));
+      c.appendChild(el("p", "pay-methods", "Card, mobile money or Apple Pay — or transfer to our account"));
     }
     var actions = el("div", "pay-actions");
     var b = el("button", "btn " + (priced ? "btn--primary" : "btn--ghost"), priced ? "Pay now" : "Ask for a price");
@@ -376,7 +380,7 @@
     // Paystack's own popup stays exactly as it is for card and mobile money; this
     // is the third way round, and the only one that carries the studio's account.
     if (priced) {
-      var x = el("button", "btn btn--ghost btn--sm pay-xfer-open", "Bank transfer");
+      var x = el("button", "btn btn--ghost btn--sm pay-xfer-open", "Transfer to our account");
       x.type = "button";
       x.addEventListener("click", function () { openTransfer(item); });
       actions.appendChild(x);
