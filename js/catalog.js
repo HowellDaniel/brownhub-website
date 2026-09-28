@@ -13,6 +13,13 @@
   var moreGrid = document.getElementById("product-modal-more-grid");
   var body = modal.querySelector(".modal__body");
   var current = "";
+  var gal = document.getElementById("product-modal-gal");
+  var prevBtn = document.getElementById("product-modal-prev");
+  var nextBtn = document.getElementById("product-modal-next");
+  var countEl = document.getElementById("product-modal-count");
+  var thumbsWrap = document.getElementById("product-modal-thumbs");
+  var photos = [];
+  var shot = 0;
 
   var cards = [];
   document.querySelectorAll(".product-card").forEach(function (card) { cards.push(card); });
@@ -64,11 +71,56 @@
     moreWrap.hidden = false;
   }
 
+  // WhatsApp only ever publishes one photo per product to the anonymous web, so any
+  // further shots are listed on the card and the gallery collapses to one frame
+  // when there is nothing else to show.
+  function shotsOf(card) {
+    var list = (card.dataset.imgs || "").split(",").map(function (s) {
+      return s.trim();
+    }).filter(Boolean);
+    if (list.length) return list;
+    return card.dataset.img ? [card.dataset.img] : [];
+  }
+
+  function showShot(i) {
+    if (!photos.length) return;
+    shot = (i + photos.length) % photos.length;
+    img.src = photos[shot];
+    countEl.textContent = (shot + 1) + " / " + photos.length;
+    Array.prototype.forEach.call(thumbsWrap.children, function (thumb, n) {
+      thumb.classList.toggle("is-active", n === shot);
+      if (n === shot) thumb.setAttribute("aria-current", "true");
+      else thumb.removeAttribute("aria-current");
+    });
+  }
+
+  function buildGallery(card) {
+    photos = shotsOf(card);
+    thumbsWrap.textContent = "";
+    var multi = photos.length > 1;
+    prevBtn.hidden = nextBtn.hidden = countEl.hidden = !multi;
+    thumbsWrap.hidden = !multi;
+    if (!multi) return;
+    photos.forEach(function (src, i) {
+      var thumb = document.createElement("button");
+      thumb.type = "button";
+      thumb.className = "modal__gal-thumb";
+      thumb.setAttribute("aria-label", card.dataset.name);
+      var face = document.createElement("img");
+      face.src = src;
+      face.alt = "";
+      thumb.appendChild(face);
+      thumb.addEventListener("click", function () { showShot(i); });
+      thumbsWrap.appendChild(thumb);
+    });
+  }
+
   function open(name) {
     var card = byName(name);
     if (!card) return;
     current = name;
-    img.src = card.dataset.img;
+    buildGallery(card);
+    showShot(0);
     img.alt = name;
     nameEl.textContent = name;
     catEl.textContent = card.dataset.catlabel || "";
@@ -97,8 +149,27 @@
     el.addEventListener("click", close);
   });
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && modal.classList.contains("open")) close();
+    if (!modal.classList.contains("open")) return;
+    if (e.key === "Escape") { close(); return; }
+    if (photos.length < 2) return;
+    if (e.key === "ArrowRight") showShot(shot + 1);
+    if (e.key === "ArrowLeft") showShot(shot - 1);
   });
+
+  prevBtn.addEventListener("click", function () { showShot(shot - 1); });
+  nextBtn.addEventListener("click", function () { showShot(shot + 1); });
+
+  var swipeX = null;
+  gal.addEventListener("touchstart", function (e) {
+    swipeX = e.touches.length === 1 ? e.touches[0].clientX : null;
+  }, { passive: true });
+  gal.addEventListener("touchend", function (e) {
+    if (swipeX === null || photos.length < 2) { swipeX = null; return; }
+    var dx = e.changedTouches[0].clientX - swipeX;
+    swipeX = null;
+    if (Math.abs(dx) < 45) return;
+    showShot(dx < 0 ? shot + 1 : shot - 1);
+  }, { passive: true });
 
   chatBtn.addEventListener("click", function () {
     var item = current;

@@ -1618,3 +1618,33 @@ html[dir="rtl"] .flow--live .flow__items{animation-name:flow-right}
   .chat-widget__teaser-close{width:36px;height:36px;font-size:1.35rem}
 }
 @media (prefers-reduced-motion:reduce){.chat-widget__teaser{animation:none}}
+/* ---------- Product photo gallery ----------
+   One photo per card is the anonymous WhatsApp ceiling, so the gallery chrome only
+   appears when a card carries more than one shot in data-imgs. */
+.modal__gal{position:relative;overflow:hidden}
+.modal__gal-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:38px;height:38px;
+  border:0;border-radius:50%;background:rgba(24,9,10,.55);color:#fff;font-size:1.5rem;line-height:1;
+  display:grid;place-items:center;cursor:pointer;transition:background-color .2s}
+.modal__gal-nav[hidden]{display:none}
+.modal__gal-nav:hover,.modal__gal-nav:focus-visible{background:rgba(24,9,10,.82)}
+.modal__gal-nav--prev{inset-inline-start:.6rem}
+.modal__gal-nav--next{inset-inline-end:.6rem}
+.modal__gal-count{position:absolute;inset-inline-end:.7rem;bottom:.7rem;z-index:2;padding:.15rem .55rem;
+  border-radius:999px;background:rgba(24,9,10,.62);color:#fff;font-size:.74rem;font-weight:600;
+  letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.modal__gal-thumbs{display:grid;grid-auto-flow:column;grid-auto-columns:64px;gap:.5rem;
+  padding:.75rem 1.4rem 0;overflow-x:auto;scrollbar-width:thin}
+.modal__gal-thumbs[hidden]{display:none}
+.modal__gal-thumb{border:2px solid transparent;border-radius:10px;padding:0;background:none;
+  line-height:0;overflow:hidden;cursor:pointer;opacity:.6;transition:border-color .2s,opacity .2s}
+.modal__gal-thumb img{display:block;width:100%;height:52px;object-fit:cover}
+.modal__gal-thumb:hover,.modal__gal-thumb:focus-visible{opacity:1}
+.modal__gal-thumb.is-active{border-color:var(--accent);opacity:1}
+html[data-theme="light"] .modal__gal-nav{background:rgba(255,251,247,.7);color:#1b0b0c}
+html[data-theme="light"] .modal__gal-nav:hover,html[data-theme="light"] .modal__gal-nav:focus-visible{background:#fff}
+html[data-theme="light"] .modal__gal-count{background:rgba(255,251,247,.75);color:#1b0b0c}
+@media (max-width:600px){
+  .modal__gal-thumbs{padding:.6rem .95rem 0;grid-auto-columns:56px}
+  .modal__gal-nav{width:34px;height:34px;font-size:1.35rem}
+}
+@media (prefers-reduced-motion:reduce){.modal__gal-nav,.modal__gal-thumb{transition:none}}
