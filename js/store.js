@@ -12,10 +12,13 @@
   // Ways a buyer can pay in the popup. Ghana rails are card and mobile_money;
   // apple_pay only appears for a visitor on an Apple device once Paystack has
   // verified this domain — the checkout also hides any channel the account has not
-  // switched on, so listing one costs nothing. bank_transfer stays out because the
-  // number it shows is a one-time account belonging to a partner bank; the studio's
-  // own account is offered beside that popup instead, from the endpoint below.
-  var CHANNELS = ["card", "mobile_money", "apple_pay"];
+  // switched on, so listing one costs nothing. bank_transfer is listed because the
+  // owner wants a transfer tab inside Paystack's own panel. Be clear about whose
+  // number that tab prints: it is the one-time account Paystack's partner bank mints
+  // for that transaction, and it still settles into this Paystack account. The
+  // studio's own bank account is a separate route and stays on the transfer panel
+  // beside that popup, served from the endpoint below.
+  var CHANNELS = ["card", "mobile_money", "apple_pay", "bank_transfer"];
   // The studio's transfer account is not written into this file: it is held in
   // Supabase's secret store and returned to supabase/functions/bank-details, which
   // answers only this site's Origin and only with no-store. So the number is never
