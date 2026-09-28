@@ -373,18 +373,21 @@
       c.appendChild(el("p", "pay-methods", "Card, mobile money or Apple Pay — or transfer to our account"));
     }
     var actions = el("div", "pay-actions");
-    var b = el("button", "btn " + (priced ? "btn--primary" : "btn--ghost"), priced ? "Pay now" : "Ask for a price");
-    b.type = "button";
-    b.addEventListener("click", function () { buy(item); });
-    actions.appendChild(b);
-    // Paystack's own popup stays exactly as it is for card and mobile money; this
-    // is the third way round, and the only one that carries the studio's account.
+    // On a priced card the heaviest action is the one that pays the studio directly.
+    // Paystack's popup is the secondary choice and does exactly what it always did —
+    // card, mobile money, Apple Pay, and its own single-use transfer number — but a
+    // buyer who wants to bank with us rather than with a processor should not have to
+    // find that route in the second row.
     if (priced) {
-      var x = el("button", "btn btn--ghost btn--sm pay-xfer-open", "Transfer to our account");
+      var x = el("button", "btn btn--primary pay-xfer-open", "Transfer to our account");
       x.type = "button";
       x.addEventListener("click", function () { openTransfer(item); });
       actions.appendChild(x);
     }
+    var b = el("button", "btn " + (priced ? "btn--ghost btn--sm" : "btn--ghost"), priced ? "Pay now" : "Ask for a price");
+    b.type = "button";
+    b.addEventListener("click", function () { buy(item); });
+    actions.appendChild(b);
     // WhatsApp is where this studio actually closes jobs, so the card offers it
     // whether or not a card terminal is wired up yet.
     var w = el("a", "btn btn--ghost btn--sm", "Order this on WhatsApp");
