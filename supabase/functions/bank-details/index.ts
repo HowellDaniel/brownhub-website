@@ -55,7 +55,7 @@ function allowed(origin: string | null): boolean {
   return origin !== null && SITES.includes(origin);
 }
 
-function json(body: unknown, status = 200): Response {
+function json(body: unknown, origin: string | null, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     // A payment account is not something an intermediary may keep.
@@ -63,6 +63,12 @@ function json(body: unknown, status = 200): Response {
       "content-type": "application/json",
       "cache-control": "no-store, max-age=0",
       "pragma": "no-cache",
+      // The preflight is only half of it: without this header on the answer itself
+      // the browser throws the response away before the page can read it. Proved
+      // the hard way on the first deploy, where the panel fell back to "we could
+      // not load our account details" while curl from the same Origin returned 200.
+      "access-control-allow-origin": origin || "null",
+      "vary": "origin",
     },
   });
 }
@@ -83,13 +89,13 @@ Deno.serve(async (req) => {
     });
   }
 
-  if (req.method !== "POST") return json({ error: "Use POST." }, 405);
-  if (!allowed(origin)) return json({ error: "off" }, 403);
+  if (req.method !== "POST") return json({ error: "Use POST." }, origin, 405);
+  if (!allowed(origin)) return json({ error: "off" }, origin, 403);
 
   const ip = (req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "unknown")
     .split(",")[0]
     .trim();
-  if (rateLimited(ip)) return json({ error: "slow" }, 429);
+  if (rateLimited(ip)) return json({ error: "slow" }, origin, 429);
 
   const raw = Deno.env.get("BANK_DETAILS") || "";
   let details: { bank?: string; name?: string; number?: string };
@@ -98,15 +104,15 @@ Deno.serve(async (req) => {
   } catch (_e) {
     // Nothing stored yet, or it was stored malformed: say so without echoing the
     // value back, since an error body is as readable as a success body.
-    return json({ error: "The studio has not stored its transfer details yet." }, 500);
+    return json({ error: "The studio has not stored its transfer details yet." }, origin, 500);
   }
   if (!details.bank || !details.name || !details.number) {
-    return json({ error: "The studio's transfer details are incomplete." }, 500);
+    return json({ error: "The studio's transfer details are incomplete." }, origin, 500);
   }
 
   return json({
     bank: String(details.bank).slice(0, 80),
     name: String(details.name).slice(0, 80),
     number: String(details.number).replace(/[\s-]/g, "").slice(0, 34),
-  });
+  }, origin);
 });
