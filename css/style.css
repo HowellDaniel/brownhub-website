@@ -1677,3 +1677,45 @@ html[data-theme="light"] .modal__gal-count{background:rgba(255,251,247,.75);colo
 #product-modal .modal__img{object-fit:contain;max-height:min(58vh,470px);background:rgba(0,0,0,.3)}
 html[data-theme="light"] #product-modal .modal__img{background:var(--bg-alt)}
 @media (max-width:600px){#product-modal .modal__img{max-height:46vh}}
+
+/* ---------- Bank transfer panel ----------
+   Paystack's own checkout frame is untouched: this is the third way round, laid out
+   in the same numbered-step idiom so it reads as part of paying rather than as a
+   paragraph of text. The values arrive from the Edge Function at click time, so the
+   only thing styled here is chrome — no account detail lives in this file. */
+.pay-xfer{position:fixed;inset:0;z-index:210;display:grid;place-items:center;padding:1rem}
+.pay-xfer__backdrop{position:absolute;inset:0;background:rgba(24,9,10,.72)}
+html[data-theme="light"] .pay-xfer__backdrop{background:rgba(38,16,15,.5)}
+.pay-xfer__box{position:relative;width:100%;max-width:30rem;max-height:min(88vh,44rem);overflow-y:auto;
+  padding:1.6rem 1.5rem 1.4rem;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);box-shadow:var(--shadow)}
+.pay-xfer__close{position:absolute;top:.6rem;inset-inline-end:.6rem;width:34px;height:34px;border-radius:50%;
+  border:none;background:var(--bg-alt);color:var(--text-muted);font-size:1.2rem;line-height:1;cursor:pointer;
+  transition:color .2s,background-color .2s}
+.pay-xfer__close:hover,.pay-xfer__close:focus-visible{color:var(--text);background:var(--glass-fill-alt,var(--bg-alt))}
+.pay-xfer__title{font-size:1.15rem;font-weight:750;margin-bottom:.2rem}
+.pay-xfer__item{display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;font-size:.9rem;color:var(--text-muted)}
+.pay-xfer__item strong{font-size:1.05rem;font-weight:750;color:var(--accent-2)}
+.pay-xfer__steps{display:grid;gap:.7rem;margin:1.1rem 0 0;padding-inline-start:1.4rem;
+  list-style:decimal;color:var(--text)}
+.pay-xfer__steps li::marker{color:var(--text-muted);font-weight:600}
+.pay-xfer__step{font-size:.92rem;line-height:1.45}
+.pay-xfer__say{color:var(--text-muted)}
+.pay-xfer__k{display:block;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-muted)}
+.pay-xfer__v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1rem;font-weight:700;
+  color:var(--text);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.pay-xfer__copy{margin-inline-start:.5rem;padding:.2rem .6rem;border:1px solid var(--border);border-radius:999px;
+  background:none;color:var(--text-muted);font-size:.74rem;font-weight:600;cursor:pointer;
+  font-family:inherit;transition:color .2s,border-color .2s}
+.pay-xfer__copy:hover,.pay-xfer__copy:focus-visible{color:var(--text);border-color:var(--text-muted)}
+.pay-xfer__load,.pay-xfer__note{margin-top:1.1rem;font-size:.85rem;color:var(--text-muted)}
+.pay-xfer__note--bad{color:var(--accent)}
+.pay-xfer__acts{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.1rem}
+.pay-xfer__acts .btn{margin:0}
+@media (max-width:640px){
+  .pay-xfer{padding:.6rem}
+  .pay-xfer__box{padding:1.35rem 1.05rem 1.15rem}
+  .pay-xfer__steps{padding-inline-start:1.15rem}
+}
+@media (prefers-reduced-motion:reduce){.pay-xfer__close,.pay-xfer__copy{transition:none}}

@@ -12,10 +12,16 @@
   // Ways a buyer can pay in the popup. Ghana rails are card and mobile_money;
   // apple_pay only appears for a visitor on an Apple device once Paystack has
   // verified this domain — the checkout also hides any channel the account has not
-  // switched on, so listing one costs nothing. bank_transfer stays out: it can only
-  // ever show a one-time account belonging to a partner bank, and the studio's own
-  // number is not published on this site.
+  // switched on, so listing one costs nothing. bank_transfer stays out because the
+  // number it shows is a one-time account belonging to a partner bank; the studio's
+  // own account is offered beside that popup instead, from the endpoint below.
   var CHANNELS = ["card", "mobile_money", "apple_pay"];
+  // The studio's transfer account is not written into this file: it is held in
+  // Supabase's secret store and returned to supabase/functions/bank-details, which
+  // answers only this site's Origin and only with no-store. So the number is never
+  // served, cached, indexed or committed as page content — a buyer who asks for it
+  // still gets to read it, which is the whole point of the panel.
+  var BANK_EP = "https://rmvyrfqyxgupwuzxadyx.supabase.co/functions/v1/bank-details";
   // Anything that is not a public key is treated as no key. This is the guard that
   // keeps a pasted sk_... secret from being published to the whole internet, since
   // this file is served to every visitor.
@@ -203,6 +209,152 @@
     a.href = WA + "?text=" + encodeURIComponent(T("I'd like to order:") + " " + T(item.name));
   }
 
+  function copyText(s) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(s).catch(function () {});
+      return;
+    }
+    var t = document.createElement("textarea");
+    t.value = s;
+    t.setAttribute("readonly", "");
+    t.style.cssText = "position:fixed;top:-10rem;opacity:0";
+    document.body.appendChild(t);
+    t.select();
+    try { document.execCommand("copy"); } catch (e) { /* nothing else to try */ }
+    t.remove();
+  }
+
+  // Held in a variable and nowhere else: not localStorage, not sessionStorage, so
+  // the account leaves the tab when the tab closes.
+  var bankData = null;
+
+  function bankDetails() {
+    if (bankData) return Promise.resolve(bankData);
+    return fetch(BANK_EP, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error("off")); })
+      .then(function (d) {
+        if (!d || !d.bank || !d.name || !d.number) return Promise.reject(new Error("empty"));
+        bankData = { bank: String(d.bank), name: String(d.name), number: String(d.number) };
+        return bankData;
+      });
+  }
+
+  var openXfer = null;
+
+  function onXferKey(e) {
+    if (e.key === "Escape") closeXfer();
+  }
+
+  function closeXfer() {
+    if (!openXfer) return;
+    var node = openXfer;
+    openXfer = null;
+    document.removeEventListener("keydown", onXferKey);
+    node.remove();
+  }
+
+  function stepText(s) {
+    var li = el("li", "pay-xfer__step");
+    li.appendChild(el("span", "pay-xfer__say", s));
+    return li;
+  }
+
+  // A label and a value that must not be translated: the dictionary rewrites the
+  // text nodes it recognises and leaves an unknown account number exactly alone,
+  // which is the safe direction for a string that sends money.
+  function stepValue(label, value, copyable) {
+    var li = el("li", "pay-xfer__step");
+    li.appendChild(el("span", "pay-xfer__k", label));
+    li.appendChild(el("span", "pay-xfer__v", value));
+    if (copyable) {
+      var b = el("button", "pay-xfer__copy", "Copy");
+      b.type = "button";
+      b.addEventListener("click", function () {
+        copyText(value);
+        txt(b, "Copied");
+        setTimeout(function () { txt(b, "Copy"); }, 2600);
+      });
+      li.appendChild(b);
+    }
+    return li;
+  }
+
+  function openTransfer(item) {
+    closeXfer();
+    // A code the buyer types into the bank's narration field, so a transfer that
+    // arrives without a message can still be matched to the order it belongs to.
+    var code = "BH" + Math.random().toString(36).slice(2, 6).toUpperCase();
+    var wrap = el("div", "pay-xfer");
+    wrap.setAttribute("role", "dialog");
+    wrap.setAttribute("aria-modal", "true");
+    wrap.setAttribute("aria-label", T("Pay by bank transfer"));
+    var back = el("div", "pay-xfer__backdrop");
+    back.addEventListener("click", closeXfer);
+    wrap.appendChild(back);
+
+    var box = el("div", "pay-xfer__box");
+    var close = el("button", "pay-xfer__close", "Close");
+    close.type = "button";
+    close.addEventListener("click", closeXfer);
+    box.appendChild(close);
+    box.appendChild(el("p", "pay-xfer__title", "Pay by bank transfer"));
+    var lead = el("p", "pay-xfer__item");
+    lead.appendChild(el("span", null, item.name));
+    lead.appendChild(el("strong", null, money(item.price)));
+    box.appendChild(lead);
+    var steps = el("ol", "pay-xfer__steps");
+    box.appendChild(steps);
+    var foot = el("p", "pay-xfer__load", "Loading the account details…");
+    box.appendChild(foot);
+    wrap.appendChild(box);
+    document.body.appendChild(wrap);
+    openXfer = wrap;
+    document.addEventListener("keydown", onXferKey);
+    close.focus();
+
+    function wire() {
+      foot.className = "pay-xfer__note";
+      txt(foot, "Send the exact amount, and put the reference in the message field, so we can match it to your order.");
+      var acts = el("div", "pay-xfer__acts");
+      var w = el("a", "btn btn--primary btn--sm", "Tell us on WhatsApp once you have sent it.");
+      w.target = "_blank";
+      w.rel = "noopener";
+      function hrefFor() {
+        w.href = WA + "?text=" + encodeURIComponent(
+          T("I have sent a bank transfer.") + ": " + T(item.name) + " " + money(item.price) +
+          " " + T("Reference") + " " + code
+        );
+      }
+      hrefFor();
+      waLinks.push({ a: w, item: item, extra: hrefFor });
+      acts.appendChild(w);
+      var alt = el("button", "btn btn--ghost btn--sm", "Pay by card or mobile money");
+      alt.type = "button";
+      alt.addEventListener("click", function () { closeXfer(); buy(item); });
+      acts.appendChild(alt);
+      box.appendChild(acts);
+    }
+
+    bankDetails().then(function (d) {
+      steps.appendChild(stepText("Open your bank app or internet banking."));
+      steps.appendChild(stepText("Choose Instant pay or GIP if your bank offers it."));
+      steps.appendChild(stepValue("Bank", d.bank, false));
+      steps.appendChild(stepValue("Account number", d.number, true));
+      steps.appendChild(stepValue("Account name", d.name, true));
+      steps.appendChild(stepValue("Amount", money(item.price), true));
+      steps.appendChild(stepValue("Reference", code, true));
+      wire();
+    }).catch(function () {
+      foot.className = "pay-xfer__note pay-xfer__note--bad";
+      txt(foot, "We could not load our account details just now. Message us and we will send them across.");
+      var w = el("a", "btn btn--ghost btn--sm", "Order this on WhatsApp");
+      w.target = "_blank";
+      w.rel = "noopener";
+      w.href = WA + "?text=" + encodeURIComponent(T("I'd like to order:") + " " + T(item.name));
+      box.appendChild(w);
+    });
+  }
+
   function card(item, priced) {
     var c = el("div", "card card--pay");
     c.appendChild(el("h3", null, item.name));
@@ -211,13 +363,21 @@
     // quote, and a repeated line would read like a missing price.
     if (priced) {
       c.appendChild(el("p", "pay-price")).appendChild(el("strong", null, money(item.price)));
-      c.appendChild(el("p", "pay-methods", "Card or mobile money"));
+      c.appendChild(el("p", "pay-methods", "Card, mobile money or bank transfer"));
     }
     var actions = el("div", "pay-actions");
     var b = el("button", "btn " + (priced ? "btn--primary" : "btn--ghost"), priced ? "Pay now" : "Ask for a price");
     b.type = "button";
     b.addEventListener("click", function () { buy(item); });
     actions.appendChild(b);
+    // Paystack's own popup stays exactly as it is for card and mobile money; this
+    // is the third way round, and the only one that carries the studio's account.
+    if (priced) {
+      var x = el("button", "btn btn--ghost btn--sm pay-xfer-open", "Bank transfer");
+      x.type = "button";
+      x.addEventListener("click", function () { openTransfer(item); });
+      actions.appendChild(x);
+    }
     // WhatsApp is where this studio actually closes jobs, so the card offers it
     // whether or not a card terminal is wired up yet.
     var w = el("a", "btn btn--ghost btn--sm", "Order this on WhatsApp");
@@ -298,7 +458,7 @@
       if (known && inp && !inp.value) inp.value = known;
     }
     document.addEventListener("i18n-applied", function () {
-      waLinks.forEach(function (l) { orderHref(l.a, l.item); });
+      waLinks.forEach(function (l) { if (l.extra) l.extra(); else orderHref(l.a, l.item); });
     });
   }
 
@@ -310,6 +470,7 @@
     channels: function () { return CHANNELS.slice(); },
     slots: SLOTS,
     pay: buy,
+    transfer: openTransfer,
     configured: function () { return !!PK_LIVE; },
     // The chat assistant quotes prices, and a second copy of the rate card would
     // drift from what the pay button charges, so it reads them from here.
