@@ -1,7 +1,7 @@
 {
   "_how_to_add": "Everything in this file is published as a fact about the studio, so a number belongs here only once it is true. metrics: value is the real count, label the words under it, note one short line of proof. A metric left as \"value\": null is never rendered, which is how the two business figures below wait without showing a made-up placeholder — type a real number and it counts up on its own. milestones: date is a day we can point to in our own records, title and text one line each. The English words double as the translation keys, so a rewritten line falls back to English in every other language until it is added again to i18n/*.json.",
   "metrics": [
-    { "value": 9, "label": "Design services", "note": "Listed one by one on the services page." },
+    { "value": 7, "label": "Design services", "note": "Listed one by one on the services page." },
     { "value": 20, "label": "Catalog items", "note": "Photographed from finished work." },
     { "value": 40, "label": "Languages", "note": "Every page rewritten by hand." },
     { "value": null, "label": "Projects delivered", "note": "Counted from our own records." },

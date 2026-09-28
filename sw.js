@@ -46,6 +46,25 @@ self.addEventListener("fetch", (e) => {
 
   const st = url.pathname.split("/")[1];
   if (["css", "js", "i18n", "data", "fonts", "images", "icons"].indexOf(st) === -1) return;
+
+  // The owner edits data/*.json by hand and expects the new figure or review to show
+  // up for a returning visitor without a hard refresh — which cache-first quietly
+  // undoes once this file is installed as an app. Curated content therefore asks the
+  // network first and falls back to what it has; code and dictionaries keep their
+  // cache-first reading because those are versioned by the ?v= ledger anyway.
+  if (st === "data") {
+    e.respondWith(
+      fetch(req)
+        .then((res) => freshen(res))
+        .catch(() => caches.match(req))
+        .then((hit) => hit || new Response("{}", {
+          status: 504,
+          headers: { "content-type": "application/json" },
+        }))
+    );
+    return;
+  }
+
   e.respondWith(
     caches.match(req).then((hit) => {
       const net = fetch(req).then((res) => freshen(res)).catch(() => hit);
