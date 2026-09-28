@@ -11,18 +11,24 @@
 // does not depend on the buyer's browser staying open.
 //
 // Trust comes from the signature, not from the network: Paystack signs the exact
-// request body with the account's webhook secret, HMAC-SHA512, hex, in
+// request body with the account's live secret key, HMAC-SHA512, hex, in
 // `x-paystack-signature`. So "Verify JWT" is OFF on this function (a server to
-// server call carries no Supabase token) and an unset secret refuses everything
+// server call carries no Supabase token) and an unset key refuses everything
 // rather than quietly accepting forged rows.
+//
+// That means this function holds the sk_live... key, the same one that can move
+// money through Paystack's API. It lives only in Supabase's secret store, is used
+// only to compute an HMAC, and is never returned, logged or sent anywhere — the
+// same place GEMINI_API_KEY and ARKSEL_API_KEY already sit. Nothing on the site
+// can read it: the page never talks to this endpoint.
 //
 // Live at /functions/v1/paystack-webhook. Redeploy after editing (runbook in memory):
 //   curl -X POST -H "Authorization: Bearer $(cat /tmp/bh_tok)" \
 //     -F "file=@supabase/functions/paystack-webhook/index.ts" \
 //     -F 'metadata={"entrypoint_path":"index.ts","import_map_path":"","verify_jwt":false,"name":"paystack-webhook"}' \
 //     "https://api.supabase.com/v1/projects/rmvyrfqyxgupwuzxadyx/functions/deploy?slug=paystack-webhook"
-// Secrets it reads and never prints: PAYSTACK_WEBHOOK_SECRET (from Paystack's own
-// API Keys page), SUPABASE_SERVICE_ROLE_KEY and SUPABASE_URL (auto-provisioned).
+// Secrets it reads and never prints: PAYSTACK_SECRET_KEY (Settings -> API Keys &
+// Webhooks -> Live Secret Key), SUPABASE_SERVICE_ROLE_KEY and SUPABASE_URL.
 
 const HOOK = "x-paystack-signature";
 const MAX_BODY = 65536;
@@ -36,7 +42,7 @@ function hex(buf: ArrayBuffer): string {
 // Length check first, then every byte, so the answer does not leak how much of a
 // guess matched.
 async function signed(body: string, given: string | null): Promise<boolean> {
-  const secret = Deno.env.get("PAYSTACK_WEBHOOK_SECRET") || "";
+  const secret = Deno.env.get("PAYSTACK_SECRET_KEY") || "";
   if (!secret || !given || !/^[0-9a-f]{128}$/.test(given.trim())) return false;
   const key = await crypto.subtle.importKey(
     "raw",
