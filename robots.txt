@@ -28,4 +28,9 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
+# One exception: /mobile/ is the native-app build folder, not a page. It holds a
+# package manifest and build notes, so a crawler indexing it would only be noise.
+User-agent: *
+Disallow: /mobile/
+
 Sitemap: https://www.brownhub283.com/sitemap.xml

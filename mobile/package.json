@@ -1,0 +1,24 @@
+{
+  "name": "brownhub-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Native shell for brownhub283.com: App Store and Play Store build of the BrownHub studio site.",
+  "scripts": {
+    "sync": "cap sync",
+    "ios": "cap open ios",
+    "android": "cap open android",
+    "build:ios": "cap build ios --release",
+    "build:android": "cap build android --release"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/browser": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/filesystem": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/push-notifications": "^6.0.0",
+    "@capacitor/share": "^6.0.0"
+  }
+}

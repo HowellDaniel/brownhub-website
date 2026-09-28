@@ -1,0 +1,17 @@
+{
+  "appId": "com.brownhub.app",
+  "appName": "BrownHub",
+  "webDir": "../",
+  "bundledWebResources": "lazy",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "allowsLinkPreview": false
+  },
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#1b0b0c"
+  }
+}

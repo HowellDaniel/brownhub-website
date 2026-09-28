@@ -1648,3 +1648,27 @@ html[data-theme="light"] .modal__gal-count{background:rgba(255,251,247,.75);colo
   .modal__gal-nav{width:34px;height:34px;font-size:1.35rem}
 }
 @media (prefers-reduced-motion:reduce){.modal__gal-nav,.modal__gal-thumb{transition:none}}
+/* ---------- Install-the-app prompt ----------
+   Lifts itself over the cookie notice with the same --cookie-h the language sheet
+   already uses, so the two never stack on top of each other. */
+.install{position:fixed;inset-inline-start:1rem;z-index:145;display:flex;align-items:center;gap:.6rem;
+  max-width:min(340px,calc(100vw - 2rem));padding:.65rem .5rem .65rem .95rem;border-radius:16px;
+  bottom:calc(1rem + var(--cookie-h,0px) + env(safe-area-inset-bottom));
+  background:var(--glass-fill);border:1px solid var(--border);box-shadow:var(--shadow);
+  -webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5);
+  opacity:0;transform:translateY(12px);transition:opacity .35s var(--ease-out,ease),transform .35s var(--ease-out,ease)}
+.install--in{opacity:1;transform:none}
+.install[hidden]{display:none}
+.install p{flex:1;min-width:0;margin:0;font-size:var(--t-fs-30,.86rem);line-height:1.45;color:var(--text)}
+.install__go{flex:none;padding:.48rem .95rem;font-size:.84rem;border-radius:999px}
+.install__no{flex:none;width:28px;height:28px;border:0;border-radius:50%;background:none;
+  color:var(--text-muted);font-size:1.25rem;line-height:1;cursor:pointer;transition:color .2s,background-color .2s}
+.install__no:hover,.install__no:focus-visible{color:var(--text);background-color:var(--glass-fill-alt)}
+@media (max-width:600px){
+  .install{inset-inline:1rem;max-width:none;padding-inline-end:.4rem;
+    /* the chat bubble is anchored to the physical right on every page, RTL included */
+    padding-right:4.75rem;
+    bottom:calc(.75rem + var(--cookie-h,0px) + env(safe-area-inset-bottom))}
+  .install__no{width:34px;height:34px}
+}
+@media (prefers-reduced-motion:reduce){.install{transition:none}.install__no{transition:none}}
