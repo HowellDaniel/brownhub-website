@@ -109,6 +109,10 @@
       var face = document.createElement("img");
       face.src = src;
       face.alt = "";
+      // Eight frames per product would otherwise all download the moment the
+      // modal opens; the strip is below the fold, so let the browser queue it.
+      face.loading = "lazy";
+      face.decoding = "async";
       thumb.appendChild(face);
       thumb.addEventListener("click", function () { showShot(i); });
       thumbsWrap.appendChild(thumb);

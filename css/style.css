@@ -1672,3 +1672,8 @@ html[data-theme="light"] .modal__gal-count{background:rgba(255,251,247,.75);colo
   .install__no{width:34px;height:34px}
 }
 @media (prefers-reduced-motion:reduce){.install{transition:none}.install__no{transition:none}}
+
+/* Product photos are the artwork itself: the gallery must show each frame whole, not cropped to the card square. */
+#product-modal .modal__img{object-fit:contain;max-height:min(58vh,470px);background:rgba(0,0,0,.3)}
+html[data-theme="light"] #product-modal .modal__img{background:var(--bg-alt)}
+@media (max-width:600px){#product-modal .modal__img{max-height:46vh}}
