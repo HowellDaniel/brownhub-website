@@ -12,8 +12,9 @@
   // Ways a buyer can pay in the popup. Ghana rails are card and mobile_money;
   // apple_pay only appears for a visitor on an Apple device once Paystack has
   // verified this domain — the checkout also hides any channel the account has not
-  // switched on, so listing one costs nothing. bank_transfer is deliberately not
-  // here: see BANK below.
+  // switched on, so listing one costs nothing. bank_transfer stays out: it can only
+  // ever show a one-time account belonging to a partner bank, and the studio's own
+  // number is not published on this site.
   var CHANNELS = ["card", "mobile_money", "apple_pay"];
   // Anything that is not a public key is treated as no key. This is the guard that
   // keeps a pasted sk_... secret from being published to the whole internet, since
@@ -55,16 +56,6 @@
 
   var WA = "https://wa.me/233502954541";
   var CURRENCY = "GHS";
-
-  // Paystack's transfer tab cannot be made to show this account: its Pay-with-
-  // Transfer channel issues a one-time number belonging to a partner bank, so a
-  // buyer who followed it would be told to pay "PAYSTACK CHECKOUT". The studio's
-  // own number is offered on the page instead, and matched by hand over WhatsApp.
-  var BANK = {
-    bank: "Fidelity Bank Ghana Limited",
-    name: "DANIEL KOJO HOWELL",
-    number: "2100753192410"
-  };
 
   // ---------------------------------------------------------------------------
 
@@ -207,64 +198,9 @@
   // The order text is built before the dictionary has arrived, so each link is
   // refreshed when translate.js reports that a language has been applied.
   var waLinks = [];
-  var bankLinks = [];
 
   function orderHref(a, item) {
     a.href = WA + "?text=" + encodeURIComponent(T("I'd like to order:") + " " + T(item.name));
-  }
-
-  function copyText(s) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(s).catch(function () {});
-      return;
-    }
-    var t = document.createElement("textarea");
-    t.value = s;
-    t.setAttribute("readonly", "");
-    t.style.cssText = "position:fixed;top:-10rem;opacity:0";
-    document.body.appendChild(t);
-    t.select();
-    try { document.execCommand("copy"); } catch (e) { /* nothing else to try */ }
-    t.remove();
-  }
-
-  // One account, shown wherever there is a price. The number and the name are
-  // values, so they sit in their own nodes and no dictionary ever offers to
-  // translate them into something that would send money elsewhere.
-  function bankPanel() {
-    var p = el("div", "pay-bank");
-    p.appendChild(el("p", "pay-bank__title", "Or pay by bank transfer"));
-    var rows = el("div", "pay-bank__rows");
-    [["Bank", BANK.bank], ["Account name", BANK.name]].forEach(function (r) {
-      var d = el("div", "pay-bank__row");
-      d.appendChild(el("span", "pay-bank__k", r[0]));
-      d.appendChild(el("span", "pay-bank__v", r[1]));
-      rows.appendChild(d);
-    });
-    var num = el("div", "pay-bank__row");
-    num.appendChild(el("span", "pay-bank__k", "Account number"));
-    num.appendChild(el("span", "pay-bank__v pay-bank__num", BANK.number));
-    var copy = el("button", "pay-bank__copy", "Copy details");
-    copy.type = "button";
-    copy.addEventListener("click", function () {
-      copyText(BANK.number);
-      txt(copy, "Copied");
-      setTimeout(function () { txt(copy, "Copy details"); }, 2600);
-    });
-    num.appendChild(copy);
-    rows.appendChild(num);
-    p.appendChild(rows);
-    var a = el("a", "pay-bank__note btn btn--ghost btn--sm", "Tell us on WhatsApp once you have sent it.");
-    a.target = "_blank";
-    a.rel = "noopener";
-    bankLinks.push(a);
-    bankHref(a);
-    p.appendChild(a);
-    return p;
-  }
-
-  function bankHref(a) {
-    a.href = WA + "?text=" + encodeURIComponent(T("I have sent a bank transfer."));
   }
 
   function card(item, priced) {
@@ -275,7 +211,7 @@
     // quote, and a repeated line would read like a missing price.
     if (priced) {
       c.appendChild(el("p", "pay-price")).appendChild(el("strong", null, money(item.price)));
-      c.appendChild(el("p", "pay-methods", "Card, bank or mobile money"));
+      c.appendChild(el("p", "pay-methods", "Card or mobile money"));
     }
     var actions = el("div", "pay-actions");
     var b = el("button", "btn " + (priced ? "btn--primary" : "btn--ghost"), priced ? "Pay now" : "Ask for a price");
@@ -298,16 +234,7 @@
     if (!host) return;
     host.textContent = "";
     items.forEach(function (i) { host.appendChild(card(i, i.price > 0 && !!PK_LIVE)); });
-    var payable = items.some(function (i) { return i.price > 0 && PK_LIVE; });
-    if (payable && emailRow) emailRow.hidden = false;
-    // The panel goes after the grid, not inside it: the grid is a card layout and
-    // a full-width account block would be squeezed into one column.
-    var sib = host.nextElementSibling;
-    if (payable && (!sib || !sib.classList.contains("pay-bank"))) {
-      host.insertAdjacentElement("afterend", bankPanel());
-    } else if (!payable && sib && sib.classList.contains("pay-bank")) {
-      sib.remove();
-    }
+    if (emailRow && items.some(function (i) { return i.price > 0 && PK_LIVE; })) emailRow.hidden = false;
   }
 
   function mount(name) { return document.querySelector('[data-store="' + name + '"]'); }
@@ -372,7 +299,6 @@
     }
     document.addEventListener("i18n-applied", function () {
       waLinks.forEach(function (l) { orderHref(l.a, l.item); });
-      bankLinks.forEach(bankHref);
     });
   }
 

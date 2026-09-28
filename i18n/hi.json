@@ -512,7 +512,7 @@
  "The tools and partners we point our own clients at. Buying through these links supports the studio at no cost to you.": "वे टूल्स और साझेदार जिनकी ओर हम अपने ग्राहकों को भेजते हैं। इन लिंक से खरीदने पर आपको कुछ अलग नहीं देना होगा, बस स्टूडियो को सपोर्ट मिलेगा।",
  "Payment reference": "पेमेंट रेफ़रेंस",
  "Send the reference to us on WhatsApp": "यह रेफ़रेंस हमें WhatsApp पर भेज दीजिए",
- "Card, bank or mobile money": "कार्ड, बैंक या मोबाइल मनी",
+ "Card or mobile money": "कार्ड या मोबाइल मनी",
  "We have your payment. We will confirm on WhatsApp and start the work.": "आपका पेमेंट हम तक पहुँच गया है। WhatsApp पर कन्फ़र्म करके काम शुरू कर देंगे।",
  "Add your email first, so we can send the receipt.": "पहले अपना ईमेल भरिए, ताकि हम आपको रसीद भेज सकें।",
  "Payment not completed. Try again, or send us the brief and we will quote it.": "पेमेंट पूरा नहीं हुआ। फिर से कीजिए, या हमें अपना ब्रीफ़ भेज दीजिए — हम दाम बता देंगे।",
@@ -739,11 +739,5 @@
  "Install the BrownHub app": "BrownHub ऐप इंस्टॉल करें",
  "Install": "इंस्टॉल करें",
  "Not now": "अभी नहीं",
- "On iPhone: tap Share, then Add to Home Screen.": "iPhone पर: «शेयर» टैप करें, फिर «होम स्क्रीन पर जोड़ें» चुनें।",
- "Or pay by bank transfer": "या बैंक ट्रांसफ़र से भुगतान करें",
- "Bank": "बैंक",
- "Account name": "खाते का नाम",
- "Account number": "खाता संख्या",
- "Tell us on WhatsApp once you have sent it.": "भेजने के बाद हमें WhatsApp पर बताइए।",
- "I have sent a bank transfer.": "मैंने बैंक ट्रांसफ़र भेजा है।"
+ "On iPhone: tap Share, then Add to Home Screen.": "iPhone पर: «शेयर» टैप करें, फिर «होम स्क्रीन पर जोड़ें» चुनें।"
 }

@@ -512,7 +512,7 @@
  "The tools and partners we point our own clients at. Buying through these links supports the studio at no cost to you.": "Zana na washirika tunowaelekeza wateja wetu wenyewe. Manunuzi kupitia viungo hivi husaidia studio bila gharama yoyote kwako.",
  "Payment reference": "Kumbukumbu ya malipo",
  "Send the reference to us on WhatsApp": "Tutumie kumbukumbu hiyo kwenye WhatsApp",
- "Card, bank or mobile money": "Kadi, benki au mobile money",
+ "Card or mobile money": "Kadi au mobile money",
  "We have your payment. We will confirm on WhatsApp and start the work.": "Tumepokea malipo yako. Tutathibitisha kwenye WhatsApp na kuanza kazi.",
  "Add your email first, so we can send the receipt.": "Ongeza barua pepe yako kwanza, ili tuweze kukutumia risiti.",
  "Payment not completed. Try again, or send us the brief and we will quote it.": "Malipo hayajakamilika. Jaribu tena, au tutumie maelezo ya kazi na tukupatie bei.",
@@ -739,11 +739,5 @@
  "Install the BrownHub app": "Sakinisha programu ya BrownHub",
  "Install": "Sakinisha",
  "Not now": "Sio sasa",
- "On iPhone: tap Share, then Add to Home Screen.": "Kwenye iPhone: gonga «Shiriki», kisha «Ongeza kwenye Skrini ya Nyumbani».",
- "Or pay by bank transfer": "Au lipa kwa uhamisho wa benki",
- "Bank": "Benki",
- "Account name": "Jina la akaunti",
- "Account number": "Nambari ya akaunti",
- "Tell us on WhatsApp once you have sent it.": "Tujulishe kwenye WhatsApp ukishatuma.",
- "I have sent a bank transfer.": "Nimetuma uhamisho wa benki."
+ "On iPhone: tap Share, then Add to Home Screen.": "Kwenye iPhone: gonga «Shiriki», kisha «Ongeza kwenye Skrini ya Nyumbani»."
 }

@@ -512,7 +512,7 @@
  "The tools and partners we point our own clients at. Buying through these links supports the studio at no cost to you.": "Инструменты и партнёры, к которым мы направляем наших собственных клиентов. Покупка по этим ссылкам поддерживает студию и ничего вам не стоит.",
  "Payment reference": "Идентификатор платежа",
  "Send the reference to us on WhatsApp": "Пришлите идентификатор нам в WhatsApp",
- "Card, bank or mobile money": "Карта, банк или мобильные деньги",
+ "Card or mobile money": "Карта или мобильные деньги",
  "We have your payment. We will confirm on WhatsApp and start the work.": "Мы получили ваш платёж. Подтвердим в WhatsApp и приступим к работе.",
  "Add your email first, so we can send the receipt.": "Сначала укажите почту, чтобы мы прислали вам чек.",
  "Payment not completed. Try again, or send us the brief and we will quote it.": "Платёж не завершён. Попробуйте ещё раз или пришлите нам бриф — мы рассчитаем стоимость.",
@@ -739,11 +739,5 @@
  "Install the BrownHub app": "Установить приложение BrownHub",
  "Install": "Установить",
  "Not now": "Не сейчас",
- "On iPhone: tap Share, then Add to Home Screen.": "На iPhone: нажмите «Поделиться», затем «На экран Домой».",
- "Or pay by bank transfer": "Или оплатите банковским переводом",
- "Bank": "Банк",
- "Account name": "Имя владельца счёта",
- "Account number": "Номер счёта",
- "Tell us on WhatsApp once you have sent it.": "Напишите нам в WhatsApp, когда отправите перевод.",
- "I have sent a bank transfer.": "Я отправил банковский перевод."
+ "On iPhone: tap Share, then Add to Home Screen.": "На iPhone: нажмите «Поделиться», затем «На экран Домой»."
 }

@@ -512,7 +512,7 @@
  "The tools and partners we point our own clients at. Buying through these links supports the studio at no cost to you.": "Mmuruguro ne nneadwumayɛfo a yɛkyerɛ yɛn client no. Sɛ wode fa saa nkyekyemu no so tɔ nneɛma a, ɛboa yɛn studio no, ɛnte wo sika biara.",
  "Payment reference": "Sikatua nkyerɛde",
  "Send the reference to us on WhatsApp": "Fa WhatsApp so sɛn saa nkyerɛde no brɛ yɛn",
- "Card, bank or mobile money": "Kadi, bank anaa mobile money",
+ "Card or mobile money": "Kadi anaa mobile money",
  "We have your payment. We will confirm on WhatsApp and start the work.": "Yɛn wo sikatua no. Yɛbɛsan adwuma no afato wɔ WhatsApp so, na yɛafi ase.",
  "Add your email first, so we can send the receipt.": "Di kan de wo email ka ho, na yɛatumi asɛn wo aduntundwɛ no aba.",
  "Payment not completed. Try again, or send us the brief and we will quote it.": "Wo sikatua no nkae. Sɔ hwɛ bio, anaa sɛn wo adwuma no ho nsɛm brɛ yɛn, na yɛde nʼabo bɛbrɛ wo.",
@@ -739,11 +739,5 @@
  "Install the BrownHub app": "Hyɛ BrownHub app no",
  "Install": "Hyɛ",
  "Not now": "Ɛnyɛ mprempren",
- "On iPhone: tap Share, then Add to Home Screen.": "Wɔ iPhone so no: Mia «Share», na akyi no mia «Add to Home Screen».",
- "Or pay by bank transfer": "Anaa fa ka wɔsɛn ka bank so",
- "Bank": "Bank",
- "Account name": "Akaunti din",
- "Account number": "Akaunti nɔma",
- "Tell us on WhatsApp once you have sent it.": "Sɛ wosɛn a, ka brɛ yɛn WhatsApp so.",
- "I have sent a bank transfer.": "Mɛsɛn sika ka fa bank so."
+ "On iPhone: tap Share, then Add to Home Screen.": "Wɔ iPhone so no: Mia «Share», na akyi no mia «Add to Home Screen»."
 }

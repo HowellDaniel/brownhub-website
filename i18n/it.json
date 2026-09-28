@@ -512,7 +512,7 @@
  "The tools and partners we point our own clients at. Buying through these links supports the studio at no cost to you.": "Gli strumenti e i partner a cui indirizziamo i nostri stessi clienti. Acquistando da questi link sostieni lo studio, senza spendere nulla in più.",
  "Payment reference": "Riferimento di pagamento",
  "Send the reference to us on WhatsApp": "Mandaci il riferimento su WhatsApp",
- "Card, bank or mobile money": "Carta, bonifico o pagamento da cellulare",
+ "Card or mobile money": "Carta o mobile money",
  "We have your payment. We will confirm on WhatsApp and start the work.": "Abbiamo ricevuto il tuo pagamento. Ti confermiamo su WhatsApp e iniziamo il lavoro.",
  "Add your email first, so we can send the receipt.": "Inserisci prima la tua email, così possiamo mandarti la ricevuta.",
  "Payment not completed. Try again, or send us the brief and we will quote it.": "Pagamento non completato. Riprova, oppure inviaci il brief e ti facciamo un preventivo.",
@@ -739,11 +739,5 @@
  "Install the BrownHub app": "Installa l'app BrownHub",
  "Install": "Installa",
  "Not now": "Non ora",
- "On iPhone: tap Share, then Add to Home Screen.": "Su iPhone: tocca «Condividi», poi «Aggiungi alla schermata Home».",
- "Or pay by bank transfer": "Oppure paga con bonifico bancario",
- "Bank": "Banca",
- "Account name": "Intestatario del conto",
- "Account number": "Numero di conto",
- "Tell us on WhatsApp once you have sent it.": "Scrivici su WhatsApp dopo aver effettuato il bonifico.",
- "I have sent a bank transfer.": "Ho effettuato un bonifico bancario."
+ "On iPhone: tap Share, then Add to Home Screen.": "Su iPhone: tocca «Condividi», poi «Aggiungi alla schermata Home»."
 }

@@ -512,7 +512,7 @@
  "The tools and partners we point our own clients at. Buying through these links supports the studio at no cost to you.": "我们把自己的客户推荐去使用的工具与合作伙伴。通过这些链接购买，对您没有任何额外费用，还能支持工作室。",
  "Payment reference": "支付参考号",
  "Send the reference to us on WhatsApp": "把参考号发到我们的 WhatsApp",
- "Card, bank or mobile money": "银行卡、银行转账或手机钱包",
+ "Card or mobile money": "银行卡或手机钱包",
  "We have your payment. We will confirm on WhatsApp and start the work.": "我们已收到您的付款。会在 WhatsApp 上跟您确认，然后开始工作。",
  "Add your email first, so we can send the receipt.": "先填上您的邮箱，我们才好把收据发给您。",
  "Payment not completed. Try again, or send us the brief and we will quote it.": "付款未完成。请再试一次，或把需求发给我们，我们来报价。",
@@ -739,11 +739,5 @@
  "Install the BrownHub app": "安装 BrownHub 应用",
  "Install": "安装",
  "Not now": "暂不",
- "On iPhone: tap Share, then Add to Home Screen.": "在 iPhone 上：点按“共享”，然后选择“添加到主屏幕”。",
- "Or pay by bank transfer": "或者通过银行转账付款",
- "Bank": "银行",
- "Account name": "账户名称",
- "Account number": "账号",
- "Tell us on WhatsApp once you have sent it.": "转账后请在 WhatsApp 上告诉我们。",
- "I have sent a bank transfer.": "我已经完成了银行转账。"
+ "On iPhone: tap Share, then Add to Home Screen.": "在 iPhone 上：点按“共享”，然后选择“添加到主屏幕”。"
 }
