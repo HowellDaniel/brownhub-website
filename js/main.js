@@ -155,9 +155,13 @@
       budgetSel.parentNode.appendChild(budgetNote);
 
       const bandFloor = (o) => Number((o && o.dataset.bandMin) || 0);
-      const serviceMin = (o) => Number((o && o.dataset.budgetMin) || 0);
-      const fitBudget = () => {
-        const min = serviceMin(serviceSel.selectedOptions[0]);
+      const serviceFloor = (o) => Number((o && o.dataset.budgetMin) || 0);
+      // clear=false hides the too-small bands and touches nothing else, which is
+      // what every non-user pass uses: a service put in the form by a re-request
+      // or restored by the browser arrives with its budget already chosen, and
+      // that answer is not ours to throw away.
+      const fitBudget = (clear) => {
+        const min = serviceFloor(serviceSel.selectedOptions[0]);
         let dropped = 0;
         [].forEach.call(budgetSel.options, (o) => {
           const f = bandFloor(o);
@@ -169,14 +173,19 @@
           if (out) dropped++;
         });
         budgetNote.hidden = !dropped;
-        // Only a choice the visitor already made is cleared, and only when the
-        // band they had picked has gone. This runs from a change event, so a
-        // re-request that refills both fields programmatically keeps its answer.
-        if (min && bandFloor(budgetSel.selectedOptions[0]) && bandFloor(budgetSel.selectedOptions[0]) < min) {
-          budgetSel.value = "";
-        }
+        if (!clear || !min) return;
+        const chosen = bandFloor(budgetSel.selectedOptions[0]);
+        if (chosen && chosen < min) budgetSel.value = "";
       };
-      serviceSel.addEventListener("change", fitBudget);
+      const userPick = () => fitBudget(true);
+      const silentPass = () => fitBudget(false);
+      serviceSel.addEventListener("change", userPick);
+      serviceSel.addEventListener("input", userPick);
+      // i18n-applied is when accounts.js refills both fields, so the picker has
+      // to be re-filtered after it rather than before.
+      document.addEventListener("i18n-applied", silentPass);
+      window.addEventListener("pageshow", silentPass);
+      silentPass();
     }
 
     const FORM_EMAIL = "https://formsubmit.co/ajax/howelldaniel533@gmail.com";
