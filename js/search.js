@@ -14,7 +14,7 @@
   var INDEX = [
     { g: "Pages", t: "Home", h: "index.html", k: "start front page studio" },
     { g: "Pages", t: "Customer experience", h: "index.html#customer-experience", k: "experience rail drag carousel how it feels" },
-    { g: "Pages", t: "Customer reviews", h: "index.html#reviews", k: "reviews testimonials clients say feedback stars rating" },
+    { g: "Pages", t: "Testimonials", h: "index.html#reviews", k: "reviews testimonials clients say feedback stars rating what our clients have to say" },
     { g: "Pages", t: "Services", h: "services.html", k: "what we do pricing packages" },
     { g: "Pages", t: "Website Design & Development", h: "websites.html", k: "website web design development software app hosting domain landing page" },
     { g: "Pages", t: "Catalog", h: "catalog.html", k: "shop items products prints" },

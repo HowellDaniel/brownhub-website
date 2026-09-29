@@ -1261,9 +1261,6 @@ p{line-height:var(--t-lh-body)}
 @media (prefers-reduced-motion:reduce){.exp__hint{display:flex}.exp__items{scroll-snap-type:none}}
 
 /* --- reviews: quote cards, stars, and the honest state before there are any --- */
-.reviews{display:grid;gap:var(--t-gap)}
-@media (min-width:901px){.reviews{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media (min-width:641px) and (max-width:900px){.reviews{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .review{display:grid;gap:var(--t-2);align-content:start;padding:var(--t-5);
   background:var(--surface);border:var(--t-bw) solid var(--border);border-radius:var(--t-r-lg)}
 .review__stars{display:flex;gap:2px;color:var(--accent-2)}
@@ -1775,3 +1772,61 @@ html[data-theme="light"] .pay-xfer__backdrop{background:rgba(38,16,15,.5)}
    reading end of the line instead of the start. */
 html[dir="rtl"] .checklist li{padding-left:0;padding-right:1.6rem}
 html[dir="rtl"] .checklist li::before{left:auto;right:0}
+
+/* ═══════════════ TESTIMONIAL WALL: quote cards that drift up their own column ═══════════════
+   Three columns, each holding the same set of approved quotes split by length, so no
+   column is a stack of one-liners next to a column of paragraphs. A track is exactly two
+   identical copies, which is why the loop travels -50% and needs no pixel measuring to
+   be seamless; the duration is set per column from the copy's own height so a long
+   column and a short one drift at the same speed. The middle column runs the other way
+   to break the symmetry, the way the reference site's wall does. */
+.tst{--tst-h:clamp(25rem,62vh,33rem);display:grid;gap:var(--t-4)}
+.tst[hidden]{display:none}
+@media (min-width:641px){.tst{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--t-gap)}}
+@media (min-width:901px){.tst{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tst__col{overflow:hidden}
+@media (min-width:641px){.tst--live .tst__col,.tst--measuring .tst__col{height:var(--tst-h);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 13%,#000 87%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 13%,#000 87%,transparent 100%)}}
+.tst__track{display:block}
+.tst__copy{display:grid;gap:var(--t-3);padding-bottom:var(--t-3)}
+.tst--live .tst__track{animation:tst-rise var(--tst-dur,48s) linear infinite}
+.tst--live .tst__col:nth-child(3n+2) .tst__track{animation-name:tst-fall}
+@keyframes tst-rise{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@keyframes tst-fall{from{transform:translateY(-50%)}to{transform:translateY(0)}}
+/* one pointer stops the whole wall: reading a drifting line of text is otherwise a race */
+.tst:hover .tst__track,.tst:focus-within .tst__track,.tst.is-held .tst__track{animation-play-state:paused}
+.tst__copy [aria-hidden="true"],.tst__copy--clone{pointer-events:none}
+/* Targeted by id rather than by class: the band's markup nests everything under
+   .container, a direct-child selector would miss it, and a plain descendant one
+   would also reach the button row inside the empty-state card. */
+#reviews-cta{margin-top:var(--t-5)}
+#reviews-cta[hidden]{display:none}
+/* .reviews-empty sets its own display, which outranks the [hidden] attribute the
+   script puts on it — so once real quotes arrive the apology stays visible
+   underneath them unless the hide is spelled out here. */
+.reviews-empty[hidden]{display:none}
+
+/* The card turns into the reference site's shape: the quote, then a face disc carrying
+   the initial the client signed with, then their name and what they do. This rule comes
+   after the original .review__who grid, so it replaces it property by property. */
+.review__who{display:flex;align-items:center;gap:var(--t-3);margin-top:var(--t-2)}
+.review__face{flex:none;display:grid;place-items:center;width:2.7rem;height:2.7rem;
+  border-radius:var(--t-r-pill);background:rgba(var(--accent-rgb),.12);color:var(--accent);
+  border:var(--t-bw) solid var(--glass-fill-hair);
+  font-size:var(--t-fs-40);font-weight:var(--t-fw-bold);line-height:1;text-transform:uppercase}
+.review__lines{display:grid;gap:2px;min-width:0}
+
+@media (prefers-reduced-motion:reduce){
+  .tst--live .tst__track{animation:none}
+  .tst--live .tst__col{height:auto;overflow:visible;
+    -webkit-mask-image:none;mask-image:none}
+  /* the second copy exists only to make the loop seamless, so with no loop it is
+     a wall of duplicated quotes and must go. It targets the clone by class rather
+     than :last-child because a column that never needed a clone has exactly one
+     copy, and that copy is its own last child. */
+  .tst__copy--clone{display:none}
+}
+/* The score line was centred for a centred heading; this band's heading is split
+   left, so the number has to start on the same edge as the quote columns below it. */
+.reviews-band .reviews-score:not([hidden]){justify-content:flex-start}
