@@ -24,7 +24,7 @@
   const questionIntents = [
     {
       keys: ["human", "agent", "real person", "talk to someone", "speak to someone", "call you", "phone", "email", "whatsapp", "contact"],
-      html: `You can reach the team directly: call <a href="tel:+233535583460">+233 53 558 3460</a> / <a href="tel:+233593872873">+233 59 387 2873</a> or WhatsApp <a href="${WA}" target="_blank" rel="noopener">+233 50 295 4541</a>, email <a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a>. The <a href="contact.html">contact form</a> works too.`
+      html: `You can reach the team directly: call <a href="tel:+233535583460">+233 53 558 3460</a> / <a href="https://wa.me/233593872873" target="_blank" rel="noopener">+233 59 387 2873</a> or WhatsApp <a href="${WA}" target="_blank" rel="noopener">+233 50 295 4541</a>, email <a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a>. The <a href="contact.html">contact form</a> works too.`
     },
     {
       keys: ["where", "address", "location", "office", "visit", "find you", "based"],

@@ -101,7 +101,8 @@ client's own logo or artwork.
 
 GETTING IN TOUCH
 WhatsApp +233 50 295 4541 (wa.me/233502954541) is the fastest route, and it is the line the
-catalog hangs off. For a voice call use +233 53 558 3460 or +233 59 387 2873. Email is howelldaniel533@gmail.com or
+catalog hangs off. +233 59 387 2873 (wa.me/233593872873) is a second WhatsApp line. For a voice
+call use +233 53 558 3460. Email is howelldaniel533@gmail.com or
 anghadaniel621@gmail.com. The site also has a contact form on the contact page, and a
 WhatsApp catalog. Offer the call number when someone wants to talk out loud; otherwise
 WhatsApp is the default.
