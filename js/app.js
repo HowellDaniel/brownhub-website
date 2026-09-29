@@ -33,10 +33,10 @@
     pill = doc.createElement("div");
     pill.className = "install";
     pill.setAttribute("role", "region");
-    pill.setAttribute("aria-label", tr("Install the BrownHub app"));
+    pill.setAttribute("aria-label", tr("Install the BrownHub Studio app"));
 
     var text = doc.createElement("p");
-    text.textContent = how === "ios" ? tr("On iPhone: tap Share, then Add to Home Screen.") : tr("Install the BrownHub app");
+    text.textContent = how === "ios" ? tr("On iPhone: tap Share, then Add to Home Screen.") : tr("Install the BrownHub Studio app");
     pill.appendChild(text);
 
     if (how === "chrome" && deferred) {

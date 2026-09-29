@@ -1,6 +1,6 @@
 {
   "appId": "com.brownhub.app",
-  "appName": "BrownHub",
+  "appName": "BrownHub Studio",
   "webDir": "../",
   "bundledWebResources": "lazy",
   "server": {
