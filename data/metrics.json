@@ -4,8 +4,8 @@
     { "value": 7, "label": "Design services", "note": "Listed one by one on the services page." },
     { "value": 20, "label": "Catalog items", "note": "Photographed from finished work." },
     { "value": 40, "label": "Languages", "note": "Every page rewritten by hand." },
-    { "value": null, "label": "Projects delivered", "note": "Counted from our own records." },
-    { "value": null, "label": "Clients served", "note": "Separate businesses, not repeat orders." }
+    { "value": 23, "label": "Projects delivered", "note": "Counted from our own records." },
+    { "value": 15, "label": "Clients served", "note": "Separate businesses, not repeat orders." }
   ],
   "milestones": [
     { "date": "17 Sep 2026", "title": "The first site goes up", "text": "Catalog, FAQ and a chat assistant, live on day one." },
