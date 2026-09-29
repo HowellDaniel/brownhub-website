@@ -1830,3 +1830,19 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
 /* The score line was centred for a centred heading; this band's heading is split
    left, so the number has to start on the same edge as the quote columns below it. */
 .reviews-band .reviews-score:not([hidden]){justify-content:flex-start}
+
+/* ==========================================================================
+   THE NUMBERS STRIP, set as one row of outlined boxes
+   The reference asked for is a bordered card rather than a frosted pane, so the
+   sheen comes off and the hairline carries the whole shape: a 20px corner, air
+   around the figure, one box per count. The proof note stays because the band's
+   own heading promises every number here can be checked, and the count stays
+   gold in the site's single face rather than the reference's plain white.
+   ========================================================================== */
+.kpi__grid{gap:clamp(12px,1.3vw,20px);grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr))}
+:is(.kpi){background-color:var(--glass-fill-alt);background-image:none;box-shadow:none;
+  border:var(--t-bw) solid var(--glass-fill-hair);border-radius:var(--t-r-xl);
+  padding:clamp(20px,2.4vw,32px) clamp(16px,1.7vw,24px);gap:var(--t-2)}
+.kpi__num{font-size:clamp(34px,3.2vw,46px);letter-spacing:-.03em}
+.kpi__label{font-size:clamp(15px,1.35vw,18px);font-weight:var(--t-fw-medium);line-height:1.35}
+.kpi__note{font-size:var(--t-fs-20);line-height:1.45;margin-top:var(--t-1)}
