@@ -795,5 +795,7 @@
  "See how we design and build websites →": "Посмотрите, как мы проектируем и делаем сайты →",
  "Start a new chat": "Начать новый чат",
  "Try that answer again": "Попробовать ответ ещё раз",
- "Only the ranges that fit this service are shown.": "Показаны только диапазоны, подходящие для этой услуги."
+ "Only the ranges that fit this service are shown.": "Показаны только диапазоны, подходящие для этой услуги.",
+ "WhatsApp number *": "Номер WhatsApp *",
+ "This is where we reply, so give the number on your WhatsApp.": "Мы отвечаем здесь, поэтому укажите номер из вашего WhatsApp."
 }

@@ -795,5 +795,7 @@
  "See how we design and build websites →": "اطّلع على كيف نصمّم المواقع ونبنيها →",
  "Start a new chat": "ابدأ محادثة جديدة",
  "Try that answer again": "جرّب هذا الرد مرة أخرى",
- "Only the ranges that fit this service are shown.": "لا تُعرض سوى النطاقات المناسبة لهذه الخدمة."
+ "Only the ranges that fit this service are shown.": "لا تُعرض سوى النطاقات المناسبة لهذه الخدمة.",
+ "WhatsApp number *": "رقم واتساب *",
+ "This is where we reply, so give the number on your WhatsApp.": "سنردّ عليك هنا، لذا اكتب الرقم المستخدم في واتساب."
 }

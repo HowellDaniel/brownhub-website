@@ -219,7 +219,7 @@
       const waText = "Hello BrownHub! I just sent this enquiry from your website:\n\n" +
         "Name: " + (data.name || "-") + "\nEmail: " + (data.email || "-") +
         (data.company ? "\nCompany: " + data.company : "") +
-        (data.phone ? "\nPhone: " + data.phone : "") +
+        (data.phone ? "\nWhatsApp: " + data.phone : "") +
         (data.service ? "\nService: " + data.service : "") +
         (data.budget ? "\nBudget: " + data.budget : "") +
         "\n\n" + (data.message || "");

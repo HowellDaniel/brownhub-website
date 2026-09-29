@@ -795,5 +795,7 @@
  "See how we design and build websites →": "看看我们如何设计与搭建网站 →",
  "Start a new chat": "开始新的对话",
  "Try that answer again": "再回答一次",
- "Only the ranges that fit this service are shown.": "仅显示与该服务相匹配的预算区间。"
+ "Only the ranges that fit this service are shown.": "仅显示与该服务相匹配的预算区间。",
+ "WhatsApp number *": "WhatsApp 号码 *",
+ "This is where we reply, so give the number on your WhatsApp.": "我们会在这里回复您，请填写您在 WhatsApp 上使用的号码。"
 }
