@@ -227,10 +227,12 @@
   }
 
   let greeted = false;
-  // `auto` marks the opening the assistant did for itself, which must not move
+  // `auto` marks an opening the assistant did for itself, which must not move
   // focus: a keyboard user's tab order stays where it was and a phone keeps its
   // on-screen keyboard shut until the visitor taps the field.
-  function openChat(auto) {
+  // `after` runs once the greeting has landed, so a question carried in from the
+  // teaser is not typed over the top of it.
+  function openChat(auto, after) {
     hideTeaser();
     markSeen();
     panel.hidden = false;
@@ -242,7 +244,10 @@
         bubble.remove();
         addMsg(greeting, "bot");
         renderChips(defaultChips);
+        if (after) after();
       }, 600);
+    } else if (after) {
+      after();
     }
     if (!auto) focusInput();
   }
@@ -264,13 +269,16 @@
     input.value = "";
   });
 
-  // ---- It speaks first, the way a front desk does --------------------------------
-  // Once per visit the assistant puts a line beside its own icon and then opens the
-  // panel by itself, so a client who never thinks to press the button is still
-  // asked. Closing the bubble, or the panel, is taken as an answer: it is never
-  // offered again in that tab.
+  // ---- It asks first, the way a front desk does ------------------------------------
+  // Once per visit the assistant puts a line beside its own icon with three quick
+  // questions under it. It does not open itself any more: the visitor answers the
+  // question or presses the bubble, and that is what unfolds the panel. Closing the
+  // bubble, or opening the panel, is taken as an answer — it is never offered again
+  // in that tab.
   const SEEN_KEY = "brownhub-chat-asked";
   const TEASE_TEXT = "Hi there! Any question about design, print or prices?";
+  // The same three labels the open panel offers, so no new words to translate.
+  const TEASE_CHIPS = ["Get a quote", "Catalog items", "Talk to a human"];
   let teaserEl = null, teaseTimer = 0;
 
   function seenThisVisit() {
@@ -299,22 +307,39 @@
     x.innerHTML = "&times;";
     // Pressing the cross is "not now", so it ends the offer for the whole visit.
     x.addEventListener("click", () => { hideTeaser(); markSeen(); });
+    const row = document.createElement("div");
+    row.className = "chat-widget__teaser-chips";
+    for (const label of TEASE_CHIPS) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = label;
+      b.addEventListener("click", () => openChat(false, () => send(T(label), label)));
+      row.appendChild(b);
+    }
     box.appendChild(bubble);
     box.appendChild(x);
+    box.appendChild(row);
     // Written in English on purpose: translate.js watches the page and picks up a
     // node it has not seen before, so this bubble follows the visitor's language
     // and re-translates when they change it, same as the panel's own messages.
     panel.parentElement.insertBefore(box, panel);
     teaserEl = box;
-    teaseTimer = setTimeout(hideTeaser, 12000);
+    // It waits long enough to be read, and stops counting down while someone is
+    // actually on it, so the offer never disappears mid-answer.
+    const hold = () => { if (teaseTimer) { clearTimeout(teaseTimer); teaseTimer = 0; } };
+    const requeue = () => { if (!teaseTimer) teaseTimer = setTimeout(hideTeaser, 8000); };
+    teaseTimer = setTimeout(hideTeaser, 20000);
+    box.addEventListener("mouseenter", hold);
+    box.addEventListener("mouseleave", requeue);
+    box.addEventListener("focusin", hold);
+    box.addEventListener("focusout", () => {
+      if (!box.contains(document.activeElement)) requeue();
+    });
   }
 
   function start() {
     if (seenThisVisit()) return;
     setTimeout(showTeaser, 1500);
-    setTimeout(() => {
-      if (!seenThisVisit() && panel.hidden) openChat(true);
-    }, 4500);
   }
   start();
 
