@@ -747,7 +747,6 @@
  "I have sent a bank transfer.": "Я отправил банковский перевод.",
  "Transfer to our account": "Перевести на наш счёт",
  "Transfer to our own bank account": "Перевести на наш собственный банковский счёт",
- "These are the studio's own account details. The Bank Transfer tab inside the Paystack checkout shows a different number that works for one payment only.": "Это реквизиты счёта самой студии. Во вкладке «Банковский перевод» внутри оплаты Paystack показывается другой номер, который действует только для одного платежа.",
  "Loading the account details…": "Загружаем реквизиты счёта…",
  "Open your bank app or internet banking.": "Откройте приложение банка или интернет-банк.",
  "Choose Instant pay or GIP if your bank offers it.": "Выберите Instant pay или GIP, если ваш банк их поддерживает.",

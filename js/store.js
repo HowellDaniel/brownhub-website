@@ -12,13 +12,13 @@
   // Ways a buyer can pay in the popup. Ghana rails are card and mobile_money;
   // apple_pay only appears for a visitor on an Apple device once Paystack has
   // verified this domain — the checkout also hides any channel the account has not
-  // switched on, so listing one costs nothing. bank_transfer is listed because the
-  // owner wants a transfer tab inside Paystack's own panel. Be clear about whose
-  // number that tab prints: it is the one-time account Paystack's partner bank mints
-  // for that transaction, and it still settles into this Paystack account. The
-  // studio's own bank account is a separate route and stays on the transfer panel
-  // beside that popup, served from the endpoint below.
-  var CHANNELS = ["card", "mobile_money", "apple_pay", "bank_transfer"];
+  // switched on, so listing one costs nothing. bank_transfer is deliberately NOT
+  // listed: the tab would print the one-time account Paystack's partner bank mints
+  // for that transaction, and the owner has decided a buyer who wants to bank with
+  // this studio should be given his account and nothing else. The dashboard's own
+  // Bank Transfer toggle stays on; a checkout that does not name the channel simply
+  // never shows it. The studio's account reaches buyers through the panel below.
+  var CHANNELS = ["card", "mobile_money", "apple_pay"];
   // The studio's transfer account is not written into this file: it is held in
   // Supabase's secret store and returned to supabase/functions/bank-details, which
   // answers only this site's Origin and only with no-store. So the number is never
@@ -301,10 +301,6 @@
     close.addEventListener("click", closeXfer);
     box.appendChild(close);
     box.appendChild(el("p", "pay-xfer__title", "Transfer to our own bank account"));
-    // Two transfer routes now exist on this site and they must not read alike: this
-    // panel carries the studio's standing account, while the tab inside Paystack's
-    // checkout mints a different number that dies with that one transaction.
-    box.appendChild(el("p", "pay-xfer__who", "These are the studio's own account details. The Bank Transfer tab inside the Paystack checkout shows a different number that works for one payment only."));
     var lead = el("p", "pay-xfer__item");
     lead.appendChild(el("span", null, item.name));
     lead.appendChild(el("strong", null, money(item.price)));

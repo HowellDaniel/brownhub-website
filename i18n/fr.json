@@ -747,7 +747,6 @@
  "I have sent a bank transfer.": "J'ai effectué un virement bancaire.",
  "Transfer to our account": "Virement vers notre compte",
  "Transfer to our own bank account": "Virement vers notre propre compte bancaire",
- "These are the studio's own account details. The Bank Transfer tab inside the Paystack checkout shows a different number that works for one payment only.": "Il s’agit des coordonnées du compte propre du studio. L’onglet « Virement bancaire » du paiement Paystack affiche un numéro différent, valable pour un seul paiement.",
  "Loading the account details…": "Chargement des coordonnées bancaires…",
  "Open your bank app or internet banking.": "Ouvrez votre application bancaire ou votre banque en ligne.",
  "Choose Instant pay or GIP if your bank offers it.": "Choisissez Instant pay ou GIP si votre banque le propose.",

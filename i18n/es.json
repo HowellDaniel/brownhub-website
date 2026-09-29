@@ -747,7 +747,6 @@
  "I have sent a bank transfer.": "He enviado una transferencia bancaria.",
  "Transfer to our account": "Transfiere a nuestra cuenta",
  "Transfer to our own bank account": "Transfiere a nuestra propia cuenta bancaria",
- "These are the studio's own account details. The Bank Transfer tab inside the Paystack checkout shows a different number that works for one payment only.": "Estos son los datos de la cuenta propia del estudio. La pestaña «Transferencia bancaria» del checkout de Paystack muestra un número distinto que solo sirve para un único pago.",
  "Loading the account details…": "Cargando los datos de la cuenta…",
  "Open your bank app or internet banking.": "Abre tu app bancaria o la banca por internet.",
  "Choose Instant pay or GIP if your bank offers it.": "Elige Instant pay o GIP si tu banco lo ofrece.",

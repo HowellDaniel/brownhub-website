@@ -747,7 +747,6 @@
  "I have sent a bank transfer.": "मैंने बैंक ट्रांसफ़र भेजा है।",
  "Transfer to our account": "हमारे खाते में ट्रांसफर करें",
  "Transfer to our own bank account": "हमारे अपने बैंक खाते में ट्रांसफर करें",
- "These are the studio's own account details. The Bank Transfer tab inside the Paystack checkout shows a different number that works for one payment only.": "ये स्टूडियो के अपने खाते की जानकारी है। Paystack चेकआउट के अंदर वाला बैंक ट्रांसफर टैब एक अलग नंबर दिखाता है जो केवल एक भुगतान के लिए काम करता है।",
  "Loading the account details…": "खाता विवरण लोड हो रहा है…",
  "Open your bank app or internet banking.": "अपना बैंक ऐप या इंटरनेट बैंकिंग खोलें।",
  "Choose Instant pay or GIP if your bank offers it.": "यदि आपका बैंक दे तो Instant pay या GIP चुनें।",

@@ -747,7 +747,6 @@
  "I have sent a bank transfer.": "我已经完成了银行转账。",
  "Transfer to our account": "转账至我们的账户",
  "Transfer to our own bank account": "转账至我们自己的银行账户",
- "These are the studio's own account details. The Bank Transfer tab inside the Paystack checkout shows a different number that works for one payment only.": "这是工作室自身的账户信息。Paystack 结算页面中的“银行转账”选项卡显示的是另一个号码，仅适用于单笔付款。",
  "Loading the account details…": "正在加载账户信息…",
  "Open your bank app or internet banking.": "打开您的手机银行或网上银行。",
  "Choose Instant pay or GIP if your bank offers it.": "如果您的银行提供，请选择 Instant pay 或 GIP。",

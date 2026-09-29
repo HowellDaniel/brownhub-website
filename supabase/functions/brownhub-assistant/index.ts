@@ -109,8 +109,10 @@ WhatsApp is the default.
 PAID PACKAGES AND PRICES
 These are the only prices that exist, and they come from the live page:
 __PRICES__
-Payment is through Paystack on the site: card, mobile money or bank transfer, in Ghana
-cedis. A payment is confirmed by the studio in the Paystack dashboard and a human picks
+Payment is through Paystack on the site: card, mobile money or Apple Pay, in Ghana
+cedis. A buyer who would rather bank with the studio directly can press "Transfer to our
+account" on any priced card and get the studio's own bank details. Either way the payment
+is confirmed by the studio in the Paystack dashboard and a human picks
 the job up on WhatsApp - there is no automatic delivery of anything.
 
 CLIENT ACCOUNTS

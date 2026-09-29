@@ -747,7 +747,6 @@
  "I have sent a bank transfer.": "Ho effettuato un bonifico bancario.",
  "Transfer to our account": "Bonifico sul nostro conto",
  "Transfer to our own bank account": "Bonifico sul nostro conto bancario",
- "These are the studio's own account details. The Bank Transfer tab inside the Paystack checkout shows a different number that works for one payment only.": "Queste sono le coordinate del conto dello studio. La scheda Bonifico bancario nel checkout di Paystack mostra un numero diverso, valido per un solo pagamento.",
  "Loading the account details…": "Caricamento dei dati del conto…",
  "Open your bank app or internet banking.": "Apri la app della tua banca o l'internet banking.",
  "Choose Instant pay or GIP if your bank offers it.": "Scegli Instant pay o GIP se la tua banca lo offre.",

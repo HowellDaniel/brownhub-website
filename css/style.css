@@ -1720,9 +1720,3 @@ html[data-theme="light"] .pay-xfer__backdrop{background:rgba(38,16,15,.5)}
 }
 @media (prefers-reduced-motion:reduce){.pay-xfer__close,.pay-xfer__copy{transition:none}}
 
-/* The panel that carries the studio's own standing account, said plainly, because
-   Paystack's checkout now has a Bank Transfer tab of its own showing a different,
-   single-use number. This line is what tells the two routes apart. */
-.pay-xfer__who{font-size:.82rem;line-height:1.5;color:var(--text-muted);
-  margin:.6rem 0 0;padding:.5rem .7rem;border-inline-start:2px solid var(--accent-2);
-  background:var(--bg-alt)}
