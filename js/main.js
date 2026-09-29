@@ -139,6 +139,46 @@
       document.addEventListener("i18n-applied", setPrefill);
     }
 
+    // A website and a flyer are not the same size of job, so the budget picker
+    // should not offer a flyer-sized range to someone asking for a website. Each
+    // service names the lowest band that can carry it in data-budget-min and the
+    // bands under that come out of the list. Both sides are matched on data
+    // attributes, never on the words: an option's text is a dictionary key, so
+    // under any other language option.value is translated and would not match.
+    const serviceSel = document.getElementById("service");
+    const budgetSel = document.getElementById("budget");
+    if (serviceSel && budgetSel) {
+      const budgetNote = document.createElement("p");
+      budgetNote.className = "form-note";
+      budgetNote.hidden = true;
+      budgetNote.textContent = "Only the ranges that fit this service are shown.";
+      budgetSel.parentNode.appendChild(budgetNote);
+
+      const bandFloor = (o) => Number((o && o.dataset.bandMin) || 0);
+      const serviceMin = (o) => Number((o && o.dataset.budgetMin) || 0);
+      const fitBudget = () => {
+        const min = serviceMin(serviceSel.selectedOptions[0]);
+        let dropped = 0;
+        [].forEach.call(budgetSel.options, (o) => {
+          const f = bandFloor(o);
+          const out = !!min && !!f && f < min;
+          // hidden, never disabled: a disabled option leaves FormData entirely,
+          // which would silently drop the budget a returning client is having
+          // refilled by their own earlier request.
+          o.hidden = out;
+          if (out) dropped++;
+        });
+        budgetNote.hidden = !dropped;
+        // Only a choice the visitor already made is cleared, and only when the
+        // band they had picked has gone. This runs from a change event, so a
+        // re-request that refills both fields programmatically keeps its answer.
+        if (min && bandFloor(budgetSel.selectedOptions[0]) && bandFloor(budgetSel.selectedOptions[0]) < min) {
+          budgetSel.value = "";
+        }
+      };
+      serviceSel.addEventListener("change", fitBudget);
+    }
+
     const FORM_EMAIL = "https://formsubmit.co/ajax/howelldaniel533@gmail.com";
     const WA_NUMBER = "https://wa.me/233502954541";
     const status = document.getElementById("form-status");

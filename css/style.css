@@ -1907,3 +1907,7 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
 /* The head now carries three glyphs, so the desktop panel takes the same 360px the
    phone already gives it; the media query is the one the base rule never fights. */
 @media (min-width:641px){.chat-widget__panel{width:360px}}
+
+/* Shown under the budget picker only once a service has taken ranges away, so the
+   client never wonders why the small numbers vanished. */
+.form-note{margin:.4rem 0 0;color:var(--text-muted);font-size:.8rem;line-height:1.45}

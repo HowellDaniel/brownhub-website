@@ -779,7 +779,7 @@
  "Do you design the brand and build the website?": "Вы разрабатываете бренд и сами делаете сайт?",
  "Yes. Identity, print and screens come out of the same studio, so the website matches the logo instead of being reinterpreted by someone else.": "Да. Айдентика, печать и экраны выходят из одной студии, поэтому сайт совпадает с логотипом, а не переосмысляется кем-то другим.",
  "What does a website cost in Ghana?": "Сколько стоит сайт в Гане?",
- "It depends on the number of pages, the features and whether the content already exists. Send us the brief and you get a free consultation and a clear quote before anything starts.": "Это зависит от количества страниц,功能 и наличия готового контента. Пришлите нам бриф — до старта вы получите бесплатную консультацию и ясную смету.",
+ "It depends on the number of pages, the features and whether the content already exists. Send us the brief and you get a free consultation and a clear quote before anything starts.": "Это зависит от количества страниц, набора функций и наличия готового контента. Пришлите нам бриф — до старта вы получите бесплатную консультацию и ясную смету.",
  "Can you improve a website I already have?": "Можно ли улучшить сайт, который у меня уже есть?",
  "Yes. Send the address and what bothers you about it — we can refresh the design, fix the mobile layout, make it load faster, or rebuild only the parts that hold it back.": "Да. Пришлите адрес и то, что вас в нём раздражает, — мы обновим дизайн, починим мобильную вёрстку, ускорим загрузку или пересоберём только тормозящие части.",
  "Do you keep the site running after launch?": "Вы поддерживаете сайт после запуска?",
@@ -794,5 +794,6 @@
  "What we build and how it runs →": "Что мы делаем и как это работает →",
  "See how we design and build websites →": "Посмотрите, как мы проектируем и делаем сайты →",
  "Start a new chat": "Начать новый чат",
- "Try that answer again": "Попробовать ответ ещё раз"
+ "Try that answer again": "Попробовать ответ ещё раз",
+ "Only the ranges that fit this service are shown.": "Показаны только диапазоны, подходящие для этой услуги."
 }
