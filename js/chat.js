@@ -114,14 +114,15 @@
   // A question the written intents do not cover goes to the studio's assistant,
   // which is grounded in the site's own facts and reads the live price list off
   // the store. It answers in the visitor's language, so it bypasses the
-  // dictionary entirely rather than being looked up in it.
+  // dictionary entirely rather than being looked up in it. The thread goes with
+  // the question, so the model hears a follow-up as a follow-up.
   function askModel(question) {
     const ask = window.BHAccounts && window.BHAccounts.ask;
     if (typeof ask !== "function") return Promise.reject(new Error("No assistant is wired up."));
     const prices = (window.BHStore && window.BHStore.offers) ? window.BHStore.offers() : [];
     const lang = (window.I18N && window.I18N.lang) || "en";
     return Promise.race([
-      ask(question, lang, prices),
+      ask(question, lang, prices, thread),
       new Promise((_, reject) => setTimeout(() => reject(new Error("The assistant took too long.")), 25000))
     ]);
   }
@@ -188,6 +189,18 @@
     return (el.textContent || "").replace(/\s+/g, " ").trim();
   }
 
+  // ---- the conversation itself ------------------------------------------------
+  // Everything said so far, in order, in plain sentences. It is what lets a
+  // follow-up like "and for 500 of them?" be understood at all, and what a person
+  // on WhatsApp reads instead of starting the visitor from the beginning again.
+  const thread = [];
+  function remember(role, text) {
+    const clean = (text || "").replace(/\s+/g, " ").trim();
+    if (!clean) return;
+    thread.push({ role: role, text: clean.slice(0, 400) });
+    while (thread.length > 24) thread.shift();
+  }
+
   function logExchange(question, answer, source) {
     const log = window.BHAccounts && window.BHAccounts.logChat;
     if (typeof log !== "function") return;
@@ -204,6 +217,7 @@
     const clean = text.trim();
     if (!clean) return;
     addMsg(clean, "user");
+    remember("user", clean);
     renderChips([]);
     const bubble = typingBubble();
     const replyWith = (html, source) => {
@@ -211,7 +225,10 @@
       addMsg(html, "bot");
       renderChips(defaultChips);
       focusInput();
-      logExchange(clean, plainText(html), source);
+      const said = plainText(html);
+      remember("model", said);
+      showHandoff();
+      logExchange(clean, said, source);
     };
     // The written answers are instant, cost nothing and have been read over, so
     // they always win when one fits. The assistant only ever sees what they miss.
@@ -222,9 +239,58 @@
       addPlain(reply);
       renderChips(defaultChips);
       focusInput();
+      remember("model", reply);
+      showHandoff();
       logExchange(clean, reply, "model");
     }).catch(() => replyWith(fallback, "fallback"));
   }
+
+  // ---- carrying the conversation to a person -----------------------------------
+  // The point of an assistant on a site like this is that the visitor should never
+  // have to tell the story twice. Once anything has been said, this appears under
+  // the chat: it opens WhatsApp with the exchange already written out, so the
+  // studio reads where the assistant left off. Nothing is sent by itself, nothing
+  // leaves the visitor's own browser, and they see the whole text before it goes.
+  const HANDOFF_LABEL = "Continue this chat with a person on WhatsApp";
+  // The icon is ours and the label is the only text node, so the translator has
+  // one plain string to work on and the drawing stays put.
+  const HANDOFF_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.2c0 4-3.79 7.2-8.5 7.2-.95 0-1.86-.13-2.71-.38L4.5 19.8l1.36-3.34A6.86 6.86 0 0 1 4 11.2C4 7.2 7.79 4 12.5 4S21 7.2 21 11.2Z"/><path d="M9.2 11.6h6.6M9.2 8.9h4.4"/></svg>';
+  const handoff = document.createElement("a");
+  handoff.className = "chat-widget__handoff";
+  handoff.target = "_blank";
+  handoff.rel = "noopener";
+  handoff.hidden = true;
+  handoff.innerHTML = HANDOFF_ICON + "<span>" + HANDOFF_LABEL + "</span>";
+  const handoffText = handoff.querySelector("span");
+  handoff.addEventListener("click", () => { handoff.href = handoffHref(); });
+  chips.parentNode.insertBefore(handoff, chips);
+
+  function digest() {
+    const turns = thread.slice(-10).map((t) =>
+      (t.role === "user" ? "Client: " : "Assistant: ") + t.text);
+    return turns.join("\n").slice(0, 900);
+  }
+
+  function handoffHref() {
+    const said = digest();
+    const body = said
+      ? "From brownhub283.com:\n" + said + "\n\nI would like to continue this with someone."
+      : "Hello BrownHub, I would like to talk to someone.";
+    return WA + "?text=" + encodeURIComponent(body);
+  }
+
+  function showHandoff() {
+    handoff.hidden = !thread.some((t) => t.role === "user");
+    handoff.href = handoffHref();
+  }
+
+  // English on purpose at build time: translate.js picks up a text node it has not
+  // seen and renders it in the visitor's language. A node it has already done is
+  // not re-done on a language switch, so this one relabels itself from the
+  // dictionary — and only its own span, so the drawing is never wiped with it.
+  document.addEventListener("i18n-applied", () => {
+    handoffText.textContent = T(HANDOFF_LABEL);
+  });
 
   let greeted = false;
   // `auto` marks an opening the assistant did for itself, which must not move

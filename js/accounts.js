@@ -150,8 +150,21 @@
   // The chat assistant is an Edge Function in this same project, which is why the
   // call lives here: this file owns the project URL and the public key. The model
   // key never touches the browser, so a visitor can only ever ask questions.
-  function ask(question, lang, prices) {
+  // `history` is the chat so far, so a follow-up reaches the model with its
+  // context. It is trimmed here rather than trusted later: eight turns, four
+  // hundred characters each, and only the two roles the model understands.
+  function ask(question, lang, prices, history) {
     if (!configured) return Promise.reject(new Error("Accounts are not configured on this site."));
+    var turns = [];
+    if (Object.prototype.toString.call(history) === "[object Array]") {
+      for (var i = Math.max(0, history.length - 8); i < history.length; i++) {
+        var t = history[i] || {};
+        if (t.role !== "user" && t.role !== "model") continue;
+        var text = String(t.text || "").slice(0, 400);
+        if (!text) continue;
+        turns.push({ role: t.role, text: text });
+      }
+    }
     return fetch(SB_API_URL + "/functions/v1/brownhub-assistant", {
       method: "POST",
       headers: {
@@ -159,7 +172,7 @@
         apikey: SB_API_KEY,
         Authorization: "Bearer " + SB_API_KEY
       },
-      body: JSON.stringify({ q: question, lang: lang, prices: prices || [] })
+      body: JSON.stringify({ q: question, lang: lang, prices: prices || [], h: turns })
     }).then(function (res) {
       return res.json().catch(function () { throw new Error("The assistant sent back nothing readable."); }).then(function (data) {
         if (!res.ok || !data || !data.answer) throw new Error((data && data.error) || "The assistant did not answer.");

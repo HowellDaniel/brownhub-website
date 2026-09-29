@@ -21,6 +21,10 @@ const SITES = ["https://www.brownhub283.com"];
 // Anything the model may be asked costs money or attention, so both are capped.
 const MAX_QUERY = 600;
 const MAX_PRICES = 20;
+// The chat so far travels with each question. Eight turns of four hundred
+// characters is enough to resolve a follow-up and small enough to stay cheap.
+const MAX_TURNS = 8;
+const MAX_TURN = 400;
 const MINUTES_WINDOW = 60_000;
 const PER_MINUTE = 8;
 const DAY_WINDOW = 86_400_000;
@@ -127,6 +131,10 @@ privacy policy page. Voice notes recorded in the chat or on the Project details 
 emailed to the studio.
 
 RULES YOU MUST KEEP
+- You are given the conversation so far, ending with the question to answer. Read
+  it as one conversation: "it", "that", "and for 500 of them" and "how much
+  then" all refer to what was said above. Do not repeat an answer already given,
+  and do not ask again for something the visitor already told you.
 - Answer only about BrownHub, its services, this website, ordering, prices, delivery and
   contact. For anything else, say in one short line that you only know about BrownHub's
   design work, and offer WhatsApp or the contact form.
@@ -153,6 +161,29 @@ function priceLines(items: unknown): string {
     })
     .filter(Boolean)
     .join("\n") || "(no prices are listed right now)";
+}
+
+// The browser sends the chat so far so that a follow-up reaches the model with its
+// context. Two things are fixed up here: the model wants the two voices to
+// alternate strictly and to open on the visitor, and the question being answered
+// is already the last turn the browser sent — so it is dropped and re-added, which
+// keeps it present even if the browser trimmed it away.
+function conversation(raw: unknown, q: string): { role: string; parts: { text: string }[] }[] {
+  const list = Array.isArray(raw) ? raw : [];
+  const merged: { role: string; text: string }[] = [];
+  for (const item of list.slice(-MAX_TURNS)) {
+    const it = (item || {}) as Record<string, unknown>;
+    const role = it.role === "model" ? "model" : it.role === "user" ? "user" : "";
+    const text = String(it.text ?? "").replace(/\s+/g, " ").trim().slice(0, MAX_TURN);
+    if (!role || !text) continue;
+    const prev = merged[merged.length - 1];
+    if (prev && prev.role === role) prev.text += "\n" + text;
+    else merged.push({ role, text });
+  }
+  if (merged.length && merged[merged.length - 1].role === "user") merged.pop();
+  if (merged.length && merged[0].role === "model") merged.shift();
+  merged.push({ role: "user", text: q });
+  return merged.map((t) => ({ role: t.role, parts: [{ text: t.text }] }));
 }
 
 function json(body: unknown, status = 200): Response {
@@ -182,7 +213,7 @@ Deno.serve(async (req) => {
   const key = Deno.env.get("GEMINI_API_KEY") || "";
   if (!key) return json({ error: "The studio has not switched the assistant on yet." }, 500);
 
-  let body: { q?: unknown; lang?: unknown; prices?: unknown };
+  let body: { q?: unknown; lang?: unknown; prices?: unknown; h?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -225,7 +256,7 @@ Deno.serve(async (req) => {
           systemInstruction: {
             parts: [{ text: BRIEF.replace("__PRICES__", priceLines(body.prices)) }],
           },
-          contents: [{ role: "user", parts: [{ text: `Answer in ${LANGUAGE[code] || "English"}. ${q}` }] }],
+          contents: conversation(body.h, `Answer in ${LANGUAGE[code] || "English"}. ${q}`),
           generationConfig: { temperature: 0.3, maxOutputTokens: 400 },
         }),
         signal: AbortSignal.timeout(20_000),

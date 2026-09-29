@@ -1865,3 +1865,22 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
   background-image:var(--glass-sheen-grad);color:#fff}
 @media (max-width:640px){.chat-widget__teaser{width:min(320px,calc(100vw - 3rem))}}
 @media (prefers-reduced-motion:reduce){.chat-widget__teaser-chips button{transition:none}}
+
+/* ==========================================================================
+   CARRYING THE CHAT TO A PERSON
+   Sits under the panel's own answers, in the filled accent the site uses for
+   the action it wants taken, so it reads as a door rather than another
+   suggestion. The [hidden] guard is explicit because a display on the class
+   would otherwise beat the attribute.
+   ========================================================================== */
+.chat-widget__handoff{display:flex;align-items:center;justify-content:center;gap:.4rem;
+  margin:0 1rem .55rem;padding:.5rem .8rem;border-radius:var(--t-r-pill,999px);
+  background-color:var(--accent-fill);color:#fff;font-size:.78rem;font-weight:600;
+  line-height:1.25;text-align:center;transition:background-color .15s}
+.chat-widget__handoff[hidden]{display:none}
+.chat-widget__handoff svg{flex:none;width:14px;height:14px}
+.chat-widget__handoff:hover,.chat-widget__handoff:focus-visible{background-color:var(--accent-fill-hover)}
+@media (max-width:640px){.chat-widget__handoff{padding:.58rem .8rem}}
+/* While a voice note is being recorded the chips step aside; this does too, so the
+   recorder keeps the whole lower half of the panel. */
+.chat-widget__panel:has(.chat-widget__voice:not([hidden])) .chat-widget__handoff{display:none}
