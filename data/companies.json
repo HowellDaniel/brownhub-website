@@ -1,4 +1,12 @@
 {
   "_how_to_add": "One object per client in \"companies\": { \"name\": \"…\", \"sector\": \"…\" }. Publish a name only where the client has agreed to appear on the site — the band stays hidden while this list is empty, and nothing here is invented. The sector is one short word (Events, Church, Retail, School, Corporate) and is optional.",
-  "companies": []
+  "companies": [
+    { "name": "Justice Winners Chapel Dzorwulu", "sector": "Church" },
+    { "name": "Bernice Media DZORWULU", "sector": "Media" },
+    { "name": "Office MoMo Line", "sector": "Retail" },
+    { "name": "Christopher Book Design", "sector": "Publishing" },
+    { "name": "GRA Trade", "sector": "Corporate" },
+    { "name": "PPATLE Uganda", "sector": "Corporate" },
+    { "name": "Glory", "sector": "Brand" }
+  ]
 }
