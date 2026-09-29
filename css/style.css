@@ -1179,8 +1179,21 @@ html.js-scroll .cta__inner{text-align:left}
   src:url(../fonts/hanken-grotesk-italic-latin-ext.woff2) format("woff2");
   unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 
+/* A second, technical face for the strings that move money: JetBrains Mono (SIL OFL,
+   see fonts/jetbrains-mono-OFL.txt) is self-hosted and subset the same way, so its
+   dotted zero keeps 0 apart from O in an account number a buyer will retype. Weight
+   400-800 variable; latin-ext also carries the cedi sign (U+20B5). It is only fetched
+   when a panel actually paints mono text, so pages without one pay nothing. */
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 800;font-display:swap;
+  src:url(../fonts/jetbrains-mono-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 800;font-display:swap;
+  src:url(../fonts/jetbrains-mono-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
 :root{
   --t-font-text:"Hanken Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --t-font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --t-fs-10:12px;--t-fs-20:14px;--t-fs-25:15px;--t-fs-30:16px;--t-fs-40:18px;--t-fs-50:20px;
   --t-fs-55:22px;--t-fs-60:24px;--t-fs-68:28px;--t-fs-70:32px;--t-fs-78:36px;--t-fs-80:40px;
   --t-fs-85:44px;--t-fs-90:48px;--t-fs-100:56px;
@@ -1679,44 +1692,79 @@ html[data-theme="light"] #product-modal .modal__img{background:var(--bg-alt)}
 @media (max-width:600px){#product-modal .modal__img{max-height:46vh}}
 
 /* ---------- Bank transfer panel ----------
-   Paystack's own checkout frame is untouched: this is the third way round, laid out
-   in the same numbered-step idiom so it reads as part of paying rather than as a
-   paragraph of text. The values arrive from the Edge Function at click time, so the
-   only thing styled here is chrome — no account detail lives in this file. */
+   Paystack's own checkout frame is untouched: this is the third way round, laid out as
+   the bank slip it is — what is being bought and for how much across the top, then one
+   bordered row per datum with its own Copy, so nothing reads across into the next line.
+   Every value that moves money is set in --t-font-mono; the prose stays in the brand
+   grotesque. The values arrive from the Edge Function at click time, so the only thing
+   styled here is chrome — no account detail lives in this file. */
 .pay-xfer{position:fixed;inset:0;z-index:210;display:grid;place-items:center;padding:1rem}
-.pay-xfer__backdrop{position:absolute;inset:0;background:rgba(24,9,10,.72)}
+.pay-xfer__backdrop{position:absolute;inset:0;background:rgba(24,9,10,.72);
+  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px)}
 html[data-theme="light"] .pay-xfer__backdrop{background:rgba(38,16,15,.5)}
-.pay-xfer__box{position:relative;width:100%;max-width:30rem;max-height:min(88vh,44rem);overflow-y:auto;
-  padding:1.6rem 1.5rem 1.4rem;background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);box-shadow:var(--shadow)}
-.pay-xfer__close{position:absolute;top:.6rem;inset-inline-end:.6rem;width:34px;height:34px;border-radius:50%;
-  border:none;background:var(--bg-alt);color:var(--text-muted);font-size:1.2rem;line-height:1;cursor:pointer;
-  transition:color .2s,background-color .2s}
-.pay-xfer__close:hover,.pay-xfer__close:focus-visible{color:var(--text);background:var(--glass-fill-alt,var(--bg-alt))}
-.pay-xfer__title{font-size:1.15rem;font-weight:750;margin-bottom:.2rem}
-.pay-xfer__item{display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;font-size:.9rem;color:var(--text-muted)}
-.pay-xfer__item strong{font-size:1.05rem;font-weight:750;color:var(--accent-2)}
-.pay-xfer__steps{display:grid;gap:.7rem;margin:1.1rem 0 0;padding-inline-start:1.4rem;
-  list-style:decimal;color:var(--text)}
-.pay-xfer__steps li::marker{color:var(--text-muted);font-weight:600}
-.pay-xfer__step{font-size:.92rem;line-height:1.45}
-.pay-xfer__say{color:var(--text-muted)}
-.pay-xfer__k{display:block;font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--text-muted)}
-.pay-xfer__v{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1rem;font-weight:700;
-  color:var(--text);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
-.pay-xfer__copy{margin-inline-start:.5rem;padding:.2rem .6rem;border:1px solid var(--border);border-radius:999px;
-  background:none;color:var(--text-muted);font-size:.74rem;font-weight:600;cursor:pointer;
-  font-family:inherit;transition:color .2s,border-color .2s}
+.pay-xfer__box{position:relative;width:100%;max-width:32rem;max-height:min(88vh,46rem);overflow-y:auto;
+  padding:1.5rem 1.4rem 1.3rem;background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;box-shadow:var(--shadow)}
+/* the logo's own red running into gold along the top edge, so the panel reads as ours */
+.pay-xfer__box::before{content:"";position:absolute;top:0;inset-inline:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  border-start-start-radius:20px;border-start-end-radius:20px}
+.pay-xfer__close{position:absolute;top:.8rem;inset-inline-end:.8rem;width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--border);background:var(--bg-alt);color:var(--text-muted);font-size:1.2rem;line-height:1;
+  cursor:pointer;transition:color .2s,background-color .2s,border-color .2s}
+.pay-xfer__close:hover,.pay-xfer__close:focus-visible{color:var(--text);border-color:var(--text-muted);
+  background:var(--glass-fill-alt,var(--bg-alt))}
+.pay-xfer__head{padding-inline-end:2.4rem}
+.pay-xfer__title{font-size:1.35rem;font-weight:800;line-height:1.15;letter-spacing:-.02em}
+.pay-xfer__item{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.3rem .9rem;
+  margin-top:.6rem;padding-block:.5rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  font-size:.9rem;color:var(--text-muted)}
+.pay-xfer__item strong{font-family:var(--t-font-mono);font-size:1.05rem;font-weight:700;color:var(--accent-2);
+  letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.pay-xfer__rows{display:grid;gap:.34rem;margin-top:1rem}
+.pay-xfer__row{display:grid;grid-template-columns:9.2rem minmax(0,1fr) auto;align-items:center;gap:.1rem .75rem;
+  padding:.5rem .75rem;background:var(--bg-alt);border:1px solid var(--border);border-radius:12px}
+.pay-xfer__k{grid-column:1;grid-row:1;font-family:var(--t-font-mono);font-size:.66rem;font-weight:500;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--text-muted)}
+.pay-xfer__v{grid-column:2;grid-row:1;min-width:0;font-family:var(--t-font-mono);font-size:1.02rem;font-weight:700;
+  color:var(--text);letter-spacing:-.01em;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.pay-xfer__copy{grid-column:3;grid-row:1;justify-self:end;padding:.28rem .68rem;
+  border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--text-muted);
+  font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit;
+  transition:color .2s,border-color .2s,background-color .2s}
 .pay-xfer__copy:hover,.pay-xfer__copy:focus-visible{color:var(--text);border-color:var(--text-muted)}
-.pay-xfer__load,.pay-xfer__note{margin-top:1.1rem;font-size:.85rem;color:var(--text-muted)}
-.pay-xfer__note--bad{color:var(--accent)}
-.pay-xfer__acts{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.1rem}
-.pay-xfer__acts .btn{margin:0}
+.pay-xfer__close:focus-visible,.pay-xfer__copy:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* the rows are on screen before the Edge Function answers, so nothing reflows under the
+   buyer's thumb once the account arrives */
+.pay-xfer__row--wait{display:block;min-height:2.55rem;animation:pay-xfer-wait 1.3s ease-in-out infinite}
+@keyframes pay-xfer-wait{0%,100%{opacity:.4}50%{opacity:.95}}
+.pay-xfer__steps{display:grid;gap:.45rem;margin:.95rem 0 0;padding-inline-start:1.35rem;
+  list-style:decimal;color:var(--text)}
+.pay-xfer__steps li::marker{font-family:var(--t-font-mono);font-size:.82rem;font-weight:700;color:var(--accent-2)}
+.pay-xfer__step{font-size:.9rem;line-height:1.45;padding-inline-start:.15rem}
+.pay-xfer__say{color:var(--text-muted)}
+.pay-xfer__load{margin-top:.95rem;font-size:.85rem;color:var(--text-muted)}
+.pay-xfer__note{margin-top:1rem;padding:.65rem .8rem;background:var(--bg-alt);border-radius:12px;
+  font-size:.86rem;line-height:1.45;color:var(--text-muted)}
+.pay-xfer__note--bad{color:var(--accent);border:1px solid var(--accent)}
+.pay-xfer__acts{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.15rem;padding-top:1.05rem;
+  border-top:1px solid var(--border)}
+.pay-xfer__acts .btn{margin:0;flex:1 1 12rem}
 @media (max-width:640px){
   .pay-xfer{padding:.6rem}
-  .pay-xfer__box{padding:1.35rem 1.05rem 1.15rem}
-  .pay-xfer__steps{padding-inline-start:1.15rem}
+  .pay-xfer__box{padding:1.3rem 1rem 1.05rem}
+  .pay-xfer__title{font-size:1.2rem}
+  /* at phone width a long account name has no room beside its label, so the label
+     goes above it and Copy keeps the right-hand column */
+  .pay-xfer__row{grid-template-columns:minmax(0,1fr) auto;gap:0 .6rem}
+  .pay-xfer__v{grid-column:1;grid-row:2}
+  .pay-xfer__copy{grid-column:2;grid-row:1/span 2;align-self:center}
+  .pay-xfer__row--wait{min-height:3.5rem}
+  .pay-xfer__steps{padding-inline-start:1.1rem}
+  .pay-xfer__acts .btn{flex:1 1 100%}
 }
-@media (prefers-reduced-motion:reduce){.pay-xfer__close,.pay-xfer__copy{transition:none}}
+@media (prefers-reduced-motion:reduce){
+  .pay-xfer__close,.pay-xfer__copy{transition:none}
+  .pay-xfer__row--wait{animation:none;opacity:.7}
+}
 

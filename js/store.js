@@ -265,10 +265,10 @@
   // A label and a value that must not be translated: the dictionary rewrites the
   // text nodes it recognises and leaves an unknown account number exactly alone,
   // which is the safe direction for a string that sends money.
-  function stepValue(label, value, copyable) {
-    var li = el("li", "pay-xfer__step");
-    li.appendChild(el("span", "pay-xfer__k", label));
-    li.appendChild(el("span", "pay-xfer__v", value));
+  function dataRow(label, value, copyable) {
+    var row = el("div", "pay-xfer__row");
+    row.appendChild(el("span", "pay-xfer__k", label));
+    row.appendChild(el("span", "pay-xfer__v", value));
     if (copyable) {
       var b = el("button", "pay-xfer__copy", "Copy");
       b.type = "button";
@@ -277,9 +277,9 @@
         txt(b, "Copied");
         setTimeout(function () { txt(b, "Copy"); }, 2600);
       });
-      li.appendChild(b);
+      row.appendChild(b);
     }
-    return li;
+    return row;
   }
 
   function openTransfer(item) {
@@ -296,15 +296,26 @@
     wrap.appendChild(back);
 
     var box = el("div", "pay-xfer__box");
-    var close = el("button", "pay-xfer__close", "Close");
+    var close = el("button", "pay-xfer__close", "×");
     close.type = "button";
+    close.setAttribute("aria-label", T("Close"));
     close.addEventListener("click", closeXfer);
     box.appendChild(close);
-    box.appendChild(el("p", "pay-xfer__title", "Transfer to our own bank account"));
+
+    var head = el("div", "pay-xfer__head");
+    head.appendChild(el("p", "pay-xfer__title", "Transfer to our own bank account"));
     var lead = el("p", "pay-xfer__item");
     lead.appendChild(el("span", null, item.name));
     lead.appendChild(el("strong", null, money(item.price)));
-    box.appendChild(lead);
+    head.appendChild(lead);
+    box.appendChild(head);
+
+    // The five rows are on screen before the account arrives, so the panel opens at
+    // roughly its final height and never rebuilds itself under the buyer's thumb.
+    var rows = el("div", "pay-xfer__rows");
+    var wait = 5;
+    while (wait--) rows.appendChild(el("div", "pay-xfer__row pay-xfer__row--wait"));
+    box.appendChild(rows);
     var steps = el("ol", "pay-xfer__steps");
     box.appendChild(steps);
     var foot = el("p", "pay-xfer__load", "Loading the account details…");
@@ -339,22 +350,27 @@
     }
 
     bankDetails().then(function (d) {
+      rows.textContent = "";
+      rows.appendChild(dataRow("Bank", d.bank, false));
+      rows.appendChild(dataRow("Account number", d.number, true));
+      rows.appendChild(dataRow("Account name", d.name, true));
+      rows.appendChild(dataRow("Amount", money(item.price), true));
+      rows.appendChild(dataRow("Reference", code, true));
       steps.appendChild(stepText("Open your bank app or internet banking."));
       steps.appendChild(stepText("Choose Instant pay or GIP if your bank offers it."));
-      steps.appendChild(stepValue("Bank", d.bank, false));
-      steps.appendChild(stepValue("Account number", d.number, true));
-      steps.appendChild(stepValue("Account name", d.name, true));
-      steps.appendChild(stepValue("Amount", money(item.price), true));
-      steps.appendChild(stepValue("Reference", code, true));
       wire();
     }).catch(function () {
+      rows.remove();
+      steps.remove();
       foot.className = "pay-xfer__note pay-xfer__note--bad";
       txt(foot, "We could not load our account details just now. Message us and we will send them across.");
+      var acts = el("div", "pay-xfer__acts");
       var w = el("a", "btn btn--ghost btn--sm", "Order this on WhatsApp");
       w.target = "_blank";
       w.rel = "noopener";
       w.href = WA + "?text=" + encodeURIComponent(T("I'd like to order:") + " " + T(item.name));
-      box.appendChild(w);
+      acts.appendChild(w);
+      box.appendChild(acts);
     });
   }
 
