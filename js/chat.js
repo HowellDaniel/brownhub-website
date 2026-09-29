@@ -75,7 +75,7 @@
     },
     {
       keys: ["website", "web site", "site", "web", "landing", "portfolio", "ecommerce", "e-commerce", "responsive", "domain", "hosting", "page", "software", "app"],
-      html: `We also build websites and software for brands that need them — business sites, landing pages, portfolios and web apps, designed and built in-house. Details on the <a href="services.html">services page</a>; tell me your idea here or on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a> for a quote.`
+      html: `We also build websites and software for brands that need them — business sites, landing pages, portfolios and web apps, designed and built in-house. Details on the <a href="websites.html">website design page</a>; tell me your idea here or on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a> for a quote.`
     },
     {
       keys: ["help", "what can you do", "assist", "options"],

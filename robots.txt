@@ -13,6 +13,7 @@ User-agent: *
 Allow: /
 Allow: /index.html
 Allow: /services.html
+Allow: /websites.html
 Allow: /catalog.html
 Allow: /about.html
 Allow: /contact.html

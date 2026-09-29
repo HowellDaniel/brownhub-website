@@ -1756,3 +1756,22 @@ html[data-theme="light"] .pay-xfer__backdrop{background:rgba(38,16,15,.5)}
   .pay-xfer__row--wait{animation:none;opacity:.7}
 }
 
+
+/* The home services grid carries ten cards. Instead of leaving a hole in the last row,
+   the tenth runs the full width with its copy and call to action side by side. */
+.cards--3 .card--wide{grid-column:1/-1;display:grid;align-items:center;
+  gap:.35rem var(--t-3);grid-template-columns:auto minmax(0,1fr) auto;
+  grid-template-areas:"icon head head" "icon body link"}
+.cards--3 .card--wide .card__icon{grid-area:icon;margin:0}
+.cards--3 .card--wide h3{grid-area:head;margin:0}
+.cards--3 .card--wide p:first-of-type{grid-area:body;margin:0}
+.cards--3 .card--wide p:last-of-type{grid-area:link;margin:0}
+@media (max-width:900px){.cards--3 .card--wide{grid-template-columns:auto minmax(0,1fr);
+  grid-template-areas:"icon head" "body body" "link link"}}
+@media (max-width:640px){.cards--3 .card--wide{grid-template-columns:minmax(0,1fr);
+  grid-template-areas:"icon" "head" "body" "link"}}
+
+/* The tick list pinned its marker with physical left/right, so in Arabic it sat on the
+   reading end of the line instead of the start. */
+html[dir="rtl"] .checklist li{padding-left:0;padding-right:1.6rem}
+html[dir="rtl"] .checklist li::before{left:auto;right:0}

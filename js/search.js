@@ -16,6 +16,7 @@
     { g: "Pages", t: "Customer experience", h: "index.html#customer-experience", k: "experience rail drag carousel how it feels" },
     { g: "Pages", t: "Customer reviews", h: "index.html#reviews", k: "reviews testimonials clients say feedback stars rating" },
     { g: "Pages", t: "Services", h: "services.html", k: "what we do pricing packages" },
+    { g: "Pages", t: "Website Design & Development", h: "websites.html", k: "website web design development software app hosting domain landing page" },
     { g: "Pages", t: "Catalog", h: "catalog.html", k: "shop items products prints" },
     { g: "Pages", t: "About", h: "about.html", k: "team story accra company" },
     { g: "Pages", t: "Contact", h: "contact.html", k: "email phone whatsapp quote enquiry" },
@@ -30,7 +31,7 @@
     { g: "Services", t: "Brochure & Company Profile Design", h: "services.html#brochures-books", k: "brochure company profile catalogue magazine" },
     { g: "Services", t: "Packaging Design", h: "services.html#packaging", k: "packaging label box sticker bottle food" },
     { g: "Services", t: "Custom Graphic Design", h: "services.html#custom", k: "custom anything illustration menu book cover" },
-    { g: "Services", t: "Website or Software", h: "services.html#web-software", k: "website web software app system dashboard" },
+    { g: "Services", t: "Website or Software", h: "websites.html", k: "website web software app system dashboard" },
 
     { g: "Catalog", t: "Pull Up Design, Backdrop and Printing", h: "catalog.html?q=Pull%20Up%20Design%2C%20Backdrop%20and%20Printing", k: "banner pull up stand backdrop event printing" },
     { g: "Catalog", t: "All Types of Frames", h: "catalog.html?q=All%20Types%20of%20Frames", k: "frame award plaque photo certificate glass" },

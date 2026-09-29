@@ -49,7 +49,7 @@
     { h: "More from the studio", items: [
       ["Packaging Design", "Labels, boxes and bottles built to shelf size.", "services.html#packaging", "box"],
       ["Custom Graphic Design", "Something unusual? We design that too.", "services.html#custom", "wand"],
-      ["Websites & Software", "A hosted site or an app for the brand.", "services.html#web-software", "monitor"]
+      ["Websites & Software", "A hosted site or an app for the brand.", "websites.html", "monitor"]
     ]},
     { h: "Popular in the catalog", items: [
       ["Banners & signage", "Pull-up stands, backdrops and ABS boards.", "catalog.html?q=Banners", "banner"],
