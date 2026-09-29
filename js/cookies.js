@@ -16,7 +16,7 @@
     {
       id: "necessary",
       name: "Strictly necessary",
-      desc: "Always on. Your chosen language, the dark or light theme and a signed-in client session are kept in your own browser so the site can remember them. Without them the pages still load, but they forget you between visits. A random code the chat assistant uses to keep your conversation in one thread is stored the same way.",
+      desc: "Always on. Your chosen language, the dark or light theme and a signed-in client session are kept in your own browser so the site can remember them. Without them the pages still load, but they forget you between visits. A random code the chat assistant uses to keep your conversation in one thread is stored the same way. The chat itself is kept the same way, for about a week, so a refresh does not lose it.",
       locked: true
     },
     {
@@ -69,7 +69,7 @@
     notice.setAttribute("aria-label", "Cookie notice");
     const inner = el("div", "cookie-notice__inner");
     inner.appendChild(el("p", "cookie-notice__text",
-      "This site keeps your language and theme in your browser and nothing else. " +
+      "This site keeps your own settings and your chat with our assistant in your browser. " +
       "No analytics or advertising cookie is placed here."));
     const btns = el("div", "cookie-notice__btns");
     const ok = el("button", "btn btn--primary btn--sm"); ok.type = "button"; ok.textContent = "Accept all";

@@ -193,13 +193,49 @@
   // Everything said so far, in order, in plain sentences. It is what lets a
   // follow-up like "and for 500 of them?" be understood at all, and what a person
   // on WhatsApp reads instead of starting the visitor from the beginning again.
+  // A phone locking, a refresh or leaving the site and coming back must not wipe
+  // it, so the thread is also kept on the visitor's own device — the same
+  // localStorage the language and theme already use — and it ages out after a
+  // week, because nobody wants to return to a fortnight-old conversation.
   const thread = [];
+  const HISTORY_KEY = "brownhub-chat-history";
+  const HISTORY_AGE = 7 * 86400000;
+
   function remember(role, text) {
     const clean = (text || "").replace(/\s+/g, " ").trim();
     if (!clean) return;
     thread.push({ role: role, text: clean.slice(0, 400) });
     while (thread.length > 24) thread.shift();
+    keep();
   }
+
+  function keep() {
+    try {
+      if (!thread.length) { localStorage.removeItem(HISTORY_KEY); return; }
+      localStorage.setItem(HISTORY_KEY, JSON.stringify({ at: Date.now(), turns: thread }));
+    } catch (e) {}
+  }
+
+  // Reading it back is guarded line by line: whatever is in that slot is data from
+  // a previous page load, not a trusted object, and a corrupt entry must leave the
+  // assistant with an empty chat rather than an exception.
+  function reopen() {
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(HISTORY_KEY) || "null"); } catch (e) { return; }
+    if (!saved || !Array.isArray(saved.turns)) return;
+    const at = Number(saved.at);
+    if (!isFinite(at) || at <= 0 || Date.now() - at > HISTORY_AGE) {
+      try { localStorage.removeItem(HISTORY_KEY); } catch (e) {}
+      return;
+    }
+    for (const t of saved.turns) {
+      if (!t || (t.role !== "user" && t.role !== "model")) continue;
+      const text = typeof t.text === "string" ? t.text.replace(/\s+/g, " ").trim() : "";
+      if (text) thread.push({ role: t.role, text: text.slice(0, 400) });
+    }
+    while (thread.length > 24) thread.shift();
+  }
+  reopen();
 
   function logExchange(question, answer, source) {
     const log = window.BHAccounts && window.BHAccounts.logChat;
@@ -226,7 +262,10 @@
       renderChips(defaultChips);
       focusInput();
       const said = plainText(html);
-      remember("model", said);
+      // The archive holds the English sentence the studio wrote; the conversation
+      // holds what this visitor actually read, because a restored chat must show
+      // the answer in the language it was given in.
+      remember("model", plainText(T(html)));
       showHandoff();
       logExchange(clean, said, source);
     };
@@ -284,6 +323,19 @@
     handoff.href = handoffHref();
   }
 
+  // A restored conversation is drawn as text, never as markup: these are words a
+  // network once sent back, and they reappear exactly as they were read. They stay
+  // out of botHistory too, so changing language later does not re-translate a
+  // sentence that already arrived in the visitor's own tongue.
+  function replay() {
+    for (const t of thread) {
+      if (t.role === "user") addMsg(t.text, "user");
+      else addPlain(t.text);
+    }
+    renderChips(defaultChips);
+    showHandoff();
+  }
+
   // English on purpose at build time: translate.js picks up a text node it has not
   // seen and renders it in the visitor's language. A node it has already done is
   // not re-done on a language switch, so this one relabels itself from the
@@ -293,6 +345,12 @@
   });
 
   let greeted = false;
+  // A restored conversation is drawn the moment the widget loads, into a panel
+  // that is still closed. Doing it here rather than on first opening keeps the
+  // turns in the right order when something else — a catalog "order via chat"
+  // press, say — sends the next message before the panel has ever been seen, and
+  // it is why such a visitor is not greeted all over again.
+  if (thread.length) { greeted = true; replay(); }
   // `auto` marks an opening the assistant did for itself, which must not move
   // focus: a keyboard user's tab order stays where it was and a phone keeps its
   // on-screen keyboard shut until the visitor taps the field.
