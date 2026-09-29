@@ -3,6 +3,7 @@
   "companies": [
     { "name": "Winners Chapel International Dzorwulu", "sector": "Church" },
     { "name": "ChrisprintGh", "sector": "Print" },
+    { "name": "Mr. Nana Kwame Chris Print", "sector": "Print" },
     { "name": "Mark Blue Print", "sector": "Print" },
     { "name": "Ama Screen Print", "sector": "Print" },
     { "name": "Star Print", "sector": "Print" },
@@ -13,6 +14,7 @@
     { "name": "Christopher Book Design", "sector": "Publishing" },
     { "name": "GRA Trade", "sector": "Corporate" },
     { "name": "PPATLE Uganda", "sector": "Corporate" },
-    { "name": "Glory", "sector": "Brand" }
+    { "name": "Glory", "sector": "Brand" },
+    { "name": "Madam Felicia Atob" }
   ]
 }
