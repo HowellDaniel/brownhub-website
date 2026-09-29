@@ -58,9 +58,8 @@
  "Hours": "Orari",
  "Mon–Fri · 9am–6pm GMT": "Lun–Ven · 9:00–18:00 GMT",
  "Work": "Lavoro",
- "Chat with our robotic assistant": "Chatta con il nostro assistente robotico",
- "Robotic AI assistant": "Assistente robotico AI",
- "Robotic AI Assistant": "Assistente Robotico AI",
+ "Chat with BrownHub Studio Assistance": "Chatta con BrownHub Studio Assistance",
+ "BrownHub Studio Assistance": "BrownHub Studio Assistance",
  "Close chat": "Chiudi chat",
  "Toggle menu": "Apri o chiudi il menu",
  "Main navigation": "Navigazione principale",
@@ -96,7 +95,6 @@
  "I give quick answers on our website development and graphic design work: services, catalog items, prices, turnaround, ordering and how to reach the team. Try a button below.": "Rispondo in fretta su sviluppo web e lavori di design grafico: servizi, articoli del catalogo, prezzi, tempi, ordini e come contattare il team. Prova un pulsante qui sotto.",
  "Hello! Great to see you. Ask me anything about our website development or graphic design work — or tap a button below to get started.": "Ciao! Sono contento di vederti. Chiedimi tutto quello che vuoi sul nostro sviluppo web o sui lavori di design grafico — oppure tocca un pulsante qui sotto per iniziare.",
  "I didn't quite catch that. I'm best at quick answers on <strong>website projects</strong> and <strong>graphic design work</strong> — services, catalog items, prices, turnaround, ordering. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "Non ho capito bene. Do il meglio con risposte rapide su <strong>progetti web</strong> e <strong>lavori di design grafico</strong> — servizi, articoli del catalogo, prezzi, tempi, ordini. Oppure parla con una persona su <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>website development</strong> and <strong>graphic design</strong> work. What can I help with?": "Ciao, sono l’assistente robotico di BrownHub. Rispondo in fretta a tutto ciò che riguarda il nostro <strong>sviluppo web</strong> e il nostro lavoro di <strong>design grafico</strong>. Come posso aiutarti?",
  "Design": "Progettazione",
  "Flyer": "Flyer",
  "catalog": "catalogo",
@@ -274,7 +272,7 @@
  "Great design is more than making something look good.": "Un design efficace è più di una bella immagine.",
  "Great design is more than making something look good. It should communicate a message, represent a brand, connect with an audience and support your business goals.": "Un design efficace è più di una bella immagine: deve comunicare un messaggio, rappresentare un brand, creare un legame con il pubblico e sostenere i tuoi obiettivi di business.",
  "Hello! Great to see you. Ask me anything about our graphic design and branding work — logos, brand identity, print, social media and packaging — or tap a button below to get started.": "Ciao! Che piacere averti qui. Chiedimi tutto sui nostri lavori di design grafico e branding — loghi, identità visive, stampa, social media e packaging — oppure tocca un pulsante qui sotto per iniziare.",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "Ciao, sono l'assistente automatico di BrownHub. Rispondo in fretta su tutto ciò che riguarda il nostro lavoro di <strong>design grafico</strong> e <strong>branding</strong> — loghi, identità, stampa, social media e packaging. Come posso aiutarti?",
+ "Hi, I'm BrownHub Studio Assistance. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "Ciao, sono BrownHub Studio Assistance. Rispondo in fretta su tutto ciò che riguarda il nostro lavoro di <strong>design grafico</strong> e <strong>branding</strong> — loghi, identità, stampa, social media e packaging. Come posso aiutarti?",
  "Hosting, maintenance and support": "Hosting, manutenzione e assistenza",
  "I didn't quite catch that. I'm best at quick answers on <strong>graphic design</strong> and <strong>branding</strong> — logos, brand identity, flyers, business cards, brochures, packaging, social media and print-ready files. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "Non ho capito bene. Me la cavo meglio con risposte rapide su <strong>design grafico</strong> e <strong>branding</strong> — loghi, identità visive, flyer, biglietti da visita, brochure, packaging, social media e file pronti per la stampa. Oppure parla con una persona su <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.",
  "I give quick answers on our design work: services, catalog items, prices, turnaround, ordering, print-ready files and how to reach the team. Try a button below.": "Rispondo in fretta sul nostro lavoro di design: servizi, elementi del catalogo, prezzi, tempi di consegna, ordini, file pronti per la stampa e come raggiungere il team. Prova con un pulsante qui sotto.",
@@ -794,5 +792,7 @@
  "Website Design & Development": "Progettazione e sviluppo web",
  "Business websites, online catalogs, booking tools and web apps — designed and coded in the same studio.": "Siti per aziende, cataloghi online, sistemi di prenotazione e web app — progettati e programmati nello stesso studio.",
  "What we build and how it runs →": "Cosa realizziamo e come funziona →",
- "See how we design and build websites →": "Guarda come progettiamo e realizziamo i siti web →"
+ "See how we design and build websites →": "Guarda come progettiamo e realizziamo i siti web →",
+ "Start a new chat": "Avvia una nuova chat",
+ "Try that answer again": "Riprova quella risposta"
 }

@@ -61,7 +61,7 @@ function rateLimited(ip: string): boolean {
 // as far as it is concerned — the numbers and the turnaround are the studio's own
 // published answers, and prices arrive from the page so this can never drift from
 // what the store actually charges.
-const BRIEF = `You are the BrownHub robotic assistant, answering visitors on brownhub's own website.
+const BRIEF = `You are BrownHub Studio Assistance, answering visitors on brownhub's own website.
 
 THE BUSINESS
 BrownHub is a creative studio in Accra, Ghana. Graphic design and branding is the main

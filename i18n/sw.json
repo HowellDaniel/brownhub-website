@@ -58,9 +58,8 @@
  "Hours": "Saa za kazi",
  "Mon–Fri · 9am–6pm GMT": "Jumatatu–Ijumaa · 9 asubuhi–6 jioni GMT",
  "Work": "Kazi",
- "Chat with our robotic assistant": "Gumza na msaidizi wetu wa roboti",
- "Robotic AI assistant": "Msaidizi wa AI wa roboti",
- "Robotic AI Assistant": "Msaidizi wa AI wa Roboti",
+ "Chat with BrownHub Studio Assistance": "Gumza na BrownHub Studio Assistance",
+ "BrownHub Studio Assistance": "BrownHub Studio Assistance",
  "Close chat": "Funga gumzo",
  "Toggle menu": "Fungua/funga menyu",
  "Main navigation": "Urambazaji mkuu",
@@ -96,7 +95,6 @@
  "I give quick answers on our website development and graphic design work: services, catalog items, prices, turnaround, ordering and how to reach the team. Try a button below.": "Ninatoa majibu ya haraka kuhusu kazi zetu za kuunda tovuti na za ubunifu wa grafiki: huduma, bidhaa za katalogi, bei, muda wa kukabidhi, kuagiza na jinsi ya kuwasiliana na timu. Jaribu kitufe kilicho hapa chini.",
  "Hello! Great to see you. Ask me anything about our website development or graphic design work — or tap a button below to get started.": "Habari! Ni furaha kukuona. Niulize chochote kuhusu kazi zetu za kuunda tovuti au za ubunifu wa grafiki — au gusa kitufe hapa chini kuanza.",
  "I didn't quite catch that. I'm best at quick answers on <strong>website projects</strong> and <strong>graphic design work</strong> — services, catalog items, prices, turnaround, ordering. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "Samahani, sikuelewa vizuri hayo. Ninazoea kutoa majibu ya haraka kuhusu <strong>miradi ya tovuti</strong> na <strong>kazi za ubunifu wa grafiki</strong> — huduma, bidhaa za katalogi, bei, muda wa kukabidhi, kuagiza. Au zungumza na binadamu kwenye <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>website development</strong> and <strong>graphic design</strong> work. What can I help with?": "Habari, mimi ni msaidizi wa roboti wa BrownHub. Ninatoa majibu ya haraka kuhusu chochote cha <strong>uundaji wa tovuti</strong> na kazi za <strong>ubunifu wa grafiki</strong>. Nichaweza kukusaidia aje?",
  "Design": "Ubuni",
  "Flyer": "Fliya",
  "catalog": "katalogi",
@@ -274,7 +272,7 @@
  "Great design is more than making something look good.": "Muundo mzuri ni zaidi ya kufanya kitu kuonekana vizuri.",
  "Great design is more than making something look good. It should communicate a message, represent a brand, connect with an audience and support your business goals.": "Muundo mzuri ni zaidi ya kufanya kitu kuonekana vizuri. Unapaswa kueleza ujumbe, kuwakilisha chapa, kuwasiliana na hadhira na kusaidia malengo ya biashara yako.",
  "Hello! Great to see you. Ask me anything about our graphic design and branding work — logos, brand identity, print, social media and packaging — or tap a button below to get started.": "Habari! Furaha kukukutana. Niulize chochote kuhusu kazi yetu ya ubunifu wa kigrafiki na utambulisho wa chapa — nembo, utambulisho wa chapa, kuchapisha, mitandao ya kijamii na vifurasha — au gusa kitufe chini kuanza.",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "Habari, mimi ni msaidizi wa kiorodhina wa BrownHub. Natoa majibu ya haraka kuhusu chochote kuhusu kazi yetu ya <strong>ubunifu wa kigrafiki</strong> na <strong>utambulisho wa chapa</strong> — nembo, vitambulisho, kuchapisha, mitandao ya kijamii na vifurasha. Nisaidie nini?",
+ "Hi, I'm BrownHub Studio Assistance. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "Habari, mimi ni BrownHub Studio Assistance. Natoa majibu ya haraka kuhusu chochote kuhusu kazi yetu ya <strong>ubunifu wa kigrafiki</strong> na <strong>utambulisho wa chapa</strong> — nembo, vitambulisho, kuchapisha, mitandao ya kijamii na vifurasha. Nisaidie nini?",
  "Hosting, maintenance and support": "Ukarishaji, matengenezo na usaidizi",
  "I didn't quite catch that. I'm best at quick answers on <strong>graphic design</strong> and <strong>branding</strong> — logos, brand identity, flyers, business cards, brochures, packaging, social media and print-ready files. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "Sikielewa vizuri. Ninazidi kwa majibu ya haraka kuhusu <strong>ubunifu wa kigrafiki</strong> na <strong>utambulisho wa chapa</strong> — nembo, utambulisho wa chapa, flaya, kadi za biashara, buroshaa, vifurasha, mitandao ya kijamii na faili tayari za kuchapisha. Au zungumza na binadamu kwenye <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.",
  "I give quick answers on our design work: services, catalog items, prices, turnaround, ordering, print-ready files and how to reach the team. Try a button below.": "Natoa majibu ya haraka kuhusu kazi yetu ya ubunifu: huduma, vitu vya katalogi, bei, muda wa kutekeleza, kuagiza, faili tayari za kuchapisha na jinsi ya kuwasiliana na timu. Jaribu kitufe chini.",
@@ -794,5 +792,7 @@
  "Website Design & Development": "Ubunifu na Ukuzaji wa Tovuti",
  "Business websites, online catalogs, booking tools and web apps — designed and coded in the same studio.": "Tovuti za biashara, katalogi mtandaoni, zana za uhifadhi na programu za wavuti — zimebuniwa na kuandikwa studio moja.",
  "What we build and how it runs →": "Tunachojenga na jinsi kinavyoendelea →",
- "See how we design and build websites →": "Tazama jinsi tunavyobuni na kujenga tovuti →"
+ "See how we design and build websites →": "Tazama jinsi tunavyobuni na kujenga tovuti →",
+ "Start a new chat": "Anza mazungumzo mapya",
+ "Try that answer again": "Jaribu jibu hilo tena"
 }

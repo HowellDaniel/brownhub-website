@@ -1884,3 +1884,26 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
 /* While a voice note is being recorded the chips step aside; this does too, so the
    recorder keeps the whole lower half of the panel. */
 .chat-widget__panel:has(.chat-widget__voice:not([hidden])) .chat-widget__handoff{display:none}
+
+/* ---- the assistant's own header controls --------------------------------------
+   Three 28px glyphs where the single close button used to sit alone. They take the
+   panel's glass head rather than a fill of their own, so both themes and RTL need
+   nothing extra, and one that has nothing to do only loses colour — it never leaves
+   its place, so the header cannot twitch while an answer is being read. */
+.chat-widget__head{gap:.5rem;flex-wrap:wrap;row-gap:.1rem}
+.chat-widget__tools{display:flex;align-items:center;gap:0;flex:none;margin-inline-start:auto}
+.chat-widget__tool{width:26px;height:26px;flex:none;display:grid;place-items:center;border:1px solid transparent;border-radius:8px;background:none;color:var(--text-muted);cursor:pointer;line-height:1;transition:color .2s,border-color .2s,background-color .2s}
+.chat-widget__tool svg{width:15px;height:15px;display:block}
+.chat-widget__tool:hover:not(:disabled),.chat-widget__tool:focus-visible{color:var(--accent);border-color:var(--glass-fill-hair);background-color:var(--glass-chip)}
+.chat-widget__tool:disabled{opacity:.38;cursor:default}
+/* The close button is HTML on nine pages and keeps its × glyph; this pulls it into
+   the same box as the two new ones so the row reads as one control. */
+.chat-widget__close{font-size:1rem}
+.chat-widget__head-text{min-width:0}
+.chat-widget__head-text strong{line-height:1.3}
+/* Moved out of the title block by js/chat.js so it gets the whole head width and
+   stays one line; the indent lines it up under the title rather than the avatar. */
+.chat-widget__head-sub{flex:1 1 100%;order:3;margin:0;padding-inline-start:calc(22px + .5rem);color:var(--text-muted);font-size:.8rem;line-height:1.35}
+/* The head now carries three glyphs, so the desktop panel takes the same 360px the
+   phone already gives it; the media query is the one the base rule never fights. */
+@media (min-width:641px){.chat-widget__panel{width:360px}}

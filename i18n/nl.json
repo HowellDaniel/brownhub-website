@@ -58,9 +58,8 @@
  "Hours": "Openingstijden",
  "Mon–Fri · 9am–6pm GMT": "ma–vr · 9.00–18.00 GMT",
  "Work": "Werk",
- "Chat with our robotic assistant": "Chat met onze robotassistent",
- "Robotic AI assistant": "Robotische AI-assistent",
- "Robotic AI Assistant": "Robotische AI-assistent",
+ "Chat with BrownHub Studio Assistance": "Chat met BrownHub Studio Assistance",
+ "BrownHub Studio Assistance": "BrownHub Studio Assistance",
  "Close chat": "Chat sluiten",
  "Toggle menu": "Menu in- en uitklappen",
  "Main navigation": "Hoofdnavigatie",
@@ -96,7 +95,6 @@
  "I give quick answers on our website development and graphic design work: services, catalog items, prices, turnaround, ordering and how to reach the team. Try a button below.": "Ik geef snelle antwoorden over onze webdevelopment en ons grafisch ontwerp: diensten, catalogusproducten, prijzen, levertijden, bestellen en hoe je het team bereikt. Probeer eens een knop hieronder.",
  "Hello! Great to see you. Ask me anything about our website development or graphic design work — or tap a button below to get started.": "Hallo! Fijn je te zien. Vraag me alles over onze webdevelopment of ons grafisch ontwerp — of tik op een knop hieronder om te beginnen.",
  "I didn't quite catch that. I'm best at quick answers on <strong>website projects</strong> and <strong>graphic design work</strong> — services, catalog items, prices, turnaround, ordering. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "Dat begrijp ik niet helemaal. Ik geef het liefst snelle antwoorden over <strong>websiteprojecten</strong> en <strong>grafisch ontwerp</strong> — diensten, catalogusproducten, prijzen, levertijden, bestellen. Of praat met een mens via <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>website development</strong> and <strong>graphic design</strong> work. What can I help with?": "Hoi, ik ben de robotassistent van BrownHub. Ik geef snelle antwoorden over alles wat met onze <strong>webdevelopment</strong> en ons <strong>grafisch ontwerp</strong> te maken heeft. Waar kan ik je mee helpen?",
  "Design": "Ontwerpen",
  "Flyer": "Flyer",
  "catalog": "catalogus",
@@ -274,7 +272,7 @@
  "Great design is more than making something look good.": "Goed ontwerp is meer dan iets mooi maken.",
  "Great design is more than making something look good. It should communicate a message, represent a brand, connect with an audience and support your business goals.": "Goed ontwerp is meer dan iets mooi maken. Het moet een boodschap overbrengen, een merk vertegenwoordigen, een doelgroep bereiken en je bedrijfsdoelen ondersteunen.",
  "Hello! Great to see you. Ask me anything about our graphic design and branding work — logos, brand identity, print, social media and packaging — or tap a button below to get started.": "Hallo! Leuk je te zien. Vraag me alles over ons werk in grafisch ontwerp en branding — logo's, huisstijl, drukwerk, sociale media en verpakkingen — of tik op een knop hieronder om te beginnen.",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "Hoi, ik ben de geautomatiseerde assistent van BrownHub. Ik geef snel antwoord op alles over ons <strong>grafisch ontwerp</strong> en ons werk in <strong>branding</strong> — logo's, huisstijlen, drukwerk, sociale media en verpakkingen. Waar kan ik je mee helpen?",
+ "Hi, I'm BrownHub Studio Assistance. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "Hoi, ik ben BrownHub Studio Assistance. Ik geef snel antwoord op alles over ons <strong>grafisch ontwerp</strong> en ons werk in <strong>branding</strong> — logo's, huisstijlen, drukwerk, sociale media en verpakkingen. Waar kan ik je mee helpen?",
  "Hosting, maintenance and support": "Hosting, onderhoud en support",
  "I didn't quite catch that. I'm best at quick answers on <strong>graphic design</strong> and <strong>branding</strong> — logos, brand identity, flyers, business cards, brochures, packaging, social media and print-ready files. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "Dat vond ik niet helemaal. Ik geef het liefst snelle antwoorden over <strong>grafisch ontwerp</strong> en <strong>branding</strong> — logo's, huisstijl, flyers, visitekaartjes, brochures, verpakkingen, sociale media en aanleverbare bestanden die drukklaar zijn. Of bereik een medewerker via <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.",
  "I give quick answers on our design work: services, catalog items, prices, turnaround, ordering, print-ready files and how to reach the team. Try a button below.": "Ik geef snel antwoord over ons werk: diensten, catalogusitems, prijzen, levertijden, bestellingen, aanleverbare bestanden die drukklaar zijn en hoe je het team bereikt. Probeer een knop hieronder.",
@@ -794,5 +792,7 @@
  "Website Design & Development": "Ontwerp en ontwikkeling van websites",
  "Business websites, online catalogs, booking tools and web apps — designed and coded in the same studio.": "Bedrijfswebsites, online catalogi, boekingstools en webapps — ontworpen en geprogrammeerd in dezelfde studio.",
  "What we build and how it runs →": "Wat wij bouwen en hoe het werkt →",
- "See how we design and build websites →": "Bekijk hoe wij websites ontwerpen en bouwen →"
+ "See how we design and build websites →": "Bekijk hoe wij websites ontwerpen en bouwen →",
+ "Start a new chat": "Nieuwe chat starten",
+ "Try that answer again": "Dit antwoord opnieuw proberen"
 }

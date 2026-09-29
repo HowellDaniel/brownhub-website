@@ -58,9 +58,8 @@
  "Hours": "营业时间",
  "Mon–Fri · 9am–6pm GMT": "周一至周五 · 9:00–18:00 GMT",
  "Work": "工作地点",
- "Chat with our robotic assistant": "与我们的智能助手聊天",
- "Robotic AI assistant": "AI 智能助手",
- "Robotic AI Assistant": "AI 智能助手",
+ "Chat with BrownHub Studio Assistance": "与 BrownHub Studio Assistance 聊天",
+ "BrownHub Studio Assistance": "BrownHub Studio Assistance",
  "Close chat": "关闭对话",
  "Toggle menu": "展开/收起菜单",
  "Main navigation": "主导航",
@@ -96,7 +95,6 @@
  "I give quick answers on our website development and graphic design work: services, catalog items, prices, turnaround, ordering and how to reach the team. Try a button below.": "我可以就我们的网站开发与平面设计工作给出快速解答：服务内容、目录商品、价格、周期、下单方式，以及如何联系团队。试试下面的按钮。",
  "Hello! Great to see you. Ask me anything about our website development or graphic design work — or tap a button below to get started.": "您好！很高兴见到您。关于我们的网站开发或平面设计，任何问题都可以问我——或者点一下下面的按钮开始。",
  "I didn't quite catch that. I'm best at quick answers on <strong>website projects</strong> and <strong>graphic design work</strong> — services, catalog items, prices, turnaround, ordering. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "抱歉，这条我没太明白。我最擅长快速回答 <strong>网站项目</strong>和<strong>平面设计</strong>相关的问题——服务、目录商品、价格、周期、下单。也可以到 <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> 上找真人沟通。",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>website development</strong> and <strong>graphic design</strong> work. What can I help with?": "您好，我是 BrownHub 的 AI 智能助手。关于我们的<strong>网站开发</strong>与<strong>平面设计</strong>工作，任何问题我都能快速回复。需要哪方面的帮助？",
  "Design": "设计",
  "Flyer": "传单",
  "catalog": "产品目录",
@@ -274,7 +272,7 @@
  "Great design is more than making something look good.": "好设计不只是好看。",
  "Great design is more than making something look good. It should communicate a message, represent a brand, connect with an audience and support your business goals.": "好设计不只是让作品好看，更应传达信息、代表品牌、连接受众，并助力您的商业目标。",
  "Hello! Great to see you. Ask me anything about our graphic design and branding work — logos, brand identity, print, social media and packaging — or tap a button below to get started.": "您好！很高兴见到您。关于我们的平面设计与品牌工作——标志、品牌形象、印刷、社交媒体和包装——任何问题都可以问我，或点击下方按钮开始咨询。",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "您好，我是 BrownHub 智能助手。关于我们的<strong>平面设计</strong>和<strong>品牌设计</strong>工作——标志、形象系统、印刷、社交媒体和包装——我都能快速为您解答。有什么可以帮您？",
+ "Hi, I'm BrownHub Studio Assistance. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "您好，我是 BrownHub Studio Assistance。关于我们的<strong>平面设计</strong>和<strong>品牌设计</strong>工作——标志、形象系统、印刷、社交媒体和包装——我都能快速为您解答。有什么可以帮您？",
  "Hosting, maintenance and support": "网站托管、维护与支持",
  "I didn't quite catch that. I'm best at quick answers on <strong>graphic design</strong> and <strong>branding</strong> — logos, brand identity, flyers, business cards, brochures, packaging, social media and print-ready files. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "这个我没太听明白。我最擅长快速解答<strong>平面设计</strong>和<strong>品牌设计</strong>相关的问题——标志、品牌形象、传单、名片、宣传册、包装、社交媒体和可直印文件。也可以在 <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> 上联系人工客服。",
  "I give quick answers on our design work: services, catalog items, prices, turnaround, ordering, print-ready files and how to reach the team. Try a button below.": "我可以就我们的设计工作快速解答：服务项目、目录产品、价格、工期、下单、可直印文件以及如何联系团队。试试下方按钮吧。",
@@ -794,5 +792,7 @@
  "Website Design & Development": "网站设计与开发",
  "Business websites, online catalogs, booking tools and web apps — designed and coded in the same studio.": "企业网站、在线目录、预订工具与网页应用 — 在同一家工作室完成设计与开发。",
  "What we build and how it runs →": "我们构建什么，以及如何运作 →",
- "See how we design and build websites →": "看看我们如何设计与搭建网站 →"
+ "See how we design and build websites →": "看看我们如何设计与搭建网站 →",
+ "Start a new chat": "开始新的对话",
+ "Try that answer again": "再回答一次"
 }

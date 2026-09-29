@@ -58,9 +58,8 @@
  "Hours": "Часы работы",
  "Mon–Fri · 9am–6pm GMT": "Пн–Пт · 9:00–18:00 GMT",
  "Work": "Работа",
- "Chat with our robotic assistant": "Чат с нашим роботом-помощником",
- "Robotic AI assistant": "Робот-помощник с AI",
- "Robotic AI Assistant": "Робот-помощник с AI",
+ "Chat with BrownHub Studio Assistance": "Чат с BrownHub Studio Assistance",
+ "BrownHub Studio Assistance": "BrownHub Studio Assistance",
  "Close chat": "Закрыть чат",
  "Toggle menu": "Открыть/закрыть меню",
  "Main navigation": "Основная навигация",
@@ -96,7 +95,6 @@
  "I give quick answers on our website development and graphic design work: services, catalog items, prices, turnaround, ordering and how to reach the team. Try a button below.": "Я коротко отвечаю о нашей разработке сайтов и графическом дизайне: услуги, позиции каталога, цены, сроки, порядок заказа и как связаться с командой. Попробуйте кнопку ниже.",
  "Hello! Great to see you. Ask me anything about our website development or graphic design work — or tap a button below to get started.": "Здравствуйте! Рад вас видеть. Спрашивайте что угодно о наших сайтах и графическом дизайне — или нажмите кнопку ниже, чтобы начать.",
  "I didn't quite catch that. I'm best at quick answers on <strong>website projects</strong> and <strong>graphic design work</strong> — services, catalog items, prices, turnaround, ordering. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "Не совсем понял вопрос. Лучше всего я коротко отвечаю про <strong>веб-проекты</strong> и <strong>графический дизайн</strong> — услуги, позиции каталога, цены, сроки, заказ. Или напишите живому человеку в <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>website development</strong> and <strong>graphic design</strong> work. What can I help with?": "Привет! Я робот-помощник BrownHub. Быстро отвечаю на всё, что касается нашей <strong>разработки сайтов</strong> и <strong>графического дизайна</strong>. Чем помочь?",
  "Design": "Дизайн",
  "Flyer": "Флаер",
  "catalog": "каталог",
@@ -274,7 +272,7 @@
  "Great design is more than making something look good.": "Отличный дизайн — это больше, чем просто красиво.",
  "Great design is more than making something look good. It should communicate a message, represent a brand, connect with an audience and support your business goals.": "Отличный дизайн — это больше, чем просто красиво. Он должен доносить смысл, представлять бренд, находить отклик у аудитории и поддерживать ваши бизнес-цели.",
  "Hello! Great to see you. Ask me anything about our graphic design and branding work — logos, brand identity, print, social media and packaging — or tap a button below to get started.": "Привет! Рады вас видеть. Спрашивайте о нашем графическом дизайне и брендинге — логотипы, фирменный стиль, печать, соцсети и упаковка, — или нажмите кнопку ниже, чтобы начать.",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "Привет! Я робот-ассистент BrownHub. Быстро отвечаю на всё, что касается нашего <strong>графического дизайна</strong> и <strong>брендинга</strong> — логотипы, айдентика, печать, соцсети и упаковка. Чем помочь?",
+ "Hi, I'm BrownHub Studio Assistance. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "Привет! Я BrownHub Studio Assistance. Быстро отвечаю на всё, что касается нашего <strong>графического дизайна</strong> и <strong>брендинга</strong> — логотипы, айдентика, печать, соцсети и упаковка. Чем помочь?",
  "Hosting, maintenance and support": "Хостинг, сопровождение и поддержка",
  "I didn't quite catch that. I'm best at quick answers on <strong>graphic design</strong> and <strong>branding</strong> — logos, brand identity, flyers, business cards, brochures, packaging, social media and print-ready files. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "Я не совсем понял. Лучше всего у меня получаются быстрые ответы про <strong>графический дизайн</strong> и <strong>брендинг</strong> — логотипы, фирменный стиль, флаеры, визитки, брошюры, упаковку, соцсети и файлы для печати. Или напишите живому человеку в <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.",
  "I give quick answers on our design work: services, catalog items, prices, turnaround, ordering, print-ready files and how to reach the team. Try a button below.": "Быстро отвечаю про нашу дизайн-работу: услуги, позиции каталога, цены, сроки, заказ, файлы для печати и как связаться с командой. Нажмите кнопку ниже.",
@@ -794,5 +792,7 @@
  "Website Design & Development": "Дизайн и разработка сайтов",
  "Business websites, online catalogs, booking tools and web apps — designed and coded in the same studio.": "Сайты для компаний, онлайн-каталоги, инструменты бронирования и веб-приложения — спроектированы и написаны в одной студии.",
  "What we build and how it runs →": "Что мы делаем и как это работает →",
- "See how we design and build websites →": "Посмотрите, как мы проектируем и делаем сайты →"
+ "See how we design and build websites →": "Посмотрите, как мы проектируем и делаем сайты →",
+ "Start a new chat": "Начать новый чат",
+ "Try that answer again": "Попробовать ответ ещё раз"
 }

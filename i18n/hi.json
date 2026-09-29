@@ -58,9 +58,8 @@
  "Hours": "समय",
  "Mon–Fri · 9am–6pm GMT": "सोम–शुक्र · सुबह 9 बजे–शाम 6 बजे GMT",
  "Work": "कार्यस्थल",
- "Chat with our robotic assistant": "हमारे रोबोटिक असिस्टेंट से चैट करें",
- "Robotic AI assistant": "रोबोटिक AI असिस्टेंट",
- "Robotic AI Assistant": "रोबोटिक AI असिस्टेंट",
+ "Chat with BrownHub Studio Assistance": "BrownHub Studio Assistance से चैट करें",
+ "BrownHub Studio Assistance": "BrownHub Studio Assistance",
  "Close chat": "चैट बंद करें",
  "Toggle menu": "मेन्यू खोलें-बंद करें",
  "Main navigation": "मुख्य नेविगेशन",
@@ -96,7 +95,6 @@
  "I give quick answers on our website development and graphic design work: services, catalog items, prices, turnaround, ordering and how to reach the team. Try a button below.": "मैं वेबसाइट डेवलपमेंट और ग्राफ़िक डिज़ाइन के हमारे काम पर फ़टी-फ़टी जवाब देता हूं: सेवाएं, कैटलॉग आइटम, कीमतें, टर्नअराउंड, ऑर्डर करने का तरीक़ा और टीम तक कैसे पहुंचें। नीचे कोई बटन दबाकर देखें।",
  "Hello! Great to see you. Ask me anything about our website development or graphic design work — or tap a button below to get started.": "नमस्ते! बहुत ख़ुशी हुई। हमारे वेबसाइट डेवलपमेंट या ग्राफ़िक डिज़ाइन के काम के बारे में कुछ भी पूछें — या शुरू करने के लिए नीचे दिया गया बटन टैप करें।",
  "I didn't quite catch that. I'm best at quick answers on <strong>website projects</strong> and <strong>graphic design work</strong> — services, catalog items, prices, turnaround, ordering. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "यह मैं ठीक से समझ नहीं पाया। <strong>वेबसाइट प्रोजेक्ट्स</strong> और <strong>ग्राफ़िक डिज़ाइन</strong> के काम पर मुझसे फ़टी-फ़टी जवाब मिलते हैं — सेवाएं, कैटलॉग आइटम, कीमतें, टर्नअराउंड, ऑर्डर। या <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> पर किसी इंसान से बात कर लीजिए।",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>website development</strong> and <strong>graphic design</strong> work. What can I help with?": "नमस्ते, मैं BrownHub का रोबोटिक असिस्टेंट हूं। हमारे <strong>वेबसाइट डेवलपमेंट</strong> और <strong>ग्राफ़िक डिज़ाइन</strong> के कामों से जुड़े हर सवाल का तेज़ जवाब दे सकता हूं। बताइए, किस चीज़ में मदद चाहिए?",
  "Design": "डिज़ाइन",
  "Flyer": "Flyer",
  "catalog": "कैटलॉग",
@@ -274,7 +272,7 @@
  "Great design is more than making something look good.": "श्रेष्ठ डिज़ाइन का मतलब सिर्फ़ सुंदर दिखना नहीं है।",
  "Great design is more than making something look good. It should communicate a message, represent a brand, connect with an audience and support your business goals.": "श्रेष्ठ डिज़ाइन का मतलब सिर्फ़ सुंदर दिखना नहीं है। उसे संदेश देना चाहिए, ब्रांड का प्रतिनिधित्व करना चाहिए, दर्शकों से जुड़ना चाहिए और आपके व्यावसायिक लक्ष्यों का सहारा बनना चाहिए।",
  "Hello! Great to see you. Ask me anything about our graphic design and branding work — logos, brand identity, print, social media and packaging — or tap a button below to get started.": "नमस्ते! आपसे मिलकर अच्छा लगा। हमारे ग्राफ़िक डिज़ाइन और ब्रांडिंग कार्य के बारे में कुछ भी पूछें — लोगो, ब्रांड पहचान, प्रिंट, सोशल मीडिया और पैकेजिंग — या शुरू करने के लिए नीचे दिए बटन पर टैप करें।",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "नमस्ते, मैं BrownHub का रोबोटिक सहायक हूँ। हमारे <strong>ग्राफ़िक डिज़ाइन</strong> और <strong>ब्रांडिंग</strong> कार्य से जुड़ी किसी भी बात का तेज़ जवाब देता हूँ — लोगो, पहचान, प्रिंट, सोशल मीडिया और पैकेजिंग। मैं किसमें मदद करूँ?",
+ "Hi, I'm BrownHub Studio Assistance. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "नमस्ते, मैं BrownHub Studio Assistance हूँ। हमारे <strong>ग्राफ़िक डिज़ाइन</strong> और <strong>ब्रांडिंग</strong> कार्य से जुड़ी किसी भी बात का तेज़ जवाब देता हूँ — लोगो, पहचान, प्रिंट, सोशल मीडिया और पैकेजिंग। मैं किसमें मदद करूँ?",
  "Hosting, maintenance and support": "होस्टिंग, रखरखाव और सहायता",
  "I didn't quite catch that. I'm best at quick answers on <strong>graphic design</strong> and <strong>branding</strong> — logos, brand identity, flyers, business cards, brochures, packaging, social media and print-ready files. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "यह मैं ठीक से समझ नहीं पाया। <strong>ग्राफ़िक डिज़ाइन</strong> और <strong>ब्रांडिंग</strong> पर तेज़ जवाब देने में मैं सबसे अच्छा हूँ — लोगो, ब्रांड पहचान, फ़्लायर, विज़िटिंग कार्ड, ब्रोशर, पैकेजिंग, सोशल मीडिया और प्रिंट-के-लिए-तैयार फ़ाइलें। या <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> पर किसी व्यक्ति से संपर्क करें।",
  "I give quick answers on our design work: services, catalog items, prices, turnaround, ordering, print-ready files and how to reach the team. Try a button below.": "हमारे डिज़ाइन कार्य पर तेज़ जवाब देता हूँ: सेवाएँ, कैटलॉग आइटम, कीमतें, कार्य-समय, ऑर्डर, प्रिंट-के-लिए-तैयार फ़ाइलें और टीम से संपर्क कैसे करें। नीचे दिया बटन आज़माएँ।",
@@ -794,5 +792,7 @@
  "Website Design & Development": "वेबसाइट डिज़ाइन और डेवलपमेंट",
  "Business websites, online catalogs, booking tools and web apps — designed and coded in the same studio.": "व्यवसायिक वेबसाइट, ऑनलाइन कैटलॉग, बुकिंग टूल और वेब ऐप्स — एक ही स्टूडियो में डिज़ाइन और कोड।",
  "What we build and how it runs →": "हम क्या बनाते हैं और यह कैसे चलता है →",
- "See how we design and build websites →": "देखें कि हम वेबसाइट कैसे डिज़ाइन और बनाते हैं →"
+ "See how we design and build websites →": "देखें कि हम वेबसाइट कैसे डिज़ाइन और बनाते हैं →",
+ "Start a new chat": "नई चैट शुरू करें",
+ "Try that answer again": "उस उत्तर को फिर से आज़माएँ"
 }

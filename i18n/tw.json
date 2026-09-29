@@ -58,9 +58,8 @@
  "Hours": "Berɛ a Yɛbue",
  "Mon–Fri · 9am–6pm GMT": "Dwoeda–Pfiada · 9am–6pm GMT",
  "Work": "Adwuma",
- "Chat with our robotic assistant": "Di kɔmmɔ wɔ yɛn robot mmoa no ho",
- "Robotic AI assistant": "Robot AI Mmoa",
- "Robotic AI Assistant": "Robot AI Mmoa",
+ "Chat with BrownHub Studio Assistance": "Di kɔmmɔ wɔ BrownHub Studio Assistance ho",
+ "BrownHub Studio Assistance": "BrownHub Studio Assistance",
  "Close chat": "To kɔmmɔ no mu",
  "Toggle menu": "Bue/toto menu",
  "Main navigation": "Kwan a ɛdi mpanim",
@@ -96,7 +95,6 @@
  "I give quick answers on our website development and graphic design work: services, catalog items, prices, turnaround, ordering and how to reach the team. Try a button below.": "Mebu mmuaeɛ a ɛbɔ wɔ yɛn wɛbsaet nsi ne nanhoni nnwuma ho: nnwuma, katɔlog mu nneɛma, boɛ, berɛ a nnwuma twa, order hyɛ, ne sɛnea wobɛdi kuw no ho kɔmmɔ. Bɔ ɔbtn bi a ɛwɔ aseɛ no.",
  "Hello! Great to see you. Ask me anything about our website development or graphic design work — or tap a button below to get started.": "Agoo! Anigyeɛ sɛ wohu me. Bisa me nneɛma biara wɔ yɛn wɛbsaet nsi anaa nanhoni nnwuma ho — anaa twa ɔbtn bi a ɛwɔ aseɛ no na fi ase.",
  "I didn't quite catch that. I'm best at quick answers on <strong>website projects</strong> and <strong>graphic design work</strong> — services, catalog items, prices, turnaround, ordering. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "Mantee saa nkrasɛm no yiye. Me yɛ adwuma papa wɔ mmuaeɛ a ɛbɔ so wɔ <strong>website projects</strong> ne <strong>graphic design work</strong> ho — nnwuma, katɔlog mu nneɛma, boɛ, berɛ a nnwuma twa, order hyɛ. Anaa di ɔnipa ho kɔmmɔ wɔ <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> so.",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>website development</strong> and <strong>graphic design</strong> work. What can I help with?": "Agoo, me ne BrownHub robot mmoa. Mebu mmuaeɛ a ɛbɔ wɔ nneɛma biara ho wɔ yɛn <strong>website development</strong> ne <strong>graphic design</strong> nnwuma mu. Nea mɛboa wo mu ne den?",
  "Design": "Nanhoni",
  "Flyer": "Flyer",
  "catalog": "katɔlog",
@@ -274,7 +272,7 @@
  "Great design is more than making something look good.": "Design pa nyɛ sɛ wohyɛ biribi ma ɛyɛ fɛ ara.",
  "Great design is more than making something look good. It should communicate a message, represent a brand, connect with an audience and support your business goals.": "Design pa nyɛ sɛ wohyɛ biribi ma ɛyɛ fɛ ara. Ɛsɛ sɛ ɛka nsɛm, gyina brand ananmu, kɔɔ nnipa ho nkɔmmɔ, na ɛboa wo nnwuma botaeɛ so.",
  "Hello! Great to see you. Ask me anything about our graphic design and branding work — logos, brand identity, print, social media and packaging — or tap a button below to get started.": "Agoo! Ɛyɛ me anigyeɛ paa sɛ mahwɛ wo. Bisa me biribiara a ɛfa yɛn graphic design ne branding nnwuma ho — logo, brand identity, print, social media ne packaging — anaa mia button a ɛwɔ ase no na fi ase.",
- "Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "Agoo, me ne BrownHub robotic assistant. Mete bua ntuntum wɔ biribiara a ɛfa yɛn <strong>graphic design</strong> ne <strong>branding</strong> nnwuma ho — logo, brand identity, print, social media ne packaging. Biribi foforɔ a mete boa wo?",
+ "Hi, I'm BrownHub Studio Assistance. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?": "Agoo, me ne BrownHub Studio Assistance. Mete bua ntuntum wɔ biribiara a ɛfa yɛn <strong>graphic design</strong> ne <strong>branding</strong> nnwuma ho — logo, brand identity, print, social media ne packaging. Biribi foforɔ a mete boa wo?",
  "Hosting, maintenance and support": "Hosting, nsiesie ne mmoa",
  "I didn't quite catch that. I'm best at quick answers on <strong>graphic design</strong> and <strong>branding</strong> — logos, brand identity, flyers, business cards, brochures, packaging, social media and print-ready files. Or reach a human on <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a>.": "Dente, mate no pefee. M'anim yɛ mpa ɛbu ntuntum a ɛfa <strong>graphic design</strong> ne <strong>branding</strong> ho — logo, brand identity, flyer, business card, brochure, packaging, social media ne files a ɛsɛ print. Anaa kasa kyɛ onipa wɔ <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> so.",
  "I give quick answers on our design work: services, catalog items, prices, turnaround, ordering, print-ready files and how to reach the team. Try a button below.": "Mebua ntuntum wɔ yɛn design nnwuma ho: nnwuma a yɛyɛ, catalog nneɛma, bo, bere a adwuma gye, order hyɛ, files a ɛsɛ print ne sɛnea wobɛhu yɛn kuw no. Mia button bi a ɛwɔ ase.",
@@ -794,5 +792,7 @@
  "Website Design & Development": "Website Hyɛ Ne Nsiesie",
  "Business websites, online catalogs, booking tools and web apps — designed and coded in the same studio.": "Nwuma websites, katɔlog a ɛwɔ online, nhyehyɛe adwumadeɛ ne web apps — wɔhyɛɛ ne siesiee wɔ studio baako mu.",
  "What we build and how it runs →": "Nea yɛsie ne sɛnea ɛkɔ so →",
- "See how we design and build websites →": "Hwɛ sɛnea yɛhyɛ ne yɛsie websites →"
+ "See how we design and build websites →": "Hwɛ sɛnea yɛhyɛ ne yɛsie websites →",
+ "Start a new chat": "Fi kɔmmɔ foforo ase",
+ "Try that answer again": "Fa no yɛ bio"
 }

@@ -89,7 +89,7 @@
 
   const fallback = `I didn't quite catch that. I'm best at quick answers on <strong>graphic design</strong> and <strong>branding</strong> — logos, brand identity, flyers, business cards, brochures, packaging, social media and print-ready files. Or reach a human on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a>.`;
 
-  const greeting = `Hi, I'm the BrownHub robotic assistant. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?`;
+  const greeting = `Hi, I'm BrownHub Studio Assistance. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?`;
 
   const defaultChips = ["Logo & branding", "Social media design", "Catalog items", "Get a quote", "Talk to a human"];
 
@@ -249,24 +249,32 @@
     });
   }
 
-  function send(text, routeAs) {
-    const clean = text.trim();
-    if (!clean) return;
-    addMsg(clean, "user");
-    remember("user", clean);
-    renderChips([]);
+  // The question the visitor last put, kept so the ↻ button can put it again
+  // after an answer that missed. `as` is the English routing string, which a
+  // chip or a catalog button sets apart from what is shown.
+  let lastQ = null;
+  let answering = false;
+
+  function answer(clean, routeAs) {
+    answering = true;
+    syncTools();
     const bubble = typingBubble();
-    const replyWith = (html, source) => {
+    const settle = () => {
       bubble.remove();
-      addMsg(html, "bot");
+      answering = false;
       renderChips(defaultChips);
       focusInput();
+      showHandoff();
+      syncTools();
+    };
+    const replyWith = (html, source) => {
       const said = plainText(html);
+      addMsg(html, "bot");
       // The archive holds the English sentence the studio wrote; the conversation
       // holds what this visitor actually read, because a restored chat must show
       // the answer in the language it was given in.
       remember("model", plainText(T(html)));
-      showHandoff();
+      settle();
       logExchange(clean, said, source);
     };
     // The written answers are instant, cost nothing and have been read over, so
@@ -274,14 +282,49 @@
     const known = matchIntent(routeAs || clean);
     if (known) { setTimeout(() => replyWith(known, "intent"), 550 + Math.random() * 450); return; }
     askModel(clean).then((reply) => {
-      bubble.remove();
       addPlain(reply);
-      renderChips(defaultChips);
-      focusInput();
       remember("model", reply);
-      showHandoff();
+      settle();
       logExchange(clean, reply, "model");
     }).catch(() => replyWith(fallback, "fallback"));
+  }
+
+  function send(text, routeAs) {
+    const clean = text.trim();
+    if (!clean) return;
+    lastQ = { q: clean, as: routeAs || null };
+    addMsg(clean, "user");
+    remember("user", clean);
+    renderChips([]);
+    answer(clean, routeAs);
+  }
+
+  // Asking again, rather than making the visitor type the same question out: the
+  // last answer comes off the screen and off the record, so a retry never leaves
+  // two replies to one question for the studio or for the model to read back.
+  function retry() {
+    if (!lastQ || answering) return;
+    const bots = messages.querySelectorAll(".chat-msg--bot:not(.chat-msg--typing)");
+    if (bots.length) bots[bots.length - 1].remove();
+    for (let i = thread.length - 1; i >= 0; i--) {
+      if (thread[i].role === "model") { thread.splice(i, 1); break; }
+    }
+    keep();
+    answer(lastQ.q, lastQ.as);
+  }
+
+  function newChat() {
+    messages.innerHTML = "";
+    botHistory.length = 0;
+    thread.length = 0;
+    keep();
+    lastQ = null;
+    answering = false;
+    addMsg(greeting, "bot");
+    renderChips(defaultChips);
+    showHandoff();
+    syncTools();
+    focusInput();
   }
 
   // ---- carrying the conversation to a person -----------------------------------
@@ -344,6 +387,61 @@
     handoffText.textContent = T(HANDOFF_LABEL);
   });
 
+  // ---- the panel's own controls --------------------------------------------------
+  // Three glyphs in the header, in the order a visitor reads them: start over,
+  // put the last question again, shut the panel. They are built here rather than
+  // written into the nine pages that carry the panel, so the chat can never have
+  // two buttons on one page and three on the next. The drawings are the site's
+  // own line-icon stroke; only the labels are text, and only ever as attributes,
+  // which the translator does not touch — so each label is set from the
+  // dictionary at build and again on a language switch.
+  const TOOL_NEW = "Start a new chat";
+  const TOOL_RETRY = "Try that answer again";
+  const TOOL_SVG = {
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg>',
+    again: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 12a8.5 8.5 0 1 1-2.49-6.01"/><path d="M20.6 4.2v4.5h-4.5"/></svg>'
+  };
+  const tools = document.createElement("div");
+  tools.className = "chat-widget__tools";
+  function tool(svg, label, fn) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chat-widget__tool";
+    b.innerHTML = svg;
+    b.dataset.label = label;
+    b.setAttribute("aria-label", T(label));
+    b.title = T(label);
+    b.addEventListener("click", fn);
+    tools.appendChild(b);
+    return b;
+  }
+  const newBtn = tool(TOOL_SVG.plus, TOOL_NEW, newChat);
+  const retryBtn = tool(TOOL_SVG.again, TOOL_RETRY, retry);
+  closeBtn.classList.add("chat-widget__tool");
+  const head = panel.querySelector(".chat-widget__head");
+  head.insertBefore(tools, closeBtn);
+  tools.appendChild(closeBtn);
+  // Three glyphs take the width the online line was using, so that line moves out
+  // of the title block and onto a row of its own across the head. It keeps its own
+  // words in every language; only its place changes.
+  const online = head.querySelector(".chat-widget__head-text small");
+  if (online) { online.classList.add("chat-widget__head-sub"); head.appendChild(online); }
+
+  // A control with nothing to do is shown but inert, so the header never changes
+  // width under someone who is reading it.
+  function syncTools() {
+    newBtn.disabled = !thread.length;
+    retryBtn.disabled = !lastQ || answering;
+  }
+
+  document.addEventListener("i18n-applied", () => {
+    for (const b of tools.querySelectorAll(".chat-widget__tool")) {
+      const label = b === closeBtn ? "Close chat" : b.dataset.label;
+      b.setAttribute("aria-label", T(label));
+      b.title = T(label);
+    }
+  });
+
   let greeted = false;
   // A restored conversation is drawn the moment the widget loads, into a panel
   // that is still closed. Doing it here rather than on first opening keeps the
@@ -351,6 +449,7 @@
   // press, say — sends the next message before the panel has ever been seen, and
   // it is why such a visitor is not greeted all over again.
   if (thread.length) { greeted = true; replay(); }
+  syncTools();
   // `auto` marks an opening the assistant did for itself, which must not move
   // focus: a keyboard user's tab order stays where it was and a phone keeps its
   // on-screen keyboard shut until the visitor taps the field.
