@@ -1944,23 +1944,13 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
 .install--qr .install__qr{order:-1}
 
 /* ==========================================================================
-   CATALOG NEON — the shapes answer the pointer.
-   Two layers on the card's own pseudo elements, so no node is inserted and the
-   markup is untouched. ::after is a light that tracks the cursor and rides the
-   nearest edge of every card within reach, which is what makes a shape start to
-   glow before the pointer lands on it; ::before is a band travelling the outline
-   while nobody is pointing. js/neon.js writes --mx/--my/--lit and switches
-   .is-on with visibility, so off-screen cards paint nothing at all.
+   CATALOG NEON — the shapes light themselves up on their own.
+   One layer on the card's own ::before, so no node is inserted and the markup is
+   untouched: a band travels the outline of every card, staggered across the grid
+   by --bh-i. js/neon.js only switches .is-on with visibility, so off-screen cards
+   animate nothing at all.
    ========================================================================== */
 .product-card{position:relative;isolation:isolate;--neon-a:var(--accent-fill)}
-.product-card__body{position:relative;z-index:2;background:var(--surface)}
-
-/* the tracking light: under the caption, over the frame */
-.product-card::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;
-  opacity:0;transition:opacity .22s ease;
-  background:radial-gradient(circle 200px at var(--mx,50%) var(--my,50%),
-    rgba(var(--accent-fill-rgb),.46),rgba(var(--accent-2-rgb),.2) 42%,rgba(var(--accent-2-rgb),0) 72%)}
-.product-card.is-lit::after{opacity:var(--lit,0)}
 
 /* the travelling band, masked down to the outline of the shape. One tile of the
    background is exactly one keyframe of travel, so the loop has no seam. */
@@ -1974,9 +1964,9 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
 .product-card.is-on::before{opacity:.92;animation:bh-neon-orbit 5.4s linear var(--bh-i,0s) infinite}
 @keyframes bh-neon-orbit{from{background-position:0 0}to{background-position:520px 0}}
 
-/* bloom: a resting halo on the shapes in view, brighter once the light is on them */
+/* bloom: a resting halo on the shapes in view, brighter under the pointer */
 .product-card.is-on{box-shadow:0 0 20px -10px rgba(var(--accent-fill-rgb),.55)}
-.product-card.is-on:hover,.product-card.is-lit{
+.product-card.is-on:hover{
   box-shadow:0 0 26px -6px rgba(var(--accent-fill-rgb),.6),0 0 54px -14px rgba(var(--accent-2-rgb),.5)}
 
 /* ==========================================================================
@@ -1994,8 +1984,7 @@ html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view 
 
 @media (prefers-reduced-motion:reduce){
   .product-card::before,.product-card.is-on::before{animation:none;opacity:0}
-  .product-card::after{transition:none}
-  .product-card.is-on,.product-card.is-on:hover,.product-card.is-lit{box-shadow:var(--shadow)}
+  .product-card.is-on,.product-card.is-on:hover{box-shadow:var(--shadow)}
   html.js-scroll .product-card.is-view .media>img,html.js-scroll .shot.is-view .media>img,
   html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view .media::after{
     animation:none}
