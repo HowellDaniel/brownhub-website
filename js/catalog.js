@@ -21,6 +21,71 @@
   var photos = [];
   var shot = 0;
 
+  /* Native-resolution frames (up to 1600px on the long side) pulled from the
+     studio's own WhatsApp Business catalog. Only the modal stage uses them;
+     card covers and the thumb strip keep the light 760px file. Regenerate this
+     list from images/catalog/hi/ whenever more frames are harvested. */
+  var HI = {
+    "book-design-5.jpg": 1,
+    "book-design-6.jpg": 1,
+    "book-design-7.jpg": 1,
+    "book-design-8.jpg": 1,
+    "flyer-4.jpg": 1,
+    "flyer-9.jpg": 1,
+    "funeral-banner-2.jpg": 1,
+    "funeral-banner-3.jpg": 1,
+    "funeral-banner-4.jpg": 1,
+    "funeral-banner-6.jpg": 1,
+    "funeral-banner-7.jpg": 1,
+    "funeral-banner-8.jpg": 1,
+    "funeral-banner-9.jpg": 1,
+    "key-holders-2.jpg": 1,
+    "key-holders.jpg": 1,
+    "label-packaging.jpg": 1,
+    "more-winners-chapel-flyers-2.jpg": 1,
+    "more-winners-chapel-flyers-3.jpg": 1,
+    "more-winners-chapel-flyers-4.jpg": 1,
+    "more-winners-chapel-flyers.jpg": 1,
+    "notepad-design.jpg": 1,
+    "other-flyers-2.jpg": 1,
+    "printing-samples-16.jpg": 1,
+    "printing-samples-17.jpg": 1,
+    "printing-samples-9.jpg": 1,
+    "pull-up-design-10.jpg": 1,
+    "pull-up-design-11.jpg": 1,
+    "pull-up-design-2.jpg": 1,
+    "pull-up-design-3.jpg": 1,
+    "pull-up-design-5.jpg": 1,
+    "pull-up-design-6.jpg": 1,
+    "pull-up-design-7.jpg": 1,
+    "pull-up-design-8.jpg": 1,
+    "pull-up-design-9.jpg": 1,
+    "tshirts-caps-10.jpg": 1,
+    "tshirts-caps-11.jpg": 1,
+    "tshirts-caps-2.jpg": 1,
+    "tshirts-caps-4.jpg": 1,
+    "tshirts-caps-5.jpg": 1,
+    "tshirts-caps-6.jpg": 1,
+    "tshirts-caps-7.jpg": 1,
+    "tshirts-caps-8.jpg": 1,
+    "tshirts-caps-9.jpg": 1,
+    "tshirts-caps.jpg": 1,
+    "winners-chapel-flyer-10.jpg": 1,
+    "winners-chapel-flyer-2.jpg": 1,
+    "winners-chapel-flyer-3.jpg": 1,
+    "winners-chapel-flyer-4.jpg": 1,
+    "winners-chapel-flyer-5.jpg": 1,
+    "winners-chapel-flyer-6.jpg": 1,
+    "winners-chapel-flyer-7.jpg": 1,
+    "winners-chapel-flyer-8.jpg": 1,
+    "winners-chapel-flyer-9.jpg": 1,
+    "winners-chapel-flyer.jpg": 1
+  };
+  function stageSrc(path) {
+    var base = path.split("/").pop();
+    return HI[base] ? "images/catalog/hi/" + base : path;
+  }
+
   var cards = [];
   document.querySelectorAll(".product-card").forEach(function (card) { cards.push(card); });
 
@@ -85,7 +150,8 @@
   function showShot(i) {
     if (!photos.length) return;
     shot = (i + photos.length) % photos.length;
-    img.src = photos[shot];
+    img.removeAttribute("data-fell");
+    img.src = stageSrc(photos[shot]);
     countEl.textContent = (shot + 1) + " / " + photos.length;
     Array.prototype.forEach.call(thumbsWrap.children, function (thumb, n) {
       thumb.classList.toggle("is-active", n === shot);
@@ -93,6 +159,12 @@
       else thumb.removeAttribute("aria-current");
     });
   }
+
+  img.addEventListener("error", function () {
+    if (img.getAttribute("data-fell")) return;
+    img.setAttribute("data-fell", "1");
+    img.src = photos[shot];
+  });
 
   function buildGallery(card) {
     photos = shotsOf(card);
