@@ -1938,3 +1938,7 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
    glass over a dark page, and a camera wants paper behind the dots. */
 .install--qr{max-width:min(430px,calc(100vw - 2rem))}
 .install__qr{flex:none;width:104px;height:104px;padding:5px;border-radius:12px;background:#fff;object-fit:contain}
+
+/* The code leads the card. A visitor decides to scan before they read the
+   sentence, so the square takes the reading-start and the text follows it. */
+.install--qr .install__qr{order:-1}
