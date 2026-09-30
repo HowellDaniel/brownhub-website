@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- GitHub Pages returns no security headers of its own, so the policy that decides
+       which scripts may run travels inside the document. Only frame-ancestors cannot
+       be carried this way; sw.js adds it as a header on every page it serves. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://js.paystack.co; style-src 'self' https://paystack.com; img-src 'self'; font-src 'self'; media-src 'self' blob:; connect-src 'self' https://rmvyrfqyxgupwuzxadyx.supabase.co wss://rmvyrfqyxgupwuzxadyx.supabase.co https://api.paystack.co https://formsubmit.co; frame-src 'self' https://formsubmit.co https://checkout.paystack.com https://paystack.com https://maps.google.com; form-action 'self' https://formsubmit.co; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Design &amp; Print Catalog in Accra — BrownHub</title>
   <meta name="description" content="Browse the BrownHub catalog right on the website — graphic design products, branding packages, and more. Tap any item for details and ordering.">
@@ -30,7 +35,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrownHub Studio">
   <link rel="preload" href="fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=81">
+  <link rel="stylesheet" href="css/style.css?v=82">
   <script src="js/theme.js"></script><script src="js/player.js?v=1"></script><script src="js/voice.js?v=1"></script>
 </head>
 <body data-nav="catalog">
@@ -395,7 +400,7 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=28"></script><script src="js/translate.js?v=81"></script><script src="js/app.js?v=2"></script>
+  <script src="js/main.js?v=29"></script><script src="js/translate.js?v=81"></script><script src="js/app.js?v=3"></script>
 
   <div class="chat-widget">
     <button class="chat-widget__toggle" id="chatToggle" aria-expanded="false" aria-controls="chatPanel" title="Chat with BrownHub Studio Assistance">
@@ -428,7 +433,7 @@
     <div class="modal__card">
       <button class="modal__close" type="button" aria-label="Close" data-close-modal>&times;</button>
       <div class="modal__gal" id="product-modal-gal">
-        <img class="modal__img" id="product-modal-img" src="" alt="">
+        <img class="modal__img" id="product-modal-img" alt="">
         <button class="modal__gal-nav modal__gal-nav--prev" type="button" id="product-modal-prev" aria-label="Previous photo" hidden>&#8249;</button>
         <button class="modal__gal-nav modal__gal-nav--next" type="button" id="product-modal-next" aria-label="Next photo" hidden>&#8250;</button>
         <span class="modal__gal-count" id="product-modal-count" hidden></span>
@@ -450,7 +455,7 @@
     </div>
   </div>
 
-  <script src="js/catalog.js?v=8"></script>
+  <script src="js/catalog.js?v=9"></script>
   <script src="js/chat.js?v=29"></script><script src="js/accounts.js?v=18"></script><script src="js/store.js?v=20"></script>
   <script src="js/scroll.js?v=3"></script>
   <script src="js/nav.js?v=4"></script><script src="js/search.js?v=8"></script><script src="js/cookies.js?v=5"></script><script src="js/social.js?v=1"></script>

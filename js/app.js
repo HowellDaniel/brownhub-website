@@ -16,6 +16,12 @@
   var deferred = null;
   var pill = null;
 
+  var phone = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+  // The printed and on-screen code points at ?app=1, which is the one address that
+  // reopens this card on the phone that arrives through it — a phone that has
+  // already refused the app once would otherwise stay silent.
+  var asked = /[?&]app=1(?:&|$)/.test(location.search);
+
   function remembered() {
     try { return localStorage.getItem(KEY) === "off"; } catch (e) { return false; }
   }
@@ -29,15 +35,29 @@
   }
 
   function show(how) {
-    if (pill || standalone || remembered()) return;
+    if (pill || standalone || (remembered() && !asked)) return;
     pill = doc.createElement("div");
-    pill.className = "install";
+    pill.className = "install" + (how === "qr" ? " install--qr" : "");
     pill.setAttribute("role", "region");
     pill.setAttribute("aria-label", tr("Install the BrownHub Studio app"));
 
     var text = doc.createElement("p");
-    text.textContent = how === "ios" ? tr("On iPhone: tap Share, then Add to Home Screen.") : tr("Install the BrownHub Studio app");
+    text.textContent = how === "ios" ? tr("On iPhone: tap Share, then Add to Home Screen.")
+      : how === "qr" ? tr("Scan this with your phone camera to open BrownHub Studio.")
+      : tr("Install the BrownHub Studio app");
     pill.appendChild(text);
+
+    if (how === "qr") {
+      // A still image rather than a canvas drawn at run time: it is the same file
+      // the studio prints on a card, so what a visitor scans is what we verified.
+      var code = doc.createElement("img");
+      code.className = "install__qr";
+      code.src = "images/qr-app.png";
+      code.width = 104;
+      code.height = 104;
+      code.alt = tr("QR code linking to the BrownHub Studio app");
+      pill.appendChild(code);
+    }
 
     if (how === "chrome" && deferred) {
       var go = doc.createElement("button");
@@ -77,8 +97,15 @@
   });
 
   // Safari on iOS never fires beforeinstallprompt, so the pill carries the gesture
-  // instead of a button.
+  // instead of a button. Desktop browsers that never fire it either — Safari and
+  // Firefox on the Mac — get the code to scan, which is how a visitor on a laptop
+  // ends up with the app on the phone in their pocket.
   var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  if (ios && !window.MSStream) setTimeout(function () { show("ios"); }, 2500);
+  setTimeout(function () {
+    if (deferred) show("chrome");
+    else if (ios && !window.MSStream) show("ios");
+    else if (!phone) show("qr");
+    else if (asked) show("plain");
+  }, 2500);
 })();

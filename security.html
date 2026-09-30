@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- GitHub Pages returns no security headers of its own, so the policy that decides
+       which scripts may run travels inside the document. Only frame-ancestors cannot
+       be carried this way; sw.js adds it as a header on every page it serves. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://js.paystack.co; style-src 'self' https://paystack.com; img-src 'self'; font-src 'self'; media-src 'self' blob:; connect-src 'self' https://rmvyrfqyxgupwuzxadyx.supabase.co wss://rmvyrfqyxgupwuzxadyx.supabase.co https://api.paystack.co https://formsubmit.co; frame-src 'self' https://formsubmit.co https://checkout.paystack.com https://paystack.com https://maps.google.com; form-action 'self' https://formsubmit.co; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Security — BrownHub</title>
   <meta name="description" content="How brownhub283.com is built and protected: static pages over HTTPS, Supabase sign-in with phone codes, Paystack checkout, spam gates, and how to report an issue.">
@@ -30,7 +35,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrownHub Studio">
   <link rel="preload" href="fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=81">
+  <link rel="stylesheet" href="css/style.css?v=82">
   <script src="js/theme.js"></script><script src="js/player.js?v=1"></script><script src="js/voice.js?v=1"></script>
 </head>
 <body data-nav="security">
@@ -69,7 +74,7 @@
     <section class="page-hero">
       <div class="container">
         <h1>Security</h1>
-        <p>Updated 26 September 2026. How this site is built, where your data actually goes, and how to tell us about a problem.</p>
+        <p>Updated 30 September 2026. How this site is built, where your data actually goes, and how to tell us about a problem.</p>
       </div>
     </section>
 
@@ -79,14 +84,15 @@
         <ul>
           <li><a href="#1">The short version</a></li>
           <li><a href="#2">How the site is served</a></li>
-          <li><a href="#3">Accounts and signing in</a></li>
-          <li><a href="#4">Payments</a></li>
-          <li><a href="#5">Forms, spam and abuse</a></li>
-          <li><a href="#6">The chat assistant</a></li>
-          <li><a href="#7">What this site keeps on your device</a></li>
-          <li><a href="#8">What we never store</a></li>
-          <li><a href="#9">Third parties involved</a></li>
-          <li><a href="#10">Reporting a security problem</a></li>
+          <li><a href="#3">What the browser is told to allow</a></li>
+          <li><a href="#4">Accounts and signing in</a></li>
+          <li><a href="#5">Payments</a></li>
+          <li><a href="#6">Forms, spam and abuse</a></li>
+          <li><a href="#7">The chat assistant</a></li>
+          <li><a href="#8">What this site keeps on your device</a></li>
+          <li><a href="#9">What we never store</a></li>
+          <li><a href="#10">Third parties involved</a></li>
+          <li><a href="#11">Reporting a security problem</a></li>
         </ul>
       </nav>
       <div class="legal">
@@ -97,28 +103,33 @@
         <h2 id="2">How the site is served</h2>
         <p>The pages are published from a private repository on GitHub Pages and delivered over HTTPS at <a href="https://www.brownhub283.com">brownhub283.com</a>. There is no content management system, no plugins and no server-side form to patch, which removes most of the attack surface a normal website carries.</p>
         <p>Because the pages are static, anything you type into them goes only where this page tells you it goes. There is no hidden analytics pipeline.</p>
-        <h2 id="3">Accounts and signing in</h2>
+        <h2 id="3">What the browser is told to allow</h2>
+        <p>Every page carries a content security policy: a written list, shipped inside the document itself, of the code and services a browser may load here. Only BrownHub's own scripts run. The one outside script permitted is Paystack's checkout, and the site will only send data to the payment, form-relay and account services named on this page &mdash; so a page that has been tricked into asking for something else is refused by your browser before the request ever leaves.</p>
+        <p>Pages also refuse to be placed inside a frame on another website, which is how a look-alike page gets a visitor to type a password into someone else's form. Alongside that, browsers are told not to hand full page addresses to third parties, and this site's pages give up the right to reach the camera, location, screen capture, USB and Bluetooth ports and the motion sensors &mdash; none of which a design studio has a reason to ask for. The microphone stays available because you chose it: the voice-note button records only after you press it, and your browser asks again the first time.</p>
+        <p>The site's build also excludes the server-side functions, the database layout and the mobile app source, so nothing that runs privately is published at a public URL. Those files stay in the private repository; they are simply no longer shipped out with the pages.</p>
+        <p>No website is unhackable and we will not claim otherwise. What this layer does is make the ordinary attacks &mdash; an injected script, a framed fake login, a page tricked into talking to a server nobody chose &mdash; fail in the open instead of quietly.</p>
+        <h2 id="4">Accounts and signing in</h2>
         <p>The optional &ldquo;My requests&rdquo; area is handled by Supabase. Passwords are salted and hashed by that provider and are never stored in readable form by BrownHub; we cannot see yours, and no one writing to us can reset it without going through the same sign-in flow you use.</p>
         <p>A confirmed phone number adds a one-time code by text message as a second step. The code is delivered by our SMS provider and expires on its own.</p>
         <p><strong>BrownHub staff will never ask for your password or for a code sent to your phone.</strong> If anyone claims to be us and asks, do not send it. Report it instead, at the address further down this page.</p>
-        <h2 id="4">Payments</h2>
+        <h2 id="5">Payments</h2>
         <p>Checkout runs in Paystack's hosted window. Paystack holds the card and mobile money credentials; BrownHub receives only the item, the amount and a reference. Card details therefore never reach this website, our code or our mailbox.</p>
         <p>Prices are shown in Ghana cedis and are confirmed in your quote before payment is requested.</p>
-        <h2 id="5">Forms, spam and abuse</h2>
+        <h2 id="6">Forms, spam and abuse</h2>
         <p>The contact form and the voice-note uploads are relayed to our mailbox by FormSubmit. They carry a hidden field that a human never fills in and a short minimum time before a send is accepted, both of which stop the great majority of automated submissions without affecting you.</p>
         <p>Submissions that trip those checks are dropped silently; the sender still sees a confirmation, so a bot gets no signal about what stopped it.</p>
         <p>The upload fields accept audio files of a bounded size and type. Nothing you send there is published anywhere on the site.</p>
-        <h2 id="6">The chat assistant</h2>
+        <h2 id="7">The chat assistant</h2>
         <p>The assistant in the corner answers from a written fact sheet about this studio. Your message travels to a single server-side function, which forwards it to the model and returns the answer. The key for that model lives in the function's configuration on the server, never in the browser, and the function refuses requests that arrive from any site other than this one. Each question and its answer are also filed in a log the studio can read, under a random code for your browser rather than your name; the database rule that accepts those entries lets a browser write and never lets it read.</p>
         <p>It is still a third-party AI service. Ask it about prices, lead times and what we do; do not type an address book, a password or anything you would not send in an email.</p>
-        <h2 id="7">What this site keeps on your device</h2>
+        <h2 id="8">What this site keeps on your device</h2>
         <p>Your chosen language, the dark or light theme, the state of your sign-in session, your cookie choice, and a random code that ties the chat assistant's answers to one conversation. That is the whole list, and you can inspect or clear it in your browser at any time.</p>
         <p>The <a href="privacy.html" data-cookie-preferences>Cookie preferences</a> window records what is allowed. Accepting or rejecting changes only what is stored in your own browser, and rejecting non-essential categories does not remove any part of the site.</p>
-        <h2 id="8">What we never store</h2>
+        <h2 id="9">What we never store</h2>
         <p>Card numbers, PINs, CVV codes, bank passwords, online-banking credentials, account passwords in readable form, or one-time codes. Not in a database, not in an email, not in a chat log.</p>
-        <h2 id="9">Third parties involved</h2>
+        <h2 id="10">Third parties involved</h2>
         <p>GitHub Pages serves the pages. Supabase provides sign-in, request history and the chat log. Paystack processes payments. FormSubmit relays the contact form and the voice notes. An SMS provider delivers verification codes. A large-language-model provider answers the chat assistant through our own relay. Each of them is bound by its own privacy policy and terms, and this page names them so that nothing is passed off as happening &ldquo;in the cloud&rdquo;.</p>
-        <h2 id="10">Reporting a security problem</h2>
+        <h2 id="11">Reporting a security problem</h2>
         <p>If you find a weakness on this site, or you believe a BrownHub account or a message from us is not what it claims to be, write to <a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a> with the word <em>security</em> in the subject line. Please send it to us directly rather than posting it publicly, so there is time to fix it first.</p>
         <p>You can also reach the studio on WhatsApp at <a href="https://wa.me/233502954541" target="_blank" rel="noopener">+233 50 295 4541</a>, or read how personal details are handled in the <a href="privacy.html">privacy policy</a> and the working terms on the <a href="legal.html">legal page</a>.</p>
       </div>
@@ -205,7 +216,7 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=28"></script><script src="js/translate.js?v=81"></script><script src="js/app.js?v=2"></script>
+  <script src="js/main.js?v=29"></script><script src="js/translate.js?v=81"></script><script src="js/app.js?v=3"></script>
 
   <div class="chat-widget">
     <button class="chat-widget__toggle" id="chatToggle" aria-expanded="false" aria-controls="chatPanel" title="Chat with BrownHub Studio Assistance">

@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <!-- GitHub Pages returns no security headers of its own, so the policy that decides
+       which scripts may run travels inside the document. Only frame-ancestors cannot
+       be carried this way; sw.js adds it as a header on every page it serves. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' https://js.paystack.co; style-src 'self' https://paystack.com; img-src 'self'; font-src 'self'; media-src 'self' blob:; connect-src 'self' https://rmvyrfqyxgupwuzxadyx.supabase.co wss://rmvyrfqyxgupwuzxadyx.supabase.co https://api.paystack.co https://formsubmit.co; frame-src 'self' https://formsubmit.co https://checkout.paystack.com https://paystack.com https://maps.google.com; form-action 'self' https://formsubmit.co; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Offline — BrownHub</title>
@@ -15,29 +20,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrownHub Studio">
-  <style>
-    /* Self-contained on purpose: this page has to render with no network at all,
-       so it cannot depend on the stylesheet being in cache. */
-    :root { color-scheme: dark; }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 1.5rem;
-      background: #1b0b0c; color: #fffbf7;
-      font: 400 1rem/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      text-align: center;
-    }
-    .off { max-width: 30rem; display: grid; gap: 1.1rem; justify-items: center; }
-    .off img { width: 132px; height: 33px; }
-    .off h1 { margin: 0; font-size: 1.5rem; letter-spacing: -.01em; }
-    .off p { margin: 0; color: rgba(255, 251, 247, .72); font-size: .95rem; }
-    .off a {
-      display: inline-block; padding: .7rem 1.3rem; border-radius: 999px; text-decoration: none;
-      font-size: .92rem; font-weight: 600;
-    }
-    .off .go { background: #fffbf7; color: #1b0b0c; }
-    .off .alt { border: 1px solid rgba(255, 251, 247, .35); color: #fffbf7; }
-    .off nav { display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; }
-  </style>
+  <link rel="stylesheet" href="css/offline.css?v=1">
 </head>
 <body>
   <main class="off">

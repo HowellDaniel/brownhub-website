@@ -1911,3 +1911,30 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
 /* Shown under the budget picker only once a service has taken ranges away, so the
    client never wonders why the small numbers vanished. */
 .form-note{margin:.4rem 0 0;color:var(--text-muted);font-size:.8rem;line-height:1.45}
+
+/* The pointer glow and the drifting hero cards. This moved out of a <style> tag
+   that js/main.js used to inject at run time, because the content policy lets
+   only a shipped file paint: main.js still creates the div and writes the pointer
+   position onto it, which CSSOM allows. The media query is the reason the JS guard
+   and the CSS agree — nobody with reduced motion gets either. */
+@media (prefers-reduced-motion:no-preference){
+.interactive-background{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:radial-gradient(circle at var(--pointer-x,50%) var(--pointer-y,35%),rgba(var(--accent-rgb),.14),transparent 28rem),radial-gradient(circle at 85% 15%,rgba(var(--accent-2-rgb),.12),transparent 24rem)}
+.interactive-background::before,.interactive-background::after{content:"";position:absolute;width:22rem;height:22rem;border-radius:50%;filter:blur(70px);opacity:.16;animation:brownhub-float 14s ease-in-out infinite alternate}
+.interactive-background::before{left:8%;top:18%;background:var(--accent)}
+.interactive-background::after{right:8%;bottom:12%;background:var(--accent-2);opacity:.09;animation-delay:-6s}
+@keyframes brownhub-float{from{transform:translate3d(-2rem,1rem,0) scale(.9)}to{transform:translate3d(2rem,-2rem,0) scale(1.1)}}
+.hero__card{will-change:transform}
+.hero__card--1{animation:hero-card-float-one 5s ease-in-out infinite}
+.hero__card--2{animation:hero-card-float-two 6s ease-in-out -1.5s infinite}
+.hero__card--3{animation:hero-card-float-three 5.5s ease-in-out -3s infinite}
+@keyframes hero-card-float-one{0%{transform:translate3d(-18px,10px,0) rotate(-6deg)}25%{transform:translate3d(20px,-8px,0) rotate(2deg)}50%{transform:translate3d(12px,-24px,0) rotate(4deg)}75%{transform:translate3d(-16px,-14px,0) rotate(-2deg)}100%{transform:translate3d(-18px,10px,0) rotate(-6deg)}}
+@keyframes hero-card-float-two{0%{transform:translate3d(26px,-16px,0) rotate(5deg)}33%{transform:translate3d(-10px,-28px,0) rotate(-2deg)}66%{transform:translate3d(10px,6px,0) rotate(3deg)}100%{transform:translate3d(26px,-16px,0) rotate(5deg)}}
+@keyframes hero-card-float-three{0%{transform:translate3d(-16px,-10px,0) rotate(-3deg)}25%{transform:translate3d(18px,-18px,0) rotate(4deg)}50%{transform:translate3d(28px,8px,0) rotate(0deg)}75%{transform:translate3d(-8px,10px,0) rotate(-5deg)}100%{transform:translate3d(-16px,-10px,0) rotate(-3deg)}}
+@media (max-width:700px){.interactive-background::before,.interactive-background::after{width:14rem;height:14rem;filter:blur(50px)}}
+}
+
+/* The desktop install card carries a code to scan, so it takes the width the
+   one-line toast never needed, and the code sits on a white plate: the card is
+   glass over a dark page, and a camera wants paper behind the dots. */
+.install--qr{max-width:min(430px,calc(100vw - 2rem))}
+.install__qr{flex:none;width:104px;height:104px;padding:5px;border-radius:12px;background:#fff;object-fit:contain}

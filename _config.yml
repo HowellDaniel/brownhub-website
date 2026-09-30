@@ -2,3 +2,14 @@
 # Pay reads to verify this domain — has to be pulled back in explicitly.
 include:
   - ".well-known"
+
+# The repository is the deployment, so anything left in the build is published at
+# a public URL. These three hold server-side source: the Edge Functions read their
+# secrets from Deno.env but their request-signing and origin rules are plain text,
+# and sql/supabase-schema.sql hands out the table and row-level-security layout.
+# None of it is ever linked from a page, so the site loses nothing by not shipping
+# it — and an attacker loses the map of it.
+exclude:
+  - "supabase"
+  - "sql"
+  - "mobile"

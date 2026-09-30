@@ -1,6 +1,6 @@
-const CACHE = "brownhub-v3";
+const CACHE = "brownhub-v4";
 const OFFLINE = "/offline.html";
-const SHELL = [OFFLINE, "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png",
+const SHELL = [OFFLINE, "/css/offline.css?v=1", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png",
   "/icons/maskable-512.png", "/icons/apple-touch-icon.png", "/images/logo.png", "/images/favicon.png"];
 
 // Anything served from another origin — Supabase auth, the chat proxy, Paystack —
@@ -28,6 +28,31 @@ function freshen(res) {
   return res;
 }
 
+// GitHub Pages answers with no security headers whatsoever. A page's own
+// <meta> can carry the content policy, but frame-ancestors is ignored when it
+// arrives that way, and no meta at all can ask for the rest — so every page this
+// worker returns, live or from cache, gets the headers the host will not send.
+const PAGE_HEADERS = {
+  "content-security-policy": "frame-ancestors 'self'",
+  "x-frame-options": "SAMEORIGIN",
+  "x-content-type-options": "nosniff",
+  "referrer-policy": "strict-origin-when-cross-origin",
+  // Everything the studio's own pages never touch. Microphone and clipboard stay
+  // open on purpose: the voice note and the copy-account button both need them.
+  "permissions-policy": "camera=(), geolocation=(), accelerometer=(), gyroscope=(), " +
+    "magnetometer=(), usb=(), bluetooth=(), serial=(), hid=(), midi=(), " +
+    "display-capture=(), idle-detection=(), interest-cohort=()",
+};
+
+function guard(res) {
+  if (!res || res.status !== 200 || res.type !== "basic") return res;
+  try {
+    const h = new Headers(res.headers);
+    for (const k in PAGE_HEADERS) if (!h.get(k)) h.set(k, PAGE_HEADERS[k]);
+    return new Response(res.body, { status: res.status, statusText: res.statusText, headers: h });
+  } catch (err) { return res; }
+}
+
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
@@ -38,8 +63,8 @@ self.addEventListener("fetch", (e) => {
   if (req.mode === "navigate") {
     e.respondWith(
       fetch(req)
-        .then((res) => freshen(res))
-        .catch(() => caches.match(req).then((hit) => hit || caches.match(OFFLINE)))
+        .then((res) => { freshen(res); return guard(res); })
+        .catch(() => caches.match(req).then((hit) => hit || caches.match(OFFLINE)).then(guard))
     );
     return;
   }

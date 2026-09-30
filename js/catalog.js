@@ -161,7 +161,10 @@
   }
 
   img.addEventListener("error", function () {
-    if (img.getAttribute("data-fell")) return;
+    // photos goes empty when another product's gallery has been built since the
+    // frame that failed was chosen, and an undefined index would put the literal
+    // string "undefined" into src and fire a second, pointless request.
+    if (img.getAttribute("data-fell") || !photos.length) return;
     img.setAttribute("data-fell", "1");
     img.src = photos[shot];
   });
