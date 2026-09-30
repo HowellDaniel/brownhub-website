@@ -52,7 +52,7 @@
       // the studio prints on a card, so what a visitor scans is what we verified.
       var code = doc.createElement("img");
       code.className = "install__qr";
-      code.src = "images/qr-app.png";
+      code.src = "images/qr-app.png?v=2";
       code.width = 104;
       code.height = 104;
       code.alt = tr("QR code linking to the BrownHub Studio app");
