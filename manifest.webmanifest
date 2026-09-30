@@ -23,7 +23,7 @@
     {
       "name": "Catalog",
       "short_name": "Catalog",
-      "description": "Twenty finished jobs, photographed",
+      "description": "Twenty-four finished jobs, photographed",
       "url": "/catalog.html?source=pwa",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
