@@ -1942,3 +1942,61 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
 /* The code leads the card. A visitor decides to scan before they read the
    sentence, so the square takes the reading-start and the text follows it. */
 .install--qr .install__qr{order:-1}
+
+/* ==========================================================================
+   CATALOG NEON — the shapes answer the pointer.
+   Two layers on the card's own pseudo elements, so no node is inserted and the
+   markup is untouched. ::after is a light that tracks the cursor and rides the
+   nearest edge of every card within reach, which is what makes a shape start to
+   glow before the pointer lands on it; ::before is a band travelling the outline
+   while nobody is pointing. js/neon.js writes --mx/--my/--lit and switches
+   .is-on with visibility, so off-screen cards paint nothing at all.
+   ========================================================================== */
+.product-card{position:relative;isolation:isolate;--neon-a:var(--accent-fill)}
+.product-card__body{position:relative;z-index:2;background:var(--surface)}
+
+/* the tracking light: under the caption, over the frame */
+.product-card::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;
+  opacity:0;transition:opacity .22s ease;
+  background:radial-gradient(circle 200px at var(--mx,50%) var(--my,50%),
+    rgba(var(--accent-fill-rgb),.46),rgba(var(--accent-2-rgb),.2) 42%,rgba(var(--accent-2-rgb),0) 72%)}
+.product-card.is-lit::after{opacity:var(--lit,0)}
+
+/* the travelling band, masked down to the outline of the shape. One tile of the
+   background is exactly one keyframe of travel, so the loop has no seam. */
+.product-card::before{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;
+  padding:2.5px;background-repeat:repeat;background-size:520px 100%;background-position:0 0;
+  background-image:linear-gradient(90deg,transparent 0 30%,rgba(var(--accent-2-rgb),.6) 42%,
+    var(--neon-a) 50%,rgba(var(--accent-2-rgb),.6) 58%,transparent 70% 100%);
+  opacity:0;transition:opacity .5s ease;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude}
+.product-card.is-on::before{opacity:.92;animation:bh-neon-orbit 5.4s linear var(--bh-i,0s) infinite}
+@keyframes bh-neon-orbit{from{background-position:0 0}to{background-position:520px 0}}
+
+/* bloom: a resting halo on the shapes in view, brighter once the light is on them */
+.product-card.is-on{box-shadow:0 0 20px -10px rgba(var(--accent-fill-rgb),.55)}
+.product-card.is-on:hover,.product-card.is-lit{
+  box-shadow:0 0 26px -6px rgba(var(--accent-fill-rgb),.6),0 0 54px -14px rgba(var(--accent-2-rgb),.5)}
+
+/* ==========================================================================
+   THE CLIP PLAYS WHILE THE FRAME IS ON SCREEN.
+   bh-clip-intro fired once on first sight and the loop hung off :hover, so a
+   touch visitor — who has no hover at all — never saw a catalog frame move, and a
+   desktop visitor saw one 2.6s drift that never repeated. is-view is toggled by
+   an observer in js/scroll.js; the loop is delayed by exactly the intro so the
+   first-sight gesture still plays before the running clip takes over.
+   ========================================================================== */
+html.js-scroll .product-card.is-view .media>img,html.js-scroll .shot.is-view .media>img{
+  animation:bh-clip-intro 2.6s ease-out 1,bh-clip-loop 13s ease-in-out 2.6s infinite}
+html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view .media::after{
+  animation:bh-scrub 13s linear 2.6s infinite}
+
+@media (prefers-reduced-motion:reduce){
+  .product-card::before,.product-card.is-on::before{animation:none;opacity:0}
+  .product-card::after{transition:none}
+  .product-card.is-on,.product-card.is-on:hover,.product-card.is-lit{box-shadow:var(--shadow)}
+  html.js-scroll .product-card.is-view .media>img,html.js-scroll .shot.is-view .media>img,
+  html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view .media::after{
+    animation:none}
+}

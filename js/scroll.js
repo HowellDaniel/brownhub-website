@@ -43,8 +43,17 @@
     }
   }, { rootMargin: "0px 0px -6% 0px", threshold: 0.08 });
 
+  /* A frame plays its clip while it is on screen, not once on first sight: the
+     loop used to hang off :hover, which no touch device ever gives it. */
+  const play = new IntersectionObserver((entries) => {
+    for (const e of entries) e.target.classList.toggle("is-view", e.isIntersecting);
+  }, { rootMargin: "120px 0px", threshold: 0.05 });
+
   function scan() {
-    doc.querySelectorAll(FRAMES).forEach((el) => tag(el, "frame"));
+    doc.querySelectorAll(FRAMES).forEach((el) => {
+      tag(el, "frame");
+      if (!el.dataset.playwatched) { el.dataset.playwatched = "1"; play.observe(el); }
+    });
     doc.querySelectorAll(RISES).forEach((el) => tag(el, "rise"));
     io.takeRecords();
     doc.querySelectorAll("[data-rv]:not(.is-in)").forEach((el) => {
