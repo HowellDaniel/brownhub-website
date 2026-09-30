@@ -96,9 +96,12 @@ arranged over WhatsApp.
 CATALOG ITEMS ON THE SITE
 ABS Board, All Types of Frames, Book Design (Inside and Cover), Flag Designing & Printing,
 Flyer, Food & Drinks Flyers, Funeral Banner, Funeral Poster & Invitation Cards, Funeral Rosettes
-and Designs, Handkerchief, ID Tags & Lanyards, More Food Flyers, Other Flyers, Other Food
-Flyers, Paper Bags Mugs & Flasks, Product Labels Printing, Pull Up Design Backdrop and
-Printing, Sample of Printing, T-Shirts & Caps, Winners' Chapel International Flyer. Catalog
+and Designs, Handkerchief, ID Tags & Lanyards, Key Holders, More Food Flyers,
+More Winners' Chapel Flyers, Notepad Design, Other Flyers, Other Food Flyers,
+Packaging Box Sleeves, Paper Bags Mugs & Flasks, Product Labels Printing, Pull Up Design
+Backdrop and Printing, Sample of Printing, T-Shirts & Caps, Winners' Chapel International Flyer.
+That is the whole catalog — if a visitor asks for something not on that list, say we have not
+listed it but can usually make it, and point them to WhatsApp. Catalog
 items are not priced on the page: their price is confirmed on WhatsApp from sizes, quantity and
 deadline. Merchandise such as t-shirts, caps, tags, mugs and flasks is printed with the
 client's own logo or artwork.

@@ -53,6 +53,10 @@
     { g: "Catalog", t: "Paper Bags, Mugs & Flasks", h: "catalog.html?q=Paper%20Bags%2C%20Mugs%20%26%20Flasks", k: "paper bag mug flask bottle branded gift retail print" },
     { g: "Catalog", t: "Funeral Rosettes and Designs", h: "catalog.html?q=Funeral%20Rosettes%20and%20Designs", k: "funeral rosette memorial cloth portrait tribute design" },
     { g: "Catalog", t: "Funeral Poster & Invitation Cards", h: "catalog.html?q=Funeral%20Poster%20%26%20Invitation%20Cards", k: "funeral poster invitation card memorial programme obituary" },
+    { g: "Catalog", t: "Key Holders", h: "catalog.html?q=Key%20Holders", k: "key holder ring medallion logo portrait gift branded" },
+    { g: "Catalog", t: "Packaging Box Sleeves", h: "catalog.html?q=Packaging%20Box%20Sleeves", k: "packaging box sleeve band wrap kraft brand label" },
+    { g: "Catalog", t: "Notepad Design", h: "catalog.html?q=Notepad%20Design", k: "notepad jotter diary notebook stationery office gift" },
+    { g: "Catalog", t: "More Winners' Chapel Flyers", h: "catalog.html?q=More%20Winners%27%20Chapel%20Flyers", k: "church programme flyer event service banquet winners chapel" },
 
     { g: "Pages", t: "Privacy policy", h: "privacy.html", k: "privacy policy data personal information" },
     { g: "Pages", t: "Legal", h: "legal.html", k: "legal terms of business contract payment ownership cancellation" },
