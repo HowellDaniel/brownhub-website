@@ -150,6 +150,7 @@
   function showShot(i) {
     if (!photos.length) return;
     shot = (i + photos.length) % photos.length;
+    unzoom();
     img.removeAttribute("data-fell");
     img.src = stageSrc(photos[shot]);
     countEl.textContent = (shot + 1) + " / " + photos.length;
@@ -213,6 +214,7 @@
   }
 
   function close() {
+    unzoom();
     modal.classList.remove("open");
     document.body.style.overflow = "";
   }
@@ -240,6 +242,9 @@
 
   var swipeX = null;
   gal.addEventListener("touchstart", function (e) {
+    // An enlarged picture pans under the finger instead; flipping the photo in the
+    // middle of a pan would be the worst possible surprise.
+    if (zoom.s > 1) { swipeX = null; return; }
     swipeX = e.touches.length === 1 ? e.touches[0].clientX : null;
   }, { passive: true });
   gal.addEventListener("touchend", function (e) {
@@ -325,4 +330,143 @@
       applyFilter(seeded, false);
     }
   }
+
+  /* ---- a closer look ----
+     The gallery already clips, so the picture itself is what scales inside it. A
+     tap opens up on the point that was touched, a second tap lets go, the enlarged
+     picture drags around, and two fingers scale it. Deliberately no control and no
+     label: the cursor and the picture are the whole affordance, which also keeps
+     this out of the dictionaries. */
+  var ZOOM_IN = 2.5;
+  var ZOOM_MAX = 4;
+  var zoom = { s: 1, x: 0, y: 0 };
+  var down = [];            // [pointerId, clientX, clientY] for the pointers held down
+  var pinch = null;         // { d: distance the pinch started at, s: scale it started at }
+  var press = null;         // the one-finger press being watched for a tap
+
+  function pair() {
+    return down.length >= 2 ? [down[0], down[1]] : null;
+  }
+  function spread(p) {
+    return Math.sqrt(Math.pow(p[0][1] - p[1][1], 2) + Math.pow(p[0][2] - p[1][2], 2)) || 1;
+  }
+  function centre(p) {
+    return { x: (p[0][1] + p[1][1]) / 2, y: (p[0][2] + p[1][2]) / 2 };
+  }
+
+  function paint() {
+    var on = zoom.s > 1;
+    gal.classList.toggle("is-zoom", on);
+    img.style.transform = on
+      ? "translate(" + zoom.x.toFixed(1) + "px," + zoom.y.toFixed(1) + "px) scale(" + zoom.s.toFixed(3) + ")"
+      : "";
+  }
+
+  function keepInside() {
+    var r = gal.getBoundingClientRect();
+    var mx = (zoom.s - 1) * r.width / 2;
+    var my = (zoom.s - 1) * r.height / 2;
+    zoom.x = Math.min(mx, Math.max(-mx, zoom.x));
+    zoom.y = Math.min(my, Math.max(-my, zoom.y));
+  }
+
+  // The picture scales about the middle of the frame, so a point is measured from
+  // there and the offset solved so the picture under the finger stays under it.
+  function scaleTo(next, cx, cy) {
+    var r = gal.getBoundingClientRect();
+    var px = cx - r.left - r.width / 2;
+    var py = cy - r.top - r.height / 2;
+    var want = Math.min(ZOOM_MAX, Math.max(1, next));
+    var k = want / zoom.s;
+    zoom.x = px - (px - zoom.x) * k;
+    zoom.y = py - (py - zoom.y) * k;
+    zoom.s = want;
+    if (want === 1) { zoom.x = 0; zoom.y = 0; }
+    keepInside();
+    paint();
+  }
+
+  function unzoom() {
+    zoom.s = 1;
+    zoom.x = 0;
+    zoom.y = 0;
+    down = [];
+    pinch = null;
+    press = null;
+    gal.classList.remove("is-drag");
+    paint();
+  }
+
+  img.setAttribute("draggable", "false");
+
+  gal.addEventListener("pointerdown", function (e) {
+    if (e.target.closest(".modal__gal-nav")) return;
+    down.push([e.pointerId, e.clientX, e.clientY]);
+    if (down.length === 2) {
+      var p = pair();
+      pinch = { d: spread(p), s: zoom.s };
+      press = null;
+      gal.classList.add("is-drag");
+      return;
+    }
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    press = { x: e.clientX, y: e.clientY, t: Date.now(), moved: false };
+    gal.classList.add("is-drag");
+    // Only an enlarged picture is draggable, and only then does it hold the
+    // pointer — otherwise a plain scroll of the card would be swallowed.
+    if (zoom.s > 1) {
+      gal.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    }
+  });
+
+  gal.addEventListener("pointermove", function (e) {
+    var held = -1;
+    for (var i = 0; i < down.length; i++) if (down[i][0] === e.pointerId) held = i;
+    if (held < 0) return;
+    down[held][1] = e.clientX;
+    down[held][2] = e.clientY;
+    var p = pair();
+    if (pinch && p) {
+      scaleTo(pinch.s * (spread(p) / pinch.d), centre(p).x, centre(p).y);
+      return;
+    }
+    if (!press) return;
+    // press keeps the last point, so the drag is measured here rather than from
+    // movementX/Y, which WebKit does not supply for touch pointers.
+    var dx = e.clientX - press.x;
+    var dy = e.clientY - press.y;
+    if (!press.moved && Math.abs(dx) + Math.abs(dy) < 9) return;
+    press.moved = true;
+    if (zoom.s > 1) {
+      zoom.x += dx;
+      zoom.y += dy;
+      keepInside();
+      paint();
+    }
+    press.x = e.clientX;
+    press.y = e.clientY;
+  });
+
+  // A release anywhere ends the press, not just one inside the frame: a mouse
+  // drag that runs off the picture would otherwise leave the grab cursor stuck
+  // and a phantom pointer held down. A cancelled gesture is the browser taking
+  // over to scroll, so it must never read as a tap.
+  function release(e, tapped) {
+    for (var i = 0; i < down.length; i++) {
+      if (down[i][0] !== e.pointerId) continue;
+      down.splice(i, 1);
+      break;
+    }
+    if (down.length < 2) pinch = null;
+    if (down.length) { press = null; return; }
+    gal.classList.remove("is-drag");
+    var wasTap = tapped !== false && press && !press.moved && Date.now() - press.t < 600;
+    press = null;
+    if (!wasTap) return;
+    if (zoom.s > 1) unzoom();
+    else scaleTo(ZOOM_IN, e.clientX, e.clientY);
+  }
+  window.addEventListener("pointerup", function (e) { release(e, true); });
+  window.addEventListener("pointercancel", function (e) { release(e, false); });
 })();

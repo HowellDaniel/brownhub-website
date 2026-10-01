@@ -1989,3 +1989,20 @@ html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view 
   html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view .media::after{
     animation:none}
 }
+
+/* ==========================================================================
+   THE PICTURE OPENS UP TO A TOUCH.
+   js/catalog.js scales #product-modal .modal__img inside the frame that already
+   clips it, so nothing is inserted and no new label needs translating. All this
+   layer carries is the gesture surface: pan-y at rest keeps the card scrollable
+   and hands the horizontal swipe to the gallery, none while enlarged lets the
+   drag pan instead, and the transition is off the moment a finger holds on so a
+   pan tracks the pointer exactly instead of lagging one frame behind it.
+   ========================================================================== */
+#product-modal .modal__gal{touch-action:pan-y;cursor:zoom-in;
+  -webkit-user-select:none;-moz-user-select:none;user-select:none}
+#product-modal .modal__gal.is-zoom{touch-action:none;cursor:grab}
+#product-modal .modal__gal.is-drag{cursor:grabbing}
+#product-modal .modal__img{transition:transform .22s var(--ease-out)}
+#product-modal .modal__gal.is-drag .modal__img{transition:none}
+@media (prefers-reduced-motion:reduce){#product-modal .modal__img{transition:none}}
