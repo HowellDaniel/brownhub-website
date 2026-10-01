@@ -141,10 +141,11 @@
 
     // A website and a flyer are not the same size of job, so the budget picker
     // should not offer a flyer-sized range to someone asking for a website. Each
-    // service names the lowest band that can carry it in data-budget-min and the
-    // bands under that come out of the list. Both sides are matched on data
-    // attributes, never on the words: an option's text is a dictionary key, so
-    // under any other language option.value is translated and would not match.
+    // service names the window that fits it — data-budget-min for the lowest band
+    // it can carry and data-budget-max for the highest one worth showing — and the
+    // bands outside that window come out of the list. Both sides are matched on
+    // data attributes, never on the words: an option's text is a dictionary key,
+    // so under any other language option.value is translated and would not match.
     const serviceSel = document.getElementById("service");
     const budgetSel = document.getElementById("budget");
     if (serviceSel && budgetSel) {
@@ -156,26 +157,25 @@
 
       const bandFloor = (o) => Number((o && o.dataset.bandMin) || 0);
       const serviceFloor = (o) => Number((o && o.dataset.budgetMin) || 0);
-      // clear=false hides the too-small bands and touches nothing else, which is
-      // what every non-user pass uses: a service put in the form by a re-request
-      // or restored by the browser arrives with its budget already chosen, and
-      // that answer is not ours to throw away.
+      const serviceCeil = (o) => Number((o && o.dataset.budgetMax) || 0);
+      // clear=false hides the bands outside the window and touches nothing else,
+      // which is what every non-user pass uses: a service put in the form by a
+      // re-request or restored by the browser arrives with its budget already
+      // chosen, and that answer is not ours to throw away.
       const fitBudget = (clear) => {
-        const min = serviceFloor(serviceSel.selectedOptions[0]);
+        const svc = serviceSel.selectedOptions[0];
+        const min = serviceFloor(svc);
+        const max = serviceCeil(svc);
+        const off = (f) => !!f && (f < min || (!!max && f > max));
         let dropped = 0;
         [].forEach.call(budgetSel.options, (o) => {
-          const f = bandFloor(o);
-          const out = !!min && !!f && f < min;
-          // hidden, never disabled: a disabled option leaves FormData entirely,
-          // which would silently drop the budget a returning client is having
-          // refilled by their own earlier request.
-          o.hidden = out;
-          if (out) dropped++;
+          // hidden, never disabled: a disabled option leaves FormData entirely.
+          o.hidden = off(bandFloor(o));
+          if (o.hidden) dropped++;
         });
         budgetNote.hidden = !dropped;
-        if (!clear || !min) return;
-        const chosen = bandFloor(budgetSel.selectedOptions[0]);
-        if (chosen && chosen < min) budgetSel.value = "";
+        if (!clear || !(min || max)) return;
+        if (off(bandFloor(budgetSel.selectedOptions[0]))) budgetSel.value = "";
       };
       const userPick = () => fitBudget(true);
       const silentPass = () => fitBudget(false);
