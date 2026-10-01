@@ -237,6 +237,13 @@
     contactForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!status) return;
+      // A real click already gets this check from the browser, which cancels the
+      // event before it reaches here. This catches a submit() call from a script
+      // or a console, which would otherwise post a half-empty enquiry.
+      if (!contactForm.checkValidity()) {
+        contactForm.reportValidity();
+        return;
+      }
       // English only: the translate.js MutationObserver localises the card on insert.
       const data = Object.fromEntries(new FormData(contactForm).entries());
       const honeypot = data.website;
