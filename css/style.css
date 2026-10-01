@@ -2006,3 +2006,30 @@ html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view 
 #product-modal .modal__img{transition:transform .22s var(--ease-out)}
 #product-modal .modal__gal.is-drag .modal__img{transition:none}
 @media (prefers-reduced-motion:reduce){#product-modal .modal__img{transition:none}}
+
+/* ==========================================================================
+   THE PAGE KEEPS OFF THE EDGE OF THE WINDOW.
+   The shell was mined from twilio at a 1400px block with a 32px gutter, which is
+   right on their own 1500px-plus screenshots and wrong everywhere else: on a
+   1440 laptop the block filled the window and the words started 32px from the
+   glass, and on a phone the utility row dropped to 12px, so the locale picker
+   and the headline sat almost against the edge. The gutter now carries the whole
+   inset — 24px on a phone up to 48px on a wide window — and the block stops
+   growing before it reaches the edge, so a 1440 window keeps real margins
+   instead of one. Nothing here changes a band's own full-bleed ground.
+   ========================================================================== */
+:root{--t-gutter:clamp(24px,3.4vw,48px)}
+.topnav__inner{padding-left:var(--t-gutter);padding-right:var(--t-gutter)}
+@media (min-width:901px){.container{max-width:min(var(--max-w),calc(100% - 5rem))}}
+/* The cookie bar is the one piece of chrome that runs the full width of the
+   window, so its words used to start 24px from the glass no matter how wide the
+   screen was. This puts them on the same edge as the page underneath: below the
+   shell it is the gutter, above it the gutter plus however far the shell itself
+   sits from the window, and the chat bubble keeps its clearance. */
+.cookie-notice{padding-inline:var(--t-gutter)}
+@media (min-width:901px){
+  .cookie-notice{padding-inline:calc(max(2.5rem,(100% - var(--max-w))/2) + var(--t-gutter))}
+  /* the chat bubble lives in the corner, so the bar's right side never comes
+     closer to the glass than the bubble needs, whatever the shell says */
+  .cookie-notice{padding-inline-end:max(calc(var(--t-4) + 72px),calc(max(2.5rem,(100% - var(--max-w))/2) + var(--t-gutter)))}
+}
