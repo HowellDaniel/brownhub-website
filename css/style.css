@@ -2033,3 +2033,67 @@ html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view 
      closer to the glass than the bubble needs, whatever the shell says */
   .cookie-notice{padding-inline-end:max(calc(var(--t-4) + 72px),calc(max(2.5rem,(100% - var(--max-w))/2) + var(--t-gutter)))}
 }
+
+/* ==========================================================================
+   THE ENGINEERING PAGE'S OWN BANDS.
+   The website/software half of the studio has never had a page long enough to
+   carry a process, a stack and a cost window, and none of those shapes existed
+   in the sheet. They are built here on the tokens the rest of the site already
+   uses — the 8/12/16/24 scale, the AA-tested ink and gold, the auto-fit grids —
+   so a band reads the same on this page as it does on the home page, and the
+   gold that marks a deliverable is the same gold the eyebrows already use.
+   Nothing here restyles a component another page owns.
+   ========================================================================== */
+.eng-cycle{display:flex;flex-wrap:wrap;align-items:center;gap:var(--t-2);margin-bottom:var(--t-4);
+  font-size:var(--t-eyebrow);font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-muted)}
+.eng-cycle i{font-style:normal;opacity:.45}
+.eng-cycle span{animation:engWord 5s linear infinite}
+.eng-cycle span:nth-of-type(2){animation-delay:1s}
+.eng-cycle span:nth-of-type(3){animation-delay:2s}
+.eng-cycle span:nth-of-type(4){animation-delay:3s}
+.eng-cycle span:nth-of-type(5){animation-delay:4s}
+@keyframes engWord{
+  0%,40%,100%{color:var(--text-muted)}
+  6%,26%{color:var(--accent-2)}
+}
+/* A visitor who asked for no motion still gets the whole sentence, lit at its
+   end rather than cycling through it. */
+@media (prefers-reduced-motion:reduce){
+  .eng-cycle span{animation:none;color:var(--text-muted)}
+  .eng-cycle span:last-of-type{color:var(--accent-2)}
+}
+html[dir="rtl"] .eng-cycle i{display:inline-block;rotate:180deg}
+
+.eng-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:var(--t-5) var(--t-4)}
+.eng-step{padding-top:var(--t-4);border-top:var(--t-bw2) solid var(--border)}
+.eng-step h3{font-size:var(--t-h3);line-height:1.3;margin-bottom:var(--t-2)}
+.eng-step > p{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-muted)}
+.eng-deliver{margin-top:var(--t-3);padding:var(--t-2) var(--t-3);
+  border-left:var(--t-bw2) solid var(--accent-2);border-radius:0 var(--t-r) var(--t-r) 0;
+  background:rgba(var(--accent-2-rgb),.09);font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-muted)}
+.eng-deliver span{display:block;margin-bottom:2px;font-size:.72rem;font-weight:700;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--accent-2)}
+html[dir="rtl"] .eng-deliver{border-left:0;border-right:var(--t-bw2) solid var(--accent-2);
+  border-radius:var(--t-r) 0 0 var(--t-r)}
+
+.eng-stack{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:var(--t-5) var(--t-6)}
+.eng-stack__col{padding-top:var(--t-3);border-top:var(--t-bw2) solid var(--accent-2)}
+.eng-stack__col h3{font-size:var(--t-h3);margin-bottom:var(--t-2)}
+.eng-stack__col p{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-muted)}
+
+.eng-sectors{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:var(--t-4)}
+.eng-sectors li{display:grid;gap:var(--t-1);padding:var(--t-4);
+  background:var(--surface);border:var(--t-bw) solid var(--border);border-radius:var(--t-r-lg)}
+.eng-sectors strong{font-size:var(--t-h3);font-weight:600}
+.eng-sectors span{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-muted)}
+
+.eng-cost{display:grid;gap:var(--t-5)}
+.eng-cost__window{padding:var(--t-5);border:var(--t-bw) solid var(--border);border-radius:var(--t-r-xl);
+  background:linear-gradient(180deg,rgba(var(--accent-2-rgb),.11),rgba(var(--accent-2-rgb),0))}
+.eng-cost__label{font-size:var(--t-small);font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--accent-2)}
+.eng-cost__figure{margin:var(--t-2) 0 var(--t-3);font-size:clamp(28px,4vw,44px);font-weight:700;
+  letter-spacing:-.02em;line-height:1.1}
+.eng-cost__figure span{padding:0 var(--t-2);color:var(--accent)}
+.eng-cost__window p:last-child{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-muted)}
+.eng-cost .checklist li{font-size:var(--t-body)}

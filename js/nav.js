@@ -19,6 +19,7 @@
     sheet: '<path d="M13.6 3.2H6.4v17.6h11.2V6.8l-4-3.6Z"/><path d="M13.4 3.4v3.6h4"/><path d="M9 12.4h6M9 15.8h6"/>',
     book: '<path d="M12 6.6C10.4 5.2 8 4.6 4.2 5v13.8c3.8-.4 6.2.2 7.8 1.6 1.6-1.4 4-2 7.8-1.6V5c-3.8-.4-6.2.2-7.8 1.6Z"/><path d="M12 6.6v13.8"/>',
     box: '<path d="M3.6 7.6 12 3.6l8.4 4v8.8L12 20.4l-8.4-4V7.6Z"/><path d="M3.6 7.6 12 11.6l8.4-4M12 11.6v8.8"/>',
+    code: '<path d="M8.6 8.4 6.8 10.6l1.8 2.2M15.4 8.4l1.8 2.2-1.8 2.2M12.8 8.8l-1.6 3.8"/>',
     wand: '<path d="M4.4 19.6 15.2 8.8"/><path d="m18.2 3.4.9 2.5 2.5.9-2.5.9-.9 2.5-.9-2.5-2.5-.9 2.5-.9.9-2.5Z"/><path d="M12.4 4.2 13 5.8l1.6.6-1.6.6-.6 1.6-.6-1.6L10.2 6.4l1.6-.6.6-1.6Z"/>',
     monitor: '<rect x="2.8" y="4.6" width="18.4" height="12" rx="2.2"/><path d="M8.6 8.4 6.8 10.6l1.8 2.2M15.4 8.4l1.8 2.2-1.8 2.2M12.8 8.8l-1.6 3.8"/><path d="M6.4 20.4h11.2"/>',
     banner: '<path d="M4.6 4.4h14.8v11.2H4.6z"/><path d="M9 19.6h6M12 15.6v4"/><path d="M8 9.2h8"/>',
@@ -34,7 +35,7 @@
   }
 
   function row(r) {
-    return '<li class="mega__row"><a href="' + r[2] + '">' + icon(r[3]) +
+    return '<li class="mega__row"><a href="' + r[2] + '"' + (r[4] ? ' target="' + r[4] + '" rel="noopener"' : '') + '>' + icon(r[3]) +
       '<span class="mega__body"><span class="mega__title">' + r[0] + "</span>" +
       '<span class="mega__desc">' + r[1] + "</span></span></a></li>";
   }
@@ -49,7 +50,8 @@
     { h: "More from the studio", items: [
       ["Packaging Design", "Labels, boxes and bottles built to shelf size.", "services.html#packaging", "box"],
       ["Custom Graphic Design", "Something unusual? We design that too.", "services.html#custom", "wand"],
-      ["Websites & Software", "A hosted site or an app for the brand.", "websites.html", "monitor"]
+      ["Websites & Software", "A hosted site or an app for the brand.", "websites.html", "monitor"],
+      ["Website & Software Engineering", "The whole engineering side: builds, stack, security and care.", "engineering.html", "code", "_blank"]
     ]},
     { h: "Popular in the catalog", items: [
       ["Banners & signage", "Pull-up stands, backdrops and ABS boards.", "catalog.html?q=Banners", "banner"],

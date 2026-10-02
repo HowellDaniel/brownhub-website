@@ -17,6 +17,7 @@
     { g: "Pages", t: "Testimonials", h: "index.html#reviews", k: "reviews testimonials clients say feedback stars rating what our clients have to say" },
     { g: "Pages", t: "Services", h: "services.html", k: "what we do pricing packages" },
     { g: "Pages", t: "Website Design & Development", h: "websites.html", k: "website web design development software app hosting domain landing page" },
+    { g: "Pages", t: "Website & Software Engineering", h: "engineering.html", k: "software engineering web development code app dashboard api secure hosting build systems" },
     { g: "Pages", t: "Catalog", h: "catalog.html", k: "shop items products prints" },
     { g: "Pages", t: "About", h: "about.html", k: "team story accra company" },
     { g: "Pages", t: "Contact", h: "contact.html", k: "email phone whatsapp quote enquiry" },
