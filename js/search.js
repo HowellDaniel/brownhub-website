@@ -34,6 +34,11 @@
     { g: "Services", t: "Custom Graphic Design", h: "services.html#custom", k: "custom anything illustration menu book cover" },
     { g: "Services", t: "Website or Software", h: "websites.html", k: "website web software app system dashboard" },
 
+    { g: "Catalog", t: "Flyers & printing", h: "catalog.html?cat=print", k: "collection category shelf print flyer leaflet business card" },
+    { g: "Catalog", t: "Banners & signage", h: "catalog.html?cat=banners", k: "collection category shelf banner signage pull up backdrop flag" },
+    { g: "Catalog", t: "Branded merchandise", h: "catalog.html?cat=merch", k: "collection category shelf merchandise merch t-shirt cap mug lanyard" },
+    { g: "Catalog", t: "Books & covers", h: "catalog.html?cat=books", k: "collection category shelf book cover brochure profile magazine" },
+    { g: "Catalog", t: "Frames & awards", h: "catalog.html?cat=frames", k: "collection category shelf frame award plaque certificate" },
     { g: "Catalog", t: "Pull Up Design, Backdrop and Printing", h: "catalog.html?q=Pull%20Up%20Design%2C%20Backdrop%20and%20Printing", k: "banner pull up stand backdrop event printing" },
     { g: "Catalog", t: "All Types of Frames", h: "catalog.html?q=All%20Types%20of%20Frames", k: "frame award plaque photo certificate glass" },
     { g: "Catalog", t: "Flyer", h: "catalog.html?q=Flyer", k: "flyer printing event wedding funeral church" },

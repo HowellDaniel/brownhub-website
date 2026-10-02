@@ -2222,3 +2222,42 @@ html[data-theme="light"] .eng-aura{opacity:.18}
   .eng-aura,.eng-diagram .ed-rail{animation:none}
   .eng-sectors li:hover{transform:none}
 }
+
+/* ==========================================================================
+   Catalog collections + concept wall
+   The collection tiles are the catalog's five families, and each one narrows
+   the grid below it. Their artwork is a reserved slot: the label is the only
+   claim a tile makes, so the picture can be replaced without anything having
+   to be re-verified against a real order. The concept wall is held apart from
+   both by its own copy — those three are style studies, never delivered work,
+   and the band says so in the visitor's language.
+   Tiles are <button>s, so the font, colour and padding resets are load-bearing:
+   a browser default here would put a grey plate behind the art.
+   ========================================================================== */
+.collections{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:var(--t-4)}
+.collection{display:block;width:100%;margin:0;padding:0;font:inherit;text-align:start;cursor:pointer;
+  color:inherit;background:var(--surface);border:var(--t-bw) solid var(--border);
+  border-radius:var(--t-r-lg);overflow:hidden;
+  transition:border-color .3s,transform .3s,box-shadow .3s}
+.collection:hover{border-color:var(--accent-2);transform:translateY(-3px);box-shadow:var(--t-shadow)}
+.collection:focus-visible{outline:var(--t-bw2) solid var(--accent);outline-offset:3px}
+.collection__art{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.collection__name{display:flex;align-items:center;gap:.5rem;padding:.85rem 1rem;
+  font-size:var(--t-small);font-weight:var(--t-fw-semi);line-height:var(--t-lh-small);color:var(--text)}
+.collection__name::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;
+  background:var(--border)}
+.collection.is-on{border-color:var(--accent);box-shadow:0 0 0 var(--t-bw) var(--accent) inset,var(--t-shadow)}
+.collection.is-on .collection__name::before{background:var(--accent-fill)}
+
+.concepts{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--t-4)}
+.concepts li{min-width:0}
+.concept__art{display:block;width:100%;height:auto;aspect-ratio:1;object-fit:cover;
+  border-radius:var(--t-r-lg);border:var(--t-bw) solid rgba(255,255,255,.14)}
+
+@media (max-width:640px){
+  .collections,.concepts{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:var(--t-3)}
+  .collection__name{padding:.7rem .8rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .collection,.collection:hover{transition:none;transform:none}
+}

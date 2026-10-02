@@ -280,6 +280,7 @@
   var filterInput = document.getElementById("catalog-filter-input");
   var filterClear = document.getElementById("catalog-filter-clear");
   var emptyEl = document.getElementById("catalog-empty");
+  var catOn = "";
 
   function words(term) {
     return (term || "").toLowerCase().trim().split(/\s+/).filter(Boolean);
@@ -298,17 +299,22 @@
     var list = words(term);
     var shown = 0;
     cards.forEach(function (card) {
-      var ok = !list.length || matches(card, list);
+      // A collection narrows by the card's own data-cat, never by its words: the
+      // label is a dictionary key and may be rendered in any of forty languages,
+      // while data-cat does not move.
+      var ok = (!list.length || matches(card, list)) && (!catOn || card.dataset.cat === catOn);
       card.hidden = !ok;
       if (ok) shown++;
     });
-    if (filterClear) filterClear.hidden = !list.length;
+    if (filterClear) filterClear.hidden = !list.length && !catOn;
     if (emptyEl) emptyEl.hidden = shown !== 0;
     if (remember !== false) {
       try {
         var u = new URL(location.href);
         if (list.length) u.searchParams.set("q", term.trim());
         else u.searchParams.delete("q");
+        if (catOn) u.searchParams.set("cat", catOn);
+        else u.searchParams.delete("cat");
         history.replaceState(history.state, "", u);
       } catch (e) {}
     }
@@ -316,7 +322,12 @@
 
   if (filterForm && filterInput) {
     filterForm.addEventListener("submit", function (e) { e.preventDefault(); });
-    filterInput.addEventListener("input", function () { applyFilter(filterInput.value); });
+    filterInput.addEventListener("input", function () {
+      // Typing outranks a collection: a visitor searching has already left the
+      // shelf they came in through.
+      if (catOn) { catOn = ""; armTile(""); }
+      applyFilter(filterInput.value);
+    });
     if (filterClear) {
       filterClear.addEventListener("click", function () {
         filterInput.value = "";
@@ -328,6 +339,45 @@
     if (seeded) {
       filterInput.value = seeded;
       applyFilter(seeded, false);
+    }
+  }
+
+  /* ---- collections ----
+     Each tile narrows the grid to one family of work. The picture in a tile is a
+     reserved slot for artwork, not a photograph of an item — the label is the
+     only claim the tile makes, so the art can change without anything here
+     having to be re-verified against a real order. */
+  var tiles = [].slice.call(document.querySelectorAll(".collection[data-collection]"));
+
+  function armTile(cat) {
+    tiles.forEach(function (tile) {
+      var on = tile.getAttribute("data-collection") === cat;
+      tile.classList.toggle("is-on", on);
+      tile.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  if (tiles.length) {
+    tiles.forEach(function (tile) {
+      tile.addEventListener("click", function () {
+        var cat = tile.getAttribute("data-collection");
+        catOn = catOn === cat ? "" : cat;
+        armTile(catOn);
+        applyFilter(filterInput ? filterInput.value : "");
+        var shelf = document.getElementById("featured");
+        if (catOn && shelf) {
+          shelf.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+            block: "start"
+          });
+        }
+      });
+    });
+    var seedCat = new URLSearchParams(location.search).get("cat");
+    if (seedCat && tiles.some(function (tile) { return tile.getAttribute("data-collection") === seedCat; })) {
+      catOn = seedCat;
+      armTile(seedCat);
+      applyFilter(filterInput ? filterInput.value : "", false);
     }
   }
 
