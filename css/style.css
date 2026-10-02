@@ -28,8 +28,10 @@
 .more-item span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.25}
 @media (max-width:520px){.modal__more-grid{grid-template-columns:repeat(2,1fr)}}
 
-/* Hamburger earlier: the language selector makes the full inline nav overflow up to ~840px */
-@media (max-width:840px){.nav__menu{position:fixed;inset:72px 0 auto 0;margin-left:0;background:var(--bg);flex-direction:column;padding:1.5rem;gap:1rem;border-bottom:1px solid var(--border);transform:translateY(-120%);opacity:0;pointer-events:none;transition:0.3s}.nav__menu.open{transform:translateY(0);opacity:1;pointer-events:auto}.nav__toggle{display:flex}.lang-select{margin-left:.6rem}}
+/* The inline nav needs the width the sixth tab took away: below 1081px the six labels,
+   the wordmark and the actions cannot share one row in every one of the forty
+   languages, so the row gives way to the drawer instead of overflowing. */
+@media (max-width:1080px){.nav__menu{position:fixed;inset:72px 0 auto 0;margin-left:0;background:var(--bg);flex-direction:column;padding:1.5rem;gap:1rem;border-bottom:1px solid var(--border);transform:translateY(-120%);opacity:0;pointer-events:none;transition:0.3s}.nav__menu.open{transform:translateY(0);opacity:1;pointer-events:auto}.nav__toggle{display:flex}.lang-select{margin-left:.6rem}}
 
 /* Chat voice notes: mic button + recording/review bar */
 .chat-widget__mic{align-self:flex-end;flex:none;background:var(--surface);border:1px solid var(--border);color:var(--text-muted);width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-right:.35rem;transition:border-color .2s,color .2s}
@@ -319,7 +321,7 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
 /* ---- Client accounts: nav entry, sign-up/login panel, request history ---- */
 .nav__link--acct{padding:0;border:none;background:none;font-family:inherit;cursor:pointer;white-space:nowrap}
 .nav__link--acct:hover,.nav__link--acct:focus-visible{color:var(--text)}
-@media (max-width:840px){.nav__menu .nav__link--acct{display:block;width:auto;padding:.6rem 0;line-height:1.6;text-align:left}}
+@media (max-width:1080px){.nav__menu .nav__link--acct{display:block;width:auto;padding:.6rem 0;line-height:1.6;text-align:left}}
 .modal--acct .modal__card{max-width:480px}
 /* Anchored drop-down: the card leaves the grid and hangs under its nav item. */
 .modal--acct.is-drop{place-items:start}
@@ -403,7 +405,7 @@ html[data-theme="light"]{--glass-hair:rgba(255,255,255,.95);--glass-hair-soft:rg
 .site-header .theme-toggle{background-color:var(--glass-ctl-bg);border-color:var(--glass-ctl-hair);
   box-shadow:inset 0 1px 0 var(--glass-hair),0 6px 16px -10px rgba(0,0,0,.55);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-@media (max-width:840px){.site-header .nav__menu{background:var(--header-bg);border-bottom:1px solid var(--border);
+@media (max-width:1080px){.site-header .nav__menu{background:var(--header-bg);border-bottom:1px solid var(--border);
   box-shadow:inset 0 1px 0 var(--glass-hair),0 20px 34px -24px rgba(0,0,0,.7);
   -webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7)}}
 /* Without compositing the bar falls back to the flat opaque header it had before. */
@@ -2097,3 +2099,25 @@ html[dir="rtl"] .eng-deliver{border-left:0;border-right:var(--t-bw2) solid var(-
 .eng-cost__figure span{padding:0 var(--t-2);color:var(--accent)}
 .eng-cost__window p:last-child{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-muted)}
 .eng-cost .checklist li{font-size:var(--t-body)}
+
+/* ---- Nav breathing room on the sixth tab ----
+   The wordmark sat flush against the first link: every spare pixel went between
+   the links and the actions. A row gap takes from that same pool, so both
+   directions keep their distance. */
+nav.nav{gap:clamp(1rem,2.2vw,1.75rem)}
+/* js/scroll.js keeps --nav-h at the header's real height, which is where the drawer
+   has to hang from. The fixed 72px left the panel across the bar from 641px up. */
+.nav__menu{inset:var(--nav-h,124px) 0 auto 0}
+/* The drawer is now the only navigation below the gate, so the hover panel that
+   answers the same question on the desktop steps out of its way. */
+@media (max-width:1080px){.mega{display:none}html.js-nav .nav__caret{display:none}}
+@media (min-width:1081px){
+  /* A label that breaks in the middle reads as a mistake, so each one stays whole
+     and the row gives up a second line instead. Tamil, Vietnamese, Hungarian,
+     Greek and Polish are the only ones wide enough to need it, and only just
+     above the gate. */
+  .nav__menu{flex-wrap:wrap}
+  .nav__menu .nav__link{white-space:nowrap}
+  .nav{height:auto;min-height:80px;padding:var(--t-1) 0}
+}
+
