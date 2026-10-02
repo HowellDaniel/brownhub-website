@@ -2261,3 +2261,36 @@ html[data-theme="light"] .eng-aura{opacity:.18}
 @media (prefers-reduced-motion:reduce){
   .collection,.collection:hover{transition:none;transform:none}
 }
+
+/* ==========================================================================
+   Websites page: ambient layer + layout-study band
+   The reference page we were pointed at wears the same three things on its
+   website band — a soft colour glow, a dot grid and a fine noise film over the
+   flat surfaces. All three already exist here: .eng-aura and .eng-grain are the
+   engineering page's, measured down to the group alphas that keep body copy at
+   AA in both themes, so this band borrows them instead of re-deriving a glow
+   behind text nobody checked. Only the dot grid is new, and it is a
+   radial-gradient rather than an image so it costs no request.
+   The four pictures ride .shot, which is already the site's motion register:
+   curtain reveal on first sight, parallax drift inside the frame, a looping
+   clip while in view and the ink overlay on hover. Nothing here re-implements
+   any of it — the band only opts out of the pointer, because no modal exists
+   on this page to open.
+   ========================================================================== */
+.web-hero,.webviews{position:relative;overflow:clip;isolation:isolate}
+/* the hero is a short band, so its glow sits higher and shallower than a section's */
+.web-hero .eng-aura{inset:-16% -8% auto -8%;height:440px}
+.webviews .eng-aura{inset:-6% -8% auto -8%;height:520px}
+.web-grid{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.6;
+  background-image:radial-gradient(rgba(255,255,255,.13) 1px,transparent 1.2px);
+  background-size:26px 26px;
+  -webkit-mask-image:radial-gradient(120% 92% at 50% 0%,#000 18%,transparent 74%);
+  mask-image:radial-gradient(120% 92% at 50% 0%,#000 18%,transparent 74%)}
+html[data-theme="light"] .web-grid{background-image:radial-gradient(rgba(38,16,15,.14) 1px,transparent 1.2px)}
+/* four studies across the desktop container, three from ~940px, two on a phone */
+.webviews .shots{grid-template-columns:repeat(auto-fit,minmax(clamp(160px,21vw,256px),1fr))}
+.webviews .shot{cursor:default}
+@media (max-width:640px){
+  .web-hero .eng-aura{filter:blur(44px);height:320px}
+  .webviews .eng-aura{filter:blur(44px);height:360px}
+}

@@ -3,7 +3,8 @@
 # exact file the site already references — so new artwork is a drop, not an edit.
 #
 #   tools/site-art.sh collection banners ~/Downloads/ai-flyer.png
-#   tools/site-art.sh concept    concept-1 ~/Downloads/ai-poster.png
+#   tools/site-art.sh concept    portrait ~/Downloads/ai-portrait.png
+#   tools/site-art.sh web        landing  ~/Downloads/ai-layout.png
 #   tools/site-art.sh og         ~/Downloads/ai-social.png
 #
 # Slots are the served sizes. Larger costs data on a Ghanaian plan and smaller
@@ -14,8 +15,9 @@ cd "$(dirname "$0")/.."
 case "${1:-}" in
   collection) DIR=images/collection; TW=800; TH=450; Q=72 ;;
   concept)    DIR=images/concept;    TW=800; TH=800; Q=72 ;;
+  web)        DIR=images/web;        TW=800; TH=600; Q=74 ;;
   og)         DIR=images; TW=1200; TH=630; Q=78; NAME=og-catalog; SRC="${2:-}"; FILL=2 ;;
-  *) echo "usage: tools/site-art.sh <collection|concept|og> <name|path> [source-image]" >&2; exit 2 ;;
+  *) echo "usage: tools/site-art.sh <collection|concept|web|og> <name|path> [source-image]" >&2; exit 2 ;;
 esac
 if [ "${FILL:-}" != 2 ]; then NAME="${2:-}"; SRC="${3:-}"; fi
 [ -n "$NAME" ] && [ -n "$SRC" ] && [ -f "$SRC" ] || { echo "no such source: ${SRC:-<none>}" >&2; exit 2; }
