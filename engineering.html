@@ -35,7 +35,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrownHub Studio">
   <link rel="preload" href="fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=89">
+  <link rel="stylesheet" href="css/style.css?v=90">
   <script src="js/theme.js"></script><script src="js/player.js?v=1"></script><script src="js/voice.js?v=1"></script>
   <script type="application/ld+json">
 {
@@ -134,6 +134,10 @@
 
     <main>
     <section class="page-hero eng-hero">
+      <span class="eng-aura" aria-hidden="true">
+        <i class="eng-orb eng-orb--a"></i><i class="eng-orb eng-orb--b"></i><i class="eng-orb eng-orb--c"></i>
+      </span>
+      <svg class="eng-grain" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><filter id="engGrainHero" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="saturate" values="0"/></filter><pattern id="engGrainTileHero" width="200" height="200" patternUnits="userSpaceOnUse"><rect width="200" height="200" filter="url(#engGrainHero)"/></pattern><rect width="100%" height="100%" fill="url(#engGrainTileHero)"/></svg>
       <div class="container">
         <p class="eng-cycle" aria-hidden="true"><span>Ideas</span><i>→</i><span>Concepts</span><i>→</i><span>Designs</span><i>→</i><span>Code</span><i>→</i><span>Results</span></p>
         <p class="eyebrow">Website &amp; software engineering</p>
@@ -142,6 +146,39 @@
         <div class="hero__actions">
           <a href="contact.html" class="btn btn--primary">Start a project</a>
           <a href="https://wa.me/233502954541" target="_blank" rel="noopener" class="btn btn--ghost">Talk to an engineer</a>
+        </div>
+        <div class="eng-diagram" aria-hidden="true">
+          <svg viewBox="0 0 760 200" class="eng-diagram__svg" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <path class="ed-rail" d="M190 100h30M362 100h74M562 100h84"/>
+            <g class="ed-node">
+              <rect class="ed-out" x="14" y="44" width="172" height="112" rx="12"/>
+              <path class="ed-out" d="M14 72h172"/>
+              <circle class="ed-a" cx="32" cy="58" r="5"/><circle class="ed-b" cx="50" cy="58" r="5"/>
+              <rect class="ed-c" x="30" y="88" width="72" height="14" rx="7"/>
+              <rect class="ed-c" x="30" y="110" width="46" height="9" rx="4"/>
+              <path class="ed-line-a" d="M104 140l16-22 14 11 20-26"/>
+              <rect class="ed-a" x="132" y="88" width="38" height="14" rx="7" opacity="0.8"/>
+            </g>
+            <g class="ed-node">
+              <ellipse class="ed-out" cx="290" cy="58" rx="66" ry="16"/>
+              <path class="ed-out" d="M224 58v84a66 16 0 0 0 132 0V58"/>
+              <path class="ed-out" d="M224 90a66 16 0 0 0 132 0M224 120a66 16 0 0 0 132 0" opacity="0.22"/>
+              <rect class="ed-a" x="262" y="52" width="56" height="12" rx="6" opacity="0.75"/>
+            </g>
+            <g class="ed-node">
+              <path class="ed-out" d="M500 40l58 20v52c0 30-24 52-58 64-34-12-58-34-58-64V60l58-20Z"/>
+              <path class="ed-line-b" d="M478 102l16 16 30-34"/>
+              <circle class="ed-c" cx="500" cy="76" r="10"/>
+            </g>
+            <g class="ed-node">
+              <rect class="ed-out" x="652" y="36" width="94" height="128" rx="16"/>
+              <rect class="ed-c" x="668" y="58" width="28" height="28" rx="8"/>
+              <rect class="ed-c" x="706" y="58" width="28" height="28" rx="8"/>
+              <rect class="ed-c" x="668" y="98" width="28" height="28" rx="8"/>
+              <rect class="ed-a" x="706" y="98" width="28" height="28" rx="8" opacity="0.8"/>
+              <path class="ed-out" d="M686 150h26"/>
+            </g>
+          </svg>
         </div>
       </div>
     </section>
@@ -311,26 +348,32 @@
         </div>
         <div class="eng-stack">
           <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M8.6 8.4 6.8 10.6l1.8 2.2M15.4 8.4l1.8 2.2-1.8 2.2M12.8 8.8l-1.6 3.8"/></svg></span>
             <h3>Interface</h3>
             <p>Hand-written HTML, CSS and JavaScript. No page builder, no plugin stack to expire, nothing that phones home to a licence server.</p>
           </section>
           <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><ellipse cx="12" cy="6.6" rx="7.4" ry="2.6"/><path d="M4.6 6.6v10.8c0 1.4 3.3 2.6 7.4 2.6s7.4-1.2 7.4-2.6V6.6"/><path d="M4.6 12c0 1.4 3.3 2.6 7.4 2.6s7.4-1.2 7.4-2.6"/></svg></span>
             <h3>Data &amp; accounts</h3>
             <p>A managed Postgres database with row-level security, so a signed-in client can only ever read their own records. Login by phone code or email.</p>
           </section>
           <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="4" y="4.4" width="16" height="6.2" rx="1.8"/><rect x="4" y="13.4" width="16" height="6.2" rx="1.8"/><path d="M7.4 7.5h1.4M7.4 16.5h1.4M16.6 7.5h-3.2M16.6 16.5h-3.2"/></svg></span>
             <h3>Server side</h3>
             <p>Small edge functions for the work that must not happen in the browser: signing payments, holding API keys, relaying messages.</p>
           </section>
           <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="2.8" y="5.4" width="13.4" height="9.6" rx="1.8"/><path d="M2.8 8.6h13.4"/><path d="M8.6 18.4h9.2a1.8 1.8 0 0 0 1.8-1.8V9.4"/></svg></span>
             <h3>Payments &amp; messaging</h3>
             <p>Paystack for card, mobile money and Apple Pay; SMS codes for login; WhatsApp deep links so an order can continue in a chat.</p>
           </section>
           <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M3.6 12h16.8"/><path d="M12 3.6c2.4 2.2 3.6 4.9 3.6 8.4s-1.2 6.2-3.6 8.4c-2.4-2.2-3.6-4.9-3.6-8.4s1.2-6.2 3.6-8.4Z"/></svg></span>
             <h3>Delivery</h3>
             <p>Static hosting on a global content network, a service worker for offline use, and a manifest so the site installs to a home screen.</p>
           </section>
           <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3.4l2.3 1.7 2.8-.2.9 2.7 2.3 1.7-1.1 2.6 1.1 2.6-2.3 1.7-.9 2.7-2.8-.2L12 20.6l-2.3-1.7-2.8.2-.9-2.7-2.3-1.7L4.8 12 3.7 9.4 6 7.7l.9-2.7 2.8.2L12 3.4Z"/><path d="M9.4 12.2l1.9 1.9 3.5-3.7"/></svg></span>
             <h3>Quality &amp; care</h3>
             <p>Contrast checked to AA in both themes, motion that stops when the visitor asks for it, backups taken, and every page measured for errors after each change.</p>
           </section>
@@ -346,12 +389,30 @@
           <p>Sector names taken from the clients we have actually worked for, not from a marketing list.</p>
         </div>
         <ul class="eng-sectors">
-          <li><strong>Print &amp; publishing</strong><span>Print shops, book designers and binders who need orders and artwork files handled in one place.</span></li>
-          <li><strong>Churches &amp; ministries</strong><span>Event pages, programmes, giving and media archives that a volunteer can update.</span></li>
-          <li><strong>Corporate &amp; institutions</strong><span>Company profiles, staff forms, records and internal reports.</span></li>
-          <li><strong>Consumer brands</strong><span>Product catalogs, stockists and checkout that reaches a Ghanaian wallet.</span></li>
-          <li><strong>Health &amp; wellness</strong><span>Booking, reminders and a client area that keeps each person's own history.</span></li>
-          <li><strong>Schools &amp; training</strong><span>Admissions, timetables and results pages built for phones on a modest data plan.</span></li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M13 17.4V11h14v6.4"/><rect x="12.2" y="17.4" width="15.6" height="8" rx="2"/><path d="M15 25.4h10v4.4H15z"/></svg></span>
+            <strong>Print &amp; publishing</strong><span>Print shops, book designers and binders who need orders and artwork files handled in one place.</span>
+          </li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M12 28.4V17.2L20 11l8 6.2v11.2"/><path d="M10.4 28.4h19.2"/><path d="M17.6 28.4v-5.2a2.4 2.4 0 0 1 4.8 0v5.2"/></svg></span>
+            <strong>Churches &amp; ministries</strong><span>Event pages, programmes, giving and media archives that a volunteer can update.</span>
+          </li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M12.6 28.4V13.8a1.4 1.4 0 0 1 1.4-1.4h7.4a1.4 1.4 0 0 1 1.4 1.4v14.6"/><path d="M22.8 20.6h4.2a1.4 1.4 0 0 1 1.4 1.4v6.4"/><path d="M10.4 28.4h20"/><path d="M15.6 16.4h3.6M15.6 20.4h3.6"/></svg></span>
+            <strong>Corporate &amp; institutions</strong><span>Company profiles, staff forms, records and internal reports.</span>
+          </li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M13.4 16.6h13.2l1.2 11.8H12.2z"/><path d="M16.4 16.6v-2.4a3.6 3.6 0 0 1 7.2 0v2.4"/></svg></span>
+            <strong>Consumer brands</strong><span>Product catalogs, stockists and checkout that reaches a Ghanaian wallet.</span>
+          </li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M20 28.2c-4.6-3.2-7.6-6-7.6-9.4a4.2 4.2 0 0 1 7.6-2.4 4.2 4.2 0 0 1 7.6 2.4c0 3.4-3 6.2-7.6 9.4Z"/><path d="M13.6 19.4h3.2l1.6-2.6 2 4.6 1.6-2h4.4"/></svg></span>
+            <strong>Health &amp; wellness</strong><span>Booking, reminders and a client area that keeps each person's own history.</span>
+          </li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M20 14.6c-1.8-1.6-4.4-2.2-7.4-1.8v12.4c3-.4 5.6.2 7.4 1.8 1.8-1.6 4.4-2.2 7.4-1.8V12.8c-3-.4-5.6.2-7.4 1.8Z"/><path d="M20 14.6v12.4"/></svg></span>
+            <strong>Schools &amp; training</strong><span>Admissions, timetables and results pages built for phones on a modest data plan.</span>
+          </li>
         </ul>
       </div>
     </section>
@@ -367,34 +428,58 @@
       </div>
     </section>
 
-    <section class="section" id="why">
+    <section class="section eng-why" id="why">
+      <span class="eng-aura eng-aura--why" aria-hidden="true">
+        <i class="eng-orb eng-orb--a"></i><i class="eng-orb eng-orb--b"></i><i class="eng-orb eng-orb--c"></i>
+      </span>
+      <svg class="eng-grain" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><filter id="engGrainWhy" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="saturate" values="0"/></filter><pattern id="engGrainTileWhy" width="200" height="200" patternUnits="userSpaceOnUse"><rect width="200" height="200" filter="url(#engGrainWhy)"/></pattern><rect width="100%" height="100%" fill="url(#engGrainTileWhy)"/></svg>
       <div class="container">
         <div class="section__head">
           <p class="eyebrow">Why choose us</p>
           <h2>Six things we will not trade away</h2>
         </div>
+        <ul class="eng-guards" aria-hidden="true">
+          <li class="eng-guard">
+            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-guard__ring" cx="24" cy="24" r="21"/><path d="M24 13.4 31.8 16v7.4c0 4.8-3.7 8.7-7.8 10.2-4.1-1.5-7.8-5.4-7.8-10.2V16L24 13.4Z"/><path d="M21.2 24.2l2.2 2.2 4.2-4.4"/></svg>
+          </li>
+          <li class="eng-guard">
+            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-guard__ring" cx="24" cy="24" r="21"/><rect x="17" y="22.4" width="14" height="11.4" rx="2.6"/><path d="M20.4 22.4v-3.6a3.6 3.6 0 0 1 7.2 0v3.6"/><path d="M24 27v2.6"/></svg>
+          </li>
+          <li class="eng-guard">
+            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-guard__ring" cx="24" cy="24" r="21"/><rect x="14.4" y="15.4" width="19.2" height="7.4" rx="2"/><rect x="14.4" y="25.2" width="19.2" height="7.4" rx="2"/><path d="M18.4 19.1h1.6M18.4 28.9h1.6"/><path d="M22.4 36.6h3.2"/></svg>
+          </li>
+          <li class="eng-guard">
+            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-guard__ring" cx="24" cy="24" r="21"/><path d="M15.4 21.6c2.4-2.6 5.4-4 8.6-4s6.2 1.4 8.6 4"/><path d="M18.6 25.4c1.6-1.7 3.4-2.6 5.4-2.6s3.8.9 5.4 2.6"/><circle cx="24" cy="30.6" r="1.8"/></svg>
+          </li>
+        </ul>
         <div class="cards cards--3">
           <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 4.6h14.4a1.8 1.8 0 0 1 1.8 1.8v8.4a1.8 1.8 0 0 1-1.8 1.8h-7.8l-5.2 3.8v-3.8H4.8A1.8 1.8 0 0 1 3 13.2V6.4a1.8 1.8 0 0 1 1.8-1.8Z"/><path d="M8.6 10.4l2 2 4.4-4.4"/></svg></div>
             <h3>We listen before we build</h3>
             <p>Consultation is free and the quote names exactly what is included. Nobody starts coding a brief they have not repeated back to you.</p>
           </article>
           <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="4.4" width="18.4" height="12.4" rx="2.2"/><path d="M8.2 20.4h7.6"/><path d="M13.6 7.4l3 3-4.6 4.6-3.6 1 .8-3.6 4.4-4.4Z"/></svg></div>
             <h3>One studio for the brand and the build</h3>
             <p>The logo, the flyer, the packaging and the website come from the same hands, so the screen does not reinterpret what the print already settled.</p>
           </article>
           <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 19 5.6v5.9c0 3.8-2.9 6.9-7 8.2-4.1-1.3-7-4.4-7-8.2V5.6L12 3.2Z"/><rect x="9.4" y="10.8" width="5.2" height="4.2" rx="1.2"/><path d="M10.6 10.8V9.6a1.4 1.4 0 0 1 2.8 0v1.2"/></svg></div>
             <h3>We take security personally</h3>
             <p>Secrets stay on the server, forms are gated against bots, and what we do and do not collect is written in plain words on our privacy page.</p>
           </article>
           <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.8" width="10" height="18.4" rx="2.4"/><path d="M10.6 18.4h2.8"/><path d="M4.4 8.6a5 5 0 0 1 1.6-2.2M19.6 8.6a5 5 0 0 0-1.6-2.2"/></svg></div>
             <h3>It has to work on a Ghanaian data plan</h3>
             <p>Pages are measured on real phones and modest connections before they ship, because that is where your customers are opening them.</p>
           </article>
           <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="2.6"/><path d="M7.8 17.4c0-2.2 1.9-3.6 4.2-3.6s4.2 1.4 4.2 3.6"/></svg></div>
             <h3>You are dealt with by a named person</h3>
             <p>Enquiries are answered by the studio itself on WhatsApp or email, Monday to Friday, 9am–6pm Ghana time. No ticket queue.</p>
           </article>
           <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8.2" cy="8.2" r="4"/><path d="M11.2 11.2 20 20"/><path d="M16.4 16.4l1.8-1.8M14 14l2 2"/></svg></div>
             <h3>The work is never held hostage</h3>
             <p>Your domain, your logins, your files. If you leave, the site keeps running and whoever takes over gets the whole thing.</p>
           </article>
