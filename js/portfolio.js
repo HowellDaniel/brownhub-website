@@ -1,5 +1,9 @@
 (() => {
-  const shots = Array.prototype.slice.call(document.querySelectorAll(".shot"));
+  // Only the shots that describe a real job open the modal. The layout studies
+  // further down the page are pictures of a treatment with no order behind them,
+  // so they carry no data-name and must stay out of both the click set and the
+  // filter set.
+  const shots = Array.prototype.slice.call(document.querySelectorAll(".shot[data-name]"));
   if (!shots.length) return;
 
   const WA = "https://wa.me/233502954541";

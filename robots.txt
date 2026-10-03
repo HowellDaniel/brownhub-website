@@ -13,7 +13,6 @@ User-agent: *
 Allow: /
 Allow: /index.html
 Allow: /services.html
-Allow: /websites.html
 Allow: /catalog.html
 Allow: /about.html
 Allow: /contact.html
@@ -28,6 +27,11 @@ User-agent: ClaudeBot
 Allow: /
 User-agent: Google-Extended
 Allow: /
+
+# websites.html and engineering.html are folded into the home page. They are still
+# served and still must be readable: each one answers with noindex and hands the
+# visitor on, and a crawler blocked from reading it would keep the old page in the
+# index instead of following it to the new home. They are simply not listed below.
 
 # One exception: /mobile/ is the native-app build folder, not a page. It holds a
 # package manifest and build notes, so a crawler indexing it would only be noise.

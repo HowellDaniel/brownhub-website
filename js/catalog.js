@@ -86,8 +86,12 @@
     return HI[base] ? "images/catalog/hi/" + base : path;
   }
 
+  // The home page carries a strip of catalog teasers that are plain links, so the
+  // filter may only collect the real shelf — every catalog grid on the site is
+  // #catalog-grid, and anything outside it stays exactly where it was put.
   var cards = [];
-  document.querySelectorAll(".product-card").forEach(function (card) { cards.push(card); });
+  (document.getElementById("catalog-grid") || document).querySelectorAll(".product-card")
+    .forEach(function (card) { cards.push(card); });
 
   function byName(name) {
     for (var i = 0; i < cards.length; i++) if (cards[i].dataset.name === name) return cards[i];

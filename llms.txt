@@ -13,8 +13,8 @@ BrownHub is a graphic design and website company in Accra, Ghana, helping busine
 - Packaging Design
 - Marketing & Advertising Graphics
 - Custom Graphic Design
-- Website design and development: https://www.brownhub283.com/websites.html
-- Website and software engineering (web apps, client accounts, payments, dashboards, hosting): https://www.brownhub283.com/engineering.html
+- Website design and development: https://www.brownhub283.com/#web-software
+- Website and software engineering (web apps, client accounts, payments, dashboards, hosting): https://www.brownhub283.com/#build
 
 ## What we do
 Logos, brand identity systems, print and packaging — designed to make brands stand out, with website design, development and software as the second half of the studio.

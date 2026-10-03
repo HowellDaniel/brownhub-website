@@ -35,7 +35,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrownHub Studio">
   <link rel="preload" href="fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=95">
+  <link rel="stylesheet" href="css/style.css?v=96">
   <script src="js/theme.js"></script><script src="js/player.js?v=1"></script><script src="js/voice.js?v=1"></script>
   <script type="application/ld+json">
 {
@@ -236,7 +236,7 @@
      },
      {
       "@type": "Offer",
-      "url": "https://www.brownhub283.com/websites.html",
+      "url": "https://www.brownhub283.com/#web-software",
       "itemOffered": {
        "@type": "Service",
        "name": "Website Design & Development",
@@ -248,6 +248,44 @@
      }
     ]
    }
+  },
+  {
+   "@type": "Service",
+   "@id": "https://www.brownhub283.com/#web-service",
+   "name": "Website Design & Development",
+   "serviceType": ["Web design", "Software development"],
+   "url": "https://www.brownhub283.com/#web-software",
+   "description": "Business websites, landing pages, online catalogs, booking tools, web apps and internal dashboards — designed and coded by the same studio that does the branding, with hosting, maintenance and support after launch.",
+   "provider": { "@id": "https://www.brownhub283.com/#business" },
+   "areaServed": [{ "@type": "City", "name": "Accra" }, { "@type": "Country", "name": "Ghana" }],
+   "audience": { "@type": "BusinessAudience", "name": "Businesses, brands and organisations in Ghana" },
+   "hasOfferCatalog": { "@type": "OfferCatalog", "name": "Website Design & Development", "itemListElement": [
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Business websites and landing pages" } },
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Online catalogs and booking tools" } },
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Web apps and internal dashboards" } },
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Hosting, maintenance and support" } }
+    ] }
+  },
+  {
+   "@type": "Service",
+   "@id": "https://www.brownhub283.com/#eng-service",
+   "name": "Website & Software Engineering",
+   "serviceType": ["Software development", "Web development", "Web design"],
+   "url": "https://www.brownhub283.com/#web-software",
+   "description": "Business websites, web apps, online catalogs, client accounts with phone-code login, Paystack payment checkouts, AI assistants and internal dashboards — designed, coded, hosted and maintained in Accra.",
+   "provider": { "@id": "https://www.brownhub283.com/#business" },
+   "areaServed": [{ "@type": "City", "name": "Accra" }, { "@type": "Country", "name": "Ghana" }],
+   "audience": { "@type": "BusinessAudience", "name": "Businesses, brands and organisations in Ghana" },
+   "hasOfferCatalog": { "@type": "OfferCatalog", "name": "Website & Software Engineering", "itemListElement": [
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Business websites and landing pages" } },
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Online catalogs and booking tools" } },
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Web apps and internal dashboards" } },
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Client accounts and secure login" } },
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Payments and checkout" } },
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI assistants and automation" } },
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Installable web apps" } },
+     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Hosting, maintenance and support" } }
+    ] }
   },
   {
    "@type": "FAQPage",
@@ -300,7 +338,18 @@
       "@type": "Answer",
       "text": "Message us on WhatsApp at +233 50 295 4541, email howelldaniel533@gmail.com, or use the contact form. We're open Mon–Fri, 9am–6pm GMT, based in Accra, Ghana — and the chat assistant in the corner answers common questions instantly."
      }
-    }
+    },
+    { "@type": "Question", "name": "Do you design the brand and build the website?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Identity, print and screens come out of the same studio, so the website matches the logo instead of being reinterpreted by someone else." } },
+    { "@type": "Question", "name": "What does a website cost in Ghana?", "acceptedAnswer": { "@type": "Answer", "text": "It depends on the number of pages, the features and whether the content already exists. Send us the brief and you get a free consultation and a clear quote before anything starts." } },
+    { "@type": "Question", "name": "Can you improve a website I already have?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Send the address and what bothers you about it — we can refresh the design, fix the mobile layout, make it load faster, or rebuild only the parts that hold it back." } },
+    { "@type": "Question", "name": "Do you keep the site running after launch?", "acceptedAnswer": { "@type": "Answer", "text": "Hosting, updates, backups and small changes are what the maintenance support covers. You keep the domain, the logins and the files either way." } },
+    { "@type": "Question", "name": "Do you write the code, or assemble it from templates?", "acceptedAnswer": { "@type": "Answer", "text": "Written by hand. Templates and page builders are cheap on day one and expensive in year three, when the plugin you rely on stops being maintained. Hand-built pages carry nothing you did not ask for, which is also why they load quickly on a modest data plan." } },
+    { "@type": "Question", "name": "Can you connect the tools I already use?", "acceptedAnswer": { "@type": "Answer", "text": "Usually yes. Payments through Paystack, orders into WhatsApp or email, records into a database your staff log in to, and links out to the platforms you already run. Send us the list of what is in place and the quote says which parts connect." } },
+    { "@type": "Question", "name": "Will it work on a slow connection or an old phone?", "acceptedAnswer": { "@type": "Answer", "text": "That is a build requirement, not an afterthought. Pages are kept light, tested on real phones before launch, and given an offline mode so a weak signal shows you something useful instead of a blank screen." } },
+    { "@type": "Question", "name": "Who owns the website when it is finished?", "acceptedAnswer": { "@type": "Answer", "text": "You do \u2014 the domain, the hosting account, every login and the source files. We hold copies while we maintain the site, and hand them over the day you ask for them." } },
+    { "@type": "Question", "name": "How do you keep it secure?", "acceptedAnswer": { "@type": "Answer", "text": "Row-level access on the data, secrets kept on the server and never in the page, a content policy that refuses injected script, rate and bot gates on every form, and a published security page that states what we collect and what we never store." } },
+    { "@type": "Question", "name": "How long does a build take?", "acceptedAnswer": { "@type": "Answer", "text": "It depends on the number of pages and features, and whether the content already exists. The date is part of the written quote, and if the brief changes the quote is revised before further work starts — nothing runs on and on without a number attached." } },
+    { "@type": "Question", "name": "What happens after launch?", "acceptedAnswer": { "@type": "Answer", "text": "Hosting, updates, backups and small changes are what the support covers. Bigger work \u2014 a new module, a booking system, a client area \u2014 starts from a fresh quote, the same way the first build did." } }
    ],
    "isPartOf": {
     "@type": "WebPage",
@@ -327,7 +376,6 @@
       <ul class="nav__menu" id="nav-menu">
         <li><a href="index.html" class="nav__link nav__link--active">Home</a></li>
         <li><a href="services.html" class="nav__link">Services</a></li>
-        <li><a href="engineering.html" class="nav__link">Website &amp; Software</a></li>
         <li><a href="catalog.html" class="nav__link">Catalog</a></li>
         <li><a href="about.html" class="nav__link">About</a></li>
         <li><a href="contact.html" class="nav__link">Contact</a></li>
@@ -442,7 +490,7 @@
             <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="4.6" width="18.4" height="12" rx="2.2"/><path d="M8.6 8.4 6.8 10.6l1.8 2.2M15.4 8.4l1.8 2.2-1.8 2.2M12.8 8.8l-1.6 3.8"/><path d="M6.4 20.4h11.2"/></svg></div>
             <h3>Website Design &amp; Development</h3>
             <p>Business websites, online catalogs, booking tools and web apps — designed and coded in the same studio.</p>
-            <p><a href="websites.html" class="card__link">What we build and how it runs →</a></p>
+            <p><a href="#web-software" class="card__link">What we build and how it runs →</a></p>
           </article>
         </div>
         <div class="section__more">
@@ -662,6 +710,542 @@
       </div>
     </section>
 
+    <section class="page-hero web-hero eng-hero" id="web-software">
+      <span class="eng-aura" aria-hidden="true">
+        <i class="eng-orb eng-orb--a"></i><i class="eng-orb eng-orb--b"></i><i class="eng-orb eng-orb--c"></i>
+      </span>
+      <span class="web-grid" aria-hidden="true"></span>
+      <canvas class="web-particles" data-particles aria-hidden="true"></canvas>
+      <svg class="eng-grain" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><filter id="webGrainHero" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="saturate" values="0"/></filter><pattern id="webGrainTileHero" width="200" height="200" patternUnits="userSpaceOnUse"><rect width="200" height="200" filter="url(#webGrainHero)"/></pattern><rect width="100%" height="100%" fill="url(#webGrainTileHero)"/></svg>
+      <div class="container">
+        <p class="eng-cycle" aria-hidden="true"><span>Ideas</span><i>→</i><span>Concepts</span><i>→</i><span>Designs</span><i>→</i><span>Code</span><i>→</i><span>Results</span></p>
+        <p class="eyebrow">Website &amp; software engineering</p>
+        <h2>Website design and development in Accra</h2>
+        <p>Business websites, landing pages, online catalogs, booking tools and web apps — designed and coded by the same studio that does your logo, your branding and your print.</p>
+        <div class="hero__actions">
+          <a href="contact.html" class="btn btn--primary">Start a project</a>
+          <a href="https://wa.me/233502954541" target="_blank" rel="noopener" class="btn btn--ghost">Talk to an engineer</a>
+        </div>
+        <div class="eng-diagram" aria-hidden="true">
+          <svg viewBox="0 0 760 200" class="eng-diagram__svg" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <path class="ed-rail" d="M190 100h30M362 100h74M562 100h84"/>
+            <g class="ed-node">
+              <rect class="ed-out" x="14" y="44" width="172" height="112" rx="12"/>
+              <path class="ed-out" d="M14 72h172"/>
+              <circle class="ed-a" cx="32" cy="58" r="5"/><circle class="ed-b" cx="50" cy="58" r="5"/>
+              <rect class="ed-c" x="30" y="88" width="72" height="14" rx="7"/>
+              <rect class="ed-c" x="30" y="110" width="46" height="9" rx="4"/>
+              <path class="ed-line-a" d="M104 140l16-22 14 11 20-26"/>
+              <rect class="ed-a" x="132" y="88" width="38" height="14" rx="7" opacity="0.8"/>
+            </g>
+            <g class="ed-node">
+              <ellipse class="ed-out" cx="290" cy="58" rx="66" ry="16"/>
+              <path class="ed-out" d="M224 58v84a66 16 0 0 0 132 0V58"/>
+              <path class="ed-out" d="M224 90a66 16 0 0 0 132 0M224 120a66 16 0 0 0 132 0" opacity="0.22"/>
+              <rect class="ed-a" x="262" y="52" width="56" height="12" rx="6" opacity="0.75"/>
+            </g>
+            <g class="ed-node">
+              <path class="ed-out" d="M500 40l58 20v52c0 30-24 52-58 64-34-12-58-34-58-64V60l58-20Z"/>
+              <path class="ed-line-b" d="M478 102l16 16 30-34"/>
+              <circle class="ed-c" cx="500" cy="76" r="10"/>
+            </g>
+            <g class="ed-node">
+              <rect class="ed-out" x="652" y="36" width="94" height="128" rx="16"/>
+              <rect class="ed-c" x="668" y="58" width="28" height="28" rx="8"/>
+              <rect class="ed-c" x="706" y="58" width="28" height="28" rx="8"/>
+              <rect class="ed-c" x="668" y="98" width="28" height="28" rx="8"/>
+              <rect class="ed-a" x="706" y="98" width="28" height="28" rx="8" opacity="0.8"/>
+              <path class="ed-out" d="M686 150h26"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="section web-reel">
+      <div class="container">
+        <div class="section__head">
+          <h2>A studio at work</h2>
+          <p>Websites are built by people at keyboards, not by a template. This is the part of the job a screenshot never shows.</p>
+        </div>
+        <div class="reel__pair">
+          <div class="reel">
+            <video class="reel__film" data-bg data-src="video/coding-bg.mp4" poster="images/web/reel-poster.jpg" muted loop playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
+            <canvas class="reel__dots" data-particles data-pt-line="accent" aria-hidden="true"></canvas>
+            <span class="reel__ink" aria-hidden="true"></span>
+            <span class="reel__tag"><i aria-hidden="true"></i>Illustrative stock footage</span>
+          </div>
+          <div class="reel reel--still">
+            <span class="media"><img src="images/web/coding.jpg" alt="Hands at a keyboard beside a tablet propped open on a workbench, its screen filled with source code" width="1000" height="562" loading="lazy" decoding="async"></span>
+            <span class="reel__tag"><i aria-hidden="true"></i>Illustrative stock photography</span>
+          </div>
+        </div>
+        <p class="reel__note">The footage and the photography on this page are licensed stock images of people working — they are not a client's website and not footage from a BrownHub project. Real delivered work is in our design catalog.</p>
+      </div>
+    </section>
+
+    <section class="section section--alt webcat" id="web-catalog">
+      <span class="eng-aura eng-aura--why" aria-hidden="true">
+        <i class="eng-orb eng-orb--a"></i><i class="eng-orb eng-orb--b"></i><i class="eng-orb eng-orb--c"></i>
+      </span>
+      <span class="web-grid" aria-hidden="true"></span>
+      <svg class="eng-grain" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><filter id="webGrainCat" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="saturate" values="0"/></filter><pattern id="webGrainTileCat" width="200" height="200" patternUnits="userSpaceOnUse"><rect width="200" height="200" filter="url(#webGrainCat)"/></pattern><rect width="100%" height="100%" fill="url(#webGrainTileCat)"/></svg>
+      <div class="container">
+        <div class="section__head">
+          <h2>Website work, catalogued</h2>
+          <p>This catalog is only websites and software — the print, banners and frames we deliver live in the main catalog.</p>
+        </div>
+        <form class="catalog-search" id="catalog-search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+          <input type="text" id="catalog-filter-input" autocomplete="off" placeholder="Search website work" aria-label="Search website work" aria-controls="catalog-grid">
+          <button type="button" class="catalog-search__clear" id="catalog-filter-clear" hidden>Clear search</button>
+        </form>
+        <p class="catalog-count" id="catalog-empty" role="status" aria-live="polite" hidden>No website work matches that search.</p>
+        <div class="cards cards--3" id="catalog-grid">
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Business website" data-name="Business website" data-cat="pages" data-catlabel="Business websites and landing pages" data-img="images/web/scene-1.jpg" data-imgs="images/web/scene-1.jpg, images/web/landing.jpg" data-desc="A multi-page site that explains the business and brings in enquiries: home, services, catalog and contact.">
+            <div class="media"><img src="images/web/scene-1.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Business websites and landing pages</span>
+              <h3>Business website</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: One-page landing site" data-name="One-page landing site" data-cat="pages" data-catlabel="Business websites and landing pages" data-img="images/web/scene-2.jpg" data-imgs="images/web/scene-2.jpg, images/web/landing.jpg" data-desc="One page built around a single campaign or product, with one button that does the work.">
+            <div class="media"><img src="images/web/scene-2.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Business websites and landing pages</span>
+              <h3>One-page landing site</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Online product catalog" data-name="Online product catalog" data-cat="shop" data-catlabel="Online catalogs and booking tools" data-img="images/web/scene-3.jpg" data-imgs="images/web/scene-3.jpg, images/web/shop.jpg" data-desc="Your products, prices and photos in a catalog a customer can browse and open straight into WhatsApp.">
+            <div class="media"><img src="images/web/scene-3.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Online catalogs and booking tools</span>
+              <h3>Online product catalog</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Booking and enquiry form" data-name="Booking and enquiry form" data-cat="shop" data-catlabel="Online catalogs and booking tools" data-img="images/web/scene-4.jpg" data-imgs="images/web/scene-4.jpg, images/web/booking.jpg" data-desc="Collect dates, sizes and details on the page and receive them as a message you can answer.">
+            <div class="media"><img src="images/web/scene-4.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Online catalogs and booking tools</span>
+              <h3>Booking and enquiry form</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Web app or internal dashboard" data-name="Web app or internal dashboard" data-cat="apps" data-catlabel="Web apps and internal dashboards" data-img="images/web/scene-5.jpg" data-imgs="images/web/scene-5.jpg, images/web/dashboard.jpg" data-desc="Records, forms, stock and reports for the work behind the counter, on any screen in the shop.">
+            <div class="media"><img src="images/web/scene-5.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Web apps and internal dashboards</span>
+              <h3>Web app or internal dashboard</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Online payments on your page" data-name="Online payments on your page" data-cat="apps" data-catlabel="Web apps and internal dashboards" data-img="images/web/scene-6.jpg" data-imgs="images/web/scene-6.jpg, images/web/shop.jpg" data-desc="Take card, mobile money and bank-transfer payment on the page, with your own account behind it.">
+            <div class="media"><img src="images/web/scene-6.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Web apps and internal dashboards</span>
+              <h3>Online payments on your page</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Client login and order history" data-name="Client login and order history" data-cat="apps" data-catlabel="Web apps and internal dashboards" data-img="images/web/scene-7.jpg" data-imgs="images/web/scene-7.jpg, images/web/dashboard.jpg" data-desc="A private area where a client signs in with a code on their phone, sees past orders and asks for changes.">
+            <div class="media"><img src="images/web/scene-7.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Web apps and internal dashboards</span>
+              <h3>Client login and order history</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: AI assistant on your website" data-name="AI assistant on your website" data-cat="apps" data-catlabel="Web apps and internal dashboards" data-img="images/web/scene-8.jpg" data-imgs="images/web/scene-8.jpg, images/web/landing.jpg" data-desc="An assistant that answers the common questions on the page and hands the rest to you on WhatsApp.">
+            <div class="media"><img src="images/web/scene-8.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Web apps and internal dashboards</span>
+              <h3>AI assistant on your website</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Website redesign and migration" data-name="Website redesign and migration" data-cat="pages" data-catlabel="Business websites and landing pages" data-img="images/web/scene-9.jpg" data-imgs="images/web/scene-9.jpg, images/web/landing.jpg" data-desc="Keep the address, the content and the customers — rebuild the design, the speed and the mobile layout.">
+            <div class="media"><img src="images/web/scene-9.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Business websites and landing pages</span>
+              <h3>Website redesign and migration</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Hosting, maintenance and support" data-name="Hosting, maintenance and support" data-cat="care" data-catlabel="Hosting, maintenance and support" data-img="images/web/scene-10.jpg" data-imgs="images/web/scene-10.jpg, images/web/dashboard.jpg" data-desc="The site stays online, backed up, updated and quick, with small changes made when you ask.">
+            <div class="media"><img src="images/web/scene-10.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Hosting, maintenance and support</span>
+              <h3>Hosting, maintenance and support</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+        </div>
+        <p class="webcat__note">Tap any item for the details, then order it in chat or ask for a quote. Prices come from the brief, never from a hidden rate card.</p>
+        <div class="section__more">
+          <a href="catalog.html" class="btn btn--ghost">The main catalog — print, banners and frames</a>
+          <a href="contact.html" class="btn btn--primary">Start a website project</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section webviews" id="layouts">
+      <span class="eng-aura eng-aura--why" aria-hidden="true">
+        <i class="eng-orb eng-orb--a"></i><i class="eng-orb eng-orb--b"></i><i class="eng-orb eng-orb--c"></i>
+      </span>
+      <span class="web-grid" aria-hidden="true"></span>
+      <svg class="eng-grain" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><filter id="webGrainBand" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="saturate" values="0"/></filter><pattern id="webGrainTileBand" width="200" height="200" patternUnits="userSpaceOnUse"><rect width="200" height="200" filter="url(#webGrainBand)"/></pattern><rect width="100%" height="100%" fill="url(#webGrainTileBand)"/></svg>
+      <div class="container">
+        <div class="section__head">
+          <h2>Pages we would build for you</h2>
+          <p>Four pages we designed and coded in this studio, photographed in the browser at the size they are served. They are demo builds made for this page, not client sites — a client's own words, photos and prices go in their own brand.</p>
+        </div>
+        <div class="shots">
+          <figure class="shot">
+            <div class="media"><img src="images/web/landing.jpg" alt="A demo landing page for a chop bar called Kontomantse Grill: headline, order buttons, three WhatsApp ordering steps and a platter price strip" width="800" height="600" loading="lazy" decoding="async"></div>
+            <figcaption><h3>Business websites and landing pages</h3><span>Demo build, rendered here</span></figcaption>
+          </figure>
+          <figure class="shot">
+            <div class="media"><img src="images/web/shop.jpg" alt="A demo online fabric catalog called Adom Fabrics: a filter sidebar beside six product cards with prices in Ghana cedis" width="800" height="600" loading="lazy" decoding="async"></div>
+            <figcaption><h3>Online catalogs and booking tools</h3><span>Demo build, rendered here</span></figcaption>
+          </figure>
+          <figure class="shot">
+            <div class="media"><img src="images/web/dashboard.jpg" alt="A demo delivery operations dashboard called Nima Logistics: four key figures, a parcels-per-hour chart and a jobs table on dark panels" width="800" height="600" loading="lazy" decoding="async"></div>
+            <figcaption><h3>Web apps and internal dashboards</h3><span>Demo build, rendered here</span></figcaption>
+          </figure>
+          <figure class="shot">
+            <div class="media"><img src="images/web/booking.jpg" alt="A demo appointment booking page called Aseda Hair and Beauty: a form with day and time slots beside an estimate card, a location map and a rating" width="800" height="600" loading="lazy" decoding="async"></div>
+            <figcaption><h3>Enquiry and booking forms</h3><span>Demo build, rendered here</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="build">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow">What we engineer</p>
+          <h2>Eight kinds of build</h2>
+          <p>Each one is designed and coded in-house, then delivered live with support behind it.</p>
+        </div>
+        <div class="cards cards--4">
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="4.6" width="18.4" height="12" rx="2.2"/><path d="M8.6 8.4 6.8 10.6l1.8 2.2M15.4 8.4l1.8 2.2-1.8 2.2M12.8 8.8l-1.6 3.8"/><path d="M6.4 20.4h11.2"/></svg></div>
+            <h3>Business websites &amp; landing pages</h3>
+            <p>A page that explains what you do and drives one clear action — call, message or buy — with structured markup so search engines and AI assistants read it correctly.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.2 8.6 5.6 4.4h12.8l1.4 4.2"/><path d="M4.2 8.6h15.6v10a1.4 1.4 0 0 1-1.4 1.4H5.6a1.4 1.4 0 0 1-1.4-1.4v-10Z"/><path d="M9.2 8.6a2.2 2.2 0 0 0 4.4 0"/></svg></div>
+            <h3>Online catalogs &amp; booking tools</h3>
+            <p>Products, prices and availability kept in one place, with enquiries landing straight in your WhatsApp or your inbox.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.4" y="4.2" width="17.2" height="15.6" rx="2"/><path d="M3.4 9h17.2M9 9v10.8"/><path d="M12.6 12.6h4.8M12.6 16.2h3.2"/></svg></div>
+            <h3>Web apps &amp; internal dashboards</h3>
+            <p>Tools for the work behind the counter: records, forms, stock, staff logins and reports that answer in seconds instead of a notebook.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.4" r="3.6"/><path d="M5.2 20.2c0-3.6 3-5.8 6.8-5.8s6.8 2.2 6.8 5.8"/></svg></div>
+            <h3>Client accounts &amp; secure login</h3>
+            <p>A private area where each customer signs in with a phone code, sees their own history and re-orders — with nobody able to see anyone else's rows.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="5.4" width="18.4" height="13.2" rx="2.2"/><path d="M2.8 9.6h18.4M6.4 14.6h3.2"/></svg></div>
+            <h3>Payments &amp; checkout</h3>
+            <p>Card, mobile money and Apple Pay through Paystack, settled straight into your own account, with the order recorded the moment it settles.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 4.8h14.8a1.8 1.8 0 0 1 1.8 1.8v8.2a1.8 1.8 0 0 1-1.8 1.8h-8.2l-5.4 4v-4H4.6a1.8 1.8 0 0 1-1.8-1.8V6.6a1.8 1.8 0 0 1 1.8-1.8Z"/><path d="M12.2 7.6l.9 2 2 .9-2 .9-.9 2-.9-2-2-.9 2-.9.9-2Z"/></svg></div>
+            <h3>AI assistants &amp; automation</h3>
+            <p>A chat assistant that answers clients in their own language, takes the order, and hands a human the whole conversation when it is out of its depth.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.2" y="2.8" width="11.6" height="18.4" rx="2.4"/><path d="M10.4 18.4h3.2"/><path d="M12 6.4v6.4M9.6 10.4 12 12.8l2.4-2.4"/></svg></div>
+            <h3>Installable web apps</h3>
+            <p>Your site added to a phone's home screen, opening full screen and working offline. This page installs that way — open the browser menu on your phone and choose Add to Home Screen.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="3.4"/><path d="M5.6 5.6 9.6 9.6M14.4 14.4l4 4M18.4 5.6l-4 4M9.6 14.4l-4 4"/></svg></div>
+            <h3>Hosting, maintenance &amp; support</h3>
+            <p>We keep it online, patched and quick, take the backups, and change the wording, the prices and the pages as the business moves.</p>
+          </article>
+        </div>
+        <div class="section__more">
+          <a href="#web-software" class="btn btn--ghost">The website service in short</a>
+          <a href="services.html" class="btn btn--ghost">Explore our design services</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="included">
+      <div class="container">
+        <div class="service-row">
+          <div class="service-row__text">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 12.4 12.4 20.4a2 2 0 0 1-2.8 0L3.6 14.4a2 2 0 0 1 0-2.8l8-8h8.8v8.8Z"/><circle cx="15.6" cy="8.4" r="1.4"/></svg></span>
+            <h2>What every website we deliver includes</h2>
+            <p>Every site we ship — this one included — is designed and built here, then handed over with the keys.</p>
+            <ul class="checklist">
+              <li>Design first, then code — the page follows your brand, not a template</li>
+              <li>Mobile layouts checked on real phones before launch</li>
+              <li>Fast loading on modest data plans</li>
+              <li>Your own domain, logins and hosting — never held by us</li>
+              <li>WhatsApp, call and enquiry buttons wired to your numbers</li>
+              <li>Structured markup that Google and AI assistants can read</li>
+            </ul>
+            <p><a href="services.html" class="card__link">See the design services behind it →</a></p>
+          </div>
+          <div class="service-row__visual" aria-hidden="true"><div class="visual visual--web"><svg viewBox="0 0 200 150" class="mock" aria-hidden="true"><rect class="mk-line" x="16" y="20" width="168" height="110" rx="10"/><path class="mk-a" d="M16 42h168"/><circle class="mk-b" cx="32" cy="31" r="4"/><circle class="mk-b" cx="46" cy="31" r="4"/><rect class="mk-c" x="30" y="56" width="60" height="12" rx="6"/><rect class="mk-c" x="30" y="76" width="40" height="8" rx="4"/><rect class="mk-b" x="30" y="100" width="34" height="14" rx="7"/><rect class="mk-c" x="112" y="56" width="54" height="52" rx="6"/><path class="mk-a" d="M120 96l12-16 10 8 14-20" stroke-width="5"/></svg><span class="visual__cap">Built in-house</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="own-product">
+      <div class="container">
+        <div class="service-row">
+          <div class="service-row__text">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.6 8.4 6.8 10.6l1.8 2.2M15.4 8.4l1.8 2.2-1.8 2.2M12.8 8.8l-1.6 3.8"/></svg></span>
+            <h2>We run our own shop on our own software</h2>
+            <p>The easiest way to judge a build is to look at what the builders use themselves. Everything below is live on this site right now, serving real orders.</p>
+            <ul class="checklist">
+              <li>Twenty-four catalog items with their own photographs, prices and order buttons</li>
+              <li>Client accounts that sign in with a code by text and keep each request</li>
+              <li>Card, mobile money and Apple Pay checkout that settles to the studio's own bank</li>
+              <li>A chat assistant that answers, prices and hands the conversation to a person on WhatsApp</li>
+              <li>Voicemail notes turned into playable audio before they reach an inbox</li>
+              <li>Every page rewritten by hand into forty languages, right-to-left included</li>
+              <li>An offline mode and a home-screen install, so it behaves like an app</li>
+              <li>A strict content security policy, spam gates and hidden traps on every form</li>
+            </ul>
+            <p><a href="security.html" class="card__link">Read exactly how it is secured →</a></p>
+          </div>
+          <div class="service-row__visual" aria-hidden="true">
+            <div class="visual visual--web">
+              <svg viewBox="0 0 200 150" class="mock"><rect class="mk-line" x="16" y="20" width="168" height="110" rx="10"/><path class="mk-a" d="M16 42h168"/><circle class="mk-b" cx="32" cy="31" r="4"/><circle class="mk-b" cx="46" cy="31" r="4"/><rect class="mk-c" x="30" y="56" width="60" height="12" rx="6"/><rect class="mk-c" x="30" y="76" width="40" height="8" rx="4"/><rect class="mk-b" x="30" y="100" width="34" height="14" rx="7"/><rect class="mk-c" x="112" y="56" width="54" height="52" rx="6"/><path class="mk-a" d="M120 96l12-16 10 8 14-20" stroke-width="5"/></svg>
+              <span class="visual__cap">Built here, used here</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section band--ink eng-process" id="approach">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow">Our approach</p>
+          <h2>Five steps, and what each one leaves you</h2>
+          <p>No step starts before the last one is agreed, and every one of them has something you can hold.</p>
+        </div>
+        <ol class="eng-steps">
+          <li class="eng-step">
+            <span class="step__num">1</span>
+            <h3>Needs assessment</h3>
+            <p>We look at the business, the sites you compete with and what a customer should manage in the first minute on your page.</p>
+            <p class="eng-deliver"><span>Deliverables</span> A written quote listing what is included, the price in Ghana cedis and the expected turnaround.</p>
+          </li>
+          <li class="eng-step">
+            <span class="step__num">2</span>
+            <h3>Design &amp; prototype</h3>
+            <p>Pages are laid out in your brand — type, colour, spacing, wording — and you approve the look before the build starts.</p>
+            <p class="eng-deliver"><span>Deliverables</span> Page-by-page design you can read and comment on, mobile layout included.</p>
+          </li>
+          <li class="eng-step">
+            <span class="step__num">3</span>
+            <h3>Build &amp; integrate</h3>
+            <p>Front end coded by hand, data and logins set up, payments, messaging and WhatsApp wired to your own numbers and accounts.</p>
+            <p class="eng-deliver"><span>Deliverables</span> A working preview address you can open on your own phone.</p>
+          </li>
+          <li class="eng-step">
+            <span class="step__num">4</span>
+            <h3>Test &amp; deploy</h3>
+            <p>Checked on real phones, timed on a modest data plan, forms and payments run end to end, then pointed at your domain.</p>
+            <p class="eng-deliver"><span>Deliverables</span> The site live on your address, with the security layer and the analytics in place.</p>
+          </li>
+          <li class="eng-step">
+            <span class="step__num">5</span>
+            <h3>Handover &amp; support</h3>
+            <p>Logins, files and plain guidance on changing it yourself, then hosting, updates, backups and small changes as you grow.</p>
+            <p class="eng-deliver"><span>Deliverables</span> Every credential and source file, held by you, not by us.</p>
+          </li>
+        </ol>
+        <div class="section__more">
+          <a href="legal.html" class="btn btn--ghost btn--sm">How we agree a job</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="stack">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow">How it is built</p>
+          <h2>The parts under the page</h2>
+          <p>Chosen because they are dependable and affordable to run in Ghana, not because they are fashionable.</p>
+        </div>
+        <div class="eng-stack">
+          <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M8.6 8.4 6.8 10.6l1.8 2.2M15.4 8.4l1.8 2.2-1.8 2.2M12.8 8.8l-1.6 3.8"/></svg></span>
+            <h3>Interface</h3>
+            <p>Hand-written HTML, CSS and JavaScript. No page builder, no plugin stack to expire, nothing that phones home to a licence server.</p>
+          </section>
+          <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><ellipse cx="12" cy="6.6" rx="7.4" ry="2.6"/><path d="M4.6 6.6v10.8c0 1.4 3.3 2.6 7.4 2.6s7.4-1.2 7.4-2.6V6.6"/><path d="M4.6 12c0 1.4 3.3 2.6 7.4 2.6s7.4-1.2 7.4-2.6"/></svg></span>
+            <h3>Data &amp; accounts</h3>
+            <p>A managed Postgres database with row-level security, so a signed-in client can only ever read their own records. Login by phone code or email.</p>
+          </section>
+          <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="4" y="4.4" width="16" height="6.2" rx="1.8"/><rect x="4" y="13.4" width="16" height="6.2" rx="1.8"/><path d="M7.4 7.5h1.4M7.4 16.5h1.4M16.6 7.5h-3.2M16.6 16.5h-3.2"/></svg></span>
+            <h3>Server side</h3>
+            <p>Small edge functions for the work that must not happen in the browser: signing payments, holding API keys, relaying messages.</p>
+          </section>
+          <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="2.8" y="5.4" width="13.4" height="9.6" rx="1.8"/><path d="M2.8 8.6h13.4"/><path d="M8.6 18.4h9.2a1.8 1.8 0 0 0 1.8-1.8V9.4"/></svg></span>
+            <h3>Payments &amp; messaging</h3>
+            <p>Paystack for card, mobile money and Apple Pay; SMS codes for login; WhatsApp deep links so an order can continue in a chat.</p>
+          </section>
+          <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="12" r="8.6"/><path d="M3.6 12h16.8"/><path d="M12 3.6c2.4 2.2 3.6 4.9 3.6 8.4s-1.2 6.2-3.6 8.4c-2.4-2.2-3.6-4.9-3.6-8.4s1.2-6.2 3.6-8.4Z"/></svg></span>
+            <h3>Delivery</h3>
+            <p>Static hosting on a global content network, a service worker for offline use, and a manifest so the site installs to a home screen.</p>
+          </section>
+          <section class="eng-stack__col">
+            <span class="eng-stack__mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3.4l2.3 1.7 2.8-.2.9 2.7 2.3 1.7-1.1 2.6 1.1 2.6-2.3 1.7-.9 2.7-2.8-.2L12 20.6l-2.3-1.7-2.8.2-.9-2.7-2.3-1.7L4.8 12 3.7 9.4 6 7.7l.9-2.7 2.8.2L12 3.4Z"/><path d="M9.4 12.2l1.9 1.9 3.5-3.7"/></svg></span>
+            <h3>Quality &amp; care</h3>
+            <p>Contrast checked to AA in both themes, motion that stops when the visitor asks for it, backups taken, and every page measured for errors after each change.</p>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="sectors">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow">Who we build for</p>
+          <h2>The businesses already on our books</h2>
+          <p>Sector names taken from the clients we have actually worked for, not from a marketing list.</p>
+        </div>
+        <ul class="eng-sectors">
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M13 17.4V11h14v6.4"/><rect x="12.2" y="17.4" width="15.6" height="8" rx="2"/><path d="M15 25.4h10v4.4H15z"/></svg></span>
+            <strong>Print &amp; publishing</strong><span>Print shops, book designers and binders who need orders and artwork files handled in one place.</span>
+          </li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M12 28.4V17.2L20 11l8 6.2v11.2"/><path d="M10.4 28.4h19.2"/><path d="M17.6 28.4v-5.2a2.4 2.4 0 0 1 4.8 0v5.2"/></svg></span>
+            <strong>Churches &amp; ministries</strong><span>Event pages, programmes, giving and media archives that a volunteer can update.</span>
+          </li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M12.6 28.4V13.8a1.4 1.4 0 0 1 1.4-1.4h7.4a1.4 1.4 0 0 1 1.4 1.4v14.6"/><path d="M22.8 20.6h4.2a1.4 1.4 0 0 1 1.4 1.4v6.4"/><path d="M10.4 28.4h20"/><path d="M15.6 16.4h3.6M15.6 20.4h3.6"/></svg></span>
+            <strong>Corporate &amp; institutions</strong><span>Company profiles, staff forms, records and internal reports.</span>
+          </li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M13.4 16.6h13.2l1.2 11.8H12.2z"/><path d="M16.4 16.6v-2.4a3.6 3.6 0 0 1 7.2 0v2.4"/></svg></span>
+            <strong>Consumer brands</strong><span>Product catalogs, stockists and checkout that reaches a Ghanaian wallet.</span>
+          </li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M20 28.2c-4.6-3.2-7.6-6-7.6-9.4a4.2 4.2 0 0 1 7.6-2.4 4.2 4.2 0 0 1 7.6 2.4c0 3.4-3 6.2-7.6 9.4Z"/><path d="M13.6 19.4h3.2l1.6-2.6 2 4.6 1.6-2h4.4"/></svg></span>
+            <strong>Health &amp; wellness</strong><span>Booking, reminders and a client area that keeps each person's own history.</span>
+          </li>
+          <li class="eng-sector">
+            <span class="eng-sector__med" aria-hidden="true"><svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-med__ring" cx="20" cy="20" r="18"/><path d="M20 14.6c-1.8-1.6-4.4-2.2-7.4-1.8v12.4c3-.4 5.6.2 7.4 1.8 1.8-1.6 4.4-2.2 7.4-1.8V12.8c-3-.4-5.6.2-7.4 1.8Z"/><path d="M20 14.6v12.4"/></svg></span>
+            <strong>Schools &amp; training</strong><span>Admissions, timetables and results pages built for phones on a modest data plan.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section eng-why" id="eng-why">
+      <span class="eng-aura eng-aura--why" aria-hidden="true">
+        <i class="eng-orb eng-orb--a"></i><i class="eng-orb eng-orb--b"></i><i class="eng-orb eng-orb--c"></i>
+      </span>
+      <svg class="eng-grain" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><filter id="engGrainWhy" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="saturate" values="0"/></filter><pattern id="engGrainTileWhy" width="200" height="200" patternUnits="userSpaceOnUse"><rect width="200" height="200" filter="url(#engGrainWhy)"/></pattern><rect width="100%" height="100%" fill="url(#engGrainTileWhy)"/></svg>
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow">Why choose us</p>
+          <h2>Six things we will not trade away</h2>
+        </div>
+        <ul class="eng-guards" aria-hidden="true">
+          <li class="eng-guard">
+            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-guard__ring" cx="24" cy="24" r="21"/><path d="M24 13.4 31.8 16v7.4c0 4.8-3.7 8.7-7.8 10.2-4.1-1.5-7.8-5.4-7.8-10.2V16L24 13.4Z"/><path d="M21.2 24.2l2.2 2.2 4.2-4.4"/></svg>
+          </li>
+          <li class="eng-guard">
+            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-guard__ring" cx="24" cy="24" r="21"/><rect x="17" y="22.4" width="14" height="11.4" rx="2.6"/><path d="M20.4 22.4v-3.6a3.6 3.6 0 0 1 7.2 0v3.6"/><path d="M24 27v2.6"/></svg>
+          </li>
+          <li class="eng-guard">
+            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-guard__ring" cx="24" cy="24" r="21"/><rect x="14.4" y="15.4" width="19.2" height="7.4" rx="2"/><rect x="14.4" y="25.2" width="19.2" height="7.4" rx="2"/><path d="M18.4 19.1h1.6M18.4 28.9h1.6"/><path d="M22.4 36.6h3.2"/></svg>
+          </li>
+          <li class="eng-guard">
+            <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle class="eng-guard__ring" cx="24" cy="24" r="21"/><path d="M15.4 21.6c2.4-2.6 5.4-4 8.6-4s6.2 1.4 8.6 4"/><path d="M18.6 25.4c1.6-1.7 3.4-2.6 5.4-2.6s3.8.9 5.4 2.6"/><circle cx="24" cy="30.6" r="1.8"/></svg>
+          </li>
+        </ul>
+        <div class="cards cards--3">
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 4.6h14.4a1.8 1.8 0 0 1 1.8 1.8v8.4a1.8 1.8 0 0 1-1.8 1.8h-7.8l-5.2 3.8v-3.8H4.8A1.8 1.8 0 0 1 3 13.2V6.4a1.8 1.8 0 0 1 1.8-1.8Z"/><path d="M8.6 10.4l2 2 4.4-4.4"/></svg></div>
+            <h3>We listen before we build</h3>
+            <p>Consultation is free and the quote names exactly what is included. Nobody starts coding a brief they have not repeated back to you.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.8" y="4.4" width="18.4" height="12.4" rx="2.2"/><path d="M8.2 20.4h7.6"/><path d="M13.6 7.4l3 3-4.6 4.6-3.6 1 .8-3.6 4.4-4.4Z"/></svg></div>
+            <h3>One studio for the brand and the build</h3>
+            <p>The logo, the flyer, the packaging and the website come from the same hands, so the screen does not reinterpret what the print already settled.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2 19 5.6v5.9c0 3.8-2.9 6.9-7 8.2-4.1-1.3-7-4.4-7-8.2V5.6L12 3.2Z"/><rect x="9.4" y="10.8" width="5.2" height="4.2" rx="1.2"/><path d="M10.6 10.8V9.6a1.4 1.4 0 0 1 2.8 0v1.2"/></svg></div>
+            <h3>We take security personally</h3>
+            <p>Secrets stay on the server, forms are gated against bots, and what we do and do not collect is written in plain words on our privacy page.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.8" width="10" height="18.4" rx="2.4"/><path d="M10.6 18.4h2.8"/><path d="M4.4 8.6a5 5 0 0 1 1.6-2.2M19.6 8.6a5 5 0 0 0-1.6-2.2"/></svg></div>
+            <h3>It has to work on a Ghanaian data plan</h3>
+            <p>Pages are measured on real phones and modest connections before they ship, because that is where your customers are opening them.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="2.6"/><path d="M7.8 17.4c0-2.2 1.9-3.6 4.2-3.6s4.2 1.4 4.2 3.6"/></svg></div>
+            <h3>You are dealt with by a named person</h3>
+            <p>Enquiries are answered by the studio itself on WhatsApp or email, Monday to Friday, 9am–6pm Ghana time. No ticket queue.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8.2" cy="8.2" r="4"/><path d="M11.2 11.2 20 20"/><path d="M16.4 16.4l1.8-1.8M14 14l2 2"/></svg></div>
+            <h3>The work is never held hostage</h3>
+            <p>Your domain, your logins, your files. If you leave, the site keeps running and whoever takes over gets the whole thing.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--alt" id="cost">
+      <div class="container faq__grid">
+        <div class="faq-band__main">
+          <div class="section__head">
+            <p class="eyebrow">What it costs</p>
+            <h2>A number before any work starts</h2>
+          </div>
+          <div class="eng-cost">
+            <div class="eng-cost__window">
+              <p class="eng-cost__label">Website &amp; software work on the enquiry form sits between</p>
+              <p class="eng-cost__figure">GH₵1,500 <span>—</span> GH₵8,500</p>
+              <p>and above that a larger system is quoted on its own. The figure is a band, not a rate card: the price is set by the number of pages, the features and whether the content already exists.</p>
+            </div>
+            <ul class="checklist">
+              <li>Consultation is free, and design jobs are normally quoted the same day</li>
+              <li>The quote lists what is included, the price in cedis and the expected turnaround</li>
+              <li>If sizes, quantity or the deadline change, the quote is revised before work continues</li>
+              <li>A message saying go ahead is enough — no signed contract is required</li>
+              <li>Pay by card, mobile money or transfer, and keep the files either way</li>
+            </ul>
+            <p><a href="contact.html" class="card__link">Send the brief and get a quote →</a></p>
+          </div>
+        </div>
+        <aside class="rail-card">
+          <div class="card">
+            <span class="icon-tile"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 4.8h14.8a1.8 1.8 0 0 1 1.8 1.8v8.2a1.8 1.8 0 0 1-1.8 1.8h-8.2l-5.4 4v-4H4.6a1.8 1.8 0 0 1-1.8-1.8V6.6a1.8 1.8 0 0 1 1.8-1.8Z"/></svg></span>
+            <h3>Not sure what you need?</h3>
+            <p>Describe the job in your own words — a page, a system, a form your staff keep losing — and you get an honest yes or no within a day.</p>
+            <a href="contact.html" class="btn btn--primary btn--sm">Start your project</a>
+            <a href="https://wa.me/233502954541" target="_blank" rel="noopener" class="card__link">Ask on WhatsApp →</a>
+          </div>
+        </aside>
+      </div>
+    </section>
     <section class="section band--exp" id="customer-experience">
       <div class="container">
         <div class="section__head">
@@ -808,6 +1392,49 @@
 
     <section class="section section--alt faq-band" id="faq"><div class="container faq__grid"><div class="faq-band__main"><div class="section__head"><h2>Frequently asked questions</h2><p>Quick answers before you reach out.</p></div><div class="faq"><details open><summary>What design services does BrownHub offer?</summary><p>Logos and full brand identity, social media graphics, flyers and posters, business cards, brochures and company profiles, packaging, marketing and advertising graphics, book covers and inside layout, plus large format print: pull-up banners, ABS boards and frames. We also build websites and software for brands that need them. See the <a href="services.html">services page</a> and the <a href="catalog.html">catalog</a>.</p></details><details><summary>What does a design project cost?</summary><p>It depends on the job — the number of items, sizes, quantity and deadline. Send us your idea by <a href="contact.html">contact form</a>, email or WhatsApp and you'll get a free consultation and a clear quote; design jobs are usually quoted the same day.</p></details><details><summary>How long does a project take?</summary><p>Typical turnaround: flyers and posters 1–3 days, logos and branding about a week, books and company profiles depend on page count. Need it faster? Ask about rush jobs when you request a quote.</p></details><details><summary>How do I order a print or design item?</summary><p>Pick the item in our <a href="catalog.html">catalog</a>, tap “View details”, then press “Order now via chat” — or send your sizes, quantity and deadline through the <a href="contact.html">contact form</a>. We confirm the price and start right away.</p></details><details><summary>Do you provide the files for printing?</summary><p>Yes. You receive print-ready files in the right color mode and resolution, plus the source files, so you can reprint or edit whenever you need to — with us or with any printer.</p></details><details><summary>How do I get started?</summary><p>Message us on WhatsApp at +233 50 295 4541, email <a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a>, or use the <a href="contact.html">contact form</a>. We're open Mon–Fri, 9am–6pm GMT, based in Accra, Ghana — and the chat assistant in the corner answers common questions instantly.</p></details></div></div><aside class="rail-card"><div class="card"><span class="icon-tile"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 4.8h14.8a1.8 1.8 0 0 1 1.8 1.8v8.2a1.8 1.8 0 0 1-1.8 1.8h-8.2l-5.4 4v-4H4.6a1.8 1.8 0 0 1-1.8-1.8V6.6a1.8 1.8 0 0 1 1.8-1.8Z"/></svg></span><h3>Still deciding?</h3><p>Send the idea as it is in your head — you get a free consultation and an honest yes or no within a day.</p><a href="contact.html" class="btn btn--primary btn--sm">Start your project</a><a href="https://wa.me/233502954541" class="card__link">Ask on WhatsApp →</a></div></aside></div></section>
 
+    <section class="section faq-band" id="web-faq">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow">Questions people ask</p>
+          <h2>Before you commission a build</h2>
+          <p>Quick answers before you reach out.</p>
+        </div>
+        <div class="faq">
+          <details open><summary>Do you design the brand and build the website?</summary><p>Yes. Identity, print and screens come out of the same studio, so the website matches the logo instead of being reinterpreted by someone else.</p></details>
+          <details><summary>What does a website cost in Ghana?</summary><p>It depends on the number of pages, the features and whether the content already exists. Send us the brief and you get a free consultation and a clear quote before anything starts.</p></details>
+          <details><summary>Can you improve a website I already have?</summary><p>Yes. Send the address and what bothers you about it — we can refresh the design, fix the mobile layout, make it load faster, or rebuild only the parts that hold it back.</p></details>
+          <details><summary>Do you keep the site running after launch?</summary><p>Hosting, updates, backups and small changes are what the maintenance support covers. You keep the domain, the logins and the files either way.</p></details>
+          <details>
+            <summary>Do you write the code, or assemble it from templates?</summary>
+            <p>Written by hand. Templates and page builders are cheap on day one and expensive in year three, when the plugin you rely on stops being maintained. Hand-built pages carry nothing you did not ask for, which is also why they load quickly on a modest data plan.</p>
+          </details>
+          <details>
+            <summary>Can you connect the tools I already use?</summary>
+            <p>Usually yes. Payments through Paystack, orders into WhatsApp or email, records into a database your staff log in to, and links out to the platforms you already run. Send us the list of what is in place and the quote says which parts connect.</p>
+          </details>
+          <details>
+            <summary>Will it work on a slow connection or an old phone?</summary>
+            <p>That is a build requirement, not an afterthought. Pages are kept light, tested on real phones before launch, and given an offline mode so a weak signal shows you something useful instead of a blank screen.</p>
+          </details>
+          <details>
+            <summary>Who owns the website when it is finished?</summary>
+            <p>You do — the domain, the hosting account, every login and the source files. We hold copies while we maintain the site, and hand them over the day you ask for them.</p>
+          </details>
+          <details>
+            <summary>How do you keep it secure?</summary>
+            <p>Row-level access on the data, secrets kept on the server and never in the page, a content policy that refuses injected script, rate and bot gates on every form, and a published security page that states what we collect and what we never store.</p>
+          </details>
+          <details>
+            <summary>How long does a build take?</summary>
+            <p>It depends on the number of pages and features, and whether the content already exists. The date is part of the written quote, and if the brief changes the quote is revised before further work starts — nothing runs on and on without a number attached.</p>
+          </details>
+          <details>
+            <summary>What happens after launch?</summary>
+            <p>Hosting, updates, backups and small changes are what the support covers. Bigger work — a new module, a booking system, a client area — starts from a fresh quote, the same way the first build did.</p>
+          </details>
+        </div>
+      </div>
+    </section>
     <section class="section section--alt store-tools">
       <div class="container">
         <div class="section__head">
@@ -873,8 +1500,8 @@
           <li><a href="services.html#brochures-books">Brochure &amp; Company Profile Design</a></li>
           <li><a href="services.html#packaging">Packaging Design</a></li>
           <li><a href="services.html#custom">Custom Graphic Design</a></li>
-          <li><a href="websites.html">Website or Software</a></li>
-          <li><a href="engineering.html">Website &amp; Software Engineering</a></li>
+          <li><a href="#web-software">Website or Software</a></li>
+          <li><a href="#build">Website &amp; Software Engineering</a></li>
 
         </ul>
       </div>
@@ -932,8 +1559,34 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=31"></script><script src="js/translate.js?v=86"></script><script src="js/app.js?v=4"></script>
+  <script src="js/main.js?v=31"></script><script src="js/translate.js?v=87"></script><script src="js/app.js?v=4"></script>
 
+  <div class="modal" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-name">
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__card">
+      <button class="modal__close" type="button" aria-label="Close" data-close-modal>&times;</button>
+      <div class="modal__gal" id="product-modal-gal">
+        <img class="modal__img" id="product-modal-img" alt="">
+        <button class="modal__gal-nav modal__gal-nav--prev" type="button" id="product-modal-prev" aria-label="Previous photo" hidden>&#8249;</button>
+        <button class="modal__gal-nav modal__gal-nav--next" type="button" id="product-modal-next" aria-label="Next photo" hidden>&#8250;</button>
+        <span class="modal__gal-count" id="product-modal-count" hidden></span>
+      </div>
+      <div class="modal__gal-thumbs" id="product-modal-thumbs" hidden></div>
+      <div class="modal__body">
+        <h3 id="product-modal-name"></h3>
+        <span class="modal__cat" id="product-modal-cat"></span>
+        <p class="modal__desc" id="product-modal-desc"></p>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--primary" id="product-order-chat">Order now via chat</button>
+          <a class="btn btn--ghost" id="product-order-quote" href="contact.html">Request a quote</a>
+        </div>
+        <div class="modal__more" id="product-modal-more" hidden>
+          <h4 id="product-modal-more-title">More in this category</h4>
+          <div class="modal__more-grid" id="product-modal-more-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="chat-widget">
     <button class="chat-widget__toggle" id="chatToggle" aria-expanded="false" aria-controls="chatPanel" title="Chat with BrownHub Studio Assistance">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.2c0 4-3.79 7.2-8.5 7.2-.95 0-1.86-.13-2.71-.38L4.5 19.8l1.36-3.34A6.86 6.86 0 0 1 4 11.2C4 7.2 7.79 4 12.5 4S21 7.2 21 11.2Z"/><path d="M12.5 7.4l1.2 2.6 2.6 1.15-2.6 1.15-1.2 2.6-1.2-2.6-2.6-1.15 2.6-1.15 1.2-2.6Z" fill="currentColor" stroke="none" stroke-width="0"/><circle cx="17.1" cy="14.9" r=".95" fill="currentColor" stroke="none" stroke-width="0"/></svg>
@@ -960,9 +1613,9 @@
     </div>
   </div>
 
-  <script src="js/chat.js?v=29"></script><script src="js/accounts.js?v=18"></script><script src="js/portfolio.js?v=4"></script><script src="js/store.js?v=20"></script>
-  <script src="js/scroll.js?v=4"></script><script src="js/neon.js?v=2"></script>
-  <script src="js/nav.js?v=6"></script><script src="js/search.js?v=11"></script><script src="js/cookies.js?v=5"></script><script src="js/social.js?v=1"></script>
+  <script src="js/chat.js?v=29"></script><script src="js/accounts.js?v=18"></script><script src="js/portfolio.js?v=5"></script><script src="js/store.js?v=20"></script>
+  <script src="js/scroll.js?v=4"></script><script src="js/catalog.js?v=13"></script><script src="js/ambient.js?v=1"></script><script src="js/neon.js?v=2"></script>
+  <script src="js/nav.js?v=7"></script><script src="js/search.js?v=12"></script><script src="js/cookies.js?v=5"></script><script src="js/social.js?v=1"></script>
   <script src="js/carousel.js?v=1"></script><script src="js/flow.js?v=1"></script><script src="js/reviews.js?v=3"></script><script src="js/stats.js?v=1"></script>
 
 </body>

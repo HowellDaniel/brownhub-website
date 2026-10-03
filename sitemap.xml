@@ -2,25 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.brownhub283.com/</loc>
-    <lastmod>2026-09-30</lastmod>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.brownhub283.com/services.html</loc>
     <lastmod>2026-09-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brownhub283.com/websites.html</loc>
-    <lastmod>2026-10-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.brownhub283.com/engineering.html</loc>
-    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

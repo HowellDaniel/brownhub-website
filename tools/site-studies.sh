@@ -1,5 +1,5 @@
 #!/bin/zsh
-# tools/site-studies.sh — rebuild the four layout studies on websites.html#layouts.
+# tools/site-studies.sh — rebuild the four layout studies on index.html#layouts.
 # They used to be illustrations drawn in SVG. These are real pages: four small demo
 # sites, rendered by headless Chrome at the exact served size (800x600 CSS px, shot
 # at 2x so the JPEG lands crisp). Nothing here is served or linked; the pages exist

@@ -2345,3 +2345,13 @@ html[data-theme="light"] .web-grid{background-image:radial-gradient(rgba(38,16,1
 /* after the mobile 4/3 rule above on purpose: cropping this frame to 4/3 would
    take the code off the tablet, which is the reason the picture is here */
 .reel--still{aspect-ratio:16/9}
+
+/* ---------- merged home page: the second headline in a page hero ----------
+   websites.html opened with an h1 and it is now a band inside the home page, so
+   the element demoted to h2 while the page kept its single h1. Four separate
+   rules in this stack style ".page-hero h1" and the last one wins by order, not
+   by meaning; this mirrors the final value of all four so the two headlines are
+   indistinguishable. font-weight and the base line-height already arrive from
+   the global h1,h2,h3,h4 rule and need no twin. */
+.page-hero h2{font-size:var(--t-h1);line-height:var(--t-lh-tight);
+  letter-spacing:var(--t-display-ls);margin-bottom:var(--t-3)}
