@@ -573,8 +573,9 @@ html.js-scroll [data-rv="frame"].is-in > img,html.js-scroll [data-rv="frame"].is
 .filter__btn.is-active{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
 /* :not() keeps the active chip out of this rule: it is a (0,3,0) selector, so plain
    .filter__btn would outrank .filter__btn.is-active and paint the label the same
-   red as its own background. */
-html[data-theme="light"] .filter__btn:not(.is-active){color:var(--accent)}
+   red as its own background. On the pale tint the light theme's --accent only reads
+   3.98:1, so the label takes the deeper hover ink and clears AA at 5.2:1. */
+html[data-theme="light"] .filter__btn:not(.is-active){color:var(--accent-fill-hover)}
 
 /* --- cards lift with a brand-tinted shadow --- */
 .card:hover,.feature:hover{border-color:rgba(var(--accent-fill-rgb),.55);transform:translateY(-6px);box-shadow:0 22px 44px -22px rgba(var(--accent-fill-rgb),.34)}
@@ -2293,4 +2294,42 @@ html[data-theme="light"] .web-grid{background-image:radial-gradient(rgba(38,16,1
 @media (max-width:640px){
   .web-hero .eng-aura{filter:blur(44px);height:320px}
   .webviews .eng-aura{filter:blur(44px);height:360px}
+}
+
+/* ---------- websites page: linked dots, a showreel and its own catalog ----------
+   The reference sites lean on tsParticles and a hosted clip. script-src and
+   media-src are both 'self' here, so the network is drawn by js/ambient.js and
+   the footage is served from this repo. The dot layer is masked away from the
+   middle of the hero: a red pixel drifting behind a glyph is the one thing that
+   would quietly break the contrast numbers this page was audited against. */
+.web-particles{position:absolute;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none;
+  -webkit-mask-image:radial-gradient(76% 60% at 50% 45%,transparent 0 42%,#000 76%);
+  mask-image:radial-gradient(76% 60% at 50% 45%,transparent 0 42%,#000 76%)}
+
+.web-reel{position:relative;overflow:clip;isolation:isolate}
+.reel{position:relative;display:block;width:100%;aspect-ratio:16/9;border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;background:var(--bg-alt);box-shadow:var(--shadow)}
+.reel__film,.reel__dots{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
+.reel__dots{pointer-events:none}
+.reel__ink{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(27,11,12,.40),rgba(27,11,12,.04) 42%,rgba(27,11,12,.62))}
+/* the caption rides its own opaque chip, never the moving picture */
+.reel__tag{position:absolute;left:clamp(10px,2vw,20px);bottom:clamp(10px,2vw,20px);
+  display:inline-flex;align-items:center;gap:.5rem;max-width:calc(100% - 2rem);
+  background:var(--surface);border:1px solid var(--border);border-radius:999px;
+  padding:.42rem .9rem;font-size:.8rem;font-weight:600;color:var(--text)}
+.reel__tag i{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+.reel__note{margin:1.4rem auto 0;max-width:44rem;text-align:center;color:var(--text-muted);font-size:.92rem}
+
+.webcat{position:relative;overflow:clip;isolation:isolate}
+.webcat .product-card .media{--media-ar:4/3}
+/* auto-fit can never force a column wider than the container, so this stays ungated */
+.webcat .cards--3{grid-template-columns:repeat(auto-fit,minmax(clamp(210px,23vw,300px),1fr))}
+.webcat__type{display:block;margin-bottom:.4rem;font-size:.78rem;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--accent-2)}
+.webcat__note{margin-top:1.6rem;text-align:center;color:var(--text-muted);font-size:.9rem}
+@media (max-width:640px){
+  .reel{aspect-ratio:4/3}
+  .web-particles{-webkit-mask-image:radial-gradient(90% 52% at 50% 42%,transparent 0 38%,#000 74%);
+    mask-image:radial-gradient(90% 52% at 50% 42%,transparent 0 38%,#000 74%)}
 }

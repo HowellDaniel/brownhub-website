@@ -35,7 +35,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrownHub Studio">
   <link rel="preload" href="fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=92">
+  <link rel="stylesheet" href="css/style.css?v=94">
   <script src="js/theme.js"></script><script src="js/player.js?v=1"></script><script src="js/voice.js?v=1"></script>
   <script type="application/ld+json">
 {
@@ -131,6 +131,7 @@
         <i class="eng-orb eng-orb--a"></i><i class="eng-orb eng-orb--b"></i><i class="eng-orb eng-orb--c"></i>
       </span>
       <span class="web-grid" aria-hidden="true"></span>
+      <canvas class="web-particles" data-particles aria-hidden="true"></canvas>
       <svg class="eng-grain" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><filter id="webGrainHero" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="saturate" values="0"/></filter><pattern id="webGrainTileHero" width="200" height="200" patternUnits="userSpaceOnUse"><rect width="200" height="200" filter="url(#webGrainHero)"/></pattern><rect width="100%" height="100%" fill="url(#webGrainTileHero)"/></svg>
       <div class="container">
         <h1>Website design and development in Accra</h1>
@@ -138,6 +139,129 @@
         <div class="hero__actions">
           <a href="contact.html" class="btn btn--primary">Start a project</a>
           <a href="https://wa.me/233502954541" target="_blank" rel="noopener" class="btn btn--ghost">Talk about your project</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section web-reel">
+      <div class="container">
+        <div class="section__head">
+          <h2>A studio at work</h2>
+          <p>Websites are built by people at keyboards, not by a template. This is the part of the job a screenshot never shows.</p>
+        </div>
+        <div class="reel">
+          <video class="reel__film" data-bg data-src="video/coding-bg.mp4" poster="images/web/reel-poster.jpg" muted loop playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
+          <canvas class="reel__dots" data-particles data-pt-line="accent" aria-hidden="true"></canvas>
+          <span class="reel__ink" aria-hidden="true"></span>
+          <span class="reel__tag"><i aria-hidden="true"></i>Illustrative stock footage</span>
+        </div>
+        <p class="reel__note">The footage and the photography on this page are licensed stock images of people working — they are not a client's website and not footage from a BrownHub project. Real delivered work is in our design catalog.</p>
+      </div>
+    </section>
+
+    <section class="section section--alt webcat" id="web-catalog">
+      <span class="eng-aura eng-aura--why" aria-hidden="true">
+        <i class="eng-orb eng-orb--a"></i><i class="eng-orb eng-orb--b"></i><i class="eng-orb eng-orb--c"></i>
+      </span>
+      <span class="web-grid" aria-hidden="true"></span>
+      <svg class="eng-grain" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><filter id="webGrainCat" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch" result="n"/><feColorMatrix in="n" type="saturate" values="0"/></filter><pattern id="webGrainTileCat" width="200" height="200" patternUnits="userSpaceOnUse"><rect width="200" height="200" filter="url(#webGrainCat)"/></pattern><rect width="100%" height="100%" fill="url(#webGrainTileCat)"/></svg>
+      <div class="container">
+        <div class="section__head">
+          <h2>Website work, catalogued</h2>
+          <p>This catalog is only websites and software — the print, banners and frames we deliver live in the main catalog.</p>
+        </div>
+        <form class="catalog-search" id="catalog-search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+          <input type="text" id="catalog-filter-input" autocomplete="off" placeholder="Search website work" aria-label="Search website work" aria-controls="catalog-grid">
+          <button type="button" class="catalog-search__clear" id="catalog-filter-clear" hidden>Clear search</button>
+        </form>
+        <p class="catalog-count" id="catalog-empty" role="status" aria-live="polite" hidden>No website work matches that search.</p>
+        <div class="cards cards--3" id="catalog-grid">
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Business website" data-name="Business website" data-cat="pages" data-catlabel="Business websites and landing pages" data-img="images/web/scene-1.jpg" data-imgs="images/web/scene-1.jpg, images/web/landing.jpg" data-desc="A multi-page site that explains the business and brings in enquiries: home, services, catalog and contact.">
+            <div class="media"><img src="images/web/scene-1.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Business websites and landing pages</span>
+              <h3>Business website</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: One-page landing site" data-name="One-page landing site" data-cat="pages" data-catlabel="Business websites and landing pages" data-img="images/web/scene-2.jpg" data-imgs="images/web/scene-2.jpg, images/web/landing.jpg" data-desc="One page built around a single campaign or product, with one button that does the work.">
+            <div class="media"><img src="images/web/scene-2.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Business websites and landing pages</span>
+              <h3>One-page landing site</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Online product catalog" data-name="Online product catalog" data-cat="shop" data-catlabel="Online catalogs and booking tools" data-img="images/web/scene-3.jpg" data-imgs="images/web/scene-3.jpg, images/web/shop.jpg" data-desc="Your products, prices and photos in a catalog a customer can browse and open straight into WhatsApp.">
+            <div class="media"><img src="images/web/scene-3.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Online catalogs and booking tools</span>
+              <h3>Online product catalog</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Booking and enquiry form" data-name="Booking and enquiry form" data-cat="shop" data-catlabel="Online catalogs and booking tools" data-img="images/web/scene-4.jpg" data-imgs="images/web/scene-4.jpg, images/web/booking.jpg" data-desc="Collect dates, sizes and details on the page and receive them as a message you can answer.">
+            <div class="media"><img src="images/web/scene-4.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Online catalogs and booking tools</span>
+              <h3>Booking and enquiry form</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Web app or internal dashboard" data-name="Web app or internal dashboard" data-cat="apps" data-catlabel="Web apps and internal dashboards" data-img="images/web/scene-5.jpg" data-imgs="images/web/scene-5.jpg, images/web/dashboard.jpg" data-desc="Records, forms, stock and reports for the work behind the counter, on any screen in the shop.">
+            <div class="media"><img src="images/web/scene-5.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Web apps and internal dashboards</span>
+              <h3>Web app or internal dashboard</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Online payments on your page" data-name="Online payments on your page" data-cat="apps" data-catlabel="Web apps and internal dashboards" data-img="images/web/scene-6.jpg" data-imgs="images/web/scene-6.jpg, images/web/shop.jpg" data-desc="Take card, mobile money and bank-transfer payment on the page, with your own account behind it.">
+            <div class="media"><img src="images/web/scene-6.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Web apps and internal dashboards</span>
+              <h3>Online payments on your page</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Client login and order history" data-name="Client login and order history" data-cat="apps" data-catlabel="Web apps and internal dashboards" data-img="images/web/scene-7.jpg" data-imgs="images/web/scene-7.jpg, images/web/dashboard.jpg" data-desc="A private area where a client signs in with a code on their phone, sees past orders and asks for changes.">
+            <div class="media"><img src="images/web/scene-7.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Web apps and internal dashboards</span>
+              <h3>Client login and order history</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: AI assistant on your website" data-name="AI assistant on your website" data-cat="apps" data-catlabel="Web apps and internal dashboards" data-img="images/web/scene-8.jpg" data-imgs="images/web/scene-8.jpg, images/web/landing.jpg" data-desc="An assistant that answers the common questions on the page and hands the rest to you on WhatsApp.">
+            <div class="media"><img src="images/web/scene-8.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Web apps and internal dashboards</span>
+              <h3>AI assistant on your website</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Website redesign and migration" data-name="Website redesign and migration" data-cat="pages" data-catlabel="Business websites and landing pages" data-img="images/web/scene-9.jpg" data-imgs="images/web/scene-9.jpg, images/web/landing.jpg" data-desc="Keep the address, the content and the customers — rebuild the design, the speed and the mobile layout.">
+            <div class="media"><img src="images/web/scene-9.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Business websites and landing pages</span>
+              <h3>Website redesign and migration</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+          <article class="product-card" tabindex="0" role="button" aria-label="View details: Hosting, maintenance and support" data-name="Hosting, maintenance and support" data-cat="care" data-catlabel="Hosting, maintenance and support" data-img="images/web/scene-10.jpg" data-imgs="images/web/scene-10.jpg, images/web/dashboard.jpg" data-desc="The site stays online, backed up, updated and quick, with small changes made when you ask.">
+            <div class="media"><img src="images/web/scene-10.jpg" alt="" width="800" height="600" loading="lazy" decoding="async"></div>
+            <div class="product-card__body">
+              <span class="webcat__type">Hosting, maintenance and support</span>
+              <h3>Hosting, maintenance and support</h3>
+              <span class="card__link">View details →</span>
+            </div>
+          </article>
+        </div>
+        <p class="webcat__note">Tap any item for the details, then order it in chat or ask for a quote. Prices come from the brief, never from a hidden rate card.</p>
+        <div class="section__more">
+          <a href="catalog.html" class="btn btn--ghost">The main catalog — print, banners and frames</a>
+          <a href="contact.html" class="btn btn--primary">Start a website project</a>
         </div>
       </div>
     </section>
@@ -367,7 +491,34 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=31"></script><script src="js/translate.js?v=84"></script><script src="js/app.js?v=4"></script>
+  <div class="modal" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-name">
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__card">
+      <button class="modal__close" type="button" aria-label="Close" data-close-modal>&times;</button>
+      <div class="modal__gal" id="product-modal-gal">
+        <img class="modal__img" id="product-modal-img" alt="">
+        <button class="modal__gal-nav modal__gal-nav--prev" type="button" id="product-modal-prev" aria-label="Previous photo" hidden>&#8249;</button>
+        <button class="modal__gal-nav modal__gal-nav--next" type="button" id="product-modal-next" aria-label="Next photo" hidden>&#8250;</button>
+        <span class="modal__gal-count" id="product-modal-count" hidden></span>
+      </div>
+      <div class="modal__gal-thumbs" id="product-modal-thumbs" hidden></div>
+      <div class="modal__body">
+        <h3 id="product-modal-name"></h3>
+        <span class="modal__cat" id="product-modal-cat"></span>
+        <p class="modal__desc" id="product-modal-desc"></p>
+        <div class="modal__actions">
+          <button type="button" class="btn btn--primary" id="product-order-chat">Order now via chat</button>
+          <a class="btn btn--ghost" id="product-order-quote" href="contact.html">Request a quote</a>
+        </div>
+        <div class="modal__more" id="product-modal-more" hidden>
+          <h4 id="product-modal-more-title">More in this category</h4>
+          <div class="modal__more-grid" id="product-modal-more-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/main.js?v=31"></script><script src="js/translate.js?v=85"></script><script src="js/app.js?v=4"></script>
 
   <div class="chat-widget">
     <button class="chat-widget__toggle" id="chatToggle" aria-expanded="false" aria-controls="chatPanel" title="Chat with BrownHub Studio Assistance">
@@ -397,7 +548,8 @@
 
   <script src="js/chat.js?v=29"></script><script src="js/accounts.js?v=18"></script>
   <script src="js/scroll.js?v=4"></script>
-  <script src="js/nav.js?v=5"></script><script src="js/search.js?v=10"></script><script src="js/cookies.js?v=5"></script><script src="js/social.js?v=1"></script>
+  <script src="js/catalog.js?v=12"></script><script src="js/ambient.js?v=1"></script><script src="js/neon.js?v=2"></script>
+  <script src="js/nav.js?v=5"></script><script src="js/search.js?v=11"></script><script src="js/cookies.js?v=5"></script><script src="js/social.js?v=1"></script>
 
 </body>
 </html>

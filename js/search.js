@@ -64,6 +64,25 @@
     { g: "Catalog", t: "Notepad Design", h: "catalog.html?q=Notepad%20Design", k: "notepad jotter diary notebook stationery office gift" },
     { g: "Catalog", t: "More Winners' Chapel Flyers", h: "catalog.html?q=More%20Winners%27%20Chapel%20Flyers", k: "church programme flyer event service banquet winners chapel" },
 
+    // The website catalog is its own shelf, so it gets its own rows. Every label
+    // is a string that already exists on the page, which keeps the dictionaries
+    // honest: nothing here needs a translation that is not already a key.
+    { g: "Catalog", t: "The website catalog", h: "websites.html#web-catalog", k: "website web development catalog items pages app hosting software" },
+    { g: "Catalog", t: "Software work, item by item", h: "engineering.html#software-catalog", k: "software build app dashboard api secure hosting maintain" },
+    { g: "Catalog", t: "Business websites and landing pages", h: "websites.html?q=Business%20websites%20and%20landing%20pages", k: "collection shelf website landing page business pages" },
+    { g: "Catalog", t: "Online catalogs and booking tools", h: "websites.html?q=Online%20catalogs%20and%20booking%20tools", k: "collection shelf shop catalog booking enquiry form whatsapp" },
+    { g: "Catalog", t: "Web apps and internal dashboards", h: "websites.html?q=Web%20apps%20and%20internal%20dashboards", k: "collection shelf app dashboard records stock reports payments login" },
+    { g: "Catalog", t: "Hosting, maintenance and support", h: "websites.html?q=Hosting%2C%20maintenance%20and%20support", k: "collection shelf hosting maintenance support backup updates online" },
+    { g: "Catalog", t: "Business website", h: "websites.html?q=Business%20website", k: "website multi page home services contact enquiries" },
+    { g: "Catalog", t: "One-page landing site", h: "websites.html?q=One-page%20landing%20site", k: "landing page campaign product single page" },
+    { g: "Catalog", t: "Online product catalog", h: "websites.html?q=Online%20product%20catalog", k: "products prices photos catalog shop whatsapp browse" },
+    { g: "Catalog", t: "Booking and enquiry form", h: "websites.html?q=Booking%20and%20enquiry%20form", k: "booking dates enquiry form message collect" },
+    { g: "Catalog", t: "Web app or internal dashboard", h: "websites.html?q=Web%20app%20or%20internal%20dashboard", k: "app dashboard records stock reports counter" },
+    { g: "Catalog", t: "Online payments on your page", h: "websites.html?q=Online%20payments%20on%20your%20page", k: "payments card mobile money bank transfer checkout pay" },
+    { g: "Catalog", t: "Client login and order history", h: "websites.html?q=Client%20login%20and%20order%20history", k: "login account client otp code orders history private" },
+    { g: "Catalog", t: "AI assistant on your website", h: "websites.html?q=AI%20assistant%20on%20your%20website", k: "ai chatbot assistant questions whatsapp handoff" },
+    { g: "Catalog", t: "Website redesign and migration", h: "websites.html?q=Website%20redesign%20and%20migration", k: "redesign migration rebuild speed mobile layout move" },
+
     { g: "Pages", t: "Privacy policy", h: "privacy.html", k: "privacy policy data personal information" },
     { g: "Pages", t: "Legal", h: "legal.html", k: "legal terms of business contract payment ownership cancellation" },
     { g: "Pages", t: "Security", h: "security.html", k: "security safety password otp payment data protection report a problem" },
