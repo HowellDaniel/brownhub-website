@@ -51,7 +51,7 @@
       ["Packaging Design", "Labels, boxes and bottles built to shelf size.", "services.html#packaging", "box"],
       ["Custom Graphic Design", "Something unusual? We design that too.", "services.html#custom", "wand"],
       ["Websites & Software", "A hosted site or an app for the brand.", "websites.html", "monitor"],
-      ["Website & Software Engineering", "The whole engineering side: builds, stack, security and care.", "engineering.html", "code", "_blank"]
+      ["Website & Software Engineering", "The whole engineering side: builds, stack, security and care.", "engineering.html", "code"]
     ]},
     { h: "Popular in the catalog", items: [
       ["Banners & signage", "Pull-up stands, backdrops and ABS boards.", "catalog.html?q=Banners", "banner"],

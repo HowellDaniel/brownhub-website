@@ -2333,3 +2333,15 @@ html[data-theme="light"] .web-grid{background-image:radial-gradient(rgba(38,16,1
   .web-particles{-webkit-mask-image:radial-gradient(90% 52% at 50% 42%,transparent 0 38%,#000 74%);
     mask-image:radial-gradient(90% 52% at 50% 42%,transparent 0 38%,#000 74%)}
 }
+
+/* ---------- websites page: the clip and its still side by side ----------
+   The band shows the same job twice — moving and paused — so both frames are
+   cut from one 16/9 mould and share .reel's border, shadow and radius. The pair
+   is auto-fit rather than a fixed split: two columns whenever the container can
+   hold a readable frame in each, one on a phone, with no dead margin either way. */
+.reel__pair{display:grid;gap:clamp(14px,2.2vw,26px);margin-top:clamp(20px,3vw,34px);
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.reel--still .media{position:absolute;inset:0}
+/* after the mobile 4/3 rule above on purpose: cropping this frame to 4/3 would
+   take the code off the tablet, which is the reason the picture is here */
+.reel--still{aspect-ratio:16/9}
