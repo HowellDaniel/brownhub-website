@@ -2117,10 +2117,13 @@ nav.nav{gap:clamp(1rem,2.2vw,1.75rem)}
 @media (max-width:1180px){.mega{display:none}html.js-nav .nav__caret{display:none}}
 @media (min-width:1181px){
   /* A label that breaks in the middle reads as a mistake, so each one stays whole
-     and the row gives up a second line instead. The gate is set from measurement:
-     English fits one row from 1111px and Spanish, the widest of the common
-     labels, from 1177px. Above the gate only Vietnamese, Hungarian, Greek, Russian
-     and Tamil still take a second line, and never a lone orphan on it. */
+     and the row gives up a second line instead. The gate is set from measurement,
+     and it is set by the widest of the common labels, not by English: Spanish holds
+     one row to 1177px. English now reads "Website & Software Eng" on this row, so it
+     fits inside that with room to spare — shortening a label can only ever lower the
+     width it needs, which is why the gate did not move when the tab was shortened.
+     Above the gate only Vietnamese, Hungarian, Greek, Russian and Tamil still take a
+     second line, and never a lone orphan on it. */
   .nav__menu{flex-wrap:wrap}
   .nav__menu .nav__link{white-space:nowrap}
   .nav{height:auto;min-height:80px;padding:var(--t-1) 0}
