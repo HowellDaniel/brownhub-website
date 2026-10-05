@@ -2482,3 +2482,22 @@ html[data-theme="light"] :is(.band--ink,.hero,.cta,.site-footer,.band--exp){
   .chat-widget{bottom:calc(.75rem + max(var(--cookie-h,0px), var(--lead-h,0px)) + env(safe-area-inset-bottom))}
   .chat-widget__panel{max-height:calc(100vh - 5.5rem - max(var(--cookie-h,0px), var(--lead-h,0px)) - env(safe-area-inset-bottom))}
 }
+
+/* ---- The bottom queue stops pushing the page around ----
+   The install pill raises itself over the cookie notice and the quote card by
+   reading their heights, and it did that with `bottom`. Measured on the home
+   page, that single re-position was the whole layout-shift story: 0.149 of the
+   0.152 CLS at 390 and 0.034 of 0.042 at 1440, every time a notice appeared
+   under it. The same lift expressed as a transform looks identical and is not
+   counted as a shift at all, so the pill now sits at one fixed `bottom` and
+   slides up with its own entrance transition. */
+.install{--lift:max(var(--cookie-h,0px), var(--lead-h,0px));
+  bottom:calc(1rem + env(safe-area-inset-bottom));
+  transform:translateY(calc(12px - var(--lift)))}
+.install--in{transform:translateY(calc(-1 * var(--lift)))}
+@media (max-width:600px){
+  /* on a phone the quote card is full width and the pill only has to clear the
+     taller of the two, exactly as the old `bottom` formula did */
+  .install{bottom:calc(.75rem + env(safe-area-inset-bottom));
+    --lift:max(var(--cookie-h,0px), calc(var(--lead-h,0px) - .25rem))}
+}

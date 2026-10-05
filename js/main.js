@@ -38,7 +38,22 @@
       moveGlow(e.clientX, e.clientY);
     }, { passive: true });
     header.addEventListener("pointerleave", () => header.classList.remove("is-glass-hot"));
-    const thicken = () => header.classList.toggle("is-glass-scrolled", window.scrollY > 8);
+    /* One read per frame, and one class write only when the threshold is crossed.
+       Asking scrollY on every scroll event made the browser flush the parallax
+       writes js/scroll.js had just queued, so each frame paid for a full layout —
+       the largest single script cost the home page had. */
+    let glass = null, glassQueued = false;
+    const thicken = () => {
+      if (glassQueued) return;
+      glassQueued = true;
+      requestAnimationFrame(() => {
+        glassQueued = false;
+        const on = window.scrollY > 8;
+        if (on === glass) return;
+        glass = on;
+        header.classList.toggle("is-glass-scrolled", on);
+      });
+    };
     window.addEventListener("scroll", thicken, { passive: true });
     window.addEventListener("resize", thicken, { passive: true });
     thicken();
