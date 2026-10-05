@@ -23,7 +23,7 @@
     {
       id: "necessary",
       name: "Strictly necessary",
-      desc: "Always on. Your chosen language, the dark or light theme, your answer to this notice and a signed-in client session are kept in your own browser so the site can remember them. So is the note that you have already answered our quote question, which is what stops us asking you twice, and the random code the chat assistant uses to keep your conversation in one thread. The chat itself is kept the same way, for about a week, so a refresh does not lose it.",
+      desc: "Always on. Your chosen language, the dark or light theme, your answer to this notice and a signed-in client session are kept in your own browser so the site can remember them. So is the note that you have already answered our quote question, which is what stops us asking you twice, and the random code the chat assistant uses to keep your conversation in one thread. The chat itself is kept the same way, for about a week, so a refresh does not lose it. So is the switch that decides whether the assistant makes a sound when it has a question or an answer.",
       locked: true
     },
     {

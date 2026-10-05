@@ -266,6 +266,9 @@
       focusInput();
       showHandoff();
       syncTools();
+      // One hook for every kind of answer — written, model, or the apology — so a
+      // reply that arrives in a background tab still lands quietly.
+      chime(CHIME_REPLY);
     };
     const replyWith = (html, source) => {
       const said = plainText(html);
@@ -387,19 +390,112 @@
     handoffText.textContent = T(HANDOFF_LABEL);
   });
 
+  // ---- It makes itself heard -----------------------------------------------------
+  // A browser will not let a page play anything until the visitor has touched it, so
+  // the assistant waits for that first tap, scroll or key and then chimes once, to
+  // put its question across; it chimes again whenever an answer is ready. Someone who
+  // does not want it presses the speaker in the header and is never chimed again on
+  // that device. Both tones are drawn from an oscillator as they play, so there is no
+  // audio file to download and nothing to add to the page's content policy.
+  const SOUND_KEY = "brownhub-sound";
+  const ASKED_KEY = "brownhub-chime-asked";
+  const AudioEngine = window.AudioContext || window.webkitAudioContext;
+  // The question rises and the answer falls, so a visitor learns to tell them apart.
+  const CHIME_ASK = [[784, .05], [1046, .055]];
+  const CHIME_REPLY = [[880, .05], [587, .045]];
+  let soundCtx = null, soundTouched = false, chimeQueued = false;
+
+  function soundWanted() {
+    try { return localStorage.getItem(SOUND_KEY) !== "off"; } catch (e) { return true; }
+  }
+  function rememberSound(on) {
+    try { localStorage.setItem(SOUND_KEY, on ? "on" : "off"); } catch (e) {}
+  }
+  // Opening another page of the site is not opening the website again, so the
+  // attention chime is spent for the whole visit rather than each page load.
+  function attentionSpent() {
+    try { return sessionStorage.getItem(ASKED_KEY) === "1"; } catch (e) { return true; }
+  }
+  function spendAttention() {
+    try { sessionStorage.setItem(ASKED_KEY, "1"); } catch (e) {}
+  }
+
+  function chime(notes) {
+    if (!AudioEngine || !soundTouched || document.hidden || !soundWanted()) return;
+    try {
+      const ctx = makeCtx();
+      if (!ctx) return;
+      if (ctx.state === "suspended") ctx.resume();
+      const t = ctx.currentTime + .03;
+      notes.forEach((n, i) => {
+        const from = t + i * .14;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(n[0], from);
+        gain.gain.setValueAtTime(.0001, from);
+        gain.gain.exponentialRampToValueAtTime(n[1], from + .02);
+        gain.gain.exponentialRampToValueAtTime(.0001, from + .3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(from);
+        osc.stop(from + .34);
+      });
+    } catch (e) { /* a browser that refuses the tone simply stays quiet */ }
+  }
+
+  // A phone only lets a page make a sound once an audio engine has been built
+  // inside one of the visitor's own gestures, so the engine is made there and kept —
+  // otherwise a tone that arrives from a timer, which is what both chimes do, is
+  // silently dropped however often the screen has been touched.
+  function makeCtx() {
+    if (soundCtx || !AudioEngine) return soundCtx;
+    try { soundCtx = new AudioEngine(); } catch (e) { soundCtx = null; }
+    if (soundCtx && soundCtx.state === "suspended") soundCtx.resume();
+    return soundCtx;
+  }
+
+  // The question is asked whether or not the page has been touched yet: queued here,
+  // it sounds the instant the visitor's first gesture lets it.
+  function playAttention() {
+    if (attentionSpent() || !soundTouched || document.hidden || !soundWanted()) return;
+    chime(CHIME_ASK);
+    spendAttention();
+  }
+  function askForAttention() {
+    if (attentionSpent()) return;
+    if (soundTouched) playAttention(); else chimeQueued = true;
+  }
+  function touchSound() {
+    soundTouched = true;
+    makeCtx();
+    if (!chimeQueued) return;
+    chimeQueued = false;
+    playAttention();
+  }
+  if (AudioEngine) {
+    for (const ev of ["pointerdown", "keydown", "wheel"]) {
+      window.addEventListener(ev, touchSound, { capture: true, passive: true });
+    }
+  }
+
   // ---- the panel's own controls --------------------------------------------------
-  // Three glyphs in the header, in the order a visitor reads them: start over,
-  // put the last question again, shut the panel. They are built here rather than
-  // written into the nine pages that carry the panel, so the chat can never have
-  // two buttons on one page and three on the next. The drawings are the site's
-  // own line-icon stroke; only the labels are text, and only ever as attributes,
-  // which the translator does not touch — so each label is set from the
+  // Four glyphs in the header, in the order a visitor reads them: start over, put
+  // the last question again, silence the chimes, shut the panel. They are built here
+  // rather than written into the nine pages that carry the panel, so the chat can
+  // never have two buttons on one page and three on the next. The drawings are the
+  // site's own line-icon stroke; only the labels are text, and only ever as
+  // attributes, which the translator does not touch — so each label is set from the
   // dictionary at build and again on a language switch.
   const TOOL_NEW = "Start a new chat";
   const TOOL_RETRY = "Try that answer again";
+  const TOOL_SOUND_ON = "Turn the assistant's sounds off";
+  const TOOL_SOUND_OFF = "Turn the assistant's sounds on";
   const TOOL_SVG = {
     plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg>',
-    again: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 12a8.5 8.5 0 1 1-2.49-6.01"/><path d="M20.6 4.2v4.5h-4.5"/></svg>'
+    again: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 12a8.5 8.5 0 1 1-2.49-6.01"/><path d="M20.6 4.2v4.5h-4.5"/></svg>',
+    sound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4Z"/><path d="M15.6 8.5a5 5 0 0 1 0 7"/><path d="M18.4 5.4a9 9 0 0 1 0 13.2"/></svg>',
+    muted: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4Z"/><path d="M22 9.5 16.5 15M16.5 9.5 22 15"/></svg>'
   };
   const tools = document.createElement("div");
   tools.className = "chat-widget__tools";
@@ -417,11 +513,31 @@
   }
   const newBtn = tool(TOOL_SVG.plus, TOOL_NEW, newChat);
   const retryBtn = tool(TOOL_SVG.again, TOOL_RETRY, retry);
+  // The speaker wears whichever glyph matches its state, and says the opposite of
+  // what it shows: a visitor looking at a muted speaker is being offered sound.
+  let muted = !soundWanted();
+  const soundBtn = tool(TOOL_SVG.sound, TOOL_SOUND_ON, toggleSound);
+  function paintSound() {
+    const label = muted ? TOOL_SOUND_OFF : TOOL_SOUND_ON;
+    soundBtn.innerHTML = muted ? TOOL_SVG.muted : TOOL_SVG.sound;
+    soundBtn.dataset.label = label;
+    soundBtn.setAttribute("aria-label", T(label));
+    soundBtn.title = T(label);
+  }
+  function toggleSound() {
+    muted = !muted;
+    rememberSound(!muted);
+    paintSound();
+    // Coming back on plays the answer tone once, so the visitor knows what they have
+    // just allowed without having to wait for a question to find out.
+    if (!muted) chime(CHIME_REPLY);
+  }
+  paintSound();
   closeBtn.classList.add("chat-widget__tool");
   const head = panel.querySelector(".chat-widget__head");
   head.insertBefore(tools, closeBtn);
   tools.appendChild(closeBtn);
-  // Three glyphs take the width the online line was using, so that line moves out
+  // Four glyphs take the width the online line was using, so that line moves out
   // of the title block and onto a row of its own across the head. It keeps its own
   // words in every language; only its place changes.
   const online = head.querySelector(".chat-widget__head-text small");
@@ -547,6 +663,9 @@
     // and re-translates when they change it, same as the panel's own messages.
     panel.parentElement.insertBefore(box, panel);
     teaserEl = box;
+    // The question is what the chime is for, so it only ever sounds with this on
+    // screen: once per visit, because the teaser itself is only ever offered once.
+    askForAttention();
     // It waits long enough to be read, and stops counting down while someone is
     // actually on it, so the offer never disappears mid-answer.
     const hold = () => { if (teaseTimer) { clearTimeout(teaseTimer); teaseTimer = 0; } };
