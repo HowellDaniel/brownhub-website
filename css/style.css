@@ -2568,3 +2568,16 @@ html[data-theme-mode="dark"] .theme-toggle .icon-moon{display:block}
    row's content, never by moving the row, so nothing visible shifts. */
 /* ========================================================================== */
 .footer__bottom{padding-bottom:calc(max(var(--cookie-h, 0px), var(--lead-h, 0px)) + 1rem)}
+
+/* ==========================================================================
+   THE HERO STACKS, IT DOES NOT SHARE ITS ROW. .hero is a flex container so the
+   band can centre its content against the viewport height, and the home page
+   carries a second .container inside it: the sold banner slot that sits under
+   the headline. Each .container asks for width:100%, so on a row the two of
+   them split the viewport straight down the middle and the hero copy wrapped
+   into a 308px column on a 1440px screen — half the measure it is written for,
+   with the banner's empty, unsold container holding the other half. On the
+   column axis each one gets the full measure again and the banner lands where
+   it was authored to sit, under the headline and inside the same ink band.
+   ========================================================================== */
+.hero{flex-direction:column;justify-content:center}
