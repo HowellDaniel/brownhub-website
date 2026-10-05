@@ -1,4 +1,9 @@
 {
+ "Change display mode": "切换显示模式",
+ "Display mode": "显示模式",
+ "Light": "浅色",
+ "Dark": "深色",
+ "System": "跟随系统",
  "Pick a package and pay online — we confirm the details on WhatsApp and start right away.": "选择一个套餐并在线付款 — 我们在 WhatsApp 上确认详情，随即开工。",
  "Software  · Cloud · Product": "软件 · 云 · 产品",
  "Start a project": "启动项目",
@@ -63,8 +68,6 @@
  "Close chat": "关闭对话",
  "Toggle menu": "展开/收起菜单",
  "Main navigation": "主导航",
- "Switch to light mode": "切换为浅色模式",
- "Switch to dark mode": "切换为深色模式",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "工作地点地图，ChrisPrintgh，Accra New Town，阿克拉",
  "Printed materials sample": "印刷物料样品",
  "Pull up banner design mockup": "易拉宝设计效果图",

@@ -1,4 +1,4 @@
-const CACHE = "brownhub-v16";
+const CACHE = "brownhub-v18";
 const OFFLINE = "/offline.html";
 const SHELL = [OFFLINE, "/css/offline.css?v=1", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png",
   "/icons/maskable-512.png", "/icons/apple-touch-icon.png", "/images/logo.png", "/images/favicon.png"];

@@ -1,4 +1,9 @@
 {
+ "Change display mode": "تغيير وضع العرض",
+ "Display mode": "وضع العرض",
+ "Light": "فاتح",
+ "Dark": "داكن",
+ "System": "النظام",
  "Pick a package and pay online — we confirm the details on WhatsApp and start right away.": "اختر باقة وادفع عبر الإنترنت — نؤكد التفاصيل على واتساب ونبدأ فورًا.",
  "Software  · Cloud · Product": "البرمجيات  · السحابة · المنتجات",
  "Start a project": "ابدأ مشروعًا",
@@ -63,8 +68,6 @@
  "Close chat": "إغلاق المحادثة",
  "Toggle menu": "تبديل القائمة",
  "Main navigation": "التنقّل الرئيسي",
- "Switch to light mode": "التبديل إلى الوضع الفاتح",
- "Switch to dark mode": "التبديل إلى الوضع الداكن",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "خريطة موقع العمل، ChrisPrintgh، أكرا نيو تاون، أكرا",
  "Printed materials sample": "عيّنة من المواد المطبوعة",
  "Pull up banner design mockup": "نموذج مبدّئي لتصميم بنر سحّاب",

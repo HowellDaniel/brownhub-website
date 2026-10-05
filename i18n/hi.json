@@ -1,4 +1,9 @@
 {
+ "Change display mode": "डिस्प्ले मोड बदलें",
+ "Display mode": "डिस्प्ले मोड",
+ "Light": "लाइट",
+ "Dark": "डार्क",
+ "System": "सिस्टम",
  "Pick a package and pay online — we confirm the details on WhatsApp and start right away.": "एक पैकेज चुनें और ऑनलाइन भुगतान करें — हम WhatsApp पर विवरण की पुष्टि करते हैं और तुरंत शुरू करते हैं।",
  "Software  · Cloud · Product": "सॉफ़्टवेयर  · क्लाउड · प्रोडक्ट",
  "Start a project": "प्रोजेक्ट शुरू करें",
@@ -63,8 +68,6 @@
  "Close chat": "चैट बंद करें",
  "Toggle menu": "मेन्यू खोलें-बंद करें",
  "Main navigation": "मुख्य नेविगेशन",
- "Switch to light mode": "लाइट मोड पर स्विच करें",
- "Switch to dark mode": "डार्क मोड पर स्विच करें",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "कार्यस्थल का नक्शा — ChrisPrintgh, Accra New Town, Accra",
  "Printed materials sample": "प्रिंट किए गए मटीरियल का नमूना",
  "Pull up banner design mockup": "पुल-अप बैनर डिज़ाइन का मॉकअप",

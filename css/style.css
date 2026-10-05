@@ -2501,3 +2501,67 @@ html[data-theme="light"] :is(.band--ink,.hero,.cta,.site-footer,.band--exp){
   .install{bottom:calc(.75rem + env(safe-area-inset-bottom));
     --lift:max(var(--cookie-h,0px), calc(var(--lead-h,0px) - .25rem))}
 }
+
+/* ==========================================================================
+   THREE DISPLAY MODES — the round button opens a menu now instead of flipping
+   between two colours: Light, Dark, or System, which follows the device's own
+   setting and repaints the moment that setting changes. The sheet is the same
+   glass pane the language picker wears and it opens on the same contract
+   (is-open on the wrapper, aria-expanded on the button), so the header still
+   speaks one menu idiom rather than two.
+   ========================================================================== */
+.theme{position:relative}
+.theme-menu{position:absolute;top:calc(100% + 10px);inset-inline-end:0;z-index:130;display:none;
+  min-width:188px;padding:var(--t-1);background:var(--surface);border:var(--t-bw) solid var(--border);
+  border-radius:var(--t-r-lg);box-shadow:var(--t-shadow-strong)}
+.theme.is-open .theme-menu{display:block}
+.theme-menu__opt{display:flex;align-items:center;gap:var(--t-2);width:100%;padding:8px 10px;border:0;
+  border-radius:var(--t-r);background:none;color:var(--text-muted);font-family:inherit;font-size:var(--t-small);
+  font-weight:500;text-align:start;cursor:pointer;transition:background-color .2s,color .2s}
+.theme-menu__opt:hover{background:var(--bg-alt);color:var(--text)}
+.theme-menu__opt:focus-visible{outline:var(--t-bw2) solid var(--accent);outline-offset:-2px}
+.theme-menu__opt.is-current{color:var(--accent);font-weight:700}
+.theme-menu__opt.is-current::after{content:"\2713";margin-inline-start:auto;font-weight:700}
+.theme-menu__icon{flex:none}
+
+/* Which glyph the button wears is the mode, not the colour: System shows a screen,
+   so a visitor can see that the device is the one deciding. These three sit after
+   every other icon rule in the stack, so they win on equal specificity. */
+.theme-toggle .icon-auto{display:none}
+html[data-theme-mode="system"] .theme-toggle .icon-auto{display:block}
+html[data-theme-mode="system"] .theme-toggle .icon-sun,
+html[data-theme-mode="system"] .theme-toggle .icon-moon{display:none}
+/* The two pinned modes say what they are, not what to switch to — the button no
+   longer flips the page by itself, so a sun in the ring means "you are in Light".
+   These carry the same weight as the old html[data-theme] pair above and come
+   after it, which is what the append-only stack does with that. */
+html[data-theme-mode="light"] .theme-toggle .icon-sun{display:block}
+html[data-theme-mode="light"] .theme-toggle .icon-moon{display:none}
+html[data-theme-mode="dark"] .theme-toggle .icon-sun{display:none}
+html[data-theme-mode="dark"] .theme-toggle .icon-moon{display:block}
+.theme.is-open .theme-toggle{border-color:var(--accent);color:var(--accent)}
+@media (max-width:840px){.site-header .theme-toggle{width:44px;height:44px}.theme-menu__opt{min-height:44px}}
+
+/* ==========================================================================
+   THE QR CODE PINNED AT THE FOOTER SIDE — the same square the install card
+   carries and the studio prints on its own cards, so what a visitor scans here
+   is the file that was already verified. The plate stays white on purpose: a
+   code only scans against light, and it is the plate, not the ink band it sits
+   on, that the camera reads. */
+/* ========================================================================== */
+.footer__qr{display:flex;align-items:center;gap:var(--t-2)}
+.footer__qr-img{flex:none;width:96px;height:96px;padding:5px;border-radius:12px;background:#fff;object-fit:contain}
+.footer__qr-cap{margin:0;max-width:24ch;font-size:var(--t-fs-20);line-height:var(--t-lh-medium);color:var(--text-muted)}
+@media (max-width:900px){.footer__qr{width:100%}}
+@media (max-width:430px){.footer__qr-img{width:84px;height:84px}}
+
+/* ==========================================================================
+   FOOTER CLEARANCE FOR THE BOTTOM QUEUE. The consent notice and the quote card
+   are both fixed to the foot of the viewport, so on a first visit they lie
+   across the footer's last row — which is exactly where the pinned QR now
+   lives. --cookie-h and --lead-h are published on the root by their own
+   scripts and fall back to 0 the moment either is dismissed, so the space is
+   only ever there while something needs clearing. The room is added BELOW the
+   row's content, never by moving the row, so nothing visible shifts. */
+/* ========================================================================== */
+.footer__bottom{padding-bottom:calc(max(var(--cookie-h, 0px), var(--lead-h, 0px)) + 1rem)}

@@ -1,4 +1,9 @@
 {
+ "Change display mode": "Weergavemodus wijzigen",
+ "Display mode": "Weergavemodus",
+ "Light": "Licht",
+ "Dark": "Donker",
+ "System": "Systeem",
  "Pick a package and pay online — we confirm the details on WhatsApp and start right away.": "Kies een pakket en betaal online — we bevestigen de details via WhatsApp en starten meteen.",
  "Software  · Cloud · Product": "Software  · Cloud · Product",
  "Start a project": "Start een project",
@@ -63,8 +68,6 @@
  "Close chat": "Chat sluiten",
  "Toggle menu": "Menu in- en uitklappen",
  "Main navigation": "Hoofdnavigatie",
- "Switch to light mode": "Overschakelen naar de lichte modus",
- "Switch to dark mode": "Overschakelen naar de donkere modus",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "Kaart van de werklocatie, ChrisPrintgh, Accra New Town, Accra",
  "Printed materials sample": "Voorbeeld van gedrukt materiaal",
  "Pull up banner design mockup": "Ontwerpmock-up van een roll-up banner",

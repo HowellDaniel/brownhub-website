@@ -1,4 +1,9 @@
 {
+ "Change display mode": "Cambia modalità di visualizzazione",
+ "Display mode": "Modalità di visualizzazione",
+ "Light": "Chiaro",
+ "Dark": "Scuro",
+ "System": "Sistema",
  "Pick a package and pay online — we confirm the details on WhatsApp and start right away.": "Scegli un pacchetto e paga online — confermiamo i dettagli su WhatsApp e iniziamo subito.",
  "Software  · Cloud · Product": "Software · Cloud · Prodotto",
  "Start a project": "Avvia un progetto",
@@ -63,8 +68,6 @@
  "Close chat": "Chiudi chat",
  "Toggle menu": "Apri o chiudi il menu",
  "Main navigation": "Navigazione principale",
- "Switch to light mode": "Passa al tema chiaro",
- "Switch to dark mode": "Passa al tema scuro",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "Mappa della sede lavoro, ChrisPrintgh, Accra New Town, Accra",
  "Printed materials sample": "Esempio di materiali stampati",
  "Pull up banner design mockup": "Mockup di banner roll-up",

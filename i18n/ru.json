@@ -1,4 +1,9 @@
 {
+ "Change display mode": "Изменить режим отображения",
+ "Display mode": "Режим отображения",
+ "Light": "Светлый",
+ "Dark": "Тёмный",
+ "System": "Системный",
  "Pick a package and pay online — we confirm the details on WhatsApp and start right away.": "Выберите пакет и оплатите онлайн — мы уточним детали в WhatsApp и сразу приступим.",
  "Software  · Cloud · Product": "ПО  · Облако · Продукт",
  "Start a project": "Начать проект",
@@ -63,8 +68,6 @@
  "Close chat": "Закрыть чат",
  "Toggle menu": "Открыть/закрыть меню",
  "Main navigation": "Основная навигация",
- "Switch to light mode": "Включить светлую тему",
- "Switch to dark mode": "Включить тёмную тему",
  "Map of work location, ChrisPrintgh, Accra New Town, Accra": "Карта рабочей точки — ChrisPrintgh, Accra New Town, Accra",
  "Printed materials sample": "Образцы печатной продукции",
  "Pull up banner design mockup": "Макет баннера ролл-ап",
