@@ -52,10 +52,14 @@
   // not paid. Fill the JSON in when an order lands: name, blurb, url, an optional
   // image inside this site (the page's own content policy only allows images from
   // here), and the day the placement ends.
+  // One price for every place, on the owner's word: GH₵300 for a month in any of
+  // the three. The tag is the short position name the buyer types
+  // into the bank's narration field, so a transfer that arrives with no message is
+  // still recognisable as the top of the catalog rather than the home banner.
   var SLOTS = [
-    { id: "catalog-top", name: "Top of the catalog", price: 250, term: "30 days" },
-    { id: "catalog-mid", name: "Middle of the catalog", price: 150, term: "30 days" },
-    { id: "home-banner", name: "Home page banner", price: 400, term: "30 days" }
+    { id: "catalog-top", name: "Top of the catalog", price: 300, term: "30 days", tag: "TOP" },
+    { id: "catalog-mid", name: "Middle of the catalog", price: 300, term: "30 days", tag: "MID" },
+    { id: "home-banner", name: "Home page banner", price: 300, term: "30 days", tag: "HOME" }
   ];
   var FEATURED_EP = "data/featured.json";
 
@@ -306,7 +310,10 @@
     closeXfer();
     // A code the buyer types into the bank's narration field, so a transfer that
     // arrives without a message can still be matched to the order it belongs to.
-    var code = "BH" + Math.random().toString(36).slice(2, 6).toUpperCase();
+    // A slot's code also carries its position, because three different places now
+    // cost the same figure and the amount alone cannot say which one was bought.
+    var tag = item.tag ? "-" + item.tag : "";
+    var code = "BH" + tag + "-" + Math.random().toString(36).slice(2, 6).toUpperCase();
     var wrap = el("div", "pay-xfer");
     wrap.setAttribute("role", "dialog");
     wrap.setAttribute("aria-modal", "true");
