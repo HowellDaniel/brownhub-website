@@ -46,11 +46,18 @@
   // ===== 3. Sponsored slots ===================================================
   // Selling placement on this site to other businesses. Same pay button, and the
   // term shown under the price.
+  // What a buyer actually receives is rendered by renderFeatured() below from
+  // data/featured.json — a slot with no entry there shows nothing at all, so the
+  // band never appears as a hole and nothing is invented about a business that has
+  // not paid. Fill the JSON in when an order lands: name, blurb, url, an optional
+  // image inside this site (the page's own content policy only allows images from
+  // here), and the day the placement ends.
   var SLOTS = [
     { id: "catalog-top", name: "Top of the catalog", price: 250, term: "30 days" },
     { id: "catalog-mid", name: "Middle of the catalog", price: 150, term: "30 days" },
     { id: "home-banner", name: "Home page banner", price: 400, term: "30 days" }
   ];
+  var FEATURED_EP = "data/featured.json";
 
   // ===== 4. Tools we recommend ================================================
   // Add an entry once that program has approved the site, with your own affiliate
@@ -61,6 +68,19 @@
   // The ca-pub-... number from the AdSense snippet. While this is empty no ad
   // script loads and no box appears, so an unapproved account cannot leave a
   // grey rectangle where the work should be.
+  //
+  // Pasting a key here is NOT the whole job, and this is the line that says so:
+  // every page's own content policy reads script-src 'self' https://js.paystack.co,
+  // so Google's ad script would be refused and the slot would stay invisible with
+  // no error in the page. When a key goes in, the same commit has to widen the
+  // policy in all nine documents and in sw.js:
+  //   script-src   + https://pagead2.googlesyndication.com https://adservice.google.com
+  //   frame-src    + https://googleads.g.doubleclick.net https://adsense.google.com
+  //   img-src      + https://*.doubleclick.net https://pagead2.googlesyndication.com
+  //   connect-src  + https://*.google-analytics.com https://pagead2.googlesyndication.com
+  //   style-src    + 'unsafe-inline' for the ad frames only if Google asks
+  // Until then this file loads nothing third-party here, and the visitor's choice
+  // in the cookie centre is what decides even after it: see renderAds().
   var ADSENSE = "";
 
   var WA = "https://wa.me/233502954541";
@@ -440,11 +460,19 @@
   }
 
   // AdSense pays on impressions served from its own script, so there is nothing
-  // to show until the account number exists.
+  // to show until the account number exists — and nothing may load until the
+  // visitor has said yes to it in the cookie centre. Google asks for the same
+  // thing the site already promises, so this is a consent gate, not a style
+  // choice: no ad request for anyone who has not decided, and a second chance
+  // when the decision arrives during the visit (the bhconsent event below).
+  var adsFired = false;
+
   function renderAds() {
     var host = mount("ads");
     if (!host) return;
-    if (!ADSENSE) { host.hidden = true; return; }
+    var c = typeof window.bhConsent === "function" ? window.bhConsent() : {};
+    if (!ADSENSE || !c.decided || !c.advertising || adsFired) { host.hidden = true; return; }
+    adsFired = true;
     var ins = document.createElement("ins");
     ins.className = "adsbygoogle";
     ins.style.cssText = "display:block";
@@ -457,8 +485,68 @@
     s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + encodeURIComponent(ADSENSE);
     s.async = true;
     s.crossOrigin = "anonymous";
+    // If the page's own content policy is still refusing the ad host — which it
+    // will until the directives named above are widened — the frame simply does
+    // not appear. Hiding the mount is the honest answer; an empty box is not.
+    s.onerror = function () { host.hidden = true; };
     host.appendChild(s);
     try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* not approved yet */ }
+  }
+
+  // The paid placements, once someone has bought one. An empty or malformed file
+  // renders nothing: this never fills a slot with an invented business.
+  function renderFeatured() {
+    var hosts = document.querySelectorAll("[data-featured]");
+    if (!hosts.length) return;
+    // no-cache, and the service worker answers /data from the network first, so the
+    // owner editing this file by hand is the whole publishing step.
+    fetch(FEATURED_EP, { cache: "no-cache" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data) return;
+        Array.prototype.forEach.call(hosts, function (host) {
+          var key = host.getAttribute("data-featured");
+          var list = Array.isArray(data[key]) ? data[key] : [];
+          var today = new Date().toISOString().slice(0, 10);
+          var live = list.filter(function (f) {
+            return f && typeof f.name === "string" && f.name.trim() &&
+              typeof f.url === "string" && /^https?:\/\//i.test(f.url.trim()) &&
+              (!f.until || String(f.until).slice(0, 10) >= today);
+          }).slice(0, 2);
+          if (!live.length) return;
+          host.hidden = false;
+          host.textContent = "";
+          live.forEach(function (f) { host.appendChild(featuredCard(f)); });
+        });
+      })
+      .catch(function () { /* no placement is worse than a broken one, so say nothing */ });
+  }
+
+  function featuredCard(f) {
+    var box = el("div", "featured__card");
+    box.appendChild(el("span", "featured__tag", "Sponsored"));
+    if (typeof f.image === "string" && /^images\/[\w.-]+$/.test(f.image.trim())) {
+      var pic = el("div", "featured__pic");
+      var img = document.createElement("img");
+      img.src = f.image.trim();
+      img.alt = String(f.name).slice(0, 120);
+      img.width = 108; img.height = 108; img.loading = "lazy"; img.decoding = "async";
+      pic.appendChild(img);
+      box.appendChild(pic);
+    }
+    var body = el("div", "featured__body");
+    var name = el("h3", "featured__name");
+    var a = el("a", null, String(f.name).slice(0, 120));
+    a.href = String(f.url).trim();
+    a.target = "_blank";
+    // A buyer paid for the position, not for this site's endorsement, and search
+    // engines ask for exactly this attribute on a paid link.
+    a.rel = "sponsored nofollow noopener";
+    name.appendChild(a);
+    body.appendChild(name);
+    if (f.blurb) body.appendChild(el("p", "featured__blurb", String(f.blurb).slice(0, 240)));
+    box.appendChild(body);
+    return box;
   }
 
   function init() {
@@ -473,6 +561,7 @@
     renderInto(mount("packages"), PACKAGES);
     renderInto(mount("slots"), SLOTS);
     renderTools();
+    renderFeatured();
     renderAds();
     if (window.BHAccounts && window.BHAccounts.email && emailRow) {
       var known = window.BHAccounts.email();
@@ -482,6 +571,9 @@
     document.addEventListener("i18n-applied", function () {
       waLinks.forEach(function (l) { if (l.extra) l.extra(); else orderHref(l.a, l.item); });
     });
+    // Consent can arrive after this file has run: the notice is answered by a click,
+    // and an ad is worth requesting once it has been allowed.
+    document.addEventListener("bhconsent", renderAds);
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

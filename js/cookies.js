@@ -2,32 +2,39 @@
   Cookie preferences, in the shape twilio uses: a footer link that opens a
   centre listing each category, plus a first-visit notice.
 
-  What this site actually does today is small, and the copy says exactly that —
-  the two optional categories are recorded so that anything added later can read
-  the choice, not because a tracker is already running. Read the state with
-  window.bhConsent(); it fires a "bhconsent" event whenever it changes.
+  Two things on this site read the answer before they do anything: the studio's
+  own page counter (js/leads.js) and the display ad slot (js/store.js). Both stay
+  silent for a visitor who has not said yes, which is what the two descriptions
+  below promise, so this file and the privacy page have to be read together — if
+  one of those features changes, say so here too.
 */
 (() => {
   "use strict";
   const doc = document;
   const KEY = "brownhub-consent";
 
+  /*
+    What this site actually does, and what it will do the moment a choice is
+    allowed. Read the state with window.bhConsent(); it fires a "bhconsent" event
+    whenever it changes, and js/leads.js and js/store.js both obey it: no page
+    count is sent and no ad script is fetched without an explicit yes.
+  */
   const CATEGORIES = [
     {
       id: "necessary",
       name: "Strictly necessary",
-      desc: "Always on. Your chosen language, the dark or light theme and a signed-in client session are kept in your own browser so the site can remember them. Without them the pages still load, but they forget you between visits. A random code the chat assistant uses to keep your conversation in one thread is stored the same way. The chat itself is kept the same way, for about a week, so a refresh does not lose it.",
+      desc: "Always on. Your chosen language, the dark or light theme, your answer to this notice and a signed-in client session are kept in your own browser so the site can remember them. So is the note that you have already answered our quote question, which is what stops us asking you twice, and the random code the chat assistant uses to keep your conversation in one thread. The chat itself is kept the same way, for about a week, so a refresh does not lose it.",
       locked: true
     },
     {
       id: "analytics",
       name: "Analytics",
-      desc: "Would tell us which pages get read and where people leave. BrownHub loads no analytics script on this site today, so saving this choice changes nothing until one is added."
+      desc: "Lets BrownHub count which pages get read. The count is the studio's own script, not another company's: one row per visit holding the page, your language, the rough size of your screen and the site you came from, filed with no name, no cookie and no IP address. Turn this off and nothing is recorded at all."
     },
     {
       id: "advertising",
       name: "Advertising and affiliate",
-      desc: "Cookies a partner might set when you follow an affiliate link away from this site. No advertising or affiliate script runs here today, and turning this off does not stop a partner setting their own cookie once you visit them."
+      desc: "Lets the studio's display ad slot load, along with the cookies Google and its partners set to choose and measure the ads. No advertising script runs here unless you turn this on, and switching it off does not stop a partner setting their own cookie once you have followed a link to them."
     }
   ];
 

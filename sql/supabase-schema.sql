@@ -134,3 +134,79 @@ revoke all on table public.payments from anon, authenticated;
 
 -- Proof it is closed: this must return both counts as zero.
 select (select count(*) from pg_policies where tablename = 'payments') as payments_policies;
+
+
+-- ============================================================================
+-- leads + visits — the studio's own record of who asked for a quote, and of how
+-- many people read a page (added 2026-10-04, asked for as "keep record of anyone
+-- who opens the website").
+--
+-- Neither table has an insert policy, and that is the point: the publishable key
+-- sits in a public repo, so a policy for anon would let anyone file thousands of
+-- fake leads or fake page views a minute. The only writer is the capture Edge
+-- Function (supabase/functions/capture), which holds the service role key and
+-- checks the request's Origin, its size and the caller's address before anything
+-- reaches these rows. The studio reads them in the dashboard's Table editor,
+-- which uses the same service role and is not affected by row level security.
+--
+-- Nothing here identifies a stranger. visits.visitor is sha256(TRACK_SALT|ip|day),
+-- so the same person counts once per day and the address itself is never kept —
+-- it cannot be recovered from the hash without the salt, which lives only in
+-- Supabase's secret store. leads holds what a person typed on purpose, so they
+-- can be replied to, and nothing else.
+-- ============================================================================
+
+create table if not exists public.leads (
+  id                 bigint generated always as identity primary key,
+  created_at         timestamptz not null default now(),
+  name               text not null,
+  whatsapp           text not null,
+  whatsapp_as_typed  text not null default '',
+  interest           text not null default '',
+  page               text not null default '',
+  lang               text not null default 'en',
+  referrer           text not null default '',
+  status             text not null default 'new'
+                     constraint leads_status_check
+                     check (status in ('new', 'contacted', 'quoted', 'closed', 'spam'))
+);
+
+create index if not exists leads_created_idx
+  on public.leads (created_at desc);
+create index if not exists leads_status_idx
+  on public.leads (status, created_at desc);
+
+alter table public.leads enable row level security;
+revoke all on table public.leads from anon, authenticated;
+
+create table if not exists public.visits (
+  id         bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  day        date not null default (now() at time zone 'utc')::date,
+  page       text not null default '/',
+  lang       text not null default 'en',
+  referrer   text not null default '',
+  device     text not null default 'unknown'
+             constraint visits_device_check
+             check (device in ('phone', 'tablet', 'desktop', 'unknown')),
+  visitor    text not null default ''
+);
+
+create index if not exists visits_day_idx
+  on public.visits (day desc, page);
+create index if not exists visits_created_idx
+  on public.visits (created_at desc);
+
+alter table public.visits enable row level security;
+revoke all on table public.visits from anon, authenticated;
+
+-- Proof both are closed to a browser key: each count must come back zero.
+select (select count(*) from pg_policies where tablename = 'leads')  as lead_policies,
+       (select count(*) from pg_policies where tablename = 'visits') as visit_policies;
+
+-- The owner's reading query, when he wants the list rather than the table editor:
+--   select to_char(created_at,'YYYY-MM-DD HH24:MI') as when, name, whatsapp,
+--          interest, lang, status
+--     from public.leads order by id desc limit 100;
+--   select day, count(*) as page_views, count(distinct visitor) as people
+--     from public.visits group by day order by day desc limit 30;

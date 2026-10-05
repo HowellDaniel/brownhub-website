@@ -1650,10 +1650,11 @@ html[data-theme="light"] .modal__gal-count{background:rgba(255,251,247,.75);colo
 @media (prefers-reduced-motion:reduce){.modal__gal-nav,.modal__gal-thumb{transition:none}}
 /* ---------- Install-the-app prompt ----------
    Lifts itself over the cookie notice with the same --cookie-h the language sheet
-   already uses, so the two never stack on top of each other. */
+   already uses, and over the quote card with --lead-h (js/leads.js publishes it),
+   so the three queue from the bottom of the screen up instead of stacking. */
 .install{position:fixed;inset-inline-start:1rem;z-index:145;display:flex;align-items:center;gap:.6rem;
   max-width:min(340px,calc(100vw - 2rem));padding:.65rem .5rem .65rem .95rem;border-radius:16px;
-  bottom:calc(1rem + var(--cookie-h,0px) + env(safe-area-inset-bottom));
+  bottom:calc(1rem + max(var(--cookie-h,0px), var(--lead-h,0px)) + env(safe-area-inset-bottom));
   background:var(--glass-fill);border:1px solid var(--border);box-shadow:var(--shadow);
   -webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5);
   opacity:0;transform:translateY(12px);transition:opacity .35s var(--ease-out,ease),transform .35s var(--ease-out,ease)}
@@ -1668,7 +1669,9 @@ html[data-theme="light"] .modal__gal-count{background:rgba(255,251,247,.75);colo
   .install{inset-inline:1rem;max-width:none;padding-inline-end:.4rem;
     /* the chat bubble is anchored to the physical right on every page, RTL included */
     padding-right:4.75rem;
-    bottom:calc(.75rem + var(--cookie-h,0px) + env(safe-area-inset-bottom))}
+    /* --lead-h already measures from the bottom of the screen up to the card's top
+       edge, so on this narrow screen the pill only has to clear that one figure */
+    bottom:calc(max(.75rem + var(--cookie-h,0px), var(--lead-h,0px) + .5rem) + env(safe-area-inset-bottom))}
   .install__no{width:34px;height:34px}
 }
 @media (prefers-reduced-motion:reduce){.install{transition:none}.install__no{transition:none}}
@@ -2356,3 +2359,126 @@ html[data-theme="light"] .web-grid{background-image:radial-gradient(rgba(38,16,1
    the global h1,h2,h3,h4 rule and need no twin. */
 .page-hero h2{font-size:var(--t-h1);line-height:var(--t-lh-tight);
   letter-spacing:var(--t-display-ls);margin-bottom:var(--t-3)}
+
+/* ---------- The quote card ----------
+   Bottom-left, in the same glass face the rest of the site wears. It lifts over
+   the cookie notice with --cookie-h (js/cookies.js publishes it) exactly as the
+   install pill does, and the install pill lifts over THIS one with --lead-h, so
+   the three overlays queue instead of stacking on each other's controls. */
+.leadask{position:fixed;inset-inline-start:1rem;z-index:146;
+  bottom:calc(1rem + var(--cookie-h,0px) + env(safe-area-inset-bottom));
+  width:min(370px,calc(100vw - 2rem));max-height:calc(58vh - var(--cookie-h,0px));overflow:auto;
+  padding:var(--t-4) var(--t-4) var(--t-3);border-radius:18px;
+  background-color:var(--glass-fill);border:1px solid var(--glass-fill-hair);box-shadow:var(--shadow);
+  -webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5);
+  opacity:0;transform:translateY(14px);
+  transition:opacity .4s var(--ease-out,ease),transform .4s var(--ease-out,ease)}
+.leadask--in{opacity:1;transform:none}
+.leadask.is-gone{opacity:0;transform:translateY(14px);pointer-events:none}
+.leadask__x{position:absolute;top:.5rem;inset-inline-end:.5rem;width:32px;height:32px;border:0;border-radius:50%;
+  background:none;color:var(--text-muted);font-size:1.3rem;line-height:1;cursor:pointer;
+  transition:color .2s,background-color .2s}
+.leadask__x:hover,.leadask__x:focus-visible{color:var(--text);background:var(--glass-fill-alt)}
+.leadask__eyebrow{margin:0 0 .35rem;font-size:var(--t-fs-20);font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-muted)}
+.leadask__title{margin:0 0 var(--t-3);font-size:var(--t-fs-50);line-height:var(--t-lh-small);
+  letter-spacing:var(--t-display-ls,normal);color:var(--text)}
+.leadask__field{margin-bottom:var(--t-3)}
+.leadask__field label{display:block;font-size:var(--t-fs-20);font-weight:600;color:var(--text)}
+.leadask input{display:block;width:100%;margin-top:.35rem;padding:.6rem .75rem;font:inherit;
+  font-size:var(--t-fs-30);color:var(--text);background:var(--surface);
+  border:1px solid var(--border);border-radius:10px}
+.leadask input:focus{outline:none;border-color:var(--accent)}
+.leadask__hint{margin:.35rem 0 0;font-size:var(--t-fs-20);line-height:var(--t-lh-medium);color:var(--text-muted)}
+.leadask__go{margin-top:.25rem}
+.leadask__fine{margin:.6rem 0 0;font-size:var(--t-fs-20);color:var(--text-muted)}
+.leadask__fine a{text-decoration:underline;text-underline-offset:3px;color:var(--text-muted)}
+.leadask__fine a:hover,.leadask__fine a:focus-visible{color:var(--accent)}
+.leadask__alt{display:inline-block;margin-top:.5rem;font-size:var(--t-fs-20);color:var(--text-muted);
+  text-decoration:underline;text-underline-offset:3px}
+.leadask__alt:hover,.leadask__alt:focus-visible{color:var(--accent)}
+.leadask__done{display:flex;flex-direction:column;gap:var(--t-2);color:var(--text);font-size:var(--t-fs-30)}
+.leadask__done p{margin:0;color:var(--text-muted);font-size:var(--t-fs-25);line-height:var(--t-lh-medium)}
+@media (max-width:600px){
+  .leadask{inset-inline:1rem;width:auto;
+    /* the chat bubble is anchored to the physical right on every page, RTL included */
+    bottom:calc(5.25rem + var(--cookie-h,0px) + env(safe-area-inset-bottom));
+    max-height:calc(52vh - var(--cookie-h,0px));padding:var(--t-4) var(--t-4) var(--t-3)}
+}
+/* The assistant's teaser is 320px wide against the physical right, so below the
+   point where a 370px card and a 320px bubble can genuinely sit side by side it
+   lands on top of this card's own phone field and send button. Two asks in one
+   corner is one ask too many: while the card is up, the teaser keeps out of the
+   way, and it comes back the moment the card is answered or dismissed. */
+@media (max-width:720px){
+  html[data-leadask] .chat-widget__teaser{opacity:0;visibility:hidden;pointer-events:none}
+}
+@media (prefers-reduced-motion:reduce){.leadask,.leadask__x{transition:none}}
+
+/* ---------- A paid placement that has actually been bought ----------
+   The slots in js/store.js have been on sale since the money pass, but nothing on
+   the site could show a buyer until this existed. An empty data/featured.json
+   renders nothing at all, so the band never appears as a hole. */
+.featured{margin:0 0 var(--t-5)}
+.featured[hidden]{display:none}
+.featured--mid{margin:var(--t-5) 0}
+/* inside the hero's own gutter, so a bought banner sits under the headline rather
+   than in a band of its own above the fold */
+.featured--banner{margin:clamp(24px,4vw,48px) 0 0}
+.featured__card{display:flex;flex-wrap:wrap;align-items:center;gap:var(--t-3) var(--t-4);
+  padding:var(--t-4);border-radius:var(--t-r-xl);
+  /* A bought banner wears the site's ink plate rather than the theme's own frost.
+     The home slot sits in the hero, which stays dark in both themes, so a white
+     frost there measured 1.3:1 against its own copy in the light theme. The dark
+     plate also keeps a stranger's advertisement apart from the studio's content. */
+  background-color:rgba(38,16,15,.88);border:1px solid rgba(255,255,255,.16);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),var(--shadow);
+  --text:#f2e4de;--text-muted:#c3a79f;--accent:#f4545a;
+  -webkit-backdrop-filter:blur(14px) saturate(1.5);backdrop-filter:blur(14px) saturate(1.5)}
+.featured__tag{flex:none;padding:.25rem .7rem;border-radius:var(--t-r-pill);font-size:var(--t-fs-20);
+  font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);
+  border:1px solid var(--glass-fill-hair)}
+.featured__body{flex:1 1 26ch;min-width:0}
+.featured__name{margin:0 0 .2rem;font-size:var(--t-fs-55);line-height:var(--t-lh-small)}
+.featured__name a{color:var(--text)}
+.featured__name a:hover,.featured__name a:focus-visible{color:var(--accent)}
+.featured__blurb{margin:0;font-size:var(--t-fs-30);line-height:var(--t-lh-medium);color:var(--text-muted)}
+.featured__pic{flex:none;width:clamp(72px,18vw,108px);aspect-ratio:1;border-radius:14px;overflow:hidden}
+.featured__pic img{width:100%;height:100%;object-fit:cover}
+
+/* ---- The ink bands wear dark glass in both themes ----
+   These five bands stay on --ink-band whatever the theme, and each already
+   re-scopes --text/--surface/--border for that plate — but none of them re-scoped
+   the --glass-* tokens, so in the light theme their cards, buttons and social
+   squares were filled with the light theme's white pane laid over a dark
+   background: the hero chips measured 1.26:1 and a footer social button 1.14:1
+   against their own copy. Restoring the dark values here, only inside the bands
+   that sit on ink.
+   Only the tokens these bands actually consume. --glass-veil/-blur/-edge/-glow/
+   -drop/-ctl-* belong to the header and --glass-hair-soft/-chip to the chat
+   widget, which mount outside any band. --glass-sheen-grad is deliberately
+   absent: it stores an unresolved var(--glass-sheen), which re-resolves on every
+   element, so the sheen follows the override on its own.
+   The cookie notice, the quote card and the dialogs all append to <body>, so this
+   rule cannot repaint the light frost they are meant to wear. */
+html[data-theme="light"] :is(.band--ink,.hero,.cta,.site-footer,.band--exp){
+  --glass-fill:rgba(51,21,23,.62);--glass-fill-alt:rgba(38,16,15,.62);
+  --glass-fill-hair:rgba(255,255,255,.16);--glass-inset:inset 0 1px 0 rgba(255,255,255,.1);
+  --glass-glow-card:rgba(255,255,255,.028);--glass-sheen:rgba(255,255,255,.08);
+  --glass-hair:rgba(255,255,255,.34)}
+
+/* ---- The chat bubble joins the bottom queue ----
+   The cookie notice spans the full width of the foot at z-index 9990 and the
+   bubble is fixed at bottom 1.5rem on z-index 200, so until a first-time visitor
+   answered the notice the assistant was behind it — measured at 390, 1240 and
+   1440, the bubble sat entirely inside the notice's band. It lifts over the
+   notice like the install pill and the language sheet do, and on a phone it also
+   clears the quote card, which is full width there (on wider screens the card is
+   left-anchored and the two never meet). The panel's height is cut back by the
+   same figure, or a lifted bubble would push its own dialog off the top. */
+.chat-widget{bottom:calc(1.5rem + var(--cookie-h,0px) + env(safe-area-inset-bottom))}
+.chat-widget__panel{max-height:min(380px, calc(100vh - 6rem - var(--cookie-h,0px) - env(safe-area-inset-bottom)))}
+@media (max-width:600px){
+  .chat-widget{bottom:calc(.75rem + max(var(--cookie-h,0px), var(--lead-h,0px)) + env(safe-area-inset-bottom))}
+  .chat-widget__panel{max-height:calc(100vh - 5.5rem - max(var(--cookie-h,0px), var(--lead-h,0px)) - env(safe-area-inset-bottom))}
+}

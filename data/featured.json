@@ -1,0 +1,6 @@
+{
+  "_how_to_add": "Paid placements, sold from the 'Feature your business here' band on the catalog page. One entry per bought slot, and an empty list renders nothing at all — the band hides itself, so an unsold slot never shows a hole and a business never appears here before it has paid. name is the buyer's own words, blurb one line of them, url their site, image an optional square picture that lives inside this site (images/featured/... — the page's own content policy refuses a picture from anywhere else), until the last day the placement runs, YYYY-MM-DD. An entry past its 'until' date stops rendering on its own, so selling a month of space cannot silently become forever. These words are the advertiser's, not the studio's, so they are not translation keys and they appear in English to every visitor. Example, once someone has actually bought the top of the catalog:\n  \"catalog-top\": [ { \"name\": \"Akwaaba Prints\", \"blurb\": \"Same-day flyers and banners in Osu.\", \"url\": \"https://example.com\", \"image\": \"images/featured/akwaaba.jpg\", \"until\": \"2026-12-01\" } ]",
+  "home-banner": [],
+  "catalog-top": [],
+  "catalog-mid": []
+}
