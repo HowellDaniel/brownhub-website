@@ -94,11 +94,11 @@ Logos 2-4 days. Full brand identity about a week. Flyers, posters and social med
 arranged over WhatsApp.
 
 CATALOG ITEMS ON THE SITE
-ABS Board, All Types of Frames, Book Design (Inside and Cover), Flag Designing & Printing,
-Flyer, Food & Drinks Flyers, Funeral Banner, Funeral Poster & Invitation Cards, Funeral Rosettes
-and Designs, Handkerchief, ID Tags & Lanyards, Key Holders, More Food Flyers,
-More Winners' Chapel Flyers, Notepad Design, Other Flyers, Other Food Flyers,
-Packaging Box Sleeves, Paper Bags Mugs & Flasks, Product Labels Printing, Pull Up Design
+ABS Board, All Types of Frames, Banner Printing, Book Design (Inside and Cover), Digital
+Embroidery, Flag Designing & Printing, Flyer, Food & Drinks Flyers, Funeral Poster & Invitation
+Cards, Funeral Rosettes and Designs, Gold Perspex, ID Tags & Lanyards, Key Holders, Logo Design
+Mockup, More Food Flyers, More Winners' Chapel Flyers, Notepad Design, Other Flyers, Other Food
+Flyers, Packaging Box Sleeves, Paper Bags Mugs & Flasks, Product Labels Printing, Pull Up Design
 Backdrop and Printing, Sample of Printing, T-Shirts & Caps, Winners' Chapel International Flyer.
 That is the whole catalog — if a visitor asks for something not on that list, say we have not
 listed it but can usually make it, and point them to WhatsApp. Catalog

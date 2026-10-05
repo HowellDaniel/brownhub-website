@@ -43,7 +43,7 @@
     { g: "Catalog", t: "All Types of Frames", h: "catalog.html?q=All%20Types%20of%20Frames", k: "frame award plaque photo certificate glass" },
     { g: "Catalog", t: "Flyer", h: "catalog.html?q=Flyer", k: "flyer printing event wedding funeral church" },
     { g: "Catalog", t: "Sample of Printing", h: "catalog.html?q=Sample%20of%20Printing", k: "print sample business card letterhead receipt poster" },
-    { g: "Catalog", t: "Funeral Banner", h: "catalog.html?q=Funeral%20Banner", k: "funeral banner memorial commemorative cloth" },
+    { g: "Catalog", t: "Banner Printing", h: "catalog.html?q=Banner%20Printing", k: "banner printing vinyl fabric memorial church event signage" },
     { g: "Catalog", t: "Book Design (Inside and Cover)", h: "catalog.html?q=Book%20Design%20%28Inside%20and%20Cover%29", k: "book cover inside layout typesetting manuscript" },
     { g: "Catalog", t: "ABS Board", h: "catalog.html?q=ABS%20Board", k: "abs board foam signage portrait display" },
     { g: "Catalog", t: "Other Food Flyers", h: "catalog.html?q=Other%20Food%20Flyers", k: "food flyer restaurant menu joint eating promo" },
@@ -52,7 +52,7 @@
     { g: "Catalog", t: "Winners' Chapel International Flyer", h: "catalog.html?q=Winners%27%20Chapel%20International%20Flyer", k: "church flyer programme service event poster welcome" },
     { g: "Catalog", t: "ID Tags & Lanyards", h: "catalog.html?q=ID%20Tags%20%26%20Lanyards", k: "id tag badge lanyard usher guest staff pass event access" },
     { g: "Catalog", t: "Flag Designing & Printing", h: "catalog.html?q=Flag%20Designing%20%26%20Printing", k: "flag banner outdoor logo brand printing fly" },
-    { g: "Catalog", t: "Handkerchief", h: "catalog.html?q=Handkerchief", k: "handkerchief cloth print funeral gift church programme" },
+    { g: "Catalog", t: "Digital Embroidery", h: "catalog.html?q=Digital%20Embroidery", k: "embroidery handkerchief cap polo towel stitched logo name" },
     { g: "Catalog", t: "Other Flyers", h: "catalog.html?q=Other%20Flyers", k: "flyer price list service menu promotion salon shop" },
     { g: "Catalog", t: "T-Shirts & Caps", h: "catalog.html?q=T-Shirts%20%26%20Caps", k: "t shirt polo cap hat branded print logo staff event" },
     { g: "Catalog", t: "Product Labels Printing", h: "catalog.html?q=Product%20Labels%20Printing", k: "product label sticker bottle tub jar pack packaging print" },
@@ -63,6 +63,8 @@
     { g: "Catalog", t: "Packaging Box Sleeves", h: "catalog.html?q=Packaging%20Box%20Sleeves", k: "packaging box sleeve band wrap kraft brand label" },
     { g: "Catalog", t: "Notepad Design", h: "catalog.html?q=Notepad%20Design", k: "notepad jotter diary notebook stationery office gift" },
     { g: "Catalog", t: "More Winners' Chapel Flyers", h: "catalog.html?q=More%20Winners%27%20Chapel%20Flyers", k: "church programme flyer event service banquet winners chapel" },
+    { g: "Catalog", t: "Gold Perspex", h: "catalog.html?q=Gold%20Perspex", k: "gold perspex acrylic plexiglass invite plaque award engraved mirror" },
+    { g: "Catalog", t: "Logo Design Mockup", h: "catalog.html?q=Logo%20Design%20Mockup", k: "logo design brand identity mockup sign storefront 3d" },
 
     // The website catalog is its own shelf, so it gets its own rows. Every label
     // is a string that already exists on the page, which keeps the dictionaries
