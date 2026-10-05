@@ -4,10 +4,12 @@ include:
   - ".well-known"
 
 # The repository is the deployment, so anything left in the build is published at
-# a public URL. These four hold server-side source: the Edge Functions read their
+# a public URL. These hold server-side source: the Edge Functions read their
 # secrets from Deno.env but their request-signing and origin rules are plain text,
 # and sql/supabase-schema.sql hands out the table and row-level-security layout.
 # tools/ is the Swift that draws images/qr-app.png — nothing on a page links to it.
+# ads/ is the display-ad kit uploaded to Google and Meta; the networks hold their
+# own copy, so serving a second one from this domain would only add weight.
 # None of it is ever linked from a page, so the site loses nothing by not shipping
 # it — and an attacker loses the map of it.
 exclude:
@@ -15,3 +17,4 @@ exclude:
   - "sql"
   - "mobile"
   - "tools"
+  - "ads"
