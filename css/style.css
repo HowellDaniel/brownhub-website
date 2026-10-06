@@ -2581,3 +2581,15 @@ html[data-theme-mode="dark"] .theme-toggle .icon-moon{display:block}
    it was authored to sit, under the headline and inside the same ink band.
    ========================================================================== */
 .hero{flex-direction:column;justify-content:center}
+
+/* ==========================================================================
+   THE PRICE THE STUDIO ITSELF WROTE DOWN. Three catalog items carry a figure
+   the owner typed into his own WhatsApp Business catalog — banner printing,
+   the Winners' Chapel programme flyer and gold perspex. The number is digits
+   only, so it needs no translation and reads the same in all forty languages.
+   Gold on both surfaces measures 4.66:1 (dark) and 5.66:1 (light), so it clears
+   AA at this weight without borrowing the red the order buttons use.
+   ========================================================================== */
+.card__price{display:block;margin-top:var(--t-1);font-size:var(--t-small);font-weight:700;color:var(--accent-2)}
+.modal__price{margin-top:.45rem;font-size:1.05rem;font-weight:700;color:var(--accent-2)}
+.card__price[hidden],.modal__price[hidden]{display:none}

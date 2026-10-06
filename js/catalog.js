@@ -5,6 +5,7 @@
   var img = modal.querySelector(".modal__img");
   var nameEl = document.getElementById("product-modal-name");
   var catEl = document.getElementById("product-modal-cat");
+  var priceEl = document.getElementById("product-modal-price");
   var descEl = document.getElementById("product-modal-desc");
   var chatBtn = document.getElementById("product-order-chat");
   var quoteBtn = document.getElementById("product-order-quote");
@@ -228,6 +229,11 @@
     img.alt = name;
     nameEl.textContent = name;
     catEl.textContent = card.dataset.catlabel || "";
+    // The figure is the studio's own, typed into its WhatsApp catalog entry, so the
+    // card is only ever as expensive as he priced it. Digits travel untranslated.
+    var price = card.dataset.price || "";
+    priceEl.textContent = price;
+    priceEl.hidden = !price;
     descEl.textContent = card.dataset.desc;
     quoteBtn.href = "contact.html?item=" + encodeURIComponent(name);
     renderMore(card);

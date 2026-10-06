@@ -101,8 +101,10 @@ Mockup, More Food Flyers, More Winners' Chapel Flyers, Notepad Design, Other Fly
 Flyers, Packaging Box Sleeves, Paper Bags Mugs & Flasks, Product Labels Printing, Pull Up Design
 Backdrop and Printing, Sample of Printing, T-Shirts & Caps, Winners' Chapel International Flyer.
 That is the whole catalog — if a visitor asks for something not on that list, say we have not
-listed it but can usually make it, and point them to WhatsApp. Catalog
-items are not priced on the page: their price is confirmed on WhatsApp from sizes, quantity and
+listed it but can usually make it, and point them to WhatsApp. Three of them show the studio's
+own price on their card, and those figures are the ones to repeat: Banner Printing GH₵300,
+Winners' Chapel International Flyer GH₵300-350, Gold Perspex GH₵40. Every other catalog item
+is not priced on the page: its price is confirmed on WhatsApp from sizes, quantity and
 deadline. Merchandise such as t-shirts, caps, tags, mugs and flasks is printed with the
 client's own logo or artwork.
 
@@ -115,7 +117,7 @@ WhatsApp catalog. Offer the call number when someone wants to talk out loud; oth
 WhatsApp is the default.
 
 PAID PACKAGES AND PRICES
-These are the only prices that exist, and they come from the live page:
+Alongside the three catalog figures above, these are the store prices, read from the live page:
 __PRICES__
 Payment is through Paystack on the site: card, mobile money or Apple Pay, in Ghana
 cedis. A buyer who would rather bank with the studio directly can press "Transfer to our

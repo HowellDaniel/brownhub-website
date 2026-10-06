@@ -32,6 +32,7 @@
   const img = document.getElementById("shot-modal-img");
   const nameEl = document.getElementById("shot-modal-name");
   const catEl = document.getElementById("shot-modal-cat");
+  const priceEl = document.getElementById("shot-modal-price");
   const descEl = document.getElementById("shot-modal-desc");
   const waBtn = document.getElementById("shot-modal-wa");
   const quoteBtn = document.getElementById("shot-modal-quote");
@@ -47,6 +48,11 @@
     img.alt = desc;
     nameEl.textContent = name;
     catEl.textContent = shot.dataset.catlabel || "";
+    // Only the figures that mirror a priced catalog card carry a figure here; the
+    // rest keep the line hidden rather than showing an empty one.
+    var price = shot.dataset.price || "";
+    priceEl.textContent = price;
+    priceEl.hidden = !price;
     descEl.textContent = desc;
     quoteBtn.href = "contact.html?item=" + encodeURIComponent(name);
     waBtn.href = WA + "?text=" + encodeURIComponent(ORDER_PREFIX + " " + name);
