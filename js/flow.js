@@ -13,6 +13,7 @@
   "use strict";
   const PX_PER_SECOND = 44;
   const MAX_COPIES = 6;
+  const FOCUSABLE = "a[href], button, input, select, textarea, summary, [tabindex]";
   const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const rails = Array.prototype.slice.call(document.querySelectorAll(".flow"));
@@ -42,6 +43,11 @@
       src.forEach((n) => {
         const clone = n.cloneNode(true);
         clone.setAttribute("aria-hidden", "true");
+        /* aria-hidden must not wrap a tab stop: a keyboard visitor would land on an
+           invisible duplicate and get nothing in return. CSS already seals the
+           duplicates off from the pointer; this seals them off from Tab as well. */
+        [clone].concat(Array.prototype.slice.call(clone.querySelectorAll(FOCUSABLE)))
+          .forEach((f) => { f.tabIndex = -1; });
         items.appendChild(clone);
       });
     }
