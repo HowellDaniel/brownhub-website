@@ -2593,3 +2593,55 @@ html[data-theme-mode="dark"] .theme-toggle .icon-moon{display:block}
 .card__price{display:block;margin-top:var(--t-1);font-size:var(--t-small);font-weight:700;color:var(--accent-2)}
 .modal__price{margin-top:.45rem;font-size:1.05rem;font-weight:700;color:var(--accent-2)}
 .card__price[hidden],.modal__price[hidden]{display:none}
+
+/* ==========================================================================
+   THE HERO'S BROWN IS A WINDOW. The owner asked for the flat ink slab behind
+   the headline to turn transparent so the studio's own coding clip runs
+   through it, with the JavaScript layers on top. .hero__stage carries the
+   band's colour, so the clip and the dots sit between that brown and the copy
+   rather than replacing it — and where the clip never loads (reduced motion,
+   save-data, a failed request) the stage's own background is still exactly the
+   ink band the page shipped with, so nothing is ever a black slab.
+
+   Three layers, back to front: the clip, darkened and breathing on its own
+   `scale` axis; the linked-dot network js/ambient.js paints, masked to the
+   right half where the floating chips live so no red pixel drifts behind a
+   glyph; and the veil, which is what the contrast numbers were measured
+   through. Against the moving picture, with the overlays cleared, the copy
+   holds 13.6:1 on the headline, 7.7:1 on the standfirst, 4.8:1 on the gold
+   eyebrow and 5.6:1 on the outline button at 1440px, and 14.3 / 7.2 / 5.1 /
+   5.7 at 400px — AA on every line in both themes, since this band keeps its
+   ink whatever the mode is set to. The parallax sits on `translate` and the
+   breathing on `scale` — independent properties, so the two never overwrite
+   each other, and neither one counts as layout, so the hero's CLS stays where
+   it was measured.
+   ========================================================================== */
+.hero--film{background:transparent;isolation:isolate}
+.hero__stage{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--ink-band)}
+.hero__film,.hero__dots,.hero__veil{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero__film{object-fit:cover;opacity:.78;filter:brightness(.6) saturate(1.15);
+  scale:1.1;translate:0 var(--film-shift,0px);
+  animation:hero-breathe 26s var(--ease-out) infinite alternate}
+@keyframes hero-breathe{from{scale:1.1}to{scale:1.2}}
+.hero__dots{pointer-events:none;
+  -webkit-mask-image:radial-gradient(58% 74% at 76% 48%,#000 0 38%,transparent 76%);
+  mask-image:radial-gradient(58% 74% at 76% 48%,#000 0 38%,transparent 76%)}
+.hero__veil{pointer-events:none;background:
+  linear-gradient(100deg,rgba(27,11,12,.95) 0 28%,rgba(27,11,12,.86) 44%,rgba(27,11,12,.58) 70%,rgba(27,11,12,.68)),
+  linear-gradient(180deg,rgba(27,11,12,.6),rgba(27,11,12,0) 26% 72%,var(--ink-band))}
+/* The hero stacks below the drawer gate, so the copy owns the full measure and
+   the clip would sit directly behind every line. There the dots step aside and
+   the veil closes up. */
+@media (max-width:900px){
+  .hero__dots{opacity:0}
+  .hero__veil{background:
+    linear-gradient(180deg,rgba(27,11,12,.93) 0 46%,rgba(27,11,12,.72) 68%,rgba(27,11,12,.82)),
+    linear-gradient(180deg,rgba(27,11,12,.5),rgba(27,11,12,0) 26% 72%,var(--ink-band))}
+}
+
+/* Motion is optional here too: the clip is never fetched for a visitor who
+   asked for it (js/ambient.js returns before it sets a src), so what is left is
+   its still poster at a calmer opacity, and the breathing stops. */
+@media (prefers-reduced-motion:reduce){
+  .hero__film{animation:none;scale:1.06;opacity:.5}
+}

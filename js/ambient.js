@@ -1,4 +1,5 @@
-/* Ambient hero layers: a linked-dot particle network and a background video.
+/* Ambient hero layers: a linked-dot particle network, a background video, and
+   the depth the video travels at as the page scrolls.
    The reference sites load tsParticles from a CDN and stream a hosted clip; a
    strict CSP with script-src 'self' and media-src 'self' allows neither, so both
    are drawn or served from this repo. Everything here is decorative: nothing is
@@ -175,5 +176,38 @@
       var r = v.getBoundingClientRect();
       if (loaded || (r.bottom > 0 && r.top < window.innerHeight)) onScreen(true);
     });
+  });
+
+  /* ---- hero depth ----
+     The clip behind the headline travels at a fraction of the page, so the band
+     reads as a window into a deeper space rather than a wallpaper. Only the
+     picture moves and only by `translate`, which is not layout: the hero's own
+     box never changes size or position, so nothing shifts under a reader. */
+  [].slice.call(document.querySelectorAll(".hero__film")).forEach(function (film) {
+    if (still) return;
+    var hero = film.closest(".hero") || film.parentNode;
+    if (!hero) return;
+    var queued = false;
+
+    function measure() {
+      queued = false;
+      var r = hero.getBoundingClientRect();
+      var span = r.height + window.innerHeight;
+      if (span < 1 || r.bottom < 0 || r.top > window.innerHeight) return;
+      // -1 when the band has just entered at the bottom, +1 as it leaves the top.
+      var p = (window.innerHeight - r.top) / span;
+      var drift = (Math.max(0, Math.min(1, p)) - 0.5) * r.height * 0.07;
+      film.style.setProperty("--film-shift", drift.toFixed(1) + "px");
+    }
+
+    function onScroll() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(measure);
+    }
+
+    measure();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
   });
 })();
