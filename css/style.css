@@ -2603,23 +2603,34 @@ html[data-theme-mode="dark"] .theme-toggle .icon-moon{display:block}
    save-data, a failed request) the stage's own background is still exactly the
    ink band the page shipped with, so nothing is ever a black slab.
 
-   Three layers, back to front: the clip, darkened and breathing on its own
+   Three layers, back to front: the clip, lifted and breathing on its own
    `scale` axis; the linked-dot network js/ambient.js paints, masked to the
    right half where the floating chips live so no red pixel drifts behind a
    glyph; and the veil, which is what the contrast numbers were measured
-   through. Against the moving picture, with the overlays cleared, the copy
-   holds 13.6:1 on the headline, 7.7:1 on the standfirst, 4.8:1 on the gold
-   eyebrow and 5.6:1 on the outline button at 1440px, and 14.3 / 7.2 / 5.1 /
-   5.7 at 400px — AA on every line in both themes, since this band keeps its
-   ink whatever the mode is set to. The parallax sits on `translate` and the
-   breathing on `scale` — independent properties, so the two never overwrite
-   each other, and neither one counts as layout, so the hero's CLS stays where
-   it was measured.
+   through. The owner then asked for the picture to read half again as clear, so
+   the clip's own `brightness` went .6 → .9. In the open window right of the
+   copy, at 1440px with the clip playing, that moved the median pixel luminance
+   0.0193 → 0.0324 and the p90−p10 spread of the picture 0.0263 → 0.0419 — the
+   detail in the clip is what came back, not the light.
+
+   The veil did not move, and the copy still holds AA on every line. Measured
+   from the pixels actually painted behind each line (copy hidden, the fixed
+   teaser/pill/notice cleared, clip at 960×540 with `currentTime` advancing
+   806 ms between samples), 1440px before → after: headline 15.01 → 14.79, the
+   red span 5.44 → 5.26, eyebrow 5.28 → 5.21, standfirst 8.38 → 8.34, outline
+   button 5.68 → 5.66. At 400px: 14.88 → 14.53, 5.51 → 5.38, 5.21 → 5.12,
+   8.22 → 8.03, 5.32 → 5.03, its darkest pixel 4.79. Both display modes give the
+   same figures, because this band re-scopes its own inks. Under reduced motion
+   the same lift applies to the still poster at `opacity:.5`, where the lowest
+   line medians 5.2:1 and its single darkest pixel 5.04:1. The parallax sits on
+   `translate` and the breathing on `scale` — independent properties, so the two
+   never overwrite each other, and neither one counts as layout, so the hero's
+   CLS stays where it was measured.
    ========================================================================== */
 .hero--film{background:transparent;isolation:isolate}
 .hero__stage{position:absolute;inset:0;z-index:-1;overflow:hidden;background:var(--ink-band)}
 .hero__film,.hero__dots,.hero__veil{position:absolute;inset:0;width:100%;height:100%;display:block}
-.hero__film{object-fit:cover;opacity:.78;filter:brightness(.6) saturate(1.15);
+.hero__film{object-fit:cover;opacity:.78;filter:brightness(.9) saturate(1.15);
   scale:1.1;translate:0 var(--film-shift,0px);
   animation:hero-breathe 26s var(--ease-out) infinite alternate}
 @keyframes hero-breathe{from{scale:1.1}to{scale:1.2}}
