@@ -392,24 +392,31 @@
 
   // ---- It makes itself heard -----------------------------------------------------
   // A browser will not let a page play anything until the visitor has touched it, so
-  // the assistant waits for that first tap, scroll or key and then chimes once, to
-  // put its question across; it chimes again whenever an answer is ready. Someone who
-  // does not want it presses the speaker in the header and is never chimed again on
+  // the assistant waits for that first tap, scroll or key and then chimes — and buzzes a
+  // phone — to put its question across; it chimes again whenever an answer is ready. One
+  // chime is easy to miss, so the question is put three more times, twenty to thirty
+  // minutes apart, and stops the moment the visitor opens the assistant. Someone who does
+  // not want it presses the speaker in the header and gets neither tone nor buzz again on
   // that device. Both tones are drawn from an oscillator as they play, so there is no
   // audio file to download and nothing to add to the page's content policy.
   const SOUND_KEY = "brownhub-sound";
   const ASKED_KEY = "brownhub-chime-asked";
   const AudioEngine = window.AudioContext || window.webkitAudioContext;
   // The question rises and the answer falls, so a visitor learns to tell them apart.
-  const CHIME_ASK = [[784, .05], [1046, .055]];
-  const CHIME_REPLY = [[880, .05], [587, .045]];
-  /* The two notes used to be written straight to the speaker at the level above, then
-     left to die away; they still peak at exactly those numbers. What changed is the
-     shape under the peak — see chime() — and this ceiling, which keeps the second
-     note landing on the first from adding its amplitude on top. */
-  const CHIME_KNEE = .05;
-  const CHIME_CEIL = .062;
-  let soundCtx = null, soundTouched = false, chimeQueued = false, chimeBus = null, chimeBusCtx = null;
+  const CHIME_ASK = [[784, .075], [1046, .0825]];
+  const CHIME_REPLY = [[880, .075], [587, .0675]];
+  /* Half again the level these played at, with the clamp's knee and ceiling shifted by
+     the same factor: the whole envelope simply sits further up the speaker, and the one
+     moment two notes land together is still folded back under a single ceiling instead
+     of stacking on top of itself. */
+  const CHIME_KNEE = .075;
+  const CHIME_CEIL = .093;
+  // One chime is easy to miss in a busy shop, so the question is put three more times.
+  const CHIME_REPEATS = 3;
+  const CHIME_GAP = [20 * 60000, 30 * 60000];
+  // Two short pulses read as a notification; one long one reads as a phone calling.
+  const BUZZ = [42, 68, 42];
+  let soundCtx = null, soundTouched = false, chimeQueued = false, chimeBus = null, chimeBusCtx = null, cueTimer = 0;
 
   function soundWanted() {
     try { return localStorage.getItem(SOUND_KEY) !== "off"; } catch (e) { return true; }
@@ -417,13 +424,16 @@
   function rememberSound(on) {
     try { localStorage.setItem(SOUND_KEY, on ? "on" : "off"); } catch (e) {}
   }
-  // Opening another page of the site is not opening the website again, so the
-  // attention chime is spent for the whole visit rather than each page load.
-  function attentionSpent() {
-    try { return sessionStorage.getItem(ASKED_KEY) === "1"; } catch (e) { return true; }
+  // How many times the attention cue has already sounded in this tab. Opening another
+  // page of the site is not opening the website again, so the count lives with the
+  // visit — and a tab that will not give up its session storage simply never gets one.
+  function cueCount() {
+    let n;
+    try { n = parseInt(sessionStorage.getItem(ASKED_KEY), 10); } catch (e) { return CHIME_REPEATS + 1; }
+    return isFinite(n) ? n : 0;
   }
-  function spendAttention() {
-    try { sessionStorage.setItem(ASKED_KEY, "1"); } catch (e) {}
+  function addCue() {
+    try { sessionStorage.setItem(ASKED_KEY, String(cueCount() + 1)); } catch (e) {}
   }
 
   /* The clamp is a curve drawn here, not a DynamicsCompressor: Chrome's compressor adds
@@ -474,10 +484,10 @@
         const gain = ctx.createGain();
         osc.type = "sine";
         osc.frequency.setValueAtTime(n[0], from);
-        /* The old shape fell in one straight logarithmic line from its peak to nothing,
-           so nearly all the tone's energy sat inside the first 30 ms and the rest was
-           silence the ear never counted. Same peak, held a hundred ms longer before it
-           lets go: that body is the entire increase, and it costs no ceiling at all. */
+        /* The note does not fall straight away from its peak any more: it attacks, holds
+           most of itself for a hundred and fifty milliseconds, then lets go across two
+           hundred more. That body is what makes the chime read as present rather than as
+           a click, and it costs no ceiling at all. */
         gain.gain.setValueAtTime(.0001, from);
         gain.gain.exponentialRampToValueAtTime(n[1], from + .012);
         gain.gain.exponentialRampToValueAtTime(n[1] * .68, from + .16);
@@ -501,15 +511,54 @@
     return soundCtx;
   }
 
+  // The buzz rides the same guards as the tone, and the same switch: pressing the
+  // speaker silences both. Chrome only honours vibrate() once the page has had a real
+  // gesture, which is the flag the audio already needs, and iPhone has no Vibration API
+  // at all — there the chime carries the cue on its own.
+  function buzz() {
+    if (!soundTouched || document.hidden || !soundWanted()) return;
+    try {
+      if (typeof navigator.vibrate === "function") navigator.vibrate(BUZZ);
+    } catch (e) { /* a browser without the API stays still */ }
+  }
+
   // The question is asked whether or not the page has been touched yet: queued here,
   // it sounds the instant the visitor's first gesture lets it.
-  function playAttention() {
-    if (attentionSpent() || !soundTouched || document.hidden || !soundWanted()) return;
+  function soundTheCue(repeat) {
+    if (cueCount() > CHIME_REPEATS) return;
+    addCue();
     chime(CHIME_ASK);
-    spendAttention();
+    buzz();
+    // A chime with nothing on screen to point at is just noise, so a repeat puts the
+    // question back beside the icon before it makes itself heard.
+    if (repeat) showTeaser(true);
+    scheduleCue();
+  }
+  function scheduleCue() {
+    if (cueTimer) { clearTimeout(cueTimer); cueTimer = 0; }
+    if (cueCount() > CHIME_REPEATS) return;
+    cueTimer = setTimeout(fireCue, CHIME_GAP[0] + Math.random() * (CHIME_GAP[1] - CHIME_GAP[0]));
+  }
+  function fireCue() {
+    cueTimer = 0;
+    // A cue into a tab nobody is looking at is wasted, so it waits for the page to come
+    // back rather than spending one of its three — which also covers a phone whose tab
+    // was frozen and wakes minutes later.
+    if (document.hidden) { scheduleCue(); return; }
+    // Once the visitor has opened the assistant the question is answered, and nagging
+    // them about it would only teach them to mute the whole site.
+    if (seenThisVisit() || !soundWanted()) return;
+    soundTheCue(true);
+  }
+  function stopCues() {
+    if (cueTimer) { clearTimeout(cueTimer); cueTimer = 0; }
+  }
+  function playAttention() {
+    if (cueCount() > CHIME_REPEATS || !soundTouched || document.hidden || !soundWanted()) return;
+    soundTheCue(false);
   }
   function askForAttention() {
-    if (attentionSpent()) return;
+    if (cueCount() > CHIME_REPEATS) return;
     if (soundTouched) playAttention(); else chimeQueued = true;
   }
   function touchSound() {
@@ -619,6 +668,8 @@
   // teaser is not typed over the top of it.
   function openChat(auto, after) {
     hideTeaser();
+    // The visitor is here, so there is nothing left to draw their attention to.
+    stopCues();
     markSeen();
     panel.hidden = false;
     toggle.setAttribute("aria-expanded", "true");
@@ -659,7 +710,7 @@
   // questions under it. It does not open itself any more: the visitor answers the
   // question or presses the bubble, and that is what unfolds the panel. Closing the
   // bubble, or opening the panel, is taken as an answer — it is never offered again
-  // in that tab.
+  // in that tab, although an untouched one does come back with each repeat chime.
   const SEEN_KEY = "brownhub-chat-asked";
   const TEASE_TEXT = "Hi there! Any question about design, print or prices?";
   // The same three labels the open panel offers, so no new words to translate.
@@ -676,7 +727,7 @@
     if (teaseTimer) { clearTimeout(teaseTimer); teaseTimer = 0; }
     if (teaserEl) { teaserEl.remove(); teaserEl = null; }
   }
-  function showTeaser() {
+  function showTeaser(quiet) {
     if (teaserEl || !panel.hidden || seenThisVisit()) return;
     const box = document.createElement("div");
     box.className = "chat-widget__teaser";
@@ -710,8 +761,9 @@
     panel.parentElement.insertBefore(box, panel);
     teaserEl = box;
     // The question is what the chime is for, so it only ever sounds with this on
-    // screen: once per visit, because the teaser itself is only ever offered once.
-    askForAttention();
+    // screen. A repeat brings the bubble back and stays quiet about asking again,
+    // because the cue that scheduled it has already sounded.
+    if (!quiet) askForAttention();
     // It waits long enough to be read, and stops counting down while someone is
     // actually on it, so the offer never disappears mid-answer.
     const hold = () => { if (teaseTimer) { clearTimeout(teaseTimer); teaseTimer = 0; } };
