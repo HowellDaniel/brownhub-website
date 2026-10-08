@@ -403,7 +403,13 @@
   // The question rises and the answer falls, so a visitor learns to tell them apart.
   const CHIME_ASK = [[784, .05], [1046, .055]];
   const CHIME_REPLY = [[880, .05], [587, .045]];
-  let soundCtx = null, soundTouched = false, chimeQueued = false;
+  /* The two notes used to be written straight to the speaker at the level above, then
+     left to die away; they still peak at exactly those numbers. What changed is the
+     shape under the peak — see chime() — and this ceiling, which keeps the second
+     note landing on the first from adding its amplitude on top. */
+  const CHIME_KNEE = .05;
+  const CHIME_CEIL = .062;
+  let soundCtx = null, soundTouched = false, chimeQueued = false, chimeBus = null, chimeBusCtx = null;
 
   function soundWanted() {
     try { return localStorage.getItem(SOUND_KEY) !== "off"; } catch (e) { return true; }
@@ -420,12 +426,47 @@
     try { sessionStorage.setItem(ASKED_KEY, "1"); } catch (e) {}
   }
 
+  /* The clamp is a curve drawn here, not a DynamicsCompressor: Chrome's compressor adds
+     its own make-up gain — it measured a note going in at .176 and coming out at .333,
+     which is the opposite of what a ceiling is for. Below the knee the curve is the
+     identity, so a single note passes untouched; only the moment two notes land together
+     is folded back under the ceiling. Fails soft — a browser without the node connects
+     straight to the speaker. */
+  function chimeCurve() {
+    const n = 2048;
+    const curve = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const x = (i / (n - 1)) * 2 - 1;
+      const a = Math.abs(x);
+      if (a <= CHIME_KNEE) { curve[i] = x; continue; }
+      curve[i] = (x < 0 ? -1 : 1) * (CHIME_KNEE + (CHIME_CEIL - CHIME_KNEE) *
+        Math.tanh((a - CHIME_KNEE) / (CHIME_CEIL - CHIME_KNEE)));
+    }
+    return curve;
+  }
+
+  function makeBus(ctx) {
+    if (chimeBus && chimeBusCtx === ctx) return chimeBus;
+    let node = ctx.destination;
+    try {
+      const shaper = ctx.createWaveShaper();
+      shaper.curve = chimeCurve();
+      shaper.oversample = "4x";
+      shaper.connect(ctx.destination);
+      node = shaper;
+    } catch (e) { node = ctx.destination; }
+    chimeBusCtx = ctx;
+    chimeBus = node;
+    return node;
+  }
+
   function chime(notes) {
     if (!AudioEngine || !soundTouched || document.hidden || !soundWanted()) return;
     try {
       const ctx = makeCtx();
       if (!ctx) return;
       if (ctx.state === "suspended") ctx.resume();
+      const bus = makeBus(ctx);
       const t = ctx.currentTime + .03;
       notes.forEach((n, i) => {
         const from = t + i * .14;
@@ -433,13 +474,18 @@
         const gain = ctx.createGain();
         osc.type = "sine";
         osc.frequency.setValueAtTime(n[0], from);
+        /* The old shape fell in one straight logarithmic line from its peak to nothing,
+           so nearly all the tone's energy sat inside the first 30 ms and the rest was
+           silence the ear never counted. Same peak, held a hundred ms longer before it
+           lets go: that body is the entire increase, and it costs no ceiling at all. */
         gain.gain.setValueAtTime(.0001, from);
-        gain.gain.exponentialRampToValueAtTime(n[1], from + .02);
-        gain.gain.exponentialRampToValueAtTime(.0001, from + .3);
+        gain.gain.exponentialRampToValueAtTime(n[1], from + .012);
+        gain.gain.exponentialRampToValueAtTime(n[1] * .68, from + .16);
+        gain.gain.exponentialRampToValueAtTime(.0001, from + .38);
         osc.connect(gain);
-        gain.connect(ctx.destination);
+        gain.connect(bus);
         osc.start(from);
-        osc.stop(from + .34);
+        osc.stop(from + .4);
       });
     } catch (e) { /* a browser that refuses the tone simply stays quiet */ }
   }
