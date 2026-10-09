@@ -41,7 +41,7 @@ const PAGE_HEADERS = {
   // open on purpose: the voice note and the copy-account button both need them.
   "permissions-policy": "camera=(), geolocation=(), accelerometer=(), gyroscope=(), " +
     "magnetometer=(), usb=(), bluetooth=(), serial=(), hid=(), midi=(), " +
-    "display-capture=(), idle-detection=(), interest-cohort=()",
+    "display-capture=(), idle-detection=()",
 };
 
 function guard(res) {
