@@ -39,7 +39,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrownHub Studio">
   <link rel="preload" href="fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=105">
+  <link rel="stylesheet" href="css/style.css?v=106">
   <script src="js/theme.js?v=2"></script><script src="js/player.js?v=1" defer></script><script src="js/voice.js?v=1" defer></script>
 </head>
 <body data-nav="catalog">
@@ -99,7 +99,6 @@
           <p>Our full catalog — logos, branding kits, print, social media packs, and more — is right here. Tap any featured item below to view details and place your order on the website.</p>
           <div class="hero__actions catalog-cta__actions">
             <a href="#featured" class="btn btn--primary btn--lg">View featured items</a>
-            <a href="#lookbook" class="btn btn--ghost btn--lg">Leaf through the lookbook</a>
             <a href="contact.html" class="btn btn--ghost btn--lg">Talk to the team</a>
           </div>
         </div>
@@ -330,136 +329,6 @@
       </div>
     </section>
 
-    <!-- The lookbook: one page per item, laid out as a book you turn. Every
-         surface is authored here in the document, the same as the cards above —
-         js/lookbook.js only decides which two pages are showing and animates the
-         turn, so with scripting off the band reads as a flat sheet of pages and
-         every picture, caption and folio is still in the HTML for a crawler and
-         for translate.js. The captions are the item names already published on
-         their cards; the pictures are the same files the cards use. -->
-    <section class="section section--alt" id="lookbook">
-      <div class="container">
-        <div class="section__head">
-          <h2>Flyer &amp; banner lookbook</h2>
-          <p>Sixteen pages of the printed work itself — the flyers and the banners we have actually delivered. Turn the pages, or tap a picture to open the item.</p>
-        </div>
-        <div class="lookbook">
-          <div class="lookbook__book" id="lookbook-book" role="group" aria-roledescription="book" tabindex="0" aria-keyshortcuts="ArrowLeft ArrowRight Home End" aria-label="Flyer &amp; banner lookbook">
-            <ol class="lookbook__pages">
-              <li class="lookbook__page lookbook__page--cover" id="page-1">
-                <p class="lookbook__studio">BrownHub Studio</p>
-                <h3 class="lookbook__title">Flyer &amp; banner lookbook</h3>
-                <p class="lookbook__place">Accra, Ghana · 2026</p>
-              </li>
-              <li class="lookbook__page lookbook__page--toc" id="page-2">
-                <h3 class="lookbook__name">Contents</h3>
-                <ul class="lookbook__toc">
-                  <li><a href="#page-3"><span>Flyers &amp; printing</span><b>3</b></a></li>
-                  <li><a href="#page-11"><span>Banners &amp; signage</span><b>11</b></a></li>
-                </ul>
-                <p class="lookbook__hint">Turn the pages with the arrows below, the left and right keys, or a drag across the book.</p>
-                <span class="lookbook__folio">2</span>
-              </li>
-              <li class="lookbook__page" id="page-3">
-                <a class="lookbook__plate" href="#item-flyer" aria-label="View details: Flyer"><img src="images/catalog/flyer.jpg" alt="Event flyer design" width="608" height="760" loading="lazy"></a>
-                <p class="lookbook__sec">Flyers &amp; printing</p>
-                <h3 class="lookbook__name">Flyer</h3>
-                <span class="lookbook__folio">3</span>
-              </li>
-              <li class="lookbook__page" id="page-4">
-                <a class="lookbook__plate" href="#item-other-flyers" aria-label="View details: Other Flyers"><img src="images/catalog/other-flyers.jpg" alt="Service price list flyer" width="760" height="760" loading="lazy"></a>
-                <p class="lookbook__sec">Flyers &amp; printing</p>
-                <h3 class="lookbook__name">Other Flyers</h3>
-                <span class="lookbook__folio">4</span>
-              </li>
-              <li class="lookbook__page" id="page-5">
-                <a class="lookbook__plate" href="#item-food-drinks-flyers" aria-label="View details: Food &amp; Drinks Flyers"><img src="images/catalog/food-drinks-flyers.jpg" alt="Food and drinks flyer design" width="570" height="760" loading="lazy"></a>
-                <p class="lookbook__sec">Flyers &amp; printing</p>
-                <h3 class="lookbook__name">Food &amp; Drinks Flyers</h3>
-                <span class="lookbook__folio">5</span>
-              </li>
-              <li class="lookbook__page" id="page-6">
-                <a class="lookbook__plate" href="#item-food-flyers" aria-label="View details: Other Food Flyers"><img src="images/catalog/food-flyers.jpg" alt="Food joint flyer design" width="760" height="438" loading="lazy"></a>
-                <p class="lookbook__sec">Flyers &amp; printing</p>
-                <h3 class="lookbook__name">Other Food Flyers</h3>
-                <span class="lookbook__folio">6</span>
-              </li>
-              <li class="lookbook__page" id="page-7">
-                <a class="lookbook__plate" href="#item-other-food-flyers" aria-label="View details: More Food Flyers"><img src="images/catalog/other-food-flyers.jpg" alt="Food menu flyer design" width="760" height="760" loading="lazy"></a>
-                <p class="lookbook__sec">Flyers &amp; printing</p>
-                <h3 class="lookbook__name">More Food Flyers</h3>
-                <span class="lookbook__folio">7</span>
-              </li>
-              <li class="lookbook__page" id="page-8">
-                <a class="lookbook__plate" href="#item-winners-chapel-flyer" aria-label="View details: Winners' Chapel International Flyer"><img src="images/catalog/winners-chapel-flyer.jpg" alt="Church event flyer design" width="683" height="760" loading="lazy"></a>
-                <p class="lookbook__sec">Flyers &amp; printing</p>
-                <h3 class="lookbook__name">Winners' Chapel International Flyer</h3>
-                <span class="lookbook__folio">8</span>
-              </li>
-              <li class="lookbook__page" id="page-9">
-                <a class="lookbook__plate" href="#item-more-winners-chapel-flyers" aria-label="View details: More Winners' Chapel Flyers"><img src="images/catalog/more-winners-chapel-flyers.jpg" alt="Church event flyer design" width="608" height="760" loading="lazy"></a>
-                <p class="lookbook__sec">Flyers &amp; printing</p>
-                <h3 class="lookbook__name">More Winners' Chapel Flyers</h3>
-                <span class="lookbook__folio">9</span>
-              </li>
-              <li class="lookbook__page" id="page-10">
-                <a class="lookbook__plate" href="#item-funeral-posters-invitations" aria-label="View details: Funeral Poster &amp; Invitation Cards"><img src="images/catalog/funeral-posters-invitations.jpg" alt="Funeral invitation card design" width="760" height="488" loading="lazy"></a>
-                <p class="lookbook__sec">Flyers &amp; printing</p>
-                <h3 class="lookbook__name">Funeral Poster &amp; Invitation Cards</h3>
-                <span class="lookbook__folio">10</span>
-              </li>
-              <li class="lookbook__page" id="page-11">
-                <a class="lookbook__plate" href="#item-pull-up-design" aria-label="View details: Pull Up Design, Backdrop and Printing"><img src="images/catalog/pull-up-design-2.jpg" alt="Pull up banner design mockup" width="430" height="760" loading="lazy"></a>
-                <p class="lookbook__sec">Banners &amp; signage</p>
-                <h3 class="lookbook__name">Pull Up Design, Backdrop and Printing</h3>
-                <span class="lookbook__folio">11</span>
-              </li>
-              <li class="lookbook__page" id="page-12">
-                <a class="lookbook__plate" href="#item-funeral-banner" aria-label="View details: Banner Printing"><img src="images/catalog/funeral-banner-2.jpg" alt="Banner printing design" width="570" height="760" loading="lazy"></a>
-                <p class="lookbook__sec">Banners &amp; signage</p>
-                <h3 class="lookbook__name">Banner Printing</h3>
-                <span class="lookbook__folio">12</span>
-              </li>
-              <li class="lookbook__page" id="page-13">
-                <a class="lookbook__plate" href="#item-abs-board" aria-label="View details: ABS Board"><img src="images/catalog/abs-board.jpg" alt="ABS board signage" width="570" height="760" loading="lazy"></a>
-                <p class="lookbook__sec">Banners &amp; signage</p>
-                <h3 class="lookbook__name">ABS Board</h3>
-                <span class="lookbook__folio">13</span>
-              </li>
-              <li class="lookbook__page" id="page-14">
-                <a class="lookbook__plate" href="#item-flags" aria-label="View details: Flag Designing &amp; Printing"><img src="images/catalog/flags.jpg" alt="Printed flag design" width="760" height="570" loading="lazy"></a>
-                <p class="lookbook__sec">Banners &amp; signage</p>
-                <h3 class="lookbook__name">Flag Designing &amp; Printing</h3>
-                <span class="lookbook__folio">14</span>
-              </li>
-              <li class="lookbook__page" id="page-15">
-                <a class="lookbook__plate" href="#item-funeral-rosettes" aria-label="View details: Funeral Rosettes and Designs"><img src="images/catalog/funeral-rosettes.jpg" alt="Funeral rosette design" width="760" height="760" loading="lazy"></a>
-                <p class="lookbook__sec">Banners &amp; signage</p>
-                <h3 class="lookbook__name">Funeral Rosettes and Designs</h3>
-                <span class="lookbook__folio">15</span>
-              </li>
-              <li class="lookbook__page" id="page-16">
-                <a class="lookbook__plate" href="#item-logo-design-mockup" aria-label="View details: Logo Design Mockup"><img src="images/catalog/logo-design-mockup.jpg" alt="Logo design shown on a wall mock-up" width="760" height="506" loading="lazy"></a>
-                <p class="lookbook__sec">Banners &amp; signage</p>
-                <h3 class="lookbook__name">Logo Design Mockup</h3>
-                <span class="lookbook__folio">16</span>
-              </li>
-            </ol>
-          </div>
-          <div class="lookbook__bar">
-            <button class="lookbook__nav" type="button" id="lookbook-prev" aria-label="Previous page">&#8249;</button>
-            <p class="lookbook__count" role="status" aria-live="polite">
-              <span class="lookbook__count-label">Spread</span>
-              <span class="lookbook__count-num">1 / 8</span>
-              <span class="lookbook__count-item"></span>
-            </p>
-            <button class="lookbook__nav" type="button" id="lookbook-next" aria-label="Next page">&#8250;</button>
-          </div>
-          <div class="lookbook__track" aria-hidden="true"><i id="lookbook-track"></i></div>
-        </div>
-      </div>
-    </section>
-
     <section class="section band--ink" id="concepts">
       <div class="container">
         <div class="section__head">
@@ -604,7 +473,7 @@
     </div>
   </footer>
 
-  <script src="js/main.js?v=32" defer></script><script src="js/translate.js?v=96" defer></script><script src="js/app.js?v=4" defer></script>
+  <script src="js/main.js?v=32" defer></script><script src="js/translate.js?v=97" defer></script><script src="js/app.js?v=4" defer></script>
 
   <div class="chat-widget">
     <button class="chat-widget__toggle" id="chatToggle" aria-expanded="false" aria-controls="chatPanel" title="Chat with BrownHub Studio Assistance">
@@ -660,10 +529,10 @@
     </div>
   </div>
 
-  <script src="js/catalog.js?v=15" defer></script><script src="js/lookbook.js?v=1" defer></script>
+  <script src="js/catalog.js?v=15" defer></script>
   <script src="js/chat.js?v=32" defer></script><script src="js/accounts.js?v=18" defer></script><script src="js/store.js?v=22" defer></script>
-  <script src="js/scroll.js?v=7" defer></script><script src="js/neon.js?v=2" defer></script>
-  <script src="js/nav.js?v=7" defer></script><script src="js/search.js?v=14" defer></script><script src="js/cookies.js?v=7" defer></script><script src="js/leads.js?v=1" defer></script><script src="js/social.js?v=1" defer></script>
+  <script src="js/scroll.js?v=8" defer></script><script src="js/neon.js?v=2" defer></script>
+  <script src="js/nav.js?v=7" defer></script><script src="js/search.js?v=15" defer></script><script src="js/cookies.js?v=7" defer></script><script src="js/leads.js?v=1" defer></script><script src="js/social.js?v=1" defer></script>
 
 </body>
 </html>

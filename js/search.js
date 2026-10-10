@@ -34,7 +34,6 @@
     { g: "Services", t: "Custom Graphic Design", h: "services.html#custom", k: "custom anything illustration menu book cover" },
     { g: "Services", t: "Website or Software", h: "index.html#web-software", k: "website web software app system dashboard" },
 
-    { g: "Catalog", t: "Flyer & banner lookbook", h: "catalog.html#lookbook", k: "lookbook book pages turn spread leaflet pull up banner signage" },
     { g: "Catalog", t: "Flyers & printing", h: "catalog.html?cat=print", k: "collection category shelf print flyer leaflet business card" },
     { g: "Catalog", t: "Banners & signage", h: "catalog.html?cat=banners", k: "collection category shelf banner signage pull up backdrop flag" },
     { g: "Catalog", t: "Branded merchandise", h: "catalog.html?cat=merch", k: "collection category shelf merchandise merch t-shirt cap mug lanyard" },
