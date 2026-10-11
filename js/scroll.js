@@ -23,7 +23,20 @@
   bar.className = "nav__progress";
   bar.setAttribute("aria-hidden", "true");
   if (header) header.appendChild(bar);
-  const measureNav = () => root.style.setProperty("--nav-h", Math.round(header.getBoundingClientRect().height) + "px");
+  /* The bar is not one height: the row condenses over .3s and the strip above it
+     collapses over .45s, so the value taken at page load is stale by a whole
+     header by the time the first band is read. Everything that parks itself under
+     the nav — the catalog readout, the drawer, the sticky rails, an anchor jump —
+     reads this var, so it is kept on the real geometry instead of guessed. */
+  let navH = 0;
+  const measureNav = () => {
+    if (!header) return;
+    const h = Math.round(header.getBoundingClientRect().height);
+    if (h === navH) return;
+    navH = h;
+    root.style.setProperty("--nav-h", h + "px");
+  };
+  if (header && typeof ResizeObserver === "function") new ResizeObserver(measureNav).observe(header);
 
   /* ---------- reveal tagging ---------- */
   const tagged = new WeakSet();

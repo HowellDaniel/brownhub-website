@@ -551,7 +551,6 @@ h1,h2,h3{letter-spacing:-.03em;font-weight:750}
 .nav__link--active::after{right:0;background:var(--accent-2)}
 .nav__progress{position:absolute;left:0;bottom:-1px;height:2px;width:100%;transform:scaleX(var(--p,0));transform-origin:left;background:linear-gradient(90deg,var(--accent-fill),var(--accent-2));opacity:.9}
 @media (min-width:641px){
-  .site-header.is-scrolled{--nav-h:58px}
   .site-header.is-scrolled .nav{height:58px}
   .site-header.is-scrolled .logo-img{height:28px}
 }
