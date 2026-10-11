@@ -2789,3 +2789,102 @@ html.js-hud [data-hud].is-typed [data-wm]::after{opacity:1}
   html.js-hud [data-wm]::after{transition:none}
   .hud-status__meter i{transition:none}
 }
+
+/* ==========================================================================
+   THE PLATE — ArtCraft's visual style, set in BrownHub's own tokens
+   --------------------------------------------------------------------------
+   The layer above ports their motion. This one ports how their page is
+   *built*: nothing floats, nothing is rounded, and the whole page is a plate
+   of cells separated by single hairlines, each cell announcing itself in
+   mono micro-caps with an index numeral, and answering a pointer by turning
+   inside out rather than lifting off the page.
+
+   Every rule is gated on [data-hud] (only catalog.html carries it) so no
+   other page, and no print or book rendering, picks up a square corner.
+   ========================================================================== */
+
+/* ---- square edges ----
+   Their radius is 0 everywhere, including the controls. --t-r-lg is 10px and
+   --t-r-pill is 50px; both go to 0 on this page's surfaces only. */
+[data-hud] .product-card,[data-hud] .collection,[data-hud] .catalog-cta,
+[data-hud] .step,[data-hud] .catalog-search,[data-hud] .catalog-search__clear,
+[data-hud] .concept__art,[data-hud] .featured__card,[data-hud] .step__num,
+[data-hud] .product-card .media,[data-hud] .collection__art{border-radius:0}
+
+/* ---- the hairline plate ----
+   Not the `gap:1px; background:<line>` trick: an auto-fill row that ends
+   early leaves the container's own background showing as a solid block in the
+   empty tracks. Each cell carries its own right and bottom hairline instead,
+   and the plate opens with a top and left line, so the matrix closes on
+   whichever side the last card happens to land. box-sizing is border-box
+   globally, so the added edge costs no width. */
+[data-hud] .cards,[data-hud] .collections{gap:0;
+  border-block-start:var(--t-bw) solid var(--border);
+  border-inline-start:var(--t-bw) solid var(--border)}
+[data-hud] .cards>*,[data-hud] .collections>*{border:0;
+  border-inline-end:var(--t-bw) solid var(--border);
+  border-block-end:var(--t-bw) solid var(--border)}
+[data-hud] .cards .product-card{background:var(--surface);box-shadow:none}
+/* The tile is not the grid's child — its list item is — so the button's own
+   1px edge has to go, or every cell on that band draws a double rule. */
+[data-hud] .collections .collection{border:0;background:var(--surface);box-shadow:none}
+/* The cursor-following sheen the glass layer wears is a floating-card idea;
+   on a plate it reads as a smudge. */
+[data-hud] .cards>*,[data-hud] .collections>*{position:relative}
+[data-hud] .cards>.product-card::after,[data-hud] .collections>.collection::after{opacity:0}
+
+/* ---- cells answer by inverting, not by lifting ----
+   Their .invert-block is 120ms linear, ink over paper. Applied to the readout
+   row each card already wears, so the pointer moves the label and leaves the
+   picture exactly where it was. */
+[data-hud] .cards .product-card:hover,[data-hud] .cards .product-card:focus-visible,
+[data-hud] .collections .collection:hover,[data-hud] .collections .collection:focus-visible{
+  transform:none;box-shadow:none}
+[data-hud] .product-card .hud-row{transition:background-color .12s linear,color .12s linear}
+[data-hud] .product-card:hover .hud-row,[data-hud] .product-card:focus-visible .hud-row{
+  background:var(--text)}
+[data-hud] .product-card:hover .hud-row .hud-label,
+[data-hud] .product-card:focus-visible .hud-row .hud-label{color:var(--bg)}
+[data-hud] .product-card:hover .hud-row .hud-label:first-child::before,
+[data-hud] .product-card:focus-visible .hud-row .hud-label:first-child::before{background:var(--bg)}
+
+/* ---- the band rail ----
+   Their sections open with a hairline and a mono index over the heading. The
+   numeral is a CSS counter, so it costs no markup, no dictionary key and no
+   translation — a number reads the same in all forty locales. */
+[data-hud]{counter-reset:hud-band}
+[data-hud] .section__head{counter-increment:hud-band;position:relative;
+  border-block-start:var(--t-bw) solid var(--border);padding-top:var(--t-3);
+  margin-bottom:var(--t-6)}
+[data-hud] .section__head::before{content:counter(hud-band,decimal-leading-zero);
+  display:block;margin-bottom:var(--t-2);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.6875rem;line-height:1.45;letter-spacing:.15em;
+  font-variant-numeric:tabular-nums;color:var(--text-muted)}
+
+/* ---- the display line ----
+   Their headings run far larger and tighter than the site's default ramp, and
+   they pull the leading in until the lines nearly touch. Only the catalog's
+   own hero moves; the rest of the site keeps --t-h1. */
+[data-hud] .page-hero h1{font-size:clamp(40px,6.2vw,72px);line-height:1.03;
+  letter-spacing:-.04em;overflow-wrap:break-word}
+
+/* ---- micro-caps controls ----
+   11px, 700, tracked out, square, in the same mono the readout rows already
+   speak. Text stays in the brand face everywhere else. */
+[data-hud] .btn{border-radius:0;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  line-height:1.45;padding:.9rem 1.5rem}
+[data-hud] .btn--lg{padding:1.05rem 1.75rem}
+[data-hud] .catalog-search{border-color:var(--border)}
+[data-hud] .catalog-search__clear{border-radius:0}
+[data-hud] .step__num{width:auto;height:auto;min-width:2.1rem;padding:.3rem .55rem;
+  border-radius:0;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.6875rem;font-weight:700;letter-spacing:.08em}
+[data-hud] .card__price{font-variant-numeric:tabular-nums}
+
+@media (max-width:640px){
+  [data-hud] .section__head{padding-top:var(--t-2);margin-bottom:var(--t-5)}
+  [data-hud] .btn{padding:.85rem 1.15rem}
+}
