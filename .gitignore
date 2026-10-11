@@ -2,3 +2,16 @@
 
 # Compiled from tools/qrlogo.swift by whoever last drew images/qr-app.png.
 tools/qrlogo
+
+# Compiled from tools/cdp.swift — the headless-Chrome probe harness every motion
+# and layout proof on this site is run through. The source is committed, the
+# binary is not.
+tools/cdp
+
+# Parked, off-brief, and not the studio's identity: the Nexus Lab landing page
+# and the .nx-/pointer-depth stylesheet lifted out of css/style.css on 2026-10-11.
+# Kept on disk so the work is not lost, kept out of the repo so a broad `git add`
+# can never carry an invented brand onto the live site. The owner's word revives
+# both.
+nexus-lab.html
+css/parked-nexus.css

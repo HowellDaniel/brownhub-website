@@ -39,7 +39,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrownHub Studio">
   <link rel="preload" href="fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=106">
+  <link rel="stylesheet" href="css/style.css?v=112">
   <script src="js/theme.js?v=2"></script><script src="js/player.js?v=1" defer></script><script src="js/voice.js?v=1" defer></script>
 </head>
 <body data-nav="catalog">
@@ -83,17 +83,39 @@
     </nav>
   </header>
 
-  <main>
+  <main data-hud data-ruler>
     <section class="page-hero">
       <div class="container">
-        <h1>The BrownHub <span class="text-accent">catalog</span></h1>
+        <h1 data-wm>The BrownHub <span class="text-accent">catalog</span></h1>
         <p>Every design product and package we offer — right here on the website. Tap any item to see details and order.</p>
       </div>
     </section>
 
+    <!-- The strip that runs under their hero: the five collections, looping edge to
+         edge for as long as the page is open. It repeats the list the Collections
+         band already gives, so a reader is handed the band and not the loop — and
+         because it is only that list, the dictionaries already know every word
+         in it. -->
+    <div class="hud-marquee hud-marquee--live" aria-hidden="true">
+      <ul class="hud-marquee__track hud-label">
+        <li>Flyers &amp; printing</li>
+        <li>Banners &amp; signage</li>
+        <li>Branded merchandise</li>
+        <li>Books &amp; covers</li>
+        <li>Frames &amp; awards</li>
+      </ul>
+      <ul class="hud-marquee__track hud-label">
+        <li>Flyers &amp; printing</li>
+        <li>Banners &amp; signage</li>
+        <li>Branded merchandise</li>
+        <li>Books &amp; covers</li>
+        <li>Frames &amp; awards</li>
+      </ul>
+    </div>
+
     <section class="section">
       <div class="container">
-        <div class="catalog-cta">
+        <div class="catalog-cta hud-frame">
           <div class="catalog-cta__icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.2 8.2h13.6l1.2 12.4H4L5.2 8.2Z"/><path d="M9 8.2V6.4a3 3 0 0 1 6 0v1.8"/></svg></div>
           <h2>Browse the catalog</h2>
           <p>Our full catalog — logos, branding kits, print, social media packs, and more — is right here. Tap any featured item below to view details and place your order on the website.</p>
@@ -107,11 +129,11 @@
 
     <section class="section section--alt" id="collections">
       <div class="container">
-        <div class="section__head">
+        <div class="section__head hud-frame">
           <h2>Collections</h2>
           <p>Five families of work. Pick one to narrow the items below.</p>
         </div>
-        <ul class="collections">
+        <ul class="collections hud-frame">
           <li><button class="collection" type="button" data-collection="print" aria-pressed="false"><img class="collection__art" src="images/collection/print.jpg" alt="" width="800" height="450" loading="lazy"><span class="collection__name">Flyers &amp; printing</span></button></li>
           <li><button class="collection" type="button" data-collection="banners" aria-pressed="false"><img class="collection__art" src="images/collection/banners.jpg" alt="" width="800" height="450" loading="lazy"><span class="collection__name">Banners &amp; signage</span></button></li>
           <li><button class="collection" type="button" data-collection="merch" aria-pressed="false"><img class="collection__art" src="images/collection/merch.jpg" alt="" width="800" height="450" loading="lazy"><span class="collection__name">Branded merchandise</span></button></li>
@@ -123,9 +145,20 @@
 
     <section class="section" id="featured">
       <div class="container">
-        <div class="section__head">
+        <div class="section__head hud-frame">
           <h2>Featured items</h2>
           <p>A selection from the catalog — tap any item to view details and order right here.</p>
+        </div>
+        <!-- js/hud.js keeps these numerals and the shelf name in step with the grid:
+             it is the only place the filtered count is said out loud -->
+        <div class="hud-status" data-hud-status>
+          <div class="hud-status__row">
+            <p class="hud-label">Catalog</p>
+            <span class="hud-status__sep" aria-hidden="true"></span>
+            <p class="hud-label hud-status__count"><span data-hud-shown>24</span>/<span data-hud-total>24</span></p>
+            <p class="hud-label hud-status__shelf" data-hud-shelf></p>
+            <span class="hud-status__meter" aria-hidden="true"><i></i></span>
+          </div>
         </div>
         <!-- a bought placement, filled from data/featured.json by js/store.js; it
              stays hidden until someone has actually paid for this row -->
@@ -530,6 +563,9 @@
   </div>
 
   <script src="js/catalog.js?v=15" defer></script>
+  <!-- after catalog.js: the readout has to see the grid already filtered by ?q= and ?cat= -->
+  <script src="js/hud.js?v=1" defer></script>
+  <script src="js/ruler.js?v=1" defer></script>
   <script src="js/chat.js?v=32" defer></script><script src="js/accounts.js?v=18" defer></script><script src="js/store.js?v=22" defer></script>
   <script src="js/scroll.js?v=8" defer></script><script src="js/neon.js?v=2" defer></script>
   <script src="js/nav.js?v=7" defer></script><script src="js/search.js?v=15" defer></script><script src="js/cookies.js?v=7" defer></script><script src="js/leads.js?v=1" defer></script><script src="js/social.js?v=1" defer></script>

@@ -2656,3 +2656,214 @@ html[data-theme-mode="dark"] .theme-toggle .icon-moon{display:block}
 @media (prefers-reduced-motion:reduce){
   .hero__film{animation:none;scale:1.06;opacity:.5}
 }
+
+/* ==========================================================================
+   HUD choreography on the catalog tab
+   --------------------------------------------------------------------------
+   The motion vocabulary of the ArtCraft home page, set in BrownHub's own
+   tokens: a headline that typesets itself out from under a moving blade,
+   hairline frames that draw their own border before the corner crosses pop,
+   monospace readout labels above each piece of work, an edge-to-edge
+   collection strip, and a sticky readout naming what the grid is holding.
+
+   Two gates keep this off the rest of the site: [data-hud], which only
+   catalog.html carries, and html.js-hud, which only js/hud.js adds. A visitor
+   with scripting turned off never gets either class and reads the page exactly
+   as it was before. Paired with js/hud.js?v=1.
+   ========================================================================== */
+
+/* ---- the typed headline ----
+   .hud-src holds the headline's real text nodes — the very ones js/translate.js
+   keeps references to — clipped away instead of rewritten, so the translation
+   still lands on them. The letters beside it are scenery. */
+html.js-hud [data-wm]{position:relative;isolation:isolate}
+html.js-hud [data-wm] .hud-src{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+html.js-hud [data-wm] .wm{white-space:normal}
+.wm-letter{display:inline-block}
+
+/* Their wordmark keeps a soft halo of the page colour behind it, so the letters
+   hold against whatever drifts under the hero. It arrives with the typing. */
+html.js-hud [data-wm]::after{content:"";position:absolute;z-index:-1;inset:-30% -6%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(var(--bg-rgb),.9),rgba(var(--bg-rgb),0));
+  opacity:0;transition:opacity .9s var(--ease-out)}
+html.js-hud [data-hud].is-typed [data-wm]::after{opacity:1}
+
+/* ---- blueprint frames: the rule draws left to right, then the crosses pop ---- */
+.hud-frame{position:relative}
+.hud-frame::after{content:"";position:absolute;inset:0;pointer-events:none;
+  border:var(--t-bw) solid rgba(var(--accent-rgb),.55);
+  clip-path:inset(0 100% 0 0);transition:clip-path .7s var(--ease-out)}
+.hud-frame.is-drawn::after{clip-path:inset(0 0 0 0)}
+.hud-ticks{position:absolute;inset:0;pointer-events:none}
+.hud-ticks i{position:absolute;width:11px;height:11px;opacity:0;scale:0;
+  transition:opacity .35s var(--ease-out),scale .35s var(--ease-out)}
+.hud-ticks i::before,.hud-ticks i::after{content:"";position:absolute;background:var(--accent)}
+.hud-ticks i::before{width:var(--t-bw);top:0;bottom:0;left:5px}
+.hud-ticks i::after{height:var(--t-bw);left:0;right:0;top:5px}
+.hud-ticks i:nth-child(1){top:-5px;left:-5px}
+.hud-ticks i:nth-child(2){top:-5px;right:-5px}
+.hud-ticks i:nth-child(3){bottom:-5px;left:-5px}
+.hud-ticks i:nth-child(4){bottom:-5px;right:-5px}
+.hud-frame.is-drawn .hud-ticks i{opacity:1;scale:1;transition-delay:.36s}
+.hud-frame.is-drawn .hud-ticks i:nth-child(2){transition-delay:.42s}
+.hud-frame.is-drawn .hud-ticks i:nth-child(3){transition-delay:.48s}
+.hud-frame.is-drawn .hud-ticks i:nth-child(4){transition-delay:.54s}
+
+/* ---- the monospace readout ----
+   Set in the system mono the site already uses for reference numbers, so no
+   second brand face enters the page: this is a label style, not a typeface. */
+.hud-label{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.6875rem;line-height:1.45;letter-spacing:.15em;text-transform:uppercase;
+  font-weight:500;color:var(--text-muted)}
+/* The index column is the quiet half of the row, and it is quiet by weight and
+   by tracking rather than by faded ink: muting --text-muted further with opacity
+   lands at 4.31 on the card face and 3.45 in the light theme, both under the 4.5
+   a two-digit number at .6875rem has to hold. Full --text-muted is 7.42 and 6.04. */
+.hud-label--faint{font-weight:400;letter-spacing:.22em;font-variant-numeric:tabular-nums}
+.product-card .hud-row{display:flex;align-items:center;justify-content:space-between;
+  gap:var(--t-2);padding:.55rem var(--t-3);border-bottom:var(--t-bw) solid var(--border)}
+.product-card .hud-row .hud-label:first-child::before{content:"";flex:none;display:inline-block;
+  width:6px;height:6px;margin-inline-end:.55rem;background:var(--accent)}
+
+/* ---- the collection strip: one rail, duplicated, 36s to cross ---- */
+.hud-marquee{display:flex;overflow:hidden;background:var(--bg-alt);
+  border-top:var(--t-bw) solid var(--border);border-bottom:var(--t-bw) solid var(--border)}
+.hud-marquee__track{flex:0 0 auto;min-width:100%;display:flex;align-items:center}
+.hud-marquee--live .hud-marquee__track{animation:hud-scroll 36s linear infinite}
+.hud-marquee__track li{display:flex;align-items:center;gap:.9rem;margin:0;padding:.7rem 1.5rem;
+  white-space:nowrap;color:var(--text-muted)}
+.hud-marquee__track li::before{content:"";flex:none;width:7px;height:7px;background:var(--accent)}
+@keyframes hud-scroll{to{transform:translate(-100%)}}
+
+/* ---- the sticky readout, held under the condensed nav ---- */
+.hud-status{position:sticky;top:calc(var(--nav-h) - 1px);z-index:30;
+  background:rgba(var(--bg-rgb),.74);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border-top:var(--t-bw) solid var(--border);border-bottom:var(--t-bw) solid var(--border)}
+.hud-status__row{display:flex;align-items:center;gap:var(--t-3);padding:.6rem 0}
+.hud-status__count{color:var(--text);font-weight:600}
+.hud-status__shelf:empty{display:none}
+.hud-status.is-shelf .hud-status__shelf{color:var(--accent)}
+.hud-status__sep{flex:none;width:var(--t-bw);height:14px;background:var(--border)}
+.hud-status__meter{flex:1 1 auto;min-width:38px;height:var(--t-bw);position:relative;
+  overflow:hidden;background:var(--border)}
+.hud-status__meter i{position:absolute;inset:0 auto 0 0;width:calc(var(--hud-fill,1)*100%);
+  background:var(--accent);transition:width .35s var(--ease-out)}
+.hud-status.is-empty .hud-status__meter i{background:var(--text-muted)}
+
+/* ---- the reveal, softened ----
+   Same rise js/scroll.js already plays on this page, with the blur the reference
+   ships: a block comes up out of a 7px defocus over .9s, and inside a row of
+   cards each column is a step behind the one before it. */
+@media (prefers-reduced-motion:no-preference){
+  html.js-scroll [data-hud] [data-rv="rise"]{opacity:0;translate:0 26px;filter:blur(7px);
+    transition:opacity .9s var(--ease-out) calc(var(--rv-i,0)*70ms),
+      translate .9s var(--ease-out) calc(var(--rv-i,0)*70ms),
+      filter .9s var(--ease-out) calc(var(--rv-i,0)*70ms),
+      color .2s ease,border-color .3s ease,box-shadow .3s ease,transform .3s ease,background .3s ease}
+  html.js-scroll [data-hud] [data-rv="rise"].is-in{opacity:1;translate:0 0;filter:blur(0)}
+}
+
+/* ---- the invert flash their controls answer with ---- */
+.collection__name{transition:background-color .12s linear,color .12s linear}
+.collection:hover .collection__name,.collection:focus-visible .collection__name{
+  background:var(--text);color:var(--bg)}
+.collection:hover .collection__name::before,.collection:focus-visible .collection__name::before{
+  background:var(--bg)}
+.collection.is-on:hover .collection__name::before{background:var(--accent-fill)}
+
+@media (max-width:640px){
+  .hud-status__row{gap:var(--t-2)}
+  .hud-label{letter-spacing:.12em}
+  .product-card .hud-row{padding:.5rem var(--t-2)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  [data-hud] .hud-marquee--live .hud-marquee__track{animation:none}
+  .hud-frame::after{clip-path:none;transition:none}
+  .hud-ticks i{opacity:1;scale:1;transition:none}
+  html.js-hud [data-wm]::after{transition:none}
+  .hud-status__meter i{transition:none}
+}
+
+
+
+/* ============================================================
+   THE RULER RAIL — catalog.html only, and only on a wide screen
+   ============================================================
+   A 0–100% scale pinned to the end edge that slides up as the page runs down,
+   with each band's own heading written along it where that band begins. The
+   numerals and the marker are scenery (the whole layer is aria-hidden); the
+   readout speaks the visitor's language because js/ruler.js copies the live
+   heading text rather than a string of its own.
+
+   Three contracts with js/ruler.js, and all three are numbers in that file:
+   --rail is RAIL, the 1360px below is WIDE, and the tick spacing is PX. Change
+   one and the scale stops landing where the marker says it does. */
+:root{--rail:150px}
+
+/* Nothing is reserved and nothing is hidden until the script has decided the
+   rail is allowed — a phone, a narrow window or a reduced-motion reader keeps
+   the native scrollbar and the page at full width. */
+html.has-rail body{padding-inline-end:var(--rail)}
+html.has-rail{scrollbar-width:none}
+html.has-rail::-webkit-scrollbar{width:0;height:0;display:none}
+html.has-rail .social-rail{display:none}
+/* the two things that already live on that edge */
+/* Right to left the scale takes the left edge instead, so the bubble simply
+   stays where it has always been — setting left as well would stretch it. */
+html.has-rail .chat-widget{right:calc(var(--rail) + 1.5rem + env(safe-area-inset-right,0px))}
+html.has-rail[dir="rtl"] .chat-widget{right:calc(1.5rem + env(safe-area-inset-right,0px))}
+
+.ruler{display:none}
+@media (min-width:1360px){
+  html.has-rail .ruler{display:block;position:fixed;top:0;bottom:0;inset-inline-end:0;width:var(--rail);z-index:60;pointer-events:none}
+}
+@media print{.ruler{display:none!important}}
+
+.ruler__rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:.7rem;
+  padding:calc(var(--nav-h) + var(--t-4)) 0 var(--t-6)}
+
+/* ---- the readout: what has passed, what is held, what is coming ----
+   Full --text-muted rather than a faded --text: these are small mono lines and
+   they have to hold AA (8.50 on ink, 6.88 on cream) without an opacity helping. */
+.ruler__done,.ruler__now,.ruler__next{position:relative;z-index:2;
+  margin-inline:var(--t-2) 56px;text-align:end}
+.ruler__done div,.ruler__next div{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.6875rem;line-height:1.35;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
+.ruler__done div+div,.ruler__next div+div{margin-top:.3rem}
+.ruler__next{margin-top:auto}
+/* .ruler__fly is measured against .ruler__now: the two must be the same box or
+   the letters land a few pixels off the word they are flying into. */
+.ruler__now,.ruler__fly{font-family:var(--t-font-text);font-size:.875rem;font-weight:700;
+  line-height:1.2;letter-spacing:.03em;text-transform:uppercase;color:var(--text)}
+.ruler__fly{position:fixed;z-index:61;pointer-events:none;white-space:pre}
+
+/* ---- the scale itself ---- */
+.ruler__scale{position:absolute;inset-inline-end:0;top:0;width:44px;will-change:transform}
+.ruler__tick{position:absolute;right:0;height:var(--t-bw);width:8px;background:var(--border)}
+.ruler__tick.is-major{width:16px;background:var(--text-muted)}
+.ruler__num{position:absolute;right:20px;top:-6px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.625rem;line-height:1;letter-spacing:.05em;color:var(--text-muted)}
+/* The name has its own lane: the numerals run 117–130 and the readout ends at
+   94, so 96–115 is the only strip in the band that touches neither. */
+.ruler__label{position:absolute;right:35px;writing-mode:vertical-rl;text-orientation:mixed;
+  white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:.6875rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);
+  transition:opacity .45s var(--ease-out)}
+/* the name has left the scale — it is in the readout now */
+.ruler__label.is-gone{opacity:0}
+
+.ruler__marker{position:absolute;inset-inline-end:0;top:50%;width:44px;height:var(--t-bw);
+  background:var(--accent)}
+/* The figure belongs to the line, and the line is at the very edge — so it is
+   set on the inner side of it, out of the numeral lane and out of the labels. */
+.ruler__marker b{position:absolute;top:-5px;inset-inline-end:calc(100% + var(--t-3));
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:400;
+  font-size:.625rem;letter-spacing:.05em;color:var(--accent)}
+
+/* ---- and the same rail, mirrored ---- */
+html[dir="rtl"] .ruler__tick{right:auto;left:0}
+html[dir="rtl"] .ruler__num{right:auto;left:20px}
+html[dir="rtl"] .ruler__label{right:auto;left:35px;writing-mode:vertical-lr}
