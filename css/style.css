@@ -2682,8 +2682,13 @@ html.js-hud [data-wm] .wm{white-space:normal}
 .wm-letter{display:inline-block}
 
 /* Their wordmark keeps a soft halo of the page colour behind it, so the letters
-   hold against whatever drifts under the hero. It arrives with the typing. */
-html.js-hud [data-wm]::after{content:"";position:absolute;z-index:-1;inset:-30% -6%;pointer-events:none;
+   hold against whatever drifts under the hero. It arrives with the typing. The
+   bleed is vertical only: a negative horizontal inset pushed the pseudo-element
+   past the text block, and at phone width the heading is nearly the whole
+   content box, so the halo alone gave the document 3-10px of sideways scroll.
+   closest-side already fades the gradient to nothing at the left and right
+   edges, so ending it there costs no softness. */
+html.js-hud [data-wm]::after{content:"";position:absolute;z-index:-1;inset:-30% 0;pointer-events:none;
   background:radial-gradient(closest-side,rgba(var(--bg-rgb),.9),rgba(var(--bg-rgb),0));
   opacity:0;transition:opacity .9s var(--ease-out)}
 html.js-hud [data-hud].is-typed [data-wm]::after{opacity:1}
@@ -2785,85 +2790,3 @@ html.js-hud [data-hud].is-typed [data-wm]::after{opacity:1}
   html.js-hud [data-wm]::after{transition:none}
   .hud-status__meter i{transition:none}
 }
-
-
-
-/* ============================================================
-   THE RULER RAIL — catalog.html only, and only on a wide screen
-   ============================================================
-   A 0–100% scale pinned to the end edge that slides up as the page runs down,
-   with each band's own heading written along it where that band begins. The
-   numerals and the marker are scenery (the whole layer is aria-hidden); the
-   readout speaks the visitor's language because js/ruler.js copies the live
-   heading text rather than a string of its own.
-
-   Three contracts with js/ruler.js, and all three are numbers in that file:
-   --rail is RAIL, the 1360px below is WIDE, and the tick spacing is PX. Change
-   one and the scale stops landing where the marker says it does. */
-:root{--rail:150px}
-
-/* Nothing is reserved and nothing is hidden until the script has decided the
-   rail is allowed — a phone, a narrow window or a reduced-motion reader keeps
-   the native scrollbar and the page at full width. */
-html.has-rail body{padding-inline-end:var(--rail)}
-html.has-rail{scrollbar-width:none}
-html.has-rail::-webkit-scrollbar{width:0;height:0;display:none}
-html.has-rail .social-rail{display:none}
-/* the two things that already live on that edge */
-/* Right to left the scale takes the left edge instead, so the bubble simply
-   stays where it has always been — setting left as well would stretch it. */
-html.has-rail .chat-widget{right:calc(var(--rail) + 1.5rem + env(safe-area-inset-right,0px))}
-html.has-rail[dir="rtl"] .chat-widget{right:calc(1.5rem + env(safe-area-inset-right,0px))}
-
-.ruler{display:none}
-@media (min-width:1360px){
-  html.has-rail .ruler{display:block;position:fixed;top:0;bottom:0;inset-inline-end:0;width:var(--rail);z-index:60;pointer-events:none}
-}
-@media print{.ruler{display:none!important}}
-
-.ruler__rail{position:absolute;inset:0;display:flex;flex-direction:column;gap:.7rem;
-  padding:calc(var(--nav-h) + var(--t-4)) 0 var(--t-6)}
-
-/* ---- the readout: what has passed, what is held, what is coming ----
-   Full --text-muted rather than a faded --text: these are small mono lines and
-   they have to hold AA (8.50 on ink, 6.88 on cream) without an opacity helping. */
-.ruler__done,.ruler__now,.ruler__next{position:relative;z-index:2;
-  margin-inline:var(--t-2) 56px;text-align:end}
-.ruler__done div,.ruler__next div{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  font-size:.6875rem;line-height:1.35;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
-.ruler__done div+div,.ruler__next div+div{margin-top:.3rem}
-.ruler__next{margin-top:auto}
-/* .ruler__fly is measured against .ruler__now: the two must be the same box or
-   the letters land a few pixels off the word they are flying into. */
-.ruler__now,.ruler__fly{font-family:var(--t-font-text);font-size:.875rem;font-weight:700;
-  line-height:1.2;letter-spacing:.03em;text-transform:uppercase;color:var(--text)}
-.ruler__fly{position:fixed;z-index:61;pointer-events:none;white-space:pre}
-
-/* ---- the scale itself ---- */
-.ruler__scale{position:absolute;inset-inline-end:0;top:0;width:44px;will-change:transform}
-.ruler__tick{position:absolute;right:0;height:var(--t-bw);width:8px;background:var(--border)}
-.ruler__tick.is-major{width:16px;background:var(--text-muted)}
-.ruler__num{position:absolute;right:20px;top:-6px;
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  font-size:.625rem;line-height:1;letter-spacing:.05em;color:var(--text-muted)}
-/* The name has its own lane: the numerals run 117–130 and the readout ends at
-   94, so 96–115 is the only strip in the band that touches neither. */
-.ruler__label{position:absolute;right:35px;writing-mode:vertical-rl;text-orientation:mixed;
-  white-space:nowrap;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  font-size:.6875rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);
-  transition:opacity .45s var(--ease-out)}
-/* the name has left the scale — it is in the readout now */
-.ruler__label.is-gone{opacity:0}
-
-.ruler__marker{position:absolute;inset-inline-end:0;top:50%;width:44px;height:var(--t-bw);
-  background:var(--accent)}
-/* The figure belongs to the line, and the line is at the very edge — so it is
-   set on the inner side of it, out of the numeral lane and out of the labels. */
-.ruler__marker b{position:absolute;top:-5px;inset-inline-end:calc(100% + var(--t-3));
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:400;
-  font-size:.625rem;letter-spacing:.05em;color:var(--accent)}
-
-/* ---- and the same rail, mirrored ---- */
-html[dir="rtl"] .ruler__tick{right:auto;left:0}
-html[dir="rtl"] .ruler__num{right:auto;left:20px}
-html[dir="rtl"] .ruler__label{right:auto;left:35px;writing-mode:vertical-lr}
