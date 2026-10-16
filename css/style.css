@@ -3238,3 +3238,17 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
      the last thing before the next band. */
   html.js-pstory .pstory__skip{position:static;align-self:center;margin:var(--t-2) 0 var(--t-3)}
 }
+
+/* ==========================================================================
+   THE TRACK HOLDS THE SIZE THE DRIVER ASKED FOR  (js/pinband.js, row())
+   A page of one writes each card's width as an inline flex-basis, but a flex row
+   shrinks its items by default, so a strip whose own box is narrower than the row
+   it holds quietly squashes every picture to a fraction of the size it was given.
+   The experience rail already opted out with flex:0 0 auto on its own cards; the
+   stage opts out for all of them, because the number the driver measured is the
+   number the page is built to. The track's own length is written next to it, since
+   an engine that sizes a max-content row off its content never reaches the basis.
+   ========================================================================== */
+.pinband--paged.pinband--x .pinband__window .cards>*,
+.pinband--paged.pinband--x .pinband__window .shots>*,
+.pinband--paged.pinband--x .pinband__window .exp__items>*{flex-shrink:0}

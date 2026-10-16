@@ -265,6 +265,14 @@
     const wide = one ? 1 : this.groups.reduce((m, g) => Math.max(m, g.length), 1);
     const basis = one ? Math.min(avail, cap || avail) : (avail - (wide - 1) * gap) / wide;
     this.cards.forEach((c) => { c.style.flexBasis = basis + "px"; });
+    /* The track is told how long it is, in pixels, rather than left to size itself to
+       its content. A WebKit row resolves that max-content off the picture — a 16/9 frame
+       with a measured height hands back a card 186 wide when the row asked for 342 — and
+       an engine that shrinks what it cannot fit does the same damage from the other end.
+       One number from this function settles both: the row is as long as the cards it
+       holds, and no engine has anything left to decide. */
+    const count = this.cards.length;
+    this.strip.style.width = Math.ceil(count * basis + Math.max(0, count - 1) * gap) + "px";
     this.rtl = getComputedStyle(this.strip).direction === "rtl";
     this.lead0 = one ? (avail - basis) / 2 : 0;
     /* The track's own box is asked for once, after every write this pass makes: a
@@ -306,6 +314,7 @@
      where it has no window to travel inside. */
   Band.prototype.uncard = function () {
     [].slice.call(this.strip.children).forEach((c) => { c.style.flexBasis = ""; });
+    this.strip.style.width = "";
     this.strip.style.translate = "";
     this.strip.style.transition = "";
   };
