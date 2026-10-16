@@ -2756,11 +2756,11 @@ html.js-pstory .pstory__skip:focus-visible{outline:var(--t-bw2) dotted var(--acc
 .pstory__skip-icon{display:inline-flex;width:16px;height:16px}
 
 /* --- the diamond rail: the hairline runs through the centres of the stones --- */
-html.js-pstory .pstory__rail{display:flex;position:relative;z-index:2;flex:none;height:88px;
+html.js-pstory .pstory__rail,.pinband--paged .pstory__rail{display:flex;position:relative;z-index:2;flex:none;height:88px;
   align-items:flex-end;justify-content:space-between;
   padding:0 max(var(--t-gutter),calc((100% - var(--max-w))/2 + var(--t-gutter)));
   border-bottom:var(--t-bw) solid rgba(var(--accent-rgb),.4)}
-html.js-pstory .pstory__rail::after{content:"";position:absolute;left:0;right:0;bottom:24px;height:var(--t-bw);
+html.js-pstory .pstory__rail::after,.pinband--paged .pstory__rail::after{content:"";position:absolute;left:0;right:0;bottom:24px;height:var(--t-bw);
   background:rgba(var(--accent-rgb),.4);z-index:-1}
 .pstory__step{display:flex;flex-direction:column;align-items:center;gap:var(--t-1);position:relative;
   bottom:13px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
@@ -2794,3 +2794,59 @@ html.js-pstory .pstory__rail::after{content:"";position:absolute;left:0;right:0;
 /* The skip control parks itself in the gutter on whichever side the text ends. */
 html[dir="rtl"].js-pstory .pstory__skip{right:auto;
   left:max(var(--t-gutter),calc((100% - var(--max-w))/2 + var(--t-gutter)))}
+
+/* ==========================================================================
+   THE PINNED COLLECTION BANDS
+   Three bands borrow the stage the process story stands on: the heading holds on
+   one screenful, the cards turn past it three at a time, and the same diamond rail
+   names the page you are on. js/pinband.js builds the stage out of the nodes the
+   band already had and adds .pinband--paged only over a band with more than one
+   page to show, so a phone, a short window, a filtered-down set, a visitor who
+   asked for less motion and a visitor with scripting off all keep the plain grid.
+   ========================================================================== */
+.pinband__pin,.pinband__body,.pinband__window{display:block}
+.pinband__run{display:none}
+.pinband--paged .pinband__run{display:block;height:calc((100vh - var(--nav-h)) * var(--pin-pages,1))}
+
+/* The stage. .band--exp paints with overflow:hidden, which would hand the sticky
+   element to a box that never scrolls; clip keeps the paint and gives it back its
+   own viewport. */
+.pinband--paged .pinband__pin{position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));
+  display:flex;flex-direction:column;overflow:hidden}
+.pinband.band--exp{overflow:clip}
+.pinband--paged .pinband__body{flex:1;min-height:0;display:flex;flex-direction:column;
+  justify-content:center;gap:var(--t-4);padding-top:var(--t-5)}
+.pinband--paged .pinband__window{flex:none;min-height:0;overflow:hidden}
+.pinband--paged .section__head{margin-bottom:0}
+
+/* One page is one row of three, whatever the grid's own responsive columns are. */
+.pinband--paged .pinband__window .shots,
+.pinband--paged .pinband__window .cards,
+.pinband--paged .pinband__window .exp__items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:var(--t-gap);overflow:visible;scroll-snap-type:none;cursor:auto;
+  transition:translate .55s var(--ease-out)}
+.pinband--paged .pinband__window .media{--media-ar:16/9}
+.pinband--paged .pinband__window .exp{cursor:auto}
+.pinband--paged .pinband__window .exp__card{width:auto;height:min(42vh,420px)}
+.pinband--paged .pinband__window .exp__hint{display:none}
+/* When the stage is shorter than the page it holds, the picture is the part free to
+   give — js/pinband.js measures the shortfall and names the height here. A band whose
+   frame fills its card (the experience rail) takes it off the card instead. */
+.pinband--paged .pinband__window .media{height:var(--pin-media-h,auto)}
+.pinband--paged .pinband__window .exp__card{height:var(--pin-media-h,min(42vh,420px))}
+/* A short screen has no room for a second line of intro once the stage is up, and a
+   page of cards must never be cut in half: on a short stage the picture gives up the
+   height the row needs and the stage's own air closes in around it. */
+@media (max-height:880px){
+  .pinband--paged .section__head p:not(.eyebrow):not(.hero__eyebrow){display:none}
+  .pinband--paged .pinband__body{padding-top:var(--t-4);gap:var(--t-3)}
+  .pinband--paged .pinband__window .media{--media-ar:2/1}
+}
+
+/* The rail prints in the band's own colours: the ink band keeps the paper white the
+   process rail was drawn for, an alt band prints in ink on its own surface. */
+.pinband .pstory__rail[hidden]{display:none}
+.pinband.section--alt .pstory__step-label,
+.pinband.section--alt .pstory__diamond-in{background:var(--bg-alt)}
+.pinband.section--alt .pstory__step[data-active="true"] .pstory__step-label{color:var(--text)}
+.pinband.section--alt .pstory__step:not([data-active="true"]):hover .pstory__step-label{background:var(--text);color:var(--bg-alt)}
