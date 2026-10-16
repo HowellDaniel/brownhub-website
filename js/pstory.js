@@ -148,6 +148,11 @@
   room.addEventListener("change", evaluate);
   reduce.addEventListener("change", evaluate);
   addEventListener("resize", () => { release(); if (pinned) evaluate(); }, { passive: true });
+  /* The stage now stands on a screenful shorter than the window, because the install
+     pill and the chat bubble live at the bottom of a phone and the row of stones has
+     to be above them. When that queue changes shape the run is a different length, so
+     the held geometry is dropped and the step it is on is read again. */
+  addEventListener("queue-change", () => { release(); if (pinned) evaluate(); });
   /* Translation rewrites the rail labels and can wrap a headline onto a second
      line, which changes nothing about the step it is on but does move the stage. */
   addEventListener("i18n-applied", () => { release(); if (pinned) { index = -1; follow(); } });

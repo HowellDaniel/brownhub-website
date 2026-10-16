@@ -1676,8 +1676,11 @@ html[data-theme="light"] .modal__gal-count{background:rgba(255,251,247,.75);colo
 .install__no:hover,.install__no:focus-visible{color:var(--text);background-color:var(--glass-fill-alt)}
 @media (max-width:600px){
   .install{inset-inline:1rem;max-width:none;padding-inline-end:.4rem;
-    /* the chat bubble is anchored to the physical right on every page, RTL included */
-    padding-right:4.75rem;
+    /* the chat bubble is anchored to the physical right on every page, RTL included, so
+       the card gives that lane up outright: a physical margin keeps the glass, its border
+       and its shadow clear of the button, where the old inner padding only moved the
+       close control and left the card standing underneath it. */
+    margin-right:4.5rem;
     /* --lead-h already measures from the bottom of the screen up to the card's top
        edge, so on this narrow screen the pill only has to clear that one figure */
     bottom:calc(max(.75rem + var(--cookie-h,0px), var(--lead-h,0px) + .5rem) + env(safe-area-inset-bottom))}
@@ -2841,7 +2844,10 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
 /* When the stage is shorter than the page it holds, the picture is the part free to
    give — js/pinband.js measures the shortfall and names the height here. A band whose
    frame fills its card (the experience rail) takes it off the card instead. */
-.pinband--paged .pinband__window .media{height:var(--pin-media-h,auto)}
+/* The driver trims a picture that will not fit its stage. Give the frame a definite
+   width as well as the trimmed height, or its own aspect ratio takes the width back off
+   the card and the picture stands as a square column with a strip of bare card beside it. */
+.pinband--paged .pinband__window .media{height:var(--pin-media-h,auto);width:100%}
 .pinband--paged .pinband__window .exp__card{height:var(--pin-media-h,min(42vh,420px))}
 /* A short screen has no room for a second line of intro once the stage is up, and a
    page of cards must never be cut in half: on a short stage the picture gives up the
@@ -3252,3 +3258,79 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
 .pinband--paged.pinband--x .pinband__window .cards>*,
 .pinband--paged.pinband--x .pinband__window .shots>*,
 .pinband--paged.pinband--x .pinband__window .exp__items>*{flex-shrink:0}
+
+/* ==========================================================================
+   THE PHONE GIVES THE BOTTOM OF THE SCREEN BACK  (js/app.js, reserve())
+   Measured at 390x844 with the queue in its first-visit state: the stage ended at
+   the bottom edge of the screen, the diamond rail was given the last 58px of it,
+   and the install pill — full width down here — covered 763 to 832. Every stone
+   sat under the pill, and the part of it a thumb could have reached was the part
+   behind the chat bubble. The stage was drawn for a screen nobody scrolls with a
+   mouse on, and paid for it by hiding its own controls.
+
+   --queue-h is the height the queue owns, published by js/app.js from the rect of
+   every notice still standing on the bottom edge. The
+   stage spends it twice: off the screenful the sticky element stands on, and off
+   the page-length the run is built from, so the two keep agreeing however the
+   queue changes. Because the driver reads the stage's own box for every number
+   (the spare room, the span, the jump), nothing in js/pinband.js or js/pstory.js
+   has to know the token exists — it only has to be asked again when it moves,
+   which is what the queue-change event is for.
+
+   svh rather than dvh: a phone's toolbar comes and goes as the page scrolls, and
+   a stage whose screenful breathes with it slides the picture out from under the
+   eye that was looking at it. The small viewport is the one height that is true
+   whether the bars are up or down, and the queue's own bottom offset already
+   carries the safe area.
+   ========================================================================== */
+@media (max-width:719px){
+  /* One number for the height of a phone screenful, and a floor under it. The queue at
+     the bottom of the screen is not one notice but up to three — the consent bar, the
+     quote card and the install pill, each lifted over the last — and a first visit that
+     has not decided anything yet stacks all three at once. Charged honestly that is
+     600px of an 844px screen, which leaves a stage too short to hold a picture at all.
+     The stage therefore pays for the queue up to a limit and lets the notices overlap
+     it beyond that: they are dismissible and the picture is not. */
+  :root{--stage-h:max(52vh, calc(100vh - var(--nav-h) - var(--queue-h, 0px)))}
+  @supports (height:100svh){
+    :root{--stage-h:max(52svh, calc(100svh - var(--nav-h) - var(--queue-h, 0px)))}
+  }
+  .pinband--paged .pinband__pin,
+  html.js-pstory .pstory__pin{height:var(--stage-h)}
+  html.js-pstory .pstory__run{height:calc(3 * var(--stage-h))}
+  .pinband--paged .pinband__run{
+    height:calc(min(var(--stage-h), var(--pin-page-h, 100vh)) * var(--pin-pages,1))}
+
+  /* Five chips, one line each at this width, and they wrap to three rows because
+     that is what a centred flex row does when the words are longer than the
+     screen: the heading it sits under took 279px of the stage's 727 to a picture
+     that needed the rest. The row becomes a shelf of its own — one line, dragged
+     sideways, bleeding to both edges so the last chip leaves no dead corner — and
+     gives back the eighty-odd pixels the second and third rows were spending. The
+     chips keep their tap targets and the centre-alignment goes with the wrap,
+     because a row that overflows cannot be centred and still be reachable. */
+  .pinband--paged .filter{flex-wrap:nowrap;justify-content:flex-start;
+    overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;
+    margin-inline:calc(var(--t-gutter) * -1);padding-inline:var(--t-gutter);
+    margin-bottom:0;padding-block:5px}
+  .pinband--paged .filter::-webkit-scrollbar{display:none}
+  .pinband--paged .filter__btn{flex:none}
+
+  /* The lean is the same idea at a fifth of the width. Two degrees of a turn carry
+     the far edge of a 342px card further inboard than they do on a 743px panel, so
+     here the 20deg the shelves use on a wide screen took four fifths of it — the
+     picture painted 74% of the column it was drawn into. Eight degrees keeps the
+     swing the band reads as, and a scale of one puts the near corner back inside
+     the clip now that the turn is too shallow to lift it out. */
+  .pinband--paged .pinband__window .shots>*,
+  .pinband--paged .pinband__window .cards>*,
+  .pinband--paged .pinband__window .exp__items>*{--turn-deg:8deg;--turn-fit:1}
+  html.js-pstory .pstory__visual{--turn-deg:8deg;--turn-fit:1}
+
+  /* The service artwork is a 200x150 drawing whose palette row lands in its own bottom
+     fifth — which is exactly where a caption pinned to the bottom-left of the frame
+     stands on a narrow screen, where the drawing is only as tall as it is wide. On a
+     wide column the frame is taller than the art and the caption has the empty band to
+     itself. Here it takes its place in the grid instead, under the drawing. */
+  .service-row__visual .visual__cap{position:static;margin-top:calc(var(--t-3) / 2)}
+}

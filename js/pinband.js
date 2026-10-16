@@ -131,12 +131,19 @@
     const relayout = () => this.ask();
     if (typeof ResizeObserver === "function") new ResizeObserver(relayout).observe(this.strip);
     new MutationObserver(relayout).observe(this.strip, { attributes: true, subtree: true, attributeFilter: ["hidden"] });
-    addEventListener("resize", () => {
+    const refill = () => {
       /* Only a window that actually changed size is allowed to ask for its picture
          back: a pass that both took the height and gave it back would never settle. */
       this.strip.style.removeProperty("--pin-media-h");
       relayout();
-    }, { passive: true });
+    };
+    addEventListener("resize", refill, { passive: true });
+    /* The bottom of the screen belongs to a queue the page did not build — the install
+       pill, the chat bubble, a notice that arrives a second after the stage is laid
+       out — and on a phone the stage now stands on a screenful shorter than the whole
+       window. When that edge moves, the picture is asked for back and the row is
+       measured against the room the stage has now. */
+    addEventListener("queue-change", refill);
     addEventListener("i18n-applied", relayout);
     if (this.auto) this.hold();
   };
