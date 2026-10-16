@@ -146,10 +146,18 @@
       const dot = doc.createElement("span");
       dot.className = "story-rail__dot";
       dot.setAttribute("aria-hidden", "true");
+      /* The lit stone carries a badge, the same read as the pinned story's rail.
+         It hangs off the button rather than the stone so that neither the stone's
+         45° turn nor its grow reaches the glyph. */
+      const icon = doc.createElement("span");
+      icon.className = "story-rail__icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+        'stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
       const label = doc.createElement("span");
       label.className = "story-rail__label";
       label.textContent = o.h.textContent;
-      b.append(dot, label);
+      b.append(dot, icon, label);
       b.addEventListener("click", () => o.s.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" }));
       rail.appendChild(b);
     });
