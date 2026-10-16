@@ -23,11 +23,22 @@
   one card held on screen at a time, centred in the column, with its neighbours waiting
   in the bleed at either side. The page size is a number rather than a switch because a
   band can be asked for two to a page just as easily as for one.
+
+  A band that says data-pin-auto keeps turning when nobody is scrolling it: the shelf
+  travels right to left on its own clock, one picture at a time, and the visitor's own
+  scroll takes the wheel back the moment they move. The stage, the turn and the rail are
+  the same as they were — only the hand that moves the shelf changes.
 */
 (() => {
   "use strict";
   const doc = document, root = doc.documentElement;
   const PAGE = 3;
+  /* A self-turning band keeps its own clock. A picture gets a step to travel in and a
+     hold to be read in; the last page holds longer, because the row is cut back to the
+     first card instead of sliding the whole way back. The stage is asked for twice a
+     second, which is far more often than a band turns and far less than it is drawn. */
+  const BEAT = 200, STEP = 1600, LAST = 3200, IDLE = 1400;
+  const GLIDE = "translate .8s var(--ease-out)";
   const reduce = matchMedia("(prefers-reduced-motion: reduce)");
   const room = matchMedia("(min-width:900px) and (min-height:760px)");
   const navH = () => parseFloat(root.style.getPropertyValue("--nav-h")) || 72;
@@ -55,6 +66,12 @@
     this.page = Math.max(1, parseInt(band.dataset.pinPage, 10) || PAGE);
     this.rtl = false;
     this.lead0 = 0;
+    this.auto = band.hasAttribute("data-pin-auto");
+    this.walk = 0;
+    this.touched = 0;
+    this.beat = 0;
+    this.paused = false;
+    this.lastY = scrollY;
     this.build();
     this.watch();
   }
@@ -108,6 +125,25 @@
       relayout();
     }, { passive: true });
     addEventListener("i18n-applied", relayout);
+    if (this.auto) this.hold();
+  };
+
+  /* A pointer that lands on the picture or on the stones is a request to look at that
+     page, so the clock waits until it leaves. It is held off the stage as a whole
+     because the stage is a screenful tall and the window inside it is a row: a mouse
+     parked by the heading would otherwise park the shelf with it, and the band would
+     look dead rather than patient. A caret is taken anywhere in the stage — it is in a
+     card's own button or in the search box, and neither should have the floor move
+     under it. */
+  Band.prototype.hold = function () {
+    const stop = () => { this.paused = true; };
+    const go = () => { this.paused = false; };
+    [this.win, this.rail].forEach((n) => {
+      n.addEventListener("pointerenter", stop);
+      n.addEventListener("pointerleave", go);
+    });
+    this.pin.addEventListener("focusin", stop);
+    this.pin.addEventListener("focusout", go);
   };
 
   Band.prototype.ask = function () {
@@ -247,8 +283,13 @@
     return h;
   };
 
+  /* Giving the cards back their plain style means giving the track back its own place
+     too: a shelf left panned two screens to the left would follow the grid onto a phone,
+     where it has no window to travel inside. */
   Band.prototype.uncard = function () {
     [].slice.call(this.strip.children).forEach((c) => { c.style.flexBasis = ""; });
+    this.strip.style.translate = "";
+    this.strip.style.transition = "";
   };
 
   Band.prototype.layout = function () {
@@ -261,7 +302,6 @@
     if (n < 2) {
       this.breaks();
       this.uncard();
-      this.strip.style.translate = "";
       /* The window's height is only a clamp for the stage, and a stage that is gone
          must not leave one behind: the plain grid would spill out of it and whatever
          the band still has below would sit on top of the cards. */
@@ -345,9 +385,15 @@
     this.steps = [].slice.call(this.rail.children);
   };
 
-  Band.prototype.set = function (i) {
+  Band.prototype.set = function (i, glide) {
     if (i === this.index || !this.steps) return;
     this.index = i;
+    /* The page the clock hands over travels; the page the wheel hands over is held
+       exactly where the scroll put it, so a scrub stays tight. The glide is written on
+       the same pass that moves the shelf, and taken back off it the moment the scroll
+       takes the wheel, because a shelf that lags half a second behind the wheel is a
+       shelf that never catches up. */
+    this.strip.style.transition = glide ? GLIDE : "";
     /* The track is pulled back by exactly how far its own page sits inside it. Upright
      * that is always a pull upward; sideways the sign belongs to the row, because a
      * right-to-left shelf has to be pushed the other way to bring its next page in. */
@@ -401,12 +447,57 @@
 
   Band.prototype.follow = function () {
     if (!this.paged) return;
-    this.set(Math.round(clamp((scrollY - this.top()) / this.span()) * (this.pages - 1)));
+    const i = Math.round(clamp((scrollY - this.top()) / this.span()) * (this.pages - 1));
+    if (!this.auto) { this.set(i); return; }
+    /* Scrolling is the visitor taking the wheel, so the clock waits a beat after the
+       last one. A band that turns by itself can be showing a page the scroll has not
+       reached yet: scrolling down must never rewind it, since the visitor is travelling
+       forward either way, while scrolling up is a request for that exact page and so
+       hands the shelf back. A hand-over of more than one page travels rather than cuts. */
+    const down = scrollY >= this.lastY;
+    this.lastY = scrollY;
+    this.touched = Date.now();
+    this.walk = Math.max(0, Math.min(this.pages - 1, down && i < this.walk ? this.walk : i));
+    this.set(this.walk, this.index >= 0 && Math.abs(this.walk - this.index) > 1);
+  };
+
+  /* One beat of the band's own clock. Nobody driving, the stage on screen, the page
+     behind it for a whole hold, and the next picture arrives from the right edge. */
+  Band.prototype.turn = function () {
+    if (!this.auto || !this.paged || reduce.matches) return;
+    const now = Date.now();
+    /* A held or hidden band re-seeds its own clock instead of banking a debt: the
+       shelf starts turning a full step after the pointer leaves, rather than leaping
+       the moment it does. */
+    if (this.paused || doc.hidden) { this.beat = now; return; }
+    if (!this.onStage()) return;
+    if (now - this.touched < IDLE) return;
+    if (now - this.beat < (this.walk >= this.pages - 1 ? LAST : STEP)) return;
+    this.beat = now;
+    /* The row travels one way, so the last page is cut back to the first card instead
+       of sliding backwards across every page it has already turned. */
+    const next = this.walk >= this.pages - 1 ? 0 : this.walk + 1;
+    this.walk = next;
+    this.set(next, next !== 0);
+  };
+
+  /* The run ends exactly where the stage stops being a stage, so a band is only worth
+     turning while the scroll sits inside it. Off stage the clock asks for nothing —
+     which is also what makes a printed page show the first picture rather than whichever
+     one the timer had reached. The anchor's own hold keeps this to a few reads a second. */
+  Band.prototype.onStage = function () {
+    const top = this.top();
+    return scrollY >= top - 40 && scrollY <= top + this.span() + 40;
   };
 
   /* Landing a hair inside the page's own window stops the rounding in follow() from
      handing back the page you meant to leave. */
   Band.prototype.goTo = function (i) {
+    /* On a band that turns by itself a stone is asked for a picture, not for a journey:
+       the clock may be showing a page further along than the wheel has reached, so the
+       shelf comes to the page that was picked and the viewport stays where the visitor
+       left it. Their own scroll still takes over the moment they move. */
+    if (this.auto) { this.walk = i; this.set(i, true); return; }
     scrollTo({ top: this.top() + (i / (this.pages - 1)) * this.span() + 2,
       behavior: reduce.matches ? "auto" : "smooth" });
   };
@@ -455,6 +546,13 @@
   let queued = false;
   const follow = () => { queued = false; bands.forEach((b) => b.follow()); };
   addEventListener("scroll", () => { if (!queued) { queued = true; requestAnimationFrame(follow); } }, { passive: true });
+
+  /* A band that turns by itself is driven by a clock and not by a second
+     requestAnimationFrame loop: a picture that changes once every second and a half has
+     nothing to decide sixty times a second, and the page keeps its frames for the
+     scroll. The timer is only ever started on a page that asks for it. */
+  const autos = bands.filter((b) => b.auto);
+  if (autos.length) setInterval(() => autos.forEach((b) => b.turn()), BEAT);
 
   /* Turning the stage off is a switch, not a rebuild: the grid, its filters and its
      cards are the same nodes either way. */
