@@ -3,20 +3,21 @@
 
   Three bands — Customer experience, Portfolio and the website catalog — borrow the
   stage the process story already uses: the heading holds on one screenful while its
-  cards turn past it in pages of three, and the same diamond rail along the bottom
-  names the page you are on. The cards themselves are untouched: the grid, the
-  filters, the search box and click-to-order all keep working, because the only
-  thing that moves is the window they are seen through.
+  cards turn past it, and the same diamond rail along the bottom names the page you are
+  on. The cards themselves are untouched: the grid, the filters, the search box and
+  click-to-order all keep working, because the only thing that moves is the window they
+  are seen through.
 
   Everything is opt-in. The markup ships as a plain grid; this script builds the
   stage, and only over a band that has more than one page to show. A phone, a short
   window, a visitor who asked for less motion, a filtered set too small to fill a
   second page, and a visitor with scripting off all keep the plain grid.
 
-  A band that says data-pin-dir="x" turns its pages sideways instead of lifting them
-  past the heading, which is how twilio.com's own pinned band moves: the heading holds
-  still and the next page arrives from off the right edge of the screen. Same stage,
-  same rail, same gating; only the axis of the turn changes.
+  Every band on this site says data-pin-dir="x" and turns sideways, which is how
+  twilio.com's own pinned band moves: the heading holds still and the next page arrives
+  from off the right edge of the screen. The axis stays an attribute rather than a law
+  because a band whose page is a row of words, not one picture, would do better to lift
+  its rows past the heading — and that route is still the default.
 
   A band that says data-pin-page="1" gives every picture its own turn of the stage —
   one card held on screen at a time, centred in the column, with its neighbours waiting

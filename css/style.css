@@ -2713,12 +2713,35 @@ html.js-pstory .pstory__body{flex:1;min-height:0;display:flex;flex-direction:col
 html.js-pstory .pstory__head{margin:0 auto;max-width:44rem}
 html.js-pstory .pstory__run{display:block;height:calc(3 * (100vh - var(--nav-h)))}
 html.js-pstory .pstory__slides{position:relative;flex:1;min-height:0;display:block}
+/* Landscape: the four steps stand side by side and the stage walks along them, so
+   the story travels the same way the collection shelves now do. `--at` is each
+   slide's own place in the row and `--pstep` the one the scroll is on, both handed
+   over by js/pstory.js, so the whole track moves as one number.
+
+   Every step is painted, because a neighbour that is hidden cannot slide past.
+   That is why the off-stage steps are made inert rather than invisible: the tab
+   order and the accessibility tree still hold only the step you are standing on,
+   which is the promise the hidden-and-faded version used to make by accident. */
 html.js-pstory .pstory__slide{position:absolute;inset:0;display:grid;
   grid-template-columns:minmax(0,40fr) minmax(0,58fr);grid-template-rows:minmax(0,1fr);
   gap:var(--t-6);align-items:center;
-  opacity:0;visibility:hidden;translate:0 16px;
-  transition:opacity .5s var(--ease-out),translate .5s var(--ease-out),visibility 0s linear .5s}
-html.js-pstory .pstory__slide[data-on="true"]{opacity:1;visibility:visible;translate:0 0;transition-delay:0s}
+  translate:calc((var(--at,0) - var(--pstep,0)) * 100%) 0;
+  transition:translate .5s var(--ease-out)}
+/* The cut belongs at the column, not at the screen: the shelves let their next card
+   wait out in the bleed because a picture arriving from the edge reads as a preview,
+   while the same 60px of the next step's words reads as a mistake. So the track keeps
+   its own width and clips there — the turned picture still has 23px of air inside that
+   edge, and the step coming in arrives from behind the column instead of out of the
+   page's own margin. clip rather than hidden because a scroll container here would
+   answer to the wheel. */
+html.js-pstory .pstory__slides{overflow-x:clip}
+/* A row of steps has a reading direction, and `translate` does not follow one: the
+   percentages are always physical, so left to right is the only order this track can
+   be laid out in. Under a right-to-left language the sign is turned over instead, so
+   step one waits at the right edge and the stage walks leftward — which is also the
+   way the rail's own stones now run, because flex does obey the direction. */
+html.js-pstory[dir="rtl"] .pstory__slide{
+  translate:calc((var(--pstep,0) - var(--at,0)) * 100%) 0}
 /* On the stage the picture is whatever height the screen has left, not the height
    its own ratio wants; a tall frame would otherwise run down over the rail. */
 html.js-pstory .pstory__visual{aspect-ratio:auto;align-self:stretch;min-height:0}
@@ -2952,10 +2975,20 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
    cards, so the window — not the grid — decides what is on screen, and the script
    hands each card its share of that window in pixels. position:relative makes the
    track its own offset parent, which is what lets a page be pulled to the left
-   edge by a number measured off the cards themselves. */
-.pinband--paged.pinband--x .pinband__window .cards{display:flex;flex-wrap:nowrap;
+   edge by a number measured off the cards themselves.
+
+   Every pinned shelf reads this way now, so the row is built from each band's own
+   strip rather than only the catalog's. The portfolio's .shots arrives as a grid
+   and the experience rail's .exp__items as a scroll container with a drag of its
+   own; the paged rules above have already taken the scroll away, and a flex row
+   needs no column template to obey. */
+.pinband--paged.pinband--x .pinband__window .cards,
+.pinband--paged.pinband--x .pinband__window .shots,
+.pinband--paged.pinband--x .pinband__window .exp__items{display:flex;flex-wrap:nowrap;
   position:relative;width:max-content;max-width:none}
-.pinband--paged.pinband--x .pinband__window .cards>*{flex:0 0 auto}
+.pinband--paged.pinband--x .pinband__window .cards>*,
+.pinband--paged.pinband--x .pinband__window .shots>*,
+.pinband--paged.pinband--x .pinband__window .exp__items>*{flex:0 0 auto}
 
 /* The window takes its gutters back and bleeds out to both edges of the screen, so
    a page arrives from off the viewport instead of being sliced at the column it
