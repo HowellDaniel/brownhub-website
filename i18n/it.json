@@ -913,6 +913,7 @@
  "Hand-written. Not assembled.": "Scritto a mano. Non assemblato.",
  "Excerpts from the files this site runs on.": "Stralci dai file su cui funziona questo sito.",
  "Code from this build": "Codice di questa costruzione",
+ "See what we build": "Scopri cosa costruiamo",
  "Data & accounts": "Dati e account",
  "A managed Postgres database with row-level security, so a signed-in client can only ever read their own records. Login by phone code or email.": "Un database Postgres gestito con sicurezza a livello di riga, così un cliente autenticato può leggere solo i propri record. Accesso con codice via SMS o email.",
  "Server side": "Lato server",

@@ -913,6 +913,7 @@
  "Hand-written. Not assembled.": "Imeandikwa kwa mkono. Si kukusanyika.",
  "Excerpts from the files this site runs on.": "Sehemu kutoka kwenye faili ambazo tovuti hii inaendeshwa nazo.",
  "Code from this build": "Msimbo wa ujenzi huu",
+ "See what we build": "Tazama tunachojenga",
  "Data & accounts": "Data na akaunti",
  "A managed Postgres database with row-level security, so a signed-in client can only ever read their own records. Login by phone code or email.": "Hifadhidata ya Postgres inayodumishwa na usalama wa kiwango cha safu, kwa hivyo mteja aliyeingia anaweza kusoma rekodi zake peke yake. Kuingia kwa msimbo wa simu au barua pepe.",
  "Server side": "Upande wa seva",

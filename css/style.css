@@ -3006,3 +3006,37 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
 .pinband--one .pstory__step:not([data-active="true"]) .pstory__step-label{display:none}
 .pinband--one .pstory__step{gap:0}
 .pinband--one .pstory__step[data-active="true"]{gap:4px}
+
+/* ==========================================================================
+   THE CODE CARD WRITES ITSELF  (js/codeshow.js)
+   The rest of twilio.com's "Build. Without limits." band: a language strip
+   whose tabs carry the language's own mark, one outlined pill between the
+   statement and the card, and code that arrives typed rather than printed.
+   Geometry and behaviour only — the marks here are drawn for this site in the
+   line-icon idiom the rest of the page already uses, not the official logos.
+   ========================================================================== */
+
+/* The reference's pill is the site's own .btn--ghost: a 2px inset ring, no
+   border, a full radius. Only its placement belongs to this band. */
+.codeshow__cta{text-align:center;margin:0 0 var(--t-4)}
+
+/* Icon beside the word, not instead of it. The reference can afford logos
+   alone because Python and PHP are famous; a hand-drawn mark is not, and a
+   visitor should not have to guess which of two brace-y glyphs is TypeScript. */
+.codeshow__tab{display:inline-flex;align-items:center;gap:.5rem}
+.codeshow__ico{flex:none;width:20px;height:20px;opacity:.72;transition:opacity .2s,color .2s}
+.codeshow__tab:hover .codeshow__ico,.codeshow__tab[aria-selected="true"] .codeshow__ico{opacity:1}
+
+/* The frontier. Twilio's is a 10px inline-block "▎" that blinks on a one-second
+   step; it rides the last character written, which is why the driver keeps
+   moving one node rather than painting an overlay the text could disagree with. */
+.codeshow__caret{display:inline-block;width:1ch;margin-left:.05ch;color:var(--cs-key)}
+@media (prefers-reduced-motion:no-preference){
+  .codeshow__caret{animation:csCaret 1s steps(1,end) infinite}
+}
+@keyframes csCaret{0%,49.9%{opacity:1}50%,100%{opacity:0}}
+
+@media (max-width:640px){
+  .codeshow__ico{width:16px;height:16px}
+  .codeshow__tab{gap:.35rem}
+}
