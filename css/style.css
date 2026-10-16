@@ -3040,3 +3040,76 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
   .codeshow__ico{width:16px;height:16px}
   .codeshow__tab{gap:.35rem}
 }
+
+/* ==========================================================================
+   THE PICTURE TURNS TO FACE THE WORDS
+   (js/pstory.js, js/pinband.js)
+
+   The reference band's media panel is not slid in and not faded flat. It stands
+   in space, and it turns so that the edge nearest the copy tips away from you:
+   measured off the recording, the far edge of the panel comes back about four
+   fifths the height of the near one, and the panel changes side every other
+   step. Their turn is baked into the artwork; here it is one rotation on a
+   shared perspective, so every picture the pinned stages hold can wear it.
+
+   Nothing here reaches a phone, a short window or a visitor who asked for less
+   motion, because both stages only exist behind .js-pstory and .js-pinband.
+   ========================================================================== */
+
+/* One perspective distance, one stand-back and one sign, shared by every turning
+   element. `rotate` looks like the tidier way to write this, and it is the one
+   that does not work: an inherited perspective only reaches a direct child, and
+   the process stage's panel sits under a slide, so the rotation was flattened to
+   a sideways squeeze — the picture got 3% narrower and never leaned. A shelf's
+   strip is worse again: it is as tall as all seven of its cards, so its
+   vanishing point sits a thousand-odd pixels above the one card the window is
+   actually showing, and the turn that produces is a diagonal tumble. Written
+   into the transform, the vanishing point is whatever element is turning's own
+   centre, wherever that happens to be. */
+:root{--turn-persp:1000px;--turn-deg:17deg;--turn-fit:0.89;--turn-sign:1;--turn:0deg}
+html[dir="rtl"]{--turn-sign:-1}
+
+/* --- the process stage: the picture is the panel, and it owns the column the
+       words are not using. It wears the same stand-back as the shelves, where
+       its near corner was reaching down into the row of diamonds below it. --- */
+html.js-pstory .pstory__visual{
+  transform:perspective(var(--turn-persp)) rotateY(var(--turn)) scale(var(--turn-fit));
+  box-shadow:var(--t-shadow)}
+html.js-pstory .pstory__slide:nth-child(odd) .pstory__visual{--turn:calc(var(--turn-sign) * -1 * var(--turn-deg))}
+html.js-pstory .pstory__slide:nth-child(even) .pstory__visual{--turn:calc(var(--turn-sign) * var(--turn-deg))}
+/* Every other step hands the picture the other column, which is what makes the
+   turn read as a swing rather than a fixed lean. The two columns keep their
+   sizes, so the picture is the same width on either side. */
+html.js-pstory .pstory__slide:nth-child(even){grid-template-columns:minmax(0,58fr) minmax(0,40fr)}
+html.js-pstory .pstory__slide:nth-child(even) .pstory__copy{order:2}
+html.js-pstory .pstory__slide:nth-child(even) .pstory__visual{order:1}
+
+/* --- the collection shelves: the card turns as a whole, because on the
+       experience band the words sit inside the picture and would otherwise be
+       left flat on top of it.
+
+       The angle is wider here than on the stage, and it is the width that makes
+       it so: one perspective distance brings a far edge back by however much of
+       it the turn carries out of the screen, so a 640px card has to lean further
+       than a 743px panel to lose the same four fifths.
+
+       The scale is what keeps the lean inside the stage. A turned card paints
+       taller than the box it stands in — measured, 27px off the top of each near
+       corner was being sheared away by the window's own clip — and standing the
+       card back by the same fraction the turn brings it forward puts the corner
+       home again and leaves the shadow somewhere to fall. The card keeps its
+       hover lift by carrying it through the turn rather than replacing it. --- */
+.pinband--paged .pinband__window .shots>*,
+.pinband--paged .pinband__window .cards>*,
+.pinband--paged .pinband__window .exp__items>*{
+  --turn-deg:20deg;
+  transform:perspective(var(--turn-persp)) rotateY(var(--turn)) scale(var(--turn-fit));
+  box-shadow:var(--t-shadow)}
+.pinband--paged .pinband__window .shots>*:nth-child(odd),
+.pinband--paged .pinband__window .cards>*:nth-child(odd),
+.pinband--paged .pinband__window .exp__items>*:nth-child(odd){--turn:calc(var(--turn-sign) * -1 * var(--turn-deg))}
+.pinband--paged .pinband__window .shots>*:nth-child(even),
+.pinband--paged .pinband__window .cards>*:nth-child(even),
+.pinband--paged .pinband__window .exp__items>*:nth-child(even){--turn:calc(var(--turn-sign) * var(--turn-deg))}
+.pinband--paged .pinband__window .shot:hover{
+  transform:perspective(var(--turn-persp)) rotateY(var(--turn)) scale(var(--turn-fit)) translateY(-3px)}
