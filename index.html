@@ -39,7 +39,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrownHub Studio">
   <link rel="preload" href="fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=121">
+  <link rel="stylesheet" href="css/style.css?v=122">
   <script src="js/theme.js?v=2"></script><script src="js/player.js?v=1" defer></script><script src="js/voice.js?v=1" defer></script>
   <script type="application/ld+json">
 {
@@ -764,38 +764,23 @@
           <a href="contact.html" class="btn btn--primary">Start a project</a>
           <a href="https://wa.me/233502954541" target="_blank" rel="noopener" class="btn btn--ghost">Talk to an engineer</a>
         </div>
-        <div class="eng-diagram" aria-hidden="true">
-          <svg viewBox="0 0 760 200" class="eng-diagram__svg" focusable="false" xmlns="http://www.w3.org/2000/svg">
-            <path class="ed-rail" d="M190 100h30M362 100h74M562 100h84"/>
-            <g class="ed-node">
-              <rect class="ed-out" x="14" y="44" width="172" height="112" rx="12"/>
-              <path class="ed-out" d="M14 72h172"/>
-              <circle class="ed-a" cx="32" cy="58" r="5"/><circle class="ed-b" cx="50" cy="58" r="5"/>
-              <rect class="ed-c" x="30" y="88" width="72" height="14" rx="7"/>
-              <rect class="ed-c" x="30" y="110" width="46" height="9" rx="4"/>
-              <path class="ed-line-a" d="M104 140l16-22 14 11 20-26"/>
-              <rect class="ed-a" x="132" y="88" width="38" height="14" rx="7" opacity="0.8"/>
-            </g>
-            <g class="ed-node">
-              <ellipse class="ed-out" cx="290" cy="58" rx="66" ry="16"/>
-              <path class="ed-out" d="M224 58v84a66 16 0 0 0 132 0V58"/>
-              <path class="ed-out" d="M224 90a66 16 0 0 0 132 0M224 120a66 16 0 0 0 132 0" opacity="0.22"/>
-              <rect class="ed-a" x="262" y="52" width="56" height="12" rx="6" opacity="0.75"/>
-            </g>
-            <g class="ed-node">
-              <path class="ed-out" d="M500 40l58 20v52c0 30-24 52-58 64-34-12-58-34-58-64V60l58-20Z"/>
-              <path class="ed-line-b" d="M478 102l16 16 30-34"/>
-              <circle class="ed-c" cx="500" cy="76" r="10"/>
-            </g>
-            <g class="ed-node">
-              <rect class="ed-out" x="652" y="36" width="94" height="128" rx="16"/>
-              <rect class="ed-c" x="668" y="58" width="28" height="28" rx="8"/>
-              <rect class="ed-c" x="706" y="58" width="28" height="28" rx="8"/>
-              <rect class="ed-c" x="668" y="98" width="28" height="28" rx="8"/>
-              <rect class="ed-a" x="706" y="98" width="28" height="28" rx="8" opacity="0.8"/>
-              <path class="ed-out" d="M686 150h26"/>
-            </g>
-          </svg>
+        <div class="codeshow" id="codeshow">
+          <p class="codeshow__head">Hand-written. Not assembled.</p>
+          <p class="codeshow__sub">Excerpts from the files this site runs on.</p>
+          <div class="codeshow__tabs" role="tablist" aria-label="Code from this build" dir="ltr">
+            <button type="button" role="tab" class="codeshow__tab" id="cs-t1" aria-controls="cs-p1" aria-selected="true" tabindex="0">HTML</button>
+            <button type="button" role="tab" class="codeshow__tab" id="cs-t2" aria-controls="cs-p2" aria-selected="false" tabindex="-1">CSS</button>
+            <button type="button" role="tab" class="codeshow__tab" id="cs-t3" aria-controls="cs-p3" aria-selected="false" tabindex="-1">JavaScript</button>
+            <button type="button" role="tab" class="codeshow__tab" id="cs-t4" aria-controls="cs-p4" aria-selected="false" tabindex="-1">TypeScript</button>
+            <button type="button" role="tab" class="codeshow__tab" id="cs-t5" aria-controls="cs-p5" aria-selected="false" tabindex="-1">SQL</button>
+          </div>
+          <div class="codeshow__stage">
+<pre class="codeshow__panel" id="cs-p1" role="tabpanel" aria-labelledby="cs-t1" tabindex="0" dir="ltr"><code data-i18n-off><span class="cl">&lt;<span class="t-e">article</span> <span class="t-a">class</span>=<span class="t-s">"product-card"</span> <span class="t-a">tabindex</span>=<span class="t-s">"0"</span> <span class="t-a">role</span>=<span class="t-s">"button"</span></span><span class="cl">         <span class="t-a">aria-label</span>=<span class="t-s">"View details: Web app or internal dashboard"</span></span><span class="cl">         <span class="t-a">data-name</span>=<span class="t-s">"Web app or internal dashboard"</span> <span class="t-a">data-cat</span>=<span class="t-s">"apps"</span></span><span class="cl">         <span class="t-a">data-img</span>=<span class="t-s">"images/web/scene-5.jpg"</span></span><span class="cl">         <span class="t-a">data-desc</span>=<span class="t-s">"Records, forms, stock and reports for the work behind the counter."</span>&gt;</span><span class="cl">  &lt;<span class="t-e">div</span> <span class="t-a">class</span>=<span class="t-s">"media"</span>&gt;</span><span class="cl">    &lt;<span class="t-e">img</span> <span class="t-a">src</span>=<span class="t-s">"images/web/scene-5.jpg"</span> <span class="t-a">alt</span>=<span class="t-s">""</span> <span class="t-a">width</span>=<span class="t-s">"800"</span> <span class="t-a">height</span>=<span class="t-s">"600"</span></span><span class="cl">         <span class="t-a">loading</span>=<span class="t-s">"lazy"</span> <span class="t-a">decoding</span>=<span class="t-s">"async"</span>&gt;</span><span class="cl">  &lt;/<span class="t-e">div</span>&gt;</span><span class="cl">  &lt;<span class="t-e">div</span> <span class="t-a">class</span>=<span class="t-s">"product-card__body"</span>&gt;</span><span class="cl">    &lt;<span class="t-e">span</span> <span class="t-a">class</span>=<span class="t-s">"webcat__type"</span>&gt;Web apps and internal dashboards&lt;/<span class="t-e">span</span>&gt;</span><span class="cl">    &lt;<span class="t-e">h3</span>&gt;Web app or internal dashboard&lt;/<span class="t-e">h3</span>&gt;</span><span class="cl">  &lt;/<span class="t-e">div</span>&gt;</span><span class="cl">&lt;/<span class="t-e">article</span>&gt;</span></code></pre>
+<pre class="codeshow__panel" id="cs-p2" role="tabpanel" aria-labelledby="cs-t2" tabindex="0" dir="ltr" hidden><code data-i18n-off><span class="cl"><span class="t-c">/* The band holds one screenful while its cards turn past it. */</span></span><span class="cl"><span class="t-e">.pinband--paged .pinband__pin</span> {</span><span class="cl">  <span class="t-a">position</span>: sticky;</span><span class="cl">  <span class="t-a">top</span>: <span class="t-f">var</span>(--nav-h);</span><span class="cl">  <span class="t-a">height</span>: <span class="t-f">calc</span>(100vh - <span class="t-f">var</span>(--nav-h));</span><span class="cl">  <span class="t-a">display</span>: flex;</span><span class="cl">  <span class="t-a">overflow</span>: hidden;</span><span class="cl">}</span><span class="cl"><span class="t-e">.pinband--paged .pinband__run</span> {</span><span class="cl">  <span class="t-a">height</span>: <span class="t-f">calc</span>((100vh - <span class="t-f">var</span>(--nav-h)) * <span class="t-f">var</span>(--pin-pages, <span class="t-n">1</span>));</span><span class="cl">}</span></code></pre>
+<pre class="codeshow__panel" id="cs-p3" role="tabpanel" aria-labelledby="cs-t3" tabindex="0" dir="ltr" hidden><code data-i18n-off><span class="cl"><span class="t-c">// js/store.js — the checkout this page takes its own orders through.</span></span><span class="cl">window.<span class="t-e">PaystackPop</span>.<span class="t-f">setup</span>({</span><span class="cl">  key: <span class="t-e">PK_LIVE</span>,</span><span class="cl">  channels: <span class="t-e">CHANNELS</span>,</span><span class="cl">  email: mail,</span><span class="cl">  amount: <span class="t-e">Math</span>.<span class="t-f">round</span>(item.price * <span class="t-n">100</span>),</span><span class="cl">  currency: <span class="t-e">CURRENCY</span>,</span><span class="cl">  ref: <span class="t-f">ref</span>(item),</span><span class="cl">  metadata: { custom_fields: [{ display_name: <span class="t-s">"Item"</span>,</span><span class="cl">    variable_name: <span class="t-s">"bh_item"</span>, value: item.name }] },</span><span class="cl">  callback: <span class="t-k">function</span> (res) { <span class="t-f">paid</span>(item, res); },</span><span class="cl">  onClose: <span class="t-k">function</span> () { <span class="t-f">say</span>(<span class="t-s">"Payment not completed."</span>); }</span><span class="cl">}).<span class="t-f">openIframe</span>();</span></code></pre>
+<pre class="codeshow__panel" id="cs-p4" role="tabpanel" aria-labelledby="cs-t4" tabindex="0" dir="ltr" hidden><code data-i18n-off><span class="cl"><span class="t-c">// supabase/functions/capture — the only writer the tables allow.</span></span><span class="cl"><span class="t-k">const</span> <span class="t-e">SITES</span> = [<span class="t-s">"https://www.brownhub283.com"</span>];</span><span class="cl"><span class="t-k">const</span> <span class="t-e">MAX_BODY</span> = <span class="t-n">6_000</span>;</span><span class="cl"><span class="t-k">const</span> <span class="t-e">LEADS_PER_MINUTE</span> = <span class="t-n">3</span>;</span><span class="cl"><span class="t-k">const</span> <span class="t-e">LEADS_PER_DAY</span> = <span class="t-n">12</span>;</span><span class="cl"></span><span class="cl"><span class="t-e">Deno</span>.<span class="t-f">serve</span>(<span class="t-k">async</span> (req) =&gt; {</span><span class="cl">  <span class="t-k">const</span> origin = req.headers.<span class="t-f">get</span>(<span class="t-s">"origin"</span>);</span><span class="cl">  <span class="t-k">if</span> (req.method !== <span class="t-s">"POST"</span>) <span class="t-k">return</span> <span class="t-f">json</span>({ error: <span class="t-s">"Use POST."</span> }, origin, <span class="t-n">405</span>);</span><span class="cl">  <span class="t-k">if</span> (!<span class="t-f">allowed</span>(origin)) <span class="t-k">return</span> <span class="t-f">json</span>({ error: <span class="t-s">"off"</span> }, origin, <span class="t-n">403</span>);</span><span class="cl">  <span class="t-c">// A visit keeps sha256(TRACK_SALT | ip | day), never the address itself.</span></span><span class="cl">});</span></code></pre>
+<pre class="codeshow__panel" id="cs-p5" role="tabpanel" aria-labelledby="cs-t5" tabindex="0" dir="ltr" hidden><code data-i18n-off><span class="cl"><span class="t-c">-- sql/supabase-schema.sql — a client can only ever see their own rows.</span></span><span class="cl"><span class="t-k">create table if not exists</span> public.requests (</span><span class="cl">  id       <span class="t-e">uuid</span> <span class="t-k">primary key default</span> <span class="t-f">gen_random_uuid</span>(),</span><span class="cl">  user_id  <span class="t-e">uuid</span> <span class="t-k">not null default</span> <span class="t-f">auth.uid</span>()</span><span class="cl">           <span class="t-k">references</span> auth.users (id) <span class="t-k">on delete cascade</span>,</span><span class="cl">  message  <span class="t-e">text</span> <span class="t-k">not null</span>,</span><span class="cl">  status   <span class="t-e">text</span> <span class="t-k">not null default</span> <span class="t-s">'received'</span></span><span class="cl">);</span><span class="cl"></span><span class="cl"><span class="t-k">alter table</span> public.requests <span class="t-k">enable row level security</span>;</span><span class="cl"></span><span class="cl"><span class="t-k">create policy</span> <span class="t-s">"clients read own requests"</span></span><span class="cl">  <span class="t-k">on</span> public.requests <span class="t-k">for select to authenticated</span></span><span class="cl">  <span class="t-k">using</span> (<span class="t-f">auth.uid</span>() = user_id);</span></code></pre>
+          </div>
         </div>
       </div>
     </section>
@@ -1663,7 +1648,7 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=32" defer></script><script src="js/translate.js?v=98" defer></script><script src="js/app.js?v=4" defer></script>
+  <script src="js/main.js?v=32" defer></script><script src="js/translate.js?v=99" defer></script><script src="js/app.js?v=4" defer></script>
 
   <div class="modal" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-name">
     <div class="modal__backdrop" data-close-modal></div>
@@ -1719,7 +1704,7 @@
   </div>
 
   <script src="js/chat.js?v=32" defer></script><script src="js/accounts.js?v=18" defer></script><script src="js/portfolio.js?v=6" defer></script><script src="js/store.js?v=22" defer></script>
-  <script src="js/scroll.js?v=11" defer></script><script src="js/pstory.js?v=1" defer></script><script src="js/pinband.js?v=1" defer></script><script src="js/catalog.js?v=15" defer></script><script src="js/ambient.js?v=2" defer></script><script src="js/neon.js?v=2" defer></script>
+  <script src="js/scroll.js?v=11" defer></script><script src="js/pstory.js?v=1" defer></script><script src="js/pinband.js?v=1" defer></script><script src="js/codeshow.js?v=1" defer></script><script src="js/catalog.js?v=15" defer></script><script src="js/ambient.js?v=2" defer></script><script src="js/neon.js?v=2" defer></script>
   <script src="js/nav.js?v=7" defer></script><script src="js/search.js?v=15" defer></script><script src="js/cookies.js?v=7" defer></script><script src="js/leads.js?v=1" defer></script><script src="js/social.js?v=1" defer></script>
   <script src="js/carousel.js?v=1" defer></script><script src="js/flow.js?v=2" defer></script><script src="js/reviews.js?v=3" defer></script><script src="js/stats.js?v=1" defer></script>
 

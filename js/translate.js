@@ -78,8 +78,11 @@
       return;
     }
     if (root.nodeType !== 1 || root.tagName === "SCRIPT" || root.tagName === "STYLE") return;
-  // Language names stay in their own orthography, and the picker paints them itself.
-  if (root.id === "lang-select" || root.id === "locale-list") return;
+    /* A code sample is not prose: the words inside it belong to the program, and a
+       translated snippet is a snippet that no longer runs. */
+    if (root.hasAttribute("data-i18n-off")) return;
+    // Language names stay in their own orthography, and the picker paints them itself.
+    if (root.id === "lang-select" || root.id === "locale-list") return;
   if (root.classList && (root.className === "locale__name" || root.className === "locale__group" ||
       root.classList.contains("locale__opt"))) return;
     for (var i = 0; i < ATTRS.length; i++) {
@@ -133,7 +136,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=91")
+    return fetch("i18n/" + code + ".json?v=92")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }
