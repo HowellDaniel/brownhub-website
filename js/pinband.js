@@ -12,6 +12,11 @@
   stage, and only over a band that has more than one page to show. A phone, a short
   window, a visitor who asked for less motion, a filtered set of three cards or
   fewer, and a visitor with scripting off all keep the plain grid.
+
+  A band that says data-pin-dir="x" turns its pages sideways instead of lifting them
+  past the heading, which is how twilio.com's own pinned band moves: the heading holds
+  still and the next page arrives from off the right edge of the screen. Same stage,
+  same rail, same gating; only the axis of the turn changes.
 */
 (() => {
   "use strict";
@@ -40,14 +45,17 @@
       .map((s) => s.trim()).filter(Boolean).map((s) => band.querySelector(s)).filter(Boolean);
     this.paged = false;
     this.index = -1;
+    this.axis = band.dataset.pinDir === "x" ? "x" : "y";
+    this.rtl = false;
     this.build();
     this.watch();
   }
 
   /* The stage is assembled out of nodes that already exist, in the order the band
-     already reads: heading, controls, one page of cards, rail. Whatever the band
-     still has below the fold — the order button, the empty notice — stays where it
-     was, and the pin takes the place of the block that moved. */
+     already reads: heading, controls, whatever the band sold a place above the shelf,
+     one page of cards, rail. Whatever the band still has below the fold — the order
+     button, the empty notice — stays where it was, and the pin takes the place of the
+     block that moved. */
   Band.prototype.build = function () {
     const anchor = this.band.querySelector(":scope > .container") || this.block;
     this.pin = el("div", "pinband__pin");
@@ -61,9 +69,15 @@
     this.pin.appendChild(this.rail);
     if (this.head) this.body.appendChild(this.head);
     this.controls.forEach((c) => this.body.appendChild(c));
+    /* A bought placement is sold a spot in this band's reading order, and the stage
+       swallows the container it was sitting in. It comes up with everything else the
+       stage holds, or the top of the shelf ends up printed after the tail of it. */
+    [].slice.call(this.band.querySelectorAll(".container > .featured:not(.featured--mid)"))
+      .forEach((slot) => this.body.appendChild(slot));
     this.body.appendChild(this.win);
     this.win.appendChild(this.block);
     this.band.classList.add("pinband");
+    if (this.axis === "x") this.band.classList.add("pinband--x");
     this.rail.addEventListener("keydown", (e) => this.arrow(e));
   };
 
@@ -114,8 +128,12 @@
     let used = parseFloat(b.paddingTop) + parseFloat(b.paddingBottom);
     let n = 0;
     for (const c of this.body.children) {
-      if (c === this.win) continue;
-      const m = getComputedStyle(c), r = c.getBoundingClientRect();
+      const m = getComputedStyle(c);
+      /* A slot nobody has bought, and a notice that only shows when the shelf is
+         empty, take up no room; charging the stage for their margins would shrink the
+         window to pay for a row of cards that is not there. */
+      if (c === this.win || m.display === "none") continue;
+      const r = c.getBoundingClientRect();
       used += r.height + parseFloat(m.marginTop) + parseFloat(m.marginBottom);
       n++;
     }
@@ -139,6 +157,67 @@
     if (next !== h) this.strip.style.setProperty("--pin-media-h", next + "px");
   };
 
+  /* How far the window has to reach past the container to touch both edges of the
+     screen. Read off the container, which the window's own margins never move, and
+     published as one number the CSS spends on both sides — 50vw is the guess this
+     avoids, because the scrollbar belongs to the viewport and not to the column. */
+  Band.prototype.bleed = function () {
+    const c = this.band.querySelector(":scope > .container");
+    if (!c) return;
+    const r = c.getBoundingClientRect();
+    const g = parseFloat(getComputedStyle(c).paddingLeft) || 0;
+    const reach = Math.min(r.left + g, innerWidth - (r.right - g));
+    this.win.style.setProperty("--pin-bleed", Math.max(0, Math.round(reach)) + "px");
+  };
+
+  /* Sideways: the track is one unbroken row, so a card takes an exact share of the
+     window's own content column and a page begins wherever its first card does. The
+     share is measured in pixels rather than left as a percentage because the track is
+     as wide as its content — a third of that would be three screens of card. Every
+     page is sized to the widest one, so the last short page simply ends early instead
+     of stretching its two cards across the whole stage. */
+  Band.prototype.row = function () {
+    const w = getComputedStyle(this.win);
+    const gap = parseFloat(getComputedStyle(this.strip).columnGap) || 0;
+    const avail = this.win.clientWidth - (parseFloat(w.paddingLeft) || 0) - (parseFloat(w.paddingRight) || 0);
+    const wide = this.groups.reduce((m, g) => Math.max(m, g.length), 1);
+    const basis = (avail - (wide - 1) * gap) / wide;
+    this.cards.forEach((c) => { c.style.flexBasis = basis + "px"; });
+    this.rtl = getComputedStyle(this.strip).direction === "rtl";
+    this.at = this.groups.map((g) => Math.round(this.lead(g[0])));
+    return Math.max.apply(null, this.cards.map((c) => c.offsetHeight));
+  };
+
+  /* How far the card that leads a page sits inside the track, counted from the edge the
+     row reads from. offsetLeft is the tempting answer and is wrong on half the page: a
+     right-to-left row numbers its cards backwards from the far edge, so the pan it
+     produces pulls the shelf clean off the stage. Two rects are used instead, and since
+     the track travels with its own cards, their difference is the one number a sliding
+     shelf cannot corrupt. */
+  Band.prototype.lead = function (card) {
+    const s = this.strip.getBoundingClientRect(), r = card.getBoundingClientRect();
+    return this.rtl ? s.right - r.right : r.left - s.left;
+  };
+
+  /* Upright: the pages are rows of the same grid, stacked, and the window shows one
+     row at a time. */
+  Band.prototype.stack = function () {
+    this.at = [];
+    let h = 0;
+    for (let i = 0; i < this.groups.length; i++) {
+      const row = this.groups[i];
+      const top = row[0].offsetTop;
+      const bottom = Math.max.apply(null, row.map((c) => c.offsetTop + c.offsetHeight));
+      this.at.push(top);
+      h = Math.max(h, bottom - top);
+    }
+    return h;
+  };
+
+  Band.prototype.uncard = function () {
+    [].slice.call(this.strip.children).forEach((c) => { c.style.flexBasis = ""; });
+  };
+
   Band.prototype.layout = function () {
     const wasRun = this.run.offsetHeight, wasIndex = this.index;
     const anchor = this.top(), inside = scrollY >= anchor - 2 && scrollY <= anchor + wasRun + 2;
@@ -147,6 +226,7 @@
     this.setPaged(n > 1);
     if (n < 2) {
       this.breaks();
+      this.uncard();
       this.strip.style.translate = "";
       /* The window's height is only a clamp for the stage, and a stage that is gone
          must not leave one behind: the plain grid would spill out of it and whatever
@@ -158,17 +238,16 @@
     }
     this.pages = n;
     this.groups = this.pagesOf(this.cards.length, n);
-    this.breaks(this.groups);
-    /* A row starts wherever its own first card says it does, so a two-line title in
-       one card cannot push the next page half a row out of the window. */
-    this.tops = [];
-    let h = 0;
-    for (let i = 0; i < n; i++) {
-      const row = this.groups[i];
-      const top = row[0].offsetTop;
-      const bottom = Math.max.apply(null, row.map((c) => c.offsetTop + c.offsetHeight));
-      this.tops.push(top);
-      h = Math.max(h, bottom - top);
+    let h;
+    if (this.axis === "x") {
+      this.breaks();
+      this.bleed();
+      h = this.row();
+    } else {
+      /* A row starts wherever its own first card says it does, so a two-line title in
+         one card cannot push the next page half a row out of the window. */
+      this.breaks(this.groups);
+      h = this.stack();
     }
     /* The window is one row tall: any taller and the next page leaks in under the
        current one, which is not a turn, it is a stack. When the stage is shorter than
@@ -232,7 +311,11 @@
   Band.prototype.set = function (i) {
     if (i === this.index || !this.steps) return;
     this.index = i;
-    this.strip.style.translate = "0 " + (-this.tops[i]) + "px";
+    /* The track is pulled back by exactly how far its own page sits inside it. Upright
+     * that is always a pull upward; sideways the sign belongs to the row, because a
+     * right-to-left shelf has to be pushed the other way to bring its next page in. */
+    this.strip.style.translate = this.axis === "x"
+      ? (this.rtl ? this.at[i] : -this.at[i]) + "px 0" : "0 " + (-this.at[i]) + "px";
     for (let k = 0; k < this.steps.length; k++) {
       const on = k === i;
       this.steps[k].dataset.active = on ? "true" : "false";
@@ -273,8 +356,12 @@
   };
 
   Band.prototype.arrow = function (e) {
-    const d = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1
-      : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+    /* On a shelf that reads right to left, the arrow that means 'onwards' points the
+       other way. Up and down are never sideways, so they keep their meaning everywhere. */
+    const back = this.axis === "x" && this.rtl;
+    const fwd = back ? "ArrowLeft" : "ArrowRight", away = back ? "ArrowRight" : "ArrowLeft";
+    const d = e.key === fwd || e.key === "ArrowDown" ? 1
+      : e.key === away || e.key === "ArrowUp" ? -1 : 0;
     if (!d || !this.steps) return;
     e.preventDefault();
     const i = Math.min(this.pages - 1, Math.max(0, (this.index < 0 ? 0 : this.index) + d));
@@ -295,6 +382,8 @@
     this.index = -1;
     this.keys = "";
     this.breaks();
+    this.uncard();
+    this.win.style.removeProperty("--pin-bleed");
     this.strip.style.removeProperty("--pin-media-h");
     if (this.steps) {
       this.steps.forEach((s) => { s.removeAttribute("data-active"); s.removeAttribute("aria-current"); });

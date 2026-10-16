@@ -2935,3 +2935,49 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
   .codeshow__stage{height:clamp(230px,50vh,340px)}
   .codeshow__panel{font-size:var(--t-fs-10);padding:var(--t-3)}
 }
+
+/* ==========================================================================
+   THE FEATURED SHELF PANS SIDEWAYS  (js/pinband.js, data-pin-dir="x")
+   Measured against twilio.com/en-us on 2026-10-16 rather than remembered: their
+   platform band is pinned one screenful under the nav for 8744px of scroll, its
+   content track is two viewports wide, and translateX pulls it exactly one
+   viewport (-1440 at 1440) over the first third of that pin — after which the
+   chapter rail's diamond fills, lifts and prints its name while the rest of the
+   pin turns the slides over. What is borrowed here is that geometry and nothing
+   else: the pan, the full-bleed window and the lit stone, all in BrownHub's own
+   ink, paper and hairline. Their navy is not on this page.
+   ========================================================================== */
+
+/* One unbroken row instead of a stack of rows. The track is as wide as its own
+   cards, so the window — not the grid — decides what is on screen, and the script
+   hands each card its share of that window in pixels. position:relative makes the
+   track its own offset parent, which is what lets a page be pulled to the left
+   edge by a number measured off the cards themselves. */
+.pinband--paged.pinband--x .pinband__window .cards{display:flex;flex-wrap:nowrap;
+  position:relative;width:max-content;max-width:none}
+.pinband--paged.pinband--x .pinband__window .cards>*{flex:0 0 auto}
+
+/* The window takes its gutters back and bleeds out to both edges of the screen, so
+   a page arrives from off the viewport instead of being sliced at the column it
+   happens to sit in. --pin-bleed is measured by the script off the container, not
+   guessed at 50vw: the scrollbar belongs to the viewport and not to the text, and a
+   few pixels of that difference is a horizontal scrollbar on the whole document. */
+.pinband--paged.pinband--x .pinband__window{margin-inline:calc(-1 * var(--pin-bleed,0px));
+  padding-inline:var(--pin-bleed,0px)}
+
+/* Nine pages of three cannot each print their own name along one hairline. Twilio's
+   rail prints the chapter you are standing in and leaves the rest to the stones, so
+   the sideways band does the same: every stone stays on the rail, clickable and
+   named to a reader who cannot see it, and only the one you are on prints. */
+.pinband--x .pstory__step:not([data-active="true"]) .pstory__step-label{display:none}
+.pinband--x .pstory__step{gap:0}
+.pinband--x .pstory__step[data-active="true"]{gap:4px}
+
+/* The featured shelf stands on the page's own paper, not on the ink the process story
+   was drawn against, and a paper-white nameplate on paper is not a nameplate. So the
+   stone takes the colour its band already says its text is: ink on a plain band, paper
+   on an ink band, and the alt bands keep the rule that was already written for them. */
+.pinband .pstory__step[data-active="true"] .pstory__step-label{color:inherit}
+.pinband:not(.section--alt):not(.band--exp):not(.band--ink)
+  .pstory__step:not([data-active="true"]):hover .pstory__step-label{
+  background:var(--text);color:var(--bg)}
