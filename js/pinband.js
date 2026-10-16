@@ -10,13 +10,18 @@
 
   Everything is opt-in. The markup ships as a plain grid; this script builds the
   stage, and only over a band that has more than one page to show. A phone, a short
-  window, a visitor who asked for less motion, a filtered set of three cards or
-  fewer, and a visitor with scripting off all keep the plain grid.
+  window, a visitor who asked for less motion, a filtered set too small to fill a
+  second page, and a visitor with scripting off all keep the plain grid.
 
   A band that says data-pin-dir="x" turns its pages sideways instead of lifting them
   past the heading, which is how twilio.com's own pinned band moves: the heading holds
   still and the next page arrives from off the right edge of the screen. Same stage,
   same rail, same gating; only the axis of the turn changes.
+
+  A band that says data-pin-page="1" gives every picture its own turn of the stage —
+  one card held on screen at a time, centred in the column, with its neighbours waiting
+  in the bleed at either side. The page size is a number rather than a switch because a
+  band can be asked for two to a page just as easily as for one.
 */
 (() => {
   "use strict";
@@ -46,7 +51,9 @@
     this.paged = false;
     this.index = -1;
     this.axis = band.dataset.pinDir === "x" ? "x" : "y";
+    this.page = Math.max(1, parseInt(band.dataset.pinPage, 10) || PAGE);
     this.rtl = false;
+    this.lead0 = 0;
     this.build();
     this.watch();
   }
@@ -78,6 +85,7 @@
     this.win.appendChild(this.block);
     this.band.classList.add("pinband");
     if (this.axis === "x") this.band.classList.add("pinband--x");
+    if (this.page === 1) this.band.classList.add("pinband--one");
     this.rail.addEventListener("keydown", (e) => this.arrow(e));
   };
 
@@ -96,8 +104,9 @@
     addEventListener("i18n-applied", relayout);
   };
 
-  /* Three at a time, unless that would leave one card alone on a whole screen — then
-     the pages share the set out evenly and never go over three. */
+  /* The band's own page size, unless that would leave one card alone on a whole screen
+     — then the pages share the set out evenly and never go over the size asked for. A
+     band turned to one card a page has no hole to fill, so the split is already even. */
   Band.prototype.pagesOf = function (total, n) {
     const each = Math.floor(total / n), extra = total % n, out = [];
     let at = 0;
@@ -175,16 +184,24 @@
      share is measured in pixels rather than left as a percentage because the track is
      as wide as its content — a third of that would be three screens of card. Every
      page is sized to the widest one, so the last short page simply ends early instead
-     of stretching its two cards across the whole stage. */
+     of stretching its two cards across the whole stage.
+
+     A band showing one card to a page sizes it to the band's own --pin-one-w rather
+     than to the whole column, and parks it in the middle: the card is then held where
+     the eye already is, and the next picture waits in the bleed at the edge instead of
+     arriving out of a hard cut. */
   Band.prototype.row = function () {
     const w = getComputedStyle(this.win);
     const gap = parseFloat(getComputedStyle(this.strip).columnGap) || 0;
     const avail = this.win.clientWidth - (parseFloat(w.paddingLeft) || 0) - (parseFloat(w.paddingRight) || 0);
-    const wide = this.groups.reduce((m, g) => Math.max(m, g.length), 1);
-    const basis = (avail - (wide - 1) * gap) / wide;
+    const one = this.page === 1;
+    const cap = one ? parseFloat(getComputedStyle(this.band).getPropertyValue("--pin-one-w")) || 0 : 0;
+    const wide = one ? 1 : this.groups.reduce((m, g) => Math.max(m, g.length), 1);
+    const basis = one ? Math.min(avail, cap || avail) : (avail - (wide - 1) * gap) / wide;
     this.cards.forEach((c) => { c.style.flexBasis = basis + "px"; });
     this.rtl = getComputedStyle(this.strip).direction === "rtl";
-    this.at = this.groups.map((g) => Math.round(this.lead(g[0])));
+    this.lead0 = one ? (avail - basis) / 2 : 0;
+    this.at = this.groups.map((g) => Math.round(this.lead(g[0]) - this.lead0));
     return Math.max.apply(null, this.cards.map((c) => c.offsetHeight));
   };
 
@@ -222,7 +239,7 @@
     const wasRun = this.run.offsetHeight, wasIndex = this.index;
     const anchor = this.top(), inside = scrollY >= anchor - 2 && scrollY <= anchor + wasRun + 2;
     this.cards = [].slice.call(this.strip.children).filter((c) => c.nodeType === 1 && !c.hidden);
-    const n = Math.ceil(this.cards.length / PAGE);
+    const n = Math.ceil(this.cards.length / this.page);
     this.setPaged(n > 1);
     if (n < 2) {
       this.breaks();

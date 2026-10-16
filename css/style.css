@@ -2981,3 +2981,28 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
 .pinband:not(.section--alt):not(.band--exp):not(.band--ink)
   .pstory__step:not([data-active="true"]):hover .pstory__step-label{
   background:var(--text);color:var(--bg)}
+
+/* ==========================================================================
+   ONE PICTURE TO A PAGE  (js/pinband.js, data-pin-page="1")
+   The same stage with a page size of one: a single picture is held in the middle of
+   the column while the rest of the set waits off-stage, so every item gets its own
+   turn instead of sharing one with two others. --pin-one-w is the one number both
+   axes read — the upright bands take it as their grid column, the shelf takes it as
+   the width the driver sizes each card to — so it has to stay a plain length.
+   ========================================================================== */
+.pinband--one{--pin-one-w:640px}
+
+/* Upright: one column, centred in the band's own measure. The driver already puts a
+   column break on every page leader, and with one card to a page that is every card,
+   so the set falls into a stack of single pictures with no rule of its own. */
+.pinband--paged.pinband--one:not(.pinband--x) .pinband__window .shots,
+.pinband--paged.pinband--one:not(.pinband--x) .pinband__window .cards,
+.pinband--paged.pinband--one:not(.pinband--x) .pinband__window .exp__items{
+  grid-template-columns:minmax(0,var(--pin-one-w));justify-content:center}
+
+/* Twenty-odd stones cannot each print a name along one hairline, and a rail that long
+   is a progress read-out well before it is a table of contents: the stone you are on
+   prints, the rest stay clickable and stay named to a reader who cannot see them. */
+.pinband--one .pstory__step:not([data-active="true"]) .pstory__step-label{display:none}
+.pinband--one .pstory__step{gap:0}
+.pinband--one .pstory__step[data-active="true"]{gap:4px}
