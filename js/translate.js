@@ -315,17 +315,10 @@
     window.addEventListener("resize", function () {
       if (host.classList.contains("is-open")) fitColumns();
     }, { passive: true });
-    /* Scrolling collapses the top row away, which would leave the desktop sheet
-       hanging over nothing — so it shuts with the row that holds its trigger.
-       The narrow sheet is pinned to the window rather than to the button, so
-       momentum scrolling there must leave it alone. */
-    window.addEventListener("scroll", function () {
-      if (!host.classList.contains("is-open")) return;
-      if (!matchMedia("(min-width:861px)").matches) return;
-      var header = host.closest(".site-header");
-      if (header && header.classList.contains("is-scrolled")) close();
-      else anchor();
-    }, { passive: true });
+    /* This sheet used to shut the moment the page scrolled, because scrolling
+       folded the utility row away and left the sheet hanging over nothing. The
+       row is pinned with the nav now, so it never moves out from under the sheet
+       and there is nothing to close on — the listener went with it. */
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape") close();
     });

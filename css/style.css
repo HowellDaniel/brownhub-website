@@ -982,17 +982,18 @@ html.js-scroll .product-card:hover .media::after,html.js-scroll .product-card:fo
 .icon-tile--lg svg{width:28px;height:28px}
 
 /* ==========================================================================
-   TWILIO HEADER — two rows, like twilio.com/en-us: a 44px utility bar that
-   scrolls away, an 80px main row with the logo pushed to the left edge of the
-   free space, and a full-width mega panel that hangs below it. Their panel has
-   no shadow at all — only a 1px bottom rule — and opens by max-height, which
-   is why the transition below reads as slow and calm rather than as a pop.
+   TWILIO HEADER — two rows, like twilio.com/en-us: a 44px utility bar, an 80px
+   main row with the logo pushed to the left edge of the free space, and a
+   full-width mega panel that hangs below it. Their panel has no shadow at all —
+   only a 1px bottom rule — and opens by max-height, which is why the transition
+   below reads as slow and calm rather than as a pop.
+   Their bar scrolls away and ours used to as well, which took the language
+   picker and the account link off the page for the rest of the visit. Both rows
+   are pinned now, so the bar keeps no clip and no collapse of its own — the
+   header's own sticky box is the only thing holding it up.
    ========================================================================== */
-.topnav{max-height:44px;overflow:hidden;background:var(--bg-alt);border-bottom:var(--t-bw) solid var(--border);
-  transition:max-height .45s var(--ease-out),opacity .3s ease,visibility 0s}
+.topnav{background:var(--bg-alt);border-bottom:var(--t-bw) solid var(--border)}
 .topnav__inner{display:flex;align-items:center;justify-content:space-between;gap:var(--t-3);min-height:44px}
-.site-header.is-scrolled .topnav{max-height:0;opacity:0;visibility:hidden;border-bottom-color:transparent;
-  transition:max-height .45s var(--ease-out),opacity .25s ease,visibility 0s .45s}
 .topnav__links{display:flex;align-items:center;gap:var(--t-3)}
 .topnav__links .nav__link--acct,.topnav__link{font-size:var(--t-small);font-weight:500;color:var(--text-muted);
   padding:4px 2px;border:0;background:none;cursor:pointer;font-family:inherit}
@@ -1056,7 +1057,7 @@ html.js-nav .nav__caret{display:grid}
 
 @media (max-width:1180px){.mega__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--t-5)}
   .mega__rail{grid-column:1/-1}}
-@media (prefers-reduced-motion:reduce){.topnav,.mega,.locale__caret{transition:none}}
+@media (prefers-reduced-motion:reduce){.mega,.locale__caret{transition:none}}
 
 /* the drawer, the condensed row and the story rail all key off the real header height */
 @media (max-width:900px){.mega{display:none}.nav{height:72px}html.js-nav .nav__caret{display:none}}
@@ -1070,7 +1071,7 @@ html.js-nav .nav__caret{display:grid}
 @media (max-width:430px){.site-header .logo-img{height:32px}.topnav__links .nav__link--acct{font-size:13px}}
 @media (max-width:840px){
   .locale__btn,.topnav__links .nav__link--acct{min-height:44px}
-  .topnav{max-height:52px}.topnav__inner{min-height:52px}
+  .topnav__inner{min-height:52px}
   .locale__opt{min-height:44px}
 }
 
@@ -1568,12 +1569,13 @@ html[dir="rtl"] .flow--live .flow__items{animation-name:flow-right}
 
 /* ==========================================================================
    THE LANGUAGE SHEET ON WIDE SCREENS
-   .topnav keeps overflow:hidden so the row can collapse to nothing once the page
-   scrolls, but that same clip swallowed the sheet: the panel is a descendant of
-   the row, so all forty languages were cut away below its 44px and the button
-   looked dead. The narrow-screen rule already escaped this by going fixed; the
-   desktop now does the same, anchored by --locale-top/--locale-left, which only
-   js/translate.js can publish because only it knows where the button landed.
+   The sheet goes fixed rather than hanging off its button so its height can be
+   read off the viewport: forty languages in a row-less column flow need a
+   scroll box that stops above the cookie notice, and a percentage of an
+   in-flow ancestor cannot say that. --locale-top/--locale-left are published by
+   js/translate.js, the only party that knows where the button landed. It once
+   also escaped the utility bar's collapse clip that way; the bar is pinned now
+   and no longer clips, so the fixed sheet is only about the height.
    ========================================================================== */
 @media (min-width:861px){
   .locale.is-open .locale__panel{position:fixed;inset-inline-start:auto;inset-inline-end:auto;
