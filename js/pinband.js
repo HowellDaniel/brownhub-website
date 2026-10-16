@@ -9,9 +9,10 @@
   are seen through.
 
   Everything is opt-in. The markup ships as a plain grid; this script builds the
-  stage, and only over a band that has more than one page to show. A phone, a short
-  window, a visitor who asked for less motion, a filtered set too small to fill a
-  second page, and a visitor with scripting off all keep the plain grid.
+  stage, and only over a band that has more than one page to show. A short window, a
+  visitor who asked for less motion, a filtered set too small to fill a second page, and
+  a visitor with scripting off all keep the plain grid. A phone gets the stage too, but
+  spends less scroll per page than a wide screen does — see --pin-page-h in layout().
 
   Every band on this site says data-pin-dir="x" and turns sideways, which is how
   twilio.com's own pinned band moves: the heading holds still and the next page arrives
@@ -40,7 +41,19 @@
   const BEAT = 200, STEP = 1600, LAST = 3200, IDLE = 1400;
   const GLIDE = "translate .8s var(--ease-out)";
   const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-  const room = matchMedia("(min-width:900px) and (min-height:760px)");
+  /* A phone gets the stage too. The old gate asked for 900px of width because the band
+     was built to show three cards at once, and three cards across a pocket is a stripe.
+     Every band on this site turns one picture to a page now, and one picture centred in
+     a column is exactly what a phone already does — the difference is that the stage
+     makes the next one arrive from the side instead of falling below the last. What
+     still keeps the plain grid is a window too short to stand a screenful in, a visitor
+     who asked for less motion, and scripting turned off. */
+  const room = matchMedia("(min-width:340px) and (min-height:520px)");
+  /* The pointer hold is a mouse idea: a finger that taps a picture to order it is not
+     asking the shelf to wait, and on a touch screen pointerenter fires on the tap and
+     leaves no pointerleave behind, so a band that pauses for it stays paused until the
+     visitor leaves the page. Only a device that can actually hover gets held. */
+  const canHover = matchMedia("(hover: hover)");
   const navH = () => parseFloat(root.style.getPropertyValue("--nav-h")) || 72;
   const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
   const el = (t, c) => { const n = doc.createElement(t); n.className = c; return n; };
@@ -138,10 +151,15 @@
   Band.prototype.hold = function () {
     const stop = () => { this.paused = true; };
     const go = () => { this.paused = false; };
-    [this.win, this.rail].forEach((n) => {
-      n.addEventListener("pointerenter", stop);
-      n.addEventListener("pointerleave", go);
-    });
+    if (canHover.matches) {
+      [this.win, this.rail].forEach((n) => {
+        n.addEventListener("pointerenter", stop);
+        n.addEventListener("pointerleave", go);
+        /* A pointer that is taken away mid-gesture — the browser moving to the
+           compositor, a second finger arriving — never says goodbye on its way out. */
+        n.addEventListener("pointercancel", go);
+      });
+    }
     this.pin.addEventListener("focusin", stop);
     this.pin.addEventListener("focusout", go);
   };
@@ -331,7 +349,14 @@
        does not change the layout schedules no second pass. */
     const room = this.spare();
     this.trim(h - room);
-    this.win.style.height = Math.max(200, Math.min(h, room)) + "px";
+    const page = Math.max(200, Math.min(h, room));
+    this.win.style.height = page + "px";
+    /* On a phone the stage is a whole screenful tall while a single card may be only
+       half of it, and a page of scroll that is mostly air is a page the visitor has to
+       drag their thumb through for nothing. The page's own measured height is handed to
+       CSS so the narrow layout can spend that — plus a little air to read in — per page
+       instead of a screen. Wide screens ignore the number and keep the screenful. */
+    this.run.style.setProperty("--pin-page-h", Math.round(page + Math.min(120, page * 0.3)) + "px");
     /* Every extra page buys one more screenful of scroll, at the rate the process
        story already turns. The count is handed to CSS rather than multiplied out
        here, because --nav-h shrinks while the header condenses and the stage grows
@@ -532,6 +557,7 @@
     this.breaks();
     this.uncard();
     this.win.style.removeProperty("--pin-bleed");
+    this.run.style.removeProperty("--pin-page-h");
     this.strip.style.removeProperty("--pin-media-h");
     if (this.steps) {
       this.steps.forEach((s) => { s.removeAttribute("data-active"); s.removeAttribute("aria-current"); });

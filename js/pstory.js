@@ -12,8 +12,8 @@
 
   Everything is opt-in: the band ships as a plain stacked list, and the pinned
   arrangement only appears once this script adds .js-pstory to <html>. A visitor
-  who asked for less motion, a short window, a phone, or scripting turned off all
-  keep the stack.
+  who asked for less motion, a short window, or scripting turned off all keep
+  the stack.
 */
 (() => {
   "use strict";
@@ -31,7 +31,10 @@
   slides.forEach((s, k) => s.style.setProperty("--at", String(k)));
 
   const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-  const room = matchMedia("(min-width:900px) and (min-height:600px)");
+  /* The same gate the collection bands stand behind, so the pinned layer of the page
+     arrives on a phone as it does on a desktop. A step is one screenful of story, and
+     the CSS stacks its picture over its words when the screen is a column. */
+  const room = matchMedia("(min-width:340px) and (min-height:520px)");
   let pinned = false, index = -1, queued = false;
 
   /* The nav condenses as you scroll and js/scroll.js keeps --nav-h on its real

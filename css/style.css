@@ -3146,3 +3146,95 @@ html.js-pstory .pstory__slide:nth-child(even) .pstory__visual{order:1}
 .pinband--paged .pinband__window .exp__items>*:nth-child(even){--turn:calc(var(--turn-sign) * var(--turn-deg))}
 .pinband--paged .pinband__window .shot:hover{
   transform:perspective(var(--turn-persp)) rotateY(var(--turn)) scale(var(--turn-fit)) translateY(-3px)}
+
+/* ==========================================================================
+   THE PINNED LAYER IN A POCKET  (js/pinband.js, js/pstory.js)
+   The stage used to be a desk privilege. Both drivers asked for 900px of width, because
+   a page used to be three cards side by side and three cards across a phone is a stripe.
+   Every band turns one picture to a page now, so the same stage is asked for a second
+   time — and three of its habits belong to a desk: the screen it measures itself
+   against, the scroll it charges per page, and the rail it prints the page count along.
+
+   The screen is the browser's own, not the browser's page. 100vh is the height with the
+   address bar already out of the way, so a stage built from it stands taller than the
+   visitor can see and the rail — the whole position read-out — waits under the chrome.
+   dvh follows the bar as it comes and goes. The vh line stays in front of it for any
+   engine that has never met the unit, and that page is the one it always was.
+   ========================================================================== */
+html.js-pstory .pstory__pin{height:calc(100vh - var(--nav-h));height:calc(100dvh - var(--nav-h))}
+html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(3 * (100dvh - var(--nav-h)))}
+.pinband--paged .pinband__pin{height:calc(100vh - var(--nav-h));height:calc(100dvh - var(--nav-h))}
+.pinband--paged .pinband__run{height:calc((100vh - var(--nav-h)) * var(--pin-pages,1));
+  height:calc((100dvh - var(--nav-h)) * var(--pin-pages,1))}
+
+@media (max-width:719px){
+  /* One screenful per page is the wide screen's bargain: a page there is a shelf of
+     three and the picture earns the room. A page here is one card that fills half the
+     column, and all the rest of the screen is air a thumb has to drag through to reach
+     the next picture — twenty-three screens of it for twenty-six products on the
+     catalog. --pin-page-h is the page's own measured height plus a little reading air,
+     and the narrow stage spends that instead. The stage itself keeps its screenful, and
+     every number the driver reads (the span, the jump, whether the band is on stage at
+     all) comes off the run's own box, so a denser scroll needs no second driver and no
+     different gesture. */
+  .pinband--paged .pinband__run{
+    height:calc(min(100vh - var(--nav-h), var(--pin-page-h, 100vh)) * var(--pin-pages,1));
+    height:calc(min(100dvh - var(--nav-h), var(--pin-page-h, 100dvh)) * var(--pin-pages,1))}
+
+  /* The rail holds a 24px stone, a 40px active stone and a name only the current page
+     prints; twenty-six of them have 342px to live in, which is thirteen each. So the
+     stone becomes a dot and grows back by scale — a box that changes its own width
+     pushes every neighbour along the row, and a ruler whose marks shift under the eye
+     that is reading them is no longer a ruler. The name stops riding its own stone and
+     prints once, centred on the rail, the way a chapter title prints above a scrubber:
+     at this width the two are never the same distance from the centre, and a name
+     anchored to its stone would hang half off the page whenever the stone is at an end.
+     One line, through the dots' centres, replaces the border the desktop rail wore. */
+  html.js-pstory .pstory__rail,.pinband--paged .pstory__rail{height:58px;align-items:flex-end;border-bottom:0}
+  html.js-pstory .pstory__rail::after,.pinband--paged .pstory__rail::after{bottom:8px}
+  .pstory__step{bottom:4px;gap:0}
+  .pstory__diamond,.pstory__diamond-in,
+  .pstory__step[data-active="true"] .pstory__diamond,
+  .pstory__step[data-active="true"] .pstory__diamond-in{width:9px;height:9px;bottom:0;
+    border-radius:2px;transition:scale .25s var(--ease-out),background-color .2s,border-color .2s}
+  .pstory__step[data-active="true"]{position:static;gap:0}
+  .pstory__step[data-active="true"] .pstory__diamond-in{scale:1.9}
+  .pstory__step[data-active="true"]::before,.pstory__icon{display:none}
+  .pstory__step:not([data-active="true"]) .pstory__step-label{display:none}
+  .pstory__step[data-active="true"] .pstory__step-label{position:absolute;left:50%;top:0;translate:-50% 0;
+    padding:0;background:transparent;color:inherit;font-size:15px;line-height:22px;font-weight:600;
+    max-width:calc(100% - var(--t-gutter) * 2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* A phone is tall enough to walk past the max-height rules that strip a second line of
+     intro off the stage, and a Pro Max is tall enough to keep one — so the width decides
+     here, because the width is what takes the cards down to a single column anyway. */
+  .pinband--paged .section__head p:not(.eyebrow):not(.hero__eyebrow){display:none}
+  html.js-pstory .pstory__head p:not(.hero__eyebrow){display:none}
+  .pinband--paged .pinband__body{padding-top:var(--t-4);gap:var(--t-3)}
+  html.js-pstory .pstory__body{padding-top:var(--t-4);gap:var(--t-3)}
+
+  /* The wide stage squeezes every picture to 16/9, then to 2/1 on a short screen, because
+     a shelf of three has to be wide and shallow. One picture standing alone in a column
+     as wide as the screen wants the opposite, and goes back to the ratio the card was
+     drawn with — the ratio the plain grid already uses. */
+  .pinband--paged .pinband__window .media{--media-ar:4/3}
+  .pinband--paged .pinband__window .product-card .media{--media-ar:1/1}
+  .pinband--paged.webcat .pinband__window .product-card .media{--media-ar:4/3}
+
+  /* The story's two columns become the stack the band ships with: its words first, then
+     the picture filling whatever height the screen has left. The step still arrives from
+     the side, because the track pans by its own width either way. */
+  html.js-pstory .pstory__slide,
+  html.js-pstory .pstory__slide:nth-child(even){
+    grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+  html.js-pstory .pstory__slide:nth-child(even) .pstory__copy,
+  html.js-pstory .pstory__slide:nth-child(even) .pstory__visual{order:0}
+  html.js-pstory .pstory__visual{min-height:0}
+  html.js-pstory .pstory__copy p{font-size:clamp(14px,3.6vw,16px)}
+
+  /* The way out of the story is pinned to the top-right corner of the stage, which on a
+     wide screen is empty air beside the heading. A phone has no such air: the corner sits
+     straight on the eyebrow. It goes back into the column, under the rail, where it is
+     the last thing before the next band. */
+  html.js-pstory .pstory__skip{position:static;align-self:center;margin:var(--t-2) 0 var(--t-3)}
+}
