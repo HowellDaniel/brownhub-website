@@ -92,36 +92,84 @@
      collected, not on every scroll event. Reading a rect per element inside the
      scroll loop forced a layout flush ~80 times a frame — the profiler showed it
      as the heaviest script on the page. Anything that can actually move a frame
-     (an image arriving, a translation reflowing a block, a resize, new cards) sets
-     the dirty flag instead, and the next frame re-measures once in a single pass. */
+     (an image arriving, a translation reflowing a block, a resize, new cards)
+     invalidates the measurement instead.
+
+     A read does not cost itself, it costs every write that came before it, so the
+     size of an invalidation matters as much as how often it happens. One picture
+     arriving moves one frame and is measured on the spot; a resize or a language
+     swap moves all eighty, and that walk is taken sixteen elements at a time so
+     the frames it lands on are charged a slice rather than the whole document. */
   const drift = [];
-  let dirty = true;
-  const flagDirty = () => { dirty = true; };
-  function measureDrift() {
-    if (!drift.length) { dirty = false; return; }
-    const y = scrollY;
-    for (const d of drift) {
-      const r = d.el.getBoundingClientRect();
-      d.abs = r.top + y;
-      d.h = r.height;
-    }
-    drift.sort((a, b) => a.abs - b.abs);
-    dirty = false;
+  const byElement = new Map();
+  const BATCH = 16;
+  let stale = true, at = 0;
+  function measure(d) {
+    const r = d.el.getBoundingClientRect();
+    d.abs = r.top + scrollY;
+    d.h = r.height;
   }
+  function measureDrift() {
+    if (!drift.length) { stale = false; at = 0; return; }
+    /* A slot already measured is passed over for free, so a walk woken by one new
+       picture costs that picture and nothing else. The cap counts reads, not slots. */
+    let reads = 0;
+    while (at < drift.length && reads < BATCH) {
+      const d = drift[at++];
+      if (Number.isNaN(d.abs)) { measure(d); reads++; }
+    }
+    if (at < drift.length) return;
+    drift.sort((a, b) => a.abs - b.abs);
+    stale = false;
+    at = 0;
+  }
+  function invalidateAll() {
+    stale = true;
+    at = 0;
+    for (const d of drift) d.abs = NaN;
+  }
+  /* The pass over the selectors keeps the rows it already has, in the order the last
+     walk left them, and appends whatever is new. Rebuilding in selection order instead
+     would silently unsort the list, and the early exit in the paint below leans on
+     that sort. Any change to the set moves the document under the frames that stayed,
+     so it is the whole list that is dropped rather than the one card. */
+  let pass = 0;
   function collectDrift() {
-    drift.length = 0;
-    if (still) return;
-    DRIFT.forEach(([sel, amp]) => doc.querySelectorAll(sel).forEach((el, i) =>
-      drift.push({ el, amp: sel === ".hero__card" && i % 2 ? -amp : amp, abs: 0, h: 0, py: "" })));
-    measureDrift();
+    if (still) { drift.length = 0; byElement.clear(); return; }
+    pass++;
+    let changed = false;
+    DRIFT.forEach(([sel, amp]) => doc.querySelectorAll(sel).forEach((el, i) => {
+      const flip = sel === ".hero__card" && i % 2 ? -amp : amp;
+      const d = byElement.get(el);
+      if (d) { d.amp = flip; d.live = pass; return; }
+      const fresh = { el, amp: flip, abs: NaN, h: 0, py: "", live: pass };
+      drift.push(fresh);
+      byElement.set(el, fresh);
+      changed = true;
+    }));
+    let n = 0;
+    for (let i = 0; i < drift.length; i++) {
+      const d = drift[i];
+      if (d.live !== pass) { changed = true; byElement.delete(d.el); continue; }
+      drift[n++] = d;
+    }
+    drift.length = n;
+    if (changed) invalidateAll();
   }
   function applyDrift() {
     if (!drift.length) return;
+    if (stale) measureDrift();
     const vh = innerHeight, y = scrollY;
     const from = y - 240, to = y + vh + 240;
     for (const d of drift) {
+      if (Number.isNaN(d.abs)) continue;      /* waiting for its turn in the walk */
       if (d.abs + d.h < from) continue;
-      if (d.abs > to) break;               /* the list is in document order */
+      if (d.abs > to) {
+        /* The early exit is a property of the sorted list, and the list is only
+           sorted once a walk has finished. */
+        if (!stale) break;
+        continue;
+      }
       const py = (((d.abs + d.h / 2 - y) - vh / 2) / vh * d.amp).toFixed(1) + "px";
       if (py === d.py) continue;           /* a still frame writes nothing at all */
       d.py = py;
@@ -225,12 +273,14 @@
     requestAnimationFrame(() => {
       queued = false;
       const y = scrollY;
-      /* Reads before writes, so nothing we queue here has to be settled to answer them. */
-      if (dirty) { dirty = false; measureDrift(); span = root.scrollHeight - innerHeight; spanAt = Date.now(); }
+      /* Reads before writes, so nothing we queue here has to be settled to answer them.
+         The walk itself is a slice of at most BATCH reads, so a woken list cannot spend
+         a frame the way one global flag used to. */
+      if (stale) measureDrift();
       /* The page can change height without loading anything — a band collapses, a panel
          closes — and a stale span then parks the hairline below full. That read is a layout
          flush, so it is asked for twice a second at most rather than every frame. */
-      else if (Date.now() - spanAt > 500) { spanAt = Date.now(); span = root.scrollHeight - innerHeight; }
+      if (Date.now() - spanAt > 500) { spanAt = Date.now(); span = root.scrollHeight - innerHeight; }
       if (condensed !== (y > 24)) { condensed = y > 24; if (header) header.classList.toggle("is-scrolled", condensed); }
       if (bar) bar.style.setProperty("--p", span > 0 ? Math.min(y / span, 1).toFixed(4) : 0);
       applyDrift();
@@ -238,10 +288,25 @@
   }
 
   addEventListener("scroll", onScroll, { passive: true });
-  addEventListener("resize", () => { measureNav(); wireFooter(); flagDirty(); onScroll(); }, { passive: true });
-  /* Images do not bubble their load, so capture it at the document. */
-  doc.addEventListener("load", flagDirty, true);
-  addEventListener("i18n-applied", flagDirty);
+  addEventListener("resize", () => { measureNav(); wireFooter(); invalidateAll(); onScroll(); }, { passive: true });
+  /* Images do not bubble their load, so capture it at the document. One picture that
+     arrives settles into the space the page already carved for it, so it moves only
+     itself: charge that single read now and leave the other seventy-nine alone. */
+  doc.addEventListener("load", (e) => {
+    const d = byElement.get(e.target);
+    if (!d) return;
+    /* Mid-walk the list is not yet in document order, so the only safe answer is to
+       hand the row back to the walk and let it reach its own turn. */
+    if (stale) { d.abs = NaN; at = 0; return; }
+    measure(d);
+    /* A picture that arrives can only push down, never up: the rows above it keep
+       their measured places and just the tail is dropped. */
+    const i = drift.indexOf(d);
+    for (let k = i + 1; k < drift.length; k++) drift[k].abs = NaN;
+    at = i + 1;
+    stale = true;
+  }, true);
+  addEventListener("i18n-applied", invalidateAll);
 
   measureNav();
   scan();

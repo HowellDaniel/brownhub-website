@@ -316,16 +316,41 @@
     return (term || "").toLowerCase().trim().split(/\s+/).filter(Boolean);
   }
 
+  // The words a card answers to are only ever rewritten by the translator, so each
+  // card's haystack is cut once and kept. Rebuilding it meant walking a whole card
+  // subtree and re-lowercasing it for every card on every keystroke.
+  var hays = new WeakMap();
+
+  function haystack(card) {
+    var s = hays.get(card);
+    if (s === undefined) {
+      s = (card.dataset.name + " " + (card.dataset.catlabel || "") + " " +
+        (card.dataset.desc || "") + " " + card.textContent).toLowerCase();
+      hays.set(card, s);
+    }
+    return s;
+  }
+
+  // dataset holds the English source and textContent the rendered language, so
+  // a visitor searching in either one hits the same card.
   function matches(card, list) {
-    // dataset holds the English source and textContent the rendered language, so
-    // a visitor searching in either one hits the same card.
-    var hay = (card.dataset.name + " " + (card.dataset.catlabel || "") + " " +
-      (card.dataset.desc || "") + " " + card.textContent).toLowerCase();
+    var hay = haystack(card);
     for (var i = 0; i < list.length; i++) if (hay.indexOf(list[i]) === -1) return false;
     return true;
   }
 
-  function applyFilter(term, remember) {
+  function remember(term) {
+    try {
+      var u = new URL(location.href);
+      if (words(term).length) u.searchParams.set("q", term.trim());
+      else u.searchParams.delete("q");
+      if (catOn) u.searchParams.set("cat", catOn);
+      else u.searchParams.delete("cat");
+      history.replaceState(history.state, "", u);
+    } catch (e) {}
+  }
+
+  function applyFilter(term, keep) {
     var list = words(term);
     var shown = 0;
     cards.forEach(function (card) {
@@ -333,30 +358,36 @@
       // label is a dictionary key and may be rendered in any of forty languages,
       // while data-cat does not move.
       var ok = (!list.length || matches(card, list)) && (!catOn || card.dataset.cat === catOn);
-      card.hidden = !ok;
+      // A card already showing what the term asks for is left alone: writing the
+      // same value to `hidden` still counts as a change to every observer watching
+      // the shelf, and the pinned stage rebuilds itself for each one.
+      if (card.hidden !== !ok) card.hidden = !ok;
       if (ok) shown++;
     });
     if (filterClear) filterClear.hidden = !list.length && !catOn;
     if (emptyEl) emptyEl.hidden = shown !== 0;
-    if (remember !== false) {
-      try {
-        var u = new URL(location.href);
-        if (list.length) u.searchParams.set("q", term.trim());
-        else u.searchParams.delete("q");
-        if (catOn) u.searchParams.set("cat", catOn);
-        else u.searchParams.delete("cat");
-        history.replaceState(history.state, "", u);
-      } catch (e) {}
-    }
+    if (keep !== false) remember(term);
   }
 
   if (filterForm && filterInput) {
     filterForm.addEventListener("submit", function (e) { e.preventDefault(); });
+    /* One pass per frame, whatever the fingers did in between: a visitor who types
+       four letters in a quarter second asked for four rebuilds of the whole shelf,
+       and the stage underneath it rebuilt twice for each. The address waits for the
+       typing to stop — it is a bookmark, not a readout. */
+    var wanted = "", frame = 0, quiet = 0;
     filterInput.addEventListener("input", function () {
+      wanted = filterInput.value;
       // Typing outranks a collection: a visitor searching has already left the
       // shelf they came in through.
       if (catOn) { catOn = ""; armTile(""); }
-      applyFilter(filterInput.value);
+      if (frame) return;
+      frame = requestAnimationFrame(function () {
+        frame = 0;
+        applyFilter(wanted, false);
+        clearTimeout(quiet);
+        quiet = setTimeout(function () { remember(wanted); }, 400);
+      });
     });
     if (filterClear) {
       filterClear.addEventListener("click", function () {
@@ -371,6 +402,10 @@
       applyFilter(seeded, false);
     }
   }
+
+  // A translated card answers to different words, so the cut haystacks are dropped
+  // and re-cut against whatever the page now says.
+  window.addEventListener("i18n-applied", function () { hays = new WeakMap(); });
 
   /* ---- collections ----
      Each tile narrows the grid to one family of work. The picture in a tile is a

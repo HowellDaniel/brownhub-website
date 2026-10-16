@@ -58,9 +58,25 @@
     }
   }
 
+  /* The band's distance from the top of the document only moves when something above
+     it is re-laid-out, and reading it every frame asks the page to settle every write
+     that came before it. Held for a quarter second instead, and dropped by anything
+     that can genuinely move it — a window that changed size, a language that changed
+     how a headline wraps, a picture that arrived. The nav is never part of the hold:
+     --nav-h is added at the end, so the stage keeps up with the condensing header
+     without re-reading the document. */
+  let absAt = 0, abs = 0, runH = 1;
+  function release() { absAt = 0; }
+  function hold() {
+    if (absAt && Date.now() - absAt <= 250) return;
+    absAt = Date.now();
+    abs = band.getBoundingClientRect().top + scrollY;
+    runH = run.offsetHeight || 1;
+  }
+
   function progress() {
-    const span = run.offsetHeight || 1;
-    return clamp((navH() - band.getBoundingClientRect().top) / span);
+    hold();
+    return clamp((navH() - (abs - scrollY)) / runH);
   }
 
   function follow() {
@@ -75,8 +91,9 @@
   /* Jumping to a step lands a hair inside that step's own window, so the rounding
      in follow() cannot hand the frame back to its neighbour. */
   function goTo(i) {
-    const y = band.getBoundingClientRect().top + scrollY - navH() + (i / (N - 1)) * run.offsetHeight + 2;
-    scrollTo({ top: y, behavior: reduce.matches ? "auto" : "smooth" });
+    hold();
+    scrollTo({ top: abs - navH() + (i / (N - 1)) * runH + 2,
+      behavior: reduce.matches ? "auto" : "smooth" });
   }
 
   steps.forEach((b, i) => b.addEventListener("click", () => goTo(i)));
@@ -97,13 +114,14 @@
 
   if (skip) {
     skip.addEventListener("click", () => {
-      const y = band.getBoundingClientRect().top + scrollY + band.offsetHeight - navH();
-      scrollTo({ top: y, behavior: reduce.matches ? "auto" : "smooth" });
+      hold();
+      scrollTo({ top: abs + band.offsetHeight - navH(), behavior: reduce.matches ? "auto" : "smooth" });
     });
   }
 
   function evaluate() {
     const want = room.matches && !reduce.matches;
+    release();
     if (want === pinned) return;
     pinned = want;
     root.classList.toggle("js-pstory", pinned);
@@ -126,11 +144,12 @@
   addEventListener("scroll", onScroll, { passive: true });
   room.addEventListener("change", evaluate);
   reduce.addEventListener("change", evaluate);
-  addEventListener("resize", () => { if (pinned) evaluate(); }, { passive: true });
+  addEventListener("resize", () => { release(); if (pinned) evaluate(); }, { passive: true });
   /* Translation rewrites the rail labels and can wrap a headline onto a second
-     line, which changes nothing about the geometry but does mean the current
-     index should be re-read once the paint settles. */
-  addEventListener("i18n-applied", () => { if (pinned) { index = -1; follow(); } });
+     line, which changes nothing about the step it is on but does move the stage. */
+  addEventListener("i18n-applied", () => { release(); if (pinned) { index = -1; follow(); } });
+  /* Pictures do not bubble their load, and one that lands above the stage moves it. */
+  doc.addEventListener("load", release, true);
 
   evaluate();
   if (pinned) addEventListener("load", follow, { once: true });

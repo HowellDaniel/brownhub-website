@@ -177,18 +177,25 @@
 
   function norm(s) { return (s || "").toLowerCase().trim(); }
 
-  function haystack(e) {
-    return norm(e.t) + " " + norm(TR(e.t)) + " " + norm(e.k) + " " + norm(e.g) + " " + norm(TR(e.g));
+  /* Every entry's words are cut once per language. Building the string inside the
+     walk meant a keystroke asked the dictionary four times for each of the ninety
+     rows and strung the answers together, which is the whole cost of the panel. */
+  var HAY = null;
+  function cut() {
+    HAY = INDEX.map(function (e) {
+      return norm(e.t) + " " + norm(TR(e.t)) + " " + norm(e.k) + " " + norm(e.g) + " " + norm(TR(e.g));
+    });
+    return HAY;
   }
 
   function query(q) {
     var words = norm(q).split(/\s+/).filter(Boolean);
     if (!words.length) return [];
-    var out = [];
+    var hay = HAY || cut(), out = [];
     for (var i = 0; i < INDEX.length; i++) {
-      var e = INDEX[i], hay = haystack(e), all = true, any = false;
+      var e = INDEX[i], all = true, any = false;
       for (var w = 0; w < words.length; w++) {
-        var hit = hay.indexOf(words[w]) !== -1;
+        var hit = hay[i].indexOf(words[w]) !== -1;
         if (!hit) all = false;
         if (hit) any = true;
       }
@@ -362,6 +369,7 @@
   });
 
   doc.addEventListener("i18n-applied", function () {
+    HAY = null;
     if (!open) return;
     render();
   });

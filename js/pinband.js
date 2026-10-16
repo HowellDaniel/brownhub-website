@@ -91,9 +91,14 @@
   };
 
   /* The grid's own box is the only reliable signal that the card set changed: both
-     the filters and the search hide cards, and a hidden card takes its row with it. */
+     the filters and the search hide cards, and a hidden card takes its row with it.
+
+     Both observers are answered on the next frame rather than where they fire: one
+     keystroke hides and shows a dozen cards, and a synchronous pass ran the whole
+     layout once for the mutation and again for the size it left behind. A stage that
+     is asked for twice in a frame is only ever rebuilt once. */
   Band.prototype.watch = function () {
-    const relayout = () => { if (root.classList.contains("js-pinband")) this.layout(); };
+    const relayout = () => this.ask();
     if (typeof ResizeObserver === "function") new ResizeObserver(relayout).observe(this.strip);
     new MutationObserver(relayout).observe(this.strip, { attributes: true, subtree: true, attributeFilter: ["hidden"] });
     addEventListener("resize", () => {
@@ -103,6 +108,12 @@
       relayout();
     }, { passive: true });
     addEventListener("i18n-applied", relayout);
+  };
+
+  Band.prototype.ask = function () {
+    if (this.scheduled || !root.classList.contains("js-pinband")) return;
+    this.scheduled = true;
+    requestAnimationFrame(() => { this.scheduled = false; this.layout(); });
   };
 
   /* The band's own page size, unless that would leave one card alone on a whole screen
@@ -202,7 +213,11 @@
     this.cards.forEach((c) => { c.style.flexBasis = basis + "px"; });
     this.rtl = getComputedStyle(this.strip).direction === "rtl";
     this.lead0 = one ? (avail - basis) / 2 : 0;
-    this.at = this.groups.map((g) => Math.round(this.lead(g[0]) - this.lead0));
+    /* The track's own box is asked for once, after every write this pass makes: a
+       shelf of thirty cards read it thirty times, and a read that follows a write is
+       the page being rebuilt to answer it. */
+    const s = this.strip.getBoundingClientRect();
+    this.at = this.groups.map((g) => Math.round(this.lead(g[0], s) - this.lead0));
     return Math.max.apply(null, this.cards.map((c) => c.offsetHeight));
   };
 
@@ -212,8 +227,8 @@
      produces pulls the shelf clean off the stage. Two rects are used instead, and since
      the track travels with its own cards, their difference is the one number a sliding
      shelf cannot corrupt. */
-  Band.prototype.lead = function (card) {
-    const s = this.strip.getBoundingClientRect(), r = card.getBoundingClientRect();
+  Band.prototype.lead = function (card, s) {
+    const r = card.getBoundingClientRect();
     return this.rtl ? s.right - r.right : r.left - s.left;
   };
 
@@ -237,6 +252,7 @@
   };
 
   Band.prototype.layout = function () {
+    this.release();
     const wasRun = this.run.offsetHeight, wasIndex = this.index;
     const anchor = this.top(), inside = scrollY >= anchor - 2 && scrollY <= anchor + wasRun + 2;
     this.cards = [].slice.call(this.strip.children).filter((c) => c.nodeType === 1 && !c.hidden);
@@ -281,6 +297,9 @@
        here, because --nav-h shrinks while the header condenses and the stage grows
        with it — a run measured at the top would be short by the end of the scroll. */
     this.run.style.setProperty("--pin-pages", String(n - 1));
+    /* Everything above wrote the page's own geometry, so the hold is dropped and the
+       next read pays for the stage as it now stands. */
+    this.release();
     this.stamp();
     this.index = -1;
     this.follow();
@@ -352,13 +371,32 @@
   /* The pin is sticky, so once it is stuck its own rect has stopped telling the
      story — it sits at --nav-h for the whole scroll. The run is the sibling that
      keeps moving, and the stage began exactly one stage-height above where the run
-     starts, so the run is what the progress has to be read off. */
+     starts, so the run is what the progress has to be read off.
+
+     The run's place in the document is a number that only changes when the document
+     is re-laid-out, and four bands asked for it twice every frame. Held for a quarter
+     second instead: a picture arriving above the stage, a filter that changes the
+     card count, or a window that changes size all drop the hold, and the header's own
+     condense is never part of it — --nav-h is added at the end, so the stage keeps up
+     with the nav without re-reading the document. */
+  Band.prototype.anchor = function () {
+    if (this.held === undefined || Date.now() - this.held > 250) {
+      this.held = Date.now();
+      this.abs = this.run.getBoundingClientRect().top + scrollY - this.pin.offsetHeight;
+      this.runH = this.run.offsetHeight;
+    }
+    return this.abs;
+  };
+
+  Band.prototype.release = function () { this.held = undefined; };
+
   Band.prototype.top = function () {
-    return this.run.getBoundingClientRect().top + scrollY - this.pin.offsetHeight - navH();
+    return this.anchor() - navH();
   };
 
   Band.prototype.span = function () {
-    return this.run.offsetHeight || 1;
+    this.anchor();
+    return this.runH || 1;
   };
 
   Band.prototype.follow = function () {
@@ -393,6 +431,7 @@
   Band.prototype.setPaged = function (want) {
     if (want === this.paged) return;
     this.paged = want;
+    this.release();
     this.band.classList.toggle("pinband--paged", want);
     this.run.hidden = !want;
     this.rail.hidden = !want;

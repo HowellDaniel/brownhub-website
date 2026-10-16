@@ -22,9 +22,8 @@
     var lines = code ? [].slice.call(code.children) : [];
     if (lines.length < 2) return null;
 
-    /* Snapshot every text node with its full source. Painting then only ever
-       shortens a node and hides lines that have not been reached, so the token
-       spans are never rebuilt and a colour cannot flicker mid-type. */
+    /* Snapshot every text node with its full source so the token spans are never
+       rebuilt and a colour cannot flicker mid-type. */
     var atoms = lines.map(function (line) {
       var walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT, null);
       var nodes = [];
@@ -43,25 +42,40 @@
 
     function fill(a, budget) {
       for (var i = 0; i < a.nodes.length; i++) {
-        var keep = Math.max(0, Math.min(a.nodes[i].text.length, budget));
-        a.nodes[i].node.nodeValue = a.nodes[i].text.slice(0, keep);
+        var t = a.nodes[i];
+        /* A node is always rewritten as a prefix of its own snapshot, so a length
+           that did not change means a value that did not. Skipping the write is what
+           keeps a frame that types two characters from re-invalidating sixty. */
+        var keep = Math.max(0, Math.min(t.text.length, budget));
+        if (t.node.nodeValue.length !== keep) t.node.nodeValue = t.text.slice(0, keep);
         budget -= keep;
       }
     }
 
+    /* The type only ever moves forwards, so the paint is a cursor over the lines
+       rather than a pass over the whole panel: everything before `at` is finished,
+       everything after `shown` is still closed, and one frame touches the two lines
+       that sit on those edges. Moving the caret is the only DOM insertion the panel
+       makes, and doing it once per line instead of once per frame is what stops
+       js/scroll.js watching a mutation sixty times a second. */
+    var at = 0, shown = -1, caretLine = -1;
+    atoms.forEach(function (a) { a.line.style.display = "none"; });
+
     function paint(budget) {
-      var frontier = atoms[0], i, a;
-      for (i = 0; i < atoms.length; i++) {
-        a = atoms[i];
-        frontier = a;
-        if (budget >= a.len) { fill(a, a.len); a.line.style.display = ""; budget -= a.len; }
-        else { fill(a, budget); a.line.style.display = ""; break; }
+      var left = budget;
+      while (at < atoms.length && left >= atoms[at].len) {
+        fill(atoms[at], atoms[at].len);
+        at++;
+        left -= atoms[at - 1].len;
       }
-      for (var k = i + 1; k < atoms.length; k++) {
-        fill(atoms[k], 0);
-        atoms[k].line.style.display = "none";
-      }
-      frontier.line.appendChild(caret);
+      var frontier = Math.min(at, atoms.length - 1);
+      if (at < atoms.length) fill(atoms[frontier], left);
+      if (frontier === shown) return false;
+      for (var k = shown + 1; k <= frontier; k++) atoms[k].line.style.display = "";
+      shown = frontier;
+      atoms[frontier].line.appendChild(caret);
+      caretLine = frontier;
+      return true;
     }
 
     var raf = 0, t0 = 0, running = false, done = false;
@@ -79,8 +93,10 @@
       if (!t0) t0 = now;
       var budget = (now - t0) / 1000 * RATE;
       if (budget >= total) { finish(); return; }
-      paint(budget);
-      follow();
+      /* The caret can only overflow the panel by going down a line — the code never
+         wraps, it scrolls sideways — so the two rect reads live in `follow()` happen
+         once a line, not once a frame. */
+      if (paint(budget)) follow();
       raf = requestAnimationFrame(step);
     }
 
@@ -97,6 +113,7 @@
       running = false;
       done = true;
       paint(total);
+      follow();
     }
 
     paint(0);

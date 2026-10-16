@@ -316,14 +316,27 @@
     function fire() {
       if (triggered || !eligible()) return;
       triggered = true;
+      window.removeEventListener("scroll", onScroll);
       show();
     }
+    /* The document's height is a layout read, and asking for it on every scroll
+       event flushes the writes js/scroll.js has just queued for the parallax. Twice
+       a second is far more often than the page changes height, and once the card is
+       raised the listener that was waiting for it has nothing left to do. */
+    var max = 0, sizedAt = 0;
     function scrolled() {
-      var max = doc.documentElement.scrollHeight - window.innerHeight;
+      var now = Date.now();
+      if (now - sizedAt > 500) {
+        sizedAt = now;
+        max = doc.documentElement.scrollHeight - window.innerHeight;
+      }
       return max > 400 && window.scrollY / max >= SCROLL_PART;
     }
+    function onScroll() {
+      if (scrolled() && Date.now() - openedAt > 4000) fire();
+    }
     // Two ways to earn the card: reading down the page, or simply still being here.
-    window.addEventListener("scroll", function () { if (scrolled() && Date.now() - openedAt > 4000) fire(); }, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     setTimeout(function () { if (consent().decided) fire(); }, PATIENCE_MS);
     if (start === null) {
       doc.addEventListener("bhconsent", function () {
