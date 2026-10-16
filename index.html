@@ -39,7 +39,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="BrownHub Studio">
   <link rel="preload" href="fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css?v=117">
+  <link rel="stylesheet" href="css/style.css?v=119">
   <script src="js/theme.js?v=2"></script><script src="js/player.js?v=1" defer></script><script src="js/voice.js?v=1" defer></script>
   <script type="application/ld+json">
 {
@@ -1413,19 +1413,80 @@
       </div>
     </section>
 
-    <section class="section" id="process">
-      <div class="container">
-        <div class="section__head">
-          <h2>Our process</h2>
-          <p>Understand → Create → Refine → Deliver.</p>
+    <!-- The process band pinned: one viewport holds the picture while the four
+         steps turn past it, and the diamond rail under the stage names the step
+         you are on. Every word here is the same word the four cards used to say,
+         so no dictionary needed a new key except the accent lines and the skip
+         control. With scripting off, or on a phone, or for a visitor who asked
+         for less motion, the band falls back to the plain stacked list. -->
+    <section class="section band--ink pstory" id="process">
+      <div class="pstory__pin">
+        <div class="container pstory__body">
+          <div class="section__head pstory__head">
+            <p class="hero__eyebrow">How we work</p>
+            <h2>Our process</h2>
+            <p>Understand → Create → Refine → Deliver.</p>
+          </div>
+          <div class="pstory__slides">
+            <article class="pstory__slide" data-on="true">
+              <div class="pstory__copy">
+                <span class="pstory__num" aria-hidden="true">01</span>
+                <h3 class="pstory__title">Understand<span class="pstory__accent">The brief</span></h3>
+                <p>We learn your brand, your audience and the message before we touch a single shape.</p>
+                <p class="pstory__chips"><span class="pstory__chip">Questions</span><span class="pstory__chip">Free consultation</span></p>
+              </div>
+              <div class="pstory__visual"><img src="images/concept/portrait.jpg" alt="" width="800" height="800" loading="lazy" decoding="async"></div>
+            </article>
+            <article class="pstory__slide">
+              <div class="pstory__copy">
+                <span class="pstory__num" aria-hidden="true">02</span>
+                <h3 class="pstory__title">Create<span class="pstory__accent">Concepts</span></h3>
+                <p>Original concepts, shown in realistic mockups so you can see the design in the real world.</p>
+                <p class="pstory__chips"><span class="pstory__chip">Design</span><span class="pstory__chip">Mockups</span></p>
+              </div>
+              <div class="pstory__visual"><img src="images/catalog/flyer.jpg" alt="" width="608" height="760" loading="lazy" decoding="async"></div>
+            </article>
+            <article class="pstory__slide">
+              <div class="pstory__copy">
+                <span class="pstory__num" aria-hidden="true">03</span>
+                <h3 class="pstory__title">Refine<span class="pstory__accent">Revisions</span></h3>
+                <p>You give feedback, we polish the details until the design feels completely right.</p>
+                <p class="pstory__chips"><span class="pstory__chip">Feedback</span><span class="pstory__chip">Until right</span></p>
+              </div>
+              <div class="pstory__visual"><img src="images/catalog/book-design-5.jpg" alt="" width="760" height="608" loading="lazy" decoding="async"></div>
+            </article>
+            <article class="pstory__slide">
+              <div class="pstory__copy">
+                <span class="pstory__num" aria-hidden="true">04</span>
+                <h3 class="pstory__title">Deliver<span class="pstory__accent">Print-ready</span></h3>
+                <p>Print-ready and digital files, source files, and clear guidance on using them.</p>
+                <p class="pstory__chips"><span class="pstory__chip">Source files</span><span class="pstory__chip">Delivery</span></p>
+              </div>
+              <div class="pstory__visual"><img src="images/collection/print.jpg" alt="" width="800" height="450" loading="lazy" decoding="async"></div>
+            </article>
+          </div>
         </div>
-        <div class="cards cards--4">
-          <article class="step"><span class="step__num">1</span><h3>Understand</h3><p>We learn your brand, your audience and the message before we touch a single shape.</p></article>
-          <article class="step"><span class="step__num">2</span><h3>Create</h3><p>Original concepts, shown in realistic mockups so you can see the design in the real world.</p></article>
-          <article class="step"><span class="step__num">3</span><h3>Refine</h3><p>You give feedback, we polish the details until the design feels completely right.</p></article>
-          <article class="step"><span class="step__num">4</span><h3>Deliver</h3><p>Print-ready and digital files, source files, and clear guidance on using them.</p></article>
-        </div>
+        <nav class="pstory__rail" aria-label="Process steps">
+          <button class="pstory__step" type="button" data-goto="0" aria-label="Understand">
+            <span class="pstory__step-label">Understand</span>
+            <span class="pstory__diamond"><span class="pstory__diamond-in"><span class="pstory__icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 12.4c0 3.9-3.8 7.1-8.5 7.1-.9 0-1.8-.1-2.6-.4L4.5 21l1.2-3.5c-1.1-1.2-1.7-2.9-1.7-4.6 0-3.9 3.8-7.1 8.5-7.1s8 3.2 8 6.6Z"/><path d="M8.6 12.4h.01M12 12.4h.01M15.4 12.4h.01"/></svg></span></span></span>
+          </button>
+          <button class="pstory__step" type="button" data-goto="1" aria-label="Create">
+            <span class="pstory__step-label">Create</span>
+            <span class="pstory__diamond"><span class="pstory__diamond-in"><span class="pstory__icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l10.6-10.6a2.2 2.2 0 0 0-3.1-3.1L5 17v3Z"/><path d="M14.4 6.6l3.1 3.1"/></svg></span></span></span>
+          </button>
+          <button class="pstory__step" type="button" data-goto="2" aria-label="Refine">
+            <span class="pstory__step-label">Refine</span>
+            <span class="pstory__diamond"><span class="pstory__diamond-in"><span class="pstory__icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5h8.5M17 8.5h3M4 15.5h3M11 15.5h9"/><circle cx="14.7" cy="8.5" r="2.2"/><circle cx="9.3" cy="15.5" r="2.2"/></svg></span></span></span>
+          </button>
+          <button class="pstory__step" type="button" data-goto="3" aria-label="Deliver">
+            <span class="pstory__step-label">Deliver</span>
+            <span class="pstory__diamond"><span class="pstory__diamond-in"><span class="pstory__icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.6v10.8M7.6 10.4 12 14.8l4.4-4.4"/><path d="M4.4 17.4v2.2h15.2v-2.2"/></svg></span></span></span>
+          </button>
+        </nav>
+        <button class="pstory__skip" type="button">Skip the experience<span class="pstory__skip-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v14M6 13l6 6 6-6"/></svg></span></button>
       </div>
+      <div class="pstory__run" aria-hidden="true"></div>
     </section>
 
     <section class="section section--alt faq-band" id="faq"><div class="container faq__grid"><div class="faq-band__main"><div class="section__head"><h2>Frequently asked questions</h2><p>Quick answers before you reach out.</p></div><div class="faq"><details open><summary>What design services does BrownHub offer?</summary><p>Logos and full brand identity, social media graphics, flyers and posters, business cards, brochures and company profiles, packaging, marketing and advertising graphics, book covers and inside layout, plus large format print: pull-up banners, ABS boards and frames. We also build websites and software for brands that need them. See the <a href="services.html">services page</a> and the <a href="catalog.html">catalog</a>.</p></details><details><summary>What does a design project cost?</summary><p>It depends on the job — the number of items, sizes, quantity and deadline. Send us your idea by <a href="contact.html">contact form</a>, email or WhatsApp and you'll get a free consultation and a clear quote; design jobs are usually quoted the same day.</p></details><details><summary>How long does a project take?</summary><p>Typical turnaround: flyers and posters 1–3 days, logos and branding about a week, books and company profiles depend on page count. Need it faster? Ask about rush jobs when you request a quote.</p></details><details><summary>How do I order a print or design item?</summary><p>Pick the item in our <a href="catalog.html">catalog</a>, tap “View details”, then press “Order now via chat” — or send your sizes, quantity and deadline through the <a href="contact.html">contact form</a>. We confirm the price and start right away.</p></details><details><summary>Do you provide the files for printing?</summary><p>Yes. You receive print-ready files in the right color mode and resolution, plus the source files, so you can reprint or edit whenever you need to — with us or with any printer.</p></details><details><summary>How do I get started?</summary><p>Message us on WhatsApp at +233 50 295 4541, email <a href="mailto:howelldaniel533@gmail.com">howelldaniel533@gmail.com</a>, or use the <a href="contact.html">contact form</a>. We're open Mon–Fri, 9am–6pm GMT, based in Accra, Ghana — and the chat assistant in the corner answers common questions instantly.</p></details></div></div><aside class="rail-card"><div class="card"><span class="icon-tile"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.6 4.8h14.8a1.8 1.8 0 0 1 1.8 1.8v8.2a1.8 1.8 0 0 1-1.8 1.8h-8.2l-5.4 4v-4H4.6a1.8 1.8 0 0 1-1.8-1.8V6.6a1.8 1.8 0 0 1 1.8-1.8Z"/></svg></span><h3>Still deciding?</h3><p>Send the idea as it is in your head — you get a free consultation and an honest yes or no within a day.</p><a href="contact.html" class="btn btn--primary btn--sm">Start your project</a><a href="https://wa.me/233502954541" class="card__link">Ask on WhatsApp →</a></div></aside></div></section>
@@ -1602,7 +1663,7 @@
     </div>
   </div>
 
-  <script src="js/main.js?v=32" defer></script><script src="js/translate.js?v=97" defer></script><script src="js/app.js?v=4" defer></script>
+  <script src="js/main.js?v=32" defer></script><script src="js/translate.js?v=98" defer></script><script src="js/app.js?v=4" defer></script>
 
   <div class="modal" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-name">
     <div class="modal__backdrop" data-close-modal></div>
@@ -1658,7 +1719,7 @@
   </div>
 
   <script src="js/chat.js?v=32" defer></script><script src="js/accounts.js?v=18" defer></script><script src="js/portfolio.js?v=6" defer></script><script src="js/store.js?v=22" defer></script>
-  <script src="js/scroll.js?v=9" defer></script><script src="js/catalog.js?v=15" defer></script><script src="js/ambient.js?v=2" defer></script><script src="js/neon.js?v=2" defer></script>
+  <script src="js/scroll.js?v=10" defer></script><script src="js/pstory.js?v=1" defer></script><script src="js/catalog.js?v=15" defer></script><script src="js/ambient.js?v=2" defer></script><script src="js/neon.js?v=2" defer></script>
   <script src="js/nav.js?v=7" defer></script><script src="js/search.js?v=15" defer></script><script src="js/cookies.js?v=7" defer></script><script src="js/leads.js?v=1" defer></script><script src="js/social.js?v=1" defer></script>
   <script src="js/carousel.js?v=1" defer></script><script src="js/flow.js?v=2" defer></script><script src="js/reviews.js?v=3" defer></script><script src="js/stats.js?v=1" defer></script>
 

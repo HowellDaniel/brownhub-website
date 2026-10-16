@@ -2683,3 +2683,106 @@ html[data-theme-mode="dark"] .theme-toggle .icon-moon{display:block}
   .roll__track{animation:none}
 }
 html[dir="rtl"] .roll__track{animation-direction:reverse}
+
+/* ==========================================================================
+   The pinned process story.
+
+   The reference site pins one viewport of pictures and turns the steps past it,
+   then names the current step with a row of diamonds along a hairline. The
+   arrangement is theirs; the numbers below are ours, and the whole pinned layer
+   sits behind .js-pstory so a phone, a short window, a visitor who asked for
+   less motion, and a visitor with scripting off all get the plain stack.
+   ========================================================================== */
+
+/* --- the stack, which is also the fallback: picture, then words, four times --- */
+.pstory__slides{display:flex;flex-direction:column;gap:var(--t-6)}
+.pstory__slide{display:grid;grid-template-columns:1fr;gap:var(--t-4);align-items:center}
+.pstory__copy{max-width:44rem}
+.pstory__num{display:block;font-size:var(--t-small);font-weight:600;letter-spacing:.14em;color:var(--accent-2)}
+.pstory__title{display:flex;flex-direction:column;font-size:var(--t-h2);line-height:var(--t-h2-lh);margin:var(--t-1) 0 var(--t-2)}
+.pstory__accent{color:var(--accent)}
+.pstory__copy p{color:var(--text-muted);font-size:clamp(15px,1.5vw,18px);line-height:1.6}
+.pstory__chips{display:flex;flex-wrap:wrap;gap:var(--t-1);margin-top:var(--t-3)}
+.pstory__chip{border:var(--t-bw) solid var(--border);border-radius:var(--t-r-pill);padding:3px 12px;
+  font-size:var(--t-small);line-height:20px;color:var(--text)}
+.pstory__visual{position:relative;aspect-ratio:861/600;overflow:hidden;border:var(--t-bw) solid var(--border);
+  border-radius:var(--t-r-lg);background:var(--bg-alt)}
+.pstory__visual img{width:100%;height:100%;object-fit:cover}
+.pstory__rail,.pstory__skip,.pstory__run{display:none}
+
+/* --- the pinned stage: one screenful, held while the four steps pass --- */
+html.js-pstory .pstory{padding:0}
+html.js-pstory .pstory__pin{position:sticky;top:var(--nav-h);height:calc(100vh - var(--nav-h));
+  display:flex;flex-direction:column;overflow:hidden}
+html.js-pstory .pstory__body{flex:1;min-height:0;display:flex;flex-direction:column;gap:var(--t-5);
+  padding-top:var(--t-7);max-width:var(--max-w);margin:0 auto;width:100%}
+html.js-pstory .pstory__head{margin:0 auto;max-width:44rem}
+html.js-pstory .pstory__run{display:block;height:calc(3 * (100vh - var(--nav-h)))}
+html.js-pstory .pstory__slides{position:relative;flex:1;min-height:0;display:block}
+html.js-pstory .pstory__slide{position:absolute;inset:0;display:grid;
+  grid-template-columns:minmax(0,40fr) minmax(0,58fr);grid-template-rows:minmax(0,1fr);
+  gap:var(--t-6);align-items:center;
+  opacity:0;visibility:hidden;translate:0 16px;
+  transition:opacity .5s var(--ease-out),translate .5s var(--ease-out),visibility 0s linear .5s}
+html.js-pstory .pstory__slide[data-on="true"]{opacity:1;visibility:visible;translate:0 0;transition-delay:0s}
+/* On the stage the picture is whatever height the screen has left, not the height
+   its own ratio wants; a tall frame would otherwise run down over the rail. */
+html.js-pstory .pstory__visual{aspect-ratio:auto;align-self:stretch;min-height:0}
+html.js-pstory .pstory__copy{align-self:center}
+/* The picture is the part that stays, so it moves less than the words do. */
+html.js-pstory .pstory__visual img{translate:0 var(--py,0px);scale:1.16}
+/* A short window has no room for a second line of intro, so the heading keeps the
+   stage company instead of eating into it. */
+@media (max-height:820px){
+  html.js-pstory .pstory__head .hero__eyebrow,
+  html.js-pstory .pstory__head p:not(.hero__eyebrow){display:none}
+  html.js-pstory .pstory__body{padding-top:var(--t-5);gap:var(--t-4)}
+}
+
+html.js-pstory .pstory__skip{display:inline-flex;align-items:center;gap:6px;position:absolute;
+  top:var(--t-4);right:max(var(--t-gutter),calc((100% - var(--max-w))/2 + var(--t-gutter)));
+  background:none;border:0;padding:4px 8px;border-radius:var(--t-r);cursor:pointer;
+  font:inherit;font-size:var(--t-small);color:var(--text-muted);transition:color .2s,opacity .2s}
+html.js-pstory .pstory__skip:hover{color:var(--text);opacity:.8}
+html.js-pstory .pstory__skip:focus-visible{outline:var(--t-bw2) dotted var(--accent);outline-offset:2px;color:var(--text)}
+.pstory__skip-icon{display:inline-flex;width:16px;height:16px}
+
+/* --- the diamond rail: the hairline runs through the centres of the stones --- */
+html.js-pstory .pstory__rail{display:flex;position:relative;z-index:2;flex:none;height:88px;
+  align-items:flex-end;justify-content:space-between;
+  padding:0 max(var(--t-gutter),calc((100% - var(--max-w))/2 + var(--t-gutter)));
+  border-bottom:var(--t-bw) solid rgba(var(--accent-rgb),.4)}
+html.js-pstory .pstory__rail::after{content:"";position:absolute;left:0;right:0;bottom:24px;height:var(--t-bw);
+  background:rgba(var(--accent-rgb),.4);z-index:-1}
+.pstory__step{display:flex;flex-direction:column;align-items:center;gap:var(--t-1);position:relative;
+  bottom:13px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+.pstory__step-label{padding:2px 12px;border-radius:var(--t-r-pill);background:var(--bg);
+  font-size:var(--t-small);line-height:20px;font-weight:500;color:var(--text-muted);white-space:nowrap;
+  transition:background-color .2s,color .2s,font-size .2s var(--ease-out),line-height .2s var(--ease-out)}
+.pstory__diamond{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;
+  width:24px;height:24px;bottom:-1px;transition:width .2s var(--ease-out),height .2s var(--ease-out),bottom .2s var(--ease-out)}
+.pstory__diamond-in{display:flex;align-items:center;justify-content:center;width:24px;height:24px;
+  border:var(--t-bw) solid var(--border);border-radius:var(--t-r);background:var(--bg);rotate:45deg;
+  transition:width .2s var(--ease-out),height .2s var(--ease-out),background-color .2s,border-color .2s}
+/* The icon is drawn upright and the stone is turned, so the icon turns back. */
+.pstory__icon{display:none;position:absolute;left:50%;top:50%;translate:-50% -50%;color:#fff}
+.pstory__icon svg{rotate:-45deg}
+/* Hover belongs to the stones you are not on: the current one is already lit. */
+.pstory__step:not([data-active="true"]):hover .pstory__step-label{background:#f2e4de;color:#1b0b0c}
+.pstory__step:not([data-active="true"]):hover .pstory__diamond-in{background:var(--surface)}
+.pstory__step:focus-visible{outline:var(--t-bw2) dotted var(--accent);outline-offset:3px}
+.pstory__step[data-active="true"]{gap:4px}
+.pstory__step[data-active="true"]::before{content:"";position:absolute;left:50%;bottom:35px;width:2px;height:24px;
+  translate:-50% 0;background:var(--accent)}
+.pstory__step[data-active="true"] .pstory__step-label{padding-inline:0;background:transparent;color:#f2e4de;
+  font-size:18px;line-height:28px;font-weight:600}
+/* 56px is the box the 40px stone needs once it is on its corner, and the drop
+   keeps its centre on the hairline the smaller stone was already sitting on. */
+.pstory__step[data-active="true"] .pstory__diamond{width:56px;height:56px;bottom:-17px}
+.pstory__step[data-active="true"] .pstory__diamond-in{width:40px;height:40px;
+  background:var(--accent-fill);border-color:var(--accent-fill)}
+.pstory__step[data-active="true"] .pstory__icon{display:flex}
+
+/* The skip control parks itself in the gutter on whichever side the text ends. */
+html[dir="rtl"].js-pstory .pstory__skip{right:auto;
+  left:max(var(--t-gutter),calc((100% - var(--max-w))/2 + var(--t-gutter)))}
