@@ -3382,3 +3382,49 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
   html.js-pstory .pstory__skip{position:absolute;left:0;right:0;bottom:calc(var(--rail-h) + var(--stage-pay));
     margin:0;padding-block:4px;text-align:center}
 }
+
+/* ==========================================================================
+   THE QUEUE IS PAID OUT OF THE NOTICES, NOT OUT OF THE PICTURE
+   The stage can only give what the bottom asks for, and two of the numbers the bottom
+   asked for were wrong. Measured at 390x844 on an untouched first visit: the quote card
+   was set 5.25rem above the consent bar's own height, which charges the chat bubble's
+   84px lane on top of a bar that already spans the whole width — 84px of the screen
+   belonged to nothing. And the bar wore the body's own 16px type with 16/24 gaps and a
+   50px button ramp, so three lines of legal text, two rows of controls and a close
+   button that fell onto a row of its own came to 249px: a third of the phone.
+
+   Both are paid at the source. The card now clears the taller of the bubble lane and
+   the bar, and the bar is set in its own smaller type with the close button riding on
+   the controls' row and every target at 44px. Nothing is hidden or clamped — all three
+   lines of the consent text still print, because a compacted notice that conceals what
+   it is asking consent to is worse than a tall one.
+
+   What the queue costs after that, live in mobile WebKit: with the bar up alone it owns
+   281px rather than 330, so the stage keeps 439 and the picture grows back from 123 to
+   140 with the stones standing free at 505..563. With the card up too the queue is 528:
+   bar 200 + card 239 + pill 69 is 508px of an 844px screen, and no arrangement of the
+   stage shows both its picture and its ruler underneath that — the payment hits its
+   floor, the stones lift as far as the picture can afford, and the notices keep the
+   bottom until the visitor dismisses one of them.
+   ========================================================================== */
+@media (max-width:600px){
+  /* Not 5.25rem + the bar: the bar is full width, so the lane under the card is only
+     there for the bubble, and only when the bar is shorter than the bubble needs. */
+  .leadask{bottom:calc(max(5.25rem, calc(var(--cookie-h, 0px) + .75rem)) + env(safe-area-inset-bottom))}
+}
+
+@media (max-width:719px){
+  .cookie-notice{padding:var(--t-2) var(--t-3) calc(var(--t-2) + env(safe-area-inset-bottom,0px))}
+  .cookie-notice__inner{gap:var(--t-2)}
+  .cookie-notice__text{flex:1 1 100%;order:-1;font-size:var(--t-fs-20);line-height:var(--t-lh-medium)}
+  /* 240px, not 100%: the row has to leave a lane for the close button, or the button
+     falls onto a fourth line of its own and the bar grows by the very height this saves. */
+  .cookie-notice__btns{flex:1 1 240px;gap:var(--t-2)}
+  .cookie-notice__btns .btn,.cookie-notice__btns .btn--text{min-height:44px;
+    padding:.5rem .7rem;font-size:var(--t-fs-20)}
+  /* A control takes the room its own words need and no more: stretching the text link
+     across the row is what pushed a long locale's bar onto a fourth line. */
+  .cookie-notice__btns .btn{flex:1 1 auto}
+  .cookie-notice__btns .btn--text{flex:0 1 auto}
+  .cookie-notice__close{margin-left:0;width:44px;height:44px;flex:none}
+}
