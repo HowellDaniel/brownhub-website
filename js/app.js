@@ -42,6 +42,10 @@
      pill — out of sight and out of reach of a thumb. This is the one number that tells
      the page how much of the bottom the queue owns; the stage gives it back. */
   var reserved = null;
+  /* The assistant's teaser hangs over the top of the bubble it comes out of, so a
+     stage that stops at the bubble alone still has a speech bubble printed across
+     its row of stones. It is charged by its own edge, not the button's. */
+  var QUEUE = ".install, .chat-widget__toggle, .chat-widget__teaser, .cookie-notice, .leadask";
   function reserve() {
     var owned = 0;
     /* Every member of the queue is fixed to the bottom edge, so the room it owns is the
@@ -52,9 +56,10 @@
        lifts itself over the notices, so whichever member sits highest is the edge the
        stage has to stop below. */
     [].forEach.call(
-      doc.querySelectorAll(".install, .chat-widget__toggle, .cookie-notice, .leadask"),
+      doc.querySelectorAll(QUEUE),
       function (n) {
         if (n.hidden || n.getAttribute("aria-hidden") === "true") return;
+        if (getComputedStyle(n).visibility === "hidden") return;
         var r = n.getBoundingClientRect();
         if (r.height < 1 || r.top >= innerHeight) return;
         owned = Math.max(owned, Math.round(innerHeight - r.top));
@@ -163,13 +168,23 @@
   addEventListener("resize", reserve, { passive: true });
   addEventListener("i18n-applied", reserve);
   if (typeof MutationObserver === "function") {
-    var queued = false;
+    var queued = false, widget = null;
     new MutationObserver(function () {
       if (queued) return;
       queued = true;
       requestAnimationFrame(function () {
         queued = false;
-        [].forEach.call(doc.querySelectorAll(".install, .chat-widget__toggle, .cookie-notice, .leadask"), own);
+        [].forEach.call(doc.querySelectorAll(QUEUE), own);
+        /* The teaser is not a body-level addition: it is built inside the assistant
+           twenty seconds in, while a visitor may be mid-scroll. The widget is watched
+           for its own children so the bubble arriving and leaving both move the edge. */
+        if (!widget) {
+          var w = doc.querySelector(".chat-widget");
+          if (w) {
+            widget = new MutationObserver(reserve);
+            widget.observe(w, { childList: true });
+          }
+        }
         reserve();
       });
     }).observe(doc.body, { childList: true });

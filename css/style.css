@@ -3428,3 +3428,30 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
   .cookie-notice__btns .btn--text{flex:0 1 auto}
   .cookie-notice__close{margin-left:0;width:44px;height:44px;flex:none}
 }
+
+/* ==========================================================================
+   THE TAIL A PINNED BAND CANNOT HOLD
+   A sticky stage can only travel the height of its own containing block minus one
+   screenful, so whatever a band leaves after its run — the note under the website
+   catalog, the buttons under the portfolio — travels behind the transparent stage
+   and prints over the picture, its words and the rail. On a wide window there is
+   still a strip of page below the stage to read them in; on a phone the stage owns
+   the whole screen under the nav and the strip is zero, so the tail arrives as
+   nothing but a pile of overlapping text. The tail moves out of the band into a
+   section of its own: the words go back into the flow, the band keeps every card,
+   and a phone tells the same story the wide screen does.
+   ========================================================================== */
+.band-tail{padding:var(--t-5) 0 var(--t-band)}
+/* The band above already draws its own bottom seam and paints its own glow; a
+   second of each would read as a gap where one band was meant to end. */
+.band-tail{border-top:0}
+.band-tail::before{display:none}
+.band-tail .webcat__note{margin-top:0}
+.band-tail .section__more{margin-top:var(--t-4)}
+@media (max-width:719px){
+  .band-tail{padding-top:var(--t-4)}
+  /* Two pills side by side wrap their own long labels onto a second line inside the
+     pill. One lane, centered words, and the thumb reaches both. */
+  .band-tail .section__more{flex-direction:column;align-items:stretch;gap:var(--t-2);margin-top:var(--t-3)}
+  .band-tail .section__more .btn{width:100%;justify-content:center;min-height:44px}
+}
