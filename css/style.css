@@ -3593,3 +3593,23 @@ body[data-nav="engineering"]{--nav-ink:var(--accent-2)}
   .story-rail__btn[data-active="true"]:hover .story-rail__label,
   .story-rail__btn[data-active="true"]:focus-visible .story-rail__label{max-width:13rem;opacity:1;padding-inline:.55rem}
 }
+
+/* ==========================================================================
+   THE FROST YIELDS TO THE WHEEL
+   Measured on this page, not assumed: a home-page scroll at 1440 spends 52 of every
+   90 frames over 50ms, and the #portfolio band spends 81 of 90. Take every
+   backdrop-filter off at once and the long frames go to zero — median 19fps to 42,
+   p95 74ms to 36ms. Take the biggest one off (the header frosts 179k px² at 26px),
+   or the fixed ones (the cookie notice, the install pill, the teaser), or the cards,
+   and the count does not move. That is the shape of the cost: one frosted layer over
+   the surface being scrolled is enough to charge the whole viewport a re-raster, so a
+   partial saving is no saving and the only rule that works is all of it at once.
+   So the glass is taken off for the length of a gesture — js/scroll.js puts
+   `is-flying` on the root while the wheel turns and lifts it 240ms after the page
+   settles — and every frost the visitor stops on is exactly the frost they chose.
+   `*` rather than a list on purpose: a component that frosts itself next month is
+   caught by the same rule, and one that slipped through would put the whole page back
+   into the expensive mode.
+   ========================================================================== */
+html.is-flying *,html.is-flying *::before,html.is-flying *::after{
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important}

@@ -4,10 +4,32 @@
 
   function tr(s) { return (window.I18N && I18N.t) ? I18N.t(s) : s; }
 
+  /* An installed copy asks for its own new build.
+     A service worker is otherwise only compared against the network when a document
+     starts up, so a phone that keeps BrownHub in the app switcher — which is exactly
+     what an installed app is for — never re-reads /sw.js, and that copy goes on
+     serving the day-old shell out of its cache while the browser tab, which is opened
+     fresh every time, looks fine. Nothing here reloads the visitor's page: the worker
+     already answers navigations from the network first, so a re-read only moves the
+     fallback it holds and the headers it injects onto the next one. */
   if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+    var swreg = null;
+    function recheck() {
+      if (swreg && swreg.update) swreg.update().catch(function () {});
+    }
     window.addEventListener("load", function () {
-      navigator.serviceWorker.register("/sw.js").catch(function () {});
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then(function (r) { swreg = r; })
+        .catch(function () {});
     });
+    document.addEventListener("visibilitychange", function () {
+      if (!doc.hidden) recheck();
+    });
+    addEventListener("focus", recheck);
+    /* A tablet pinned to a wall, or a phone left on a desk with the screen kept awake
+       by a client's quote page, never fires either event above. */
+    setInterval(recheck, 10 * 60 * 1000);
   }
 
   var standalone = window.matchMedia("(display-mode: standalone)").matches ||

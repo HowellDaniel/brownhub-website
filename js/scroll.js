@@ -267,6 +267,17 @@
 
   /* ---------- one rAF-gated scroll loop ---------- */
   let queued = false, span = 0, spanAt = 0, condensed = null;
+
+  /* A frosted layer is not charged per layer, it is charged per frame. The ablation that
+     found this took the whole site's glass off at once and every long frame went away;
+     then it took the biggest one off, then the moving ones, then the fixed ones — and
+     none of those changed the count. One backdrop-filter anywhere over the surface being
+     scrolled is enough to cost the viewport its re-raster, so the only saving is all of
+     it at once, and the only safe moment for that is while the page is actually moving.
+     The glass is lifted for the length of a gesture and put back once the page settles:
+     nobody reads a backdrop that is flying past, and the frost is waiting for the frame
+     they stop on. */
+  let flying = false, settle = 0;
   function onScroll() {
     if (queued) return;
     queued = true;
@@ -284,6 +295,11 @@
       if (condensed !== (y > 24)) { condensed = y > 24; if (header) header.classList.toggle("is-scrolled", condensed); }
       if (bar) bar.style.setProperty("--p", span > 0 ? Math.min(y / span, 1).toFixed(4) : 0);
       applyDrift();
+      /* Last, because the class is a write: the recalc it asks for belongs to the next
+         frame, not to the one whose reads are only just answered. */
+      if (!flying) { flying = true; root.classList.add("is-flying"); }
+      clearTimeout(settle);
+      settle = setTimeout(() => { flying = false; root.classList.remove("is-flying"); }, 240);
     });
   }
 
