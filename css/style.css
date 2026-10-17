@@ -3196,7 +3196,7 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
      at this width the two are never the same distance from the centre, and a name
      anchored to its stone would hang half off the page whenever the stone is at an end.
      One line, through the dots' centres, replaces the border the desktop rail wore. */
-  html.js-pstory .pstory__rail,.pinband--paged .pstory__rail{height:58px;align-items:flex-end;border-bottom:0}
+  html.js-pstory .pstory__rail,.pinband--paged .pstory__rail{height:var(--rail-h);align-items:flex-end;border-bottom:0}
   html.js-pstory .pstory__rail::after,.pinband--paged .pstory__rail::after{bottom:8px}
   .pstory__step{bottom:4px;gap:0}
   .pstory__diamond,.pstory__diamond-in,
@@ -3333,4 +3333,52 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
      wide column the frame is taller than the art and the caption has the empty band to
      itself. Here it takes its place in the grid instead, under the drawing. */
   .service-row__visual .visual__cap{position:static;margin-top:calc(var(--t-3) / 2)}
+}
+
+/* ==========================================================================
+   THE STONES STAND ABOVE THE QUEUE, NOT IN FRONT OF IT
+   The floor under --stage-h is what saves a picture from a greedy queue, and it
+   is also what buries the rail: measured live at 390x844 in the first-visit
+   state the queue owns 330px, the honest screenful is 397, the floor gives 439,
+   and the 42px difference falls exactly on the stage's last line — the row of
+   stones. The active diamond sat whole behind the install pill (its box 547..556
+   inside a pill that runs 514..583) on all three home bands, and a visitor who
+   cannot see which page he is on has a sideways shelf with no ruler.
+
+   So the dug-out band is paid for twice, and by two different parts of the
+   stage. The body gives up the same height the floor took back, which js/pinband
+   already knows how to spend: spare() reads the body's own padding and hands the
+   shortfall to trim(), so the picture shrinks by the number and nothing in the
+   driver has to learn a new token. The rail leaves the column and stands at that
+   same offset from the bottom edge, which keeps it touching the picture it names
+   in every queue state — at zero dug it lands exactly where it always did.
+
+   The payment is capped, because a phone whose queue owns 600px of an 844px
+   screen has no stage left to arrange: below this floor the picture stops giving
+   and simply travels under the notices, which is the trade the last block already
+   made. 268 is the rail's 58 plus the heading and the shortest frame trim() will
+   accept.
+   ========================================================================== */
+@media (max-width:719px){
+  /* The rail's own height, named once, because the two rules that must agree on it —
+     the body's padding and the stone row's box — are written six lines apart. */
+  :root{--rail-h:58px;--skip-h:30px;
+    --stage-seen:max(0px, calc(100vh - var(--nav-h) - var(--queue-h, 0px)));
+    --stage-dug:calc(var(--stage-h) - var(--stage-seen));
+    --stage-pay:min(var(--stage-dug), max(0px, calc(var(--stage-h) - 268px)))}
+  @supports (height:100svh){
+    :root{--stage-seen:max(0px, calc(100svh - var(--nav-h) - var(--queue-h, 0px)))}
+  }
+
+  .pinband--paged .pinband__body{padding-bottom:calc(var(--rail-h) + var(--stage-pay))}
+  html.js-pstory .pstory__body{padding-bottom:calc(var(--rail-h) + var(--skip-h) + var(--stage-pay))}
+  .pinband--paged .pinband__pin > .pstory__rail,
+  html.js-pstory .pstory__pin > .pstory__rail{
+    position:absolute;left:0;right:0;bottom:var(--stage-pay)}
+  /* The way out of the story stood under the rail in the column. Out of the column it
+     takes its place in the same stack, one band higher, so the three of them — picture,
+     escape, stones — keep the order the stage was drawn in and none of them reaches the
+     edge the queue owns. */
+  html.js-pstory .pstory__skip{position:absolute;left:0;right:0;bottom:calc(var(--rail-h) + var(--stage-pay));
+    margin:0;padding-block:4px;text-align:center}
 }
