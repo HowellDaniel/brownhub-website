@@ -3455,3 +3455,61 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
   .band-tail .section__more{flex-direction:column;align-items:stretch;gap:var(--t-2);margin-top:var(--t-3)}
   .band-tail .section__more .btn{width:100%;justify-content:center;min-height:44px}
 }
+
+/* ==========================================================================
+   THE WAY OUT STANDS AT THE DOOR, NOT IN THE MIDDLE OF THE ROOM
+   The escape hatch was moved into the stage's bottom stack — above the stones, below
+   the picture — and the rule that moved it wrote `bottom` without taking away the
+   `top` the wide-screen version is placed by. An absolutely positioned box given both
+   edges and no height does not pick a winner: the engine resolves the pair and paints
+   the control between them, so on a phone the label landed in the middle of the stage,
+   directly on the step's own words. Measured at 402x874 in mobile WebKit with the
+   notices dismissed, it sat 245-287px above the rail it belongs to and printed across
+   the paragraph and the chips.
+
+   Clearing `top` returns the box to the one edge that was meant to place it. The plate
+   is the second half of the fix: the reserved band below the picture is paid out of the
+   stage's floor, and on a first visit — when the consent bar, the quote card and the
+   assistant's question together own 400-600px of an 874px screen — the step's words
+   spill past it. A control that punches its own hole in whatever is behind it stays
+   readable in that state instead of becoming a second line of the paragraph.
+   ========================================================================== */
+@media (max-width:719px){
+  /* 44px is the height the thumb is asked to hit, and the stage reserves exactly that
+     much under the picture — one number, so the plate cannot overlap what it pays for. */
+  :root{--skip-h:44px}
+  html.js-pstory .pstory__skip,
+  html[dir="rtl"].js-pstory .pstory__skip{
+    top:auto;left:0;right:0;bottom:calc(var(--rail-h) + var(--stage-pay));
+    width:max-content;max-width:calc(100% - 2 * var(--t-gutter));margin-inline:auto;
+    min-height:var(--skip-h);padding-inline:var(--t-3);
+    background:var(--ink-band);border-radius:var(--t-r-pill)}
+
+  /* The floor of the deep state, measured: on a first visit the consent bar, the quote
+     card and the assistant's question leave the stage a box some 175px tall, and the
+     step's own words need 193. The picture was already down to two pixels — so the room
+     goes to the part that was never going to fit, and the frame and its two chips, which
+     the tail below repeats anyway, stand aside until the stage can hold all three. A
+     container query rather than a viewport one, because how tall this box is has never
+     been a question about the screen: it is a question about the queue. */
+  html.js-pstory .pstory__slides{container-type:size;container-name:pstage}
+  @container pstage (max-height:240px){
+    html.js-pstory .pstory__visual,
+    html.js-pstory .pstory__chips{display:none}
+  }
+
+  /* The dig stops where the words begin. 268 was the floor the rail, the heading and the
+     shortest acceptable picture needed — it was counted before the escape hatch moved
+     down into that same stack, and it left the story's own box 37px tall on a first
+     visit, which no arrangement of type can live in: the step's sentence simply printed
+     over the way out of it. 390 is the same stack measured with the copy in it — heading
+     65, rail 58, hatch 44, the stage's own top padding 64 and the 158 the shortest step
+     needs — and below it the notices keep the bottom edge instead. That is the trade the
+     block above already made: a dismissible bar can travel, a sentence cannot.
+
+     It is written on the story's own stage, not on the root, because the number is what
+     *this* band's stack costs. The three collection bands reserve a rail and no hatch,
+     and their pictures shrink to fit rather than overflowing, so they keep digging to
+     the floor that was measured for them. */
+  html.js-pstory .pstory__pin{--stage-pay:min(var(--stage-dug), max(0px, calc(var(--stage-h) - 390px)))}
+}
