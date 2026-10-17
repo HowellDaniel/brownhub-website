@@ -135,10 +135,48 @@
       const field = contactForm.querySelector(`#${id}`);
       if (field) field.autocomplete = value;
     });
-    const item = new URLSearchParams(location.search).get("item");
+    const params = new URLSearchParams(location.search);
+    const item = params.get("item");
     if (item) {
       const message = document.getElementById("message");
       const service = document.getElementById("service");
+      // The card already knows what it is. Its internal category key is English and
+      // never translated, so it can name the service option outright — which is what
+      // makes the budget filter line up, since each option carries its own window.
+      // Guessing one service for every order used to put a GH₵500 floor under a
+      // GH₵300 banner and hide the studio's own GH₵450 social figure.
+      const SERVICE_BY_CAT = {
+        print: "Flyer & Poster Design",
+        banners: "Flyer & Poster Design",
+        books: "Brochure & Company Profile Design",
+        logo: "Logo Design",
+        social: "Social Media Design",
+        packaging: "Packaging Design",
+        frames: "Something else",
+        merch: "Something else",
+        "catalog-top": "Something else",
+        "catalog-mid": "Something else",
+        "home-banner": "Something else",
+        // The software shelf on engineering.html: a page, an app, a shop or care.
+        // These are the job the page itself prices at GH₵1,500 — GH₵5,000, so they
+        // must not arrive asking for a graphic-design budget that starts at GH₵500.
+        pages: "Website or Software",
+        shop: "Website or Software",
+        apps: "Website or Software",
+        care: "Website or Software"
+      };
+      const want = params.get("cat");
+      const pickService = () => {
+        if (!service) return;
+        // Matched on data-svc and set by index, never on the words: these options
+        // carry no value attribute, so option.value is their *translated* text and an
+        // English name would only ever resolve for an English visitor.
+        const named = SERVICE_BY_CAT[want] || "Custom Graphic Design";
+        const keys = [].map.call(service.options, (o) => o.dataset.svc || "");
+        let at = keys.indexOf(named);
+        if (at < 0) at = keys.indexOf("Custom Graphic Design");
+        if (at > -1) service.selectedIndex = at;
+      };
       let auto = null;
       const tr = (s) => (window.I18N && I18N.t ? I18N.t(s) : s);
       const setPrefill = () => {
@@ -146,9 +184,7 @@
           auto = tr("I'd like to order:") + " " + tr(item);
           message.value = auto;
         }
-        if (service && [].some.call(service.options, (o) => o.value === "Custom Graphic Design")) {
-          service.value = "Custom Graphic Design";
-        }
+        pickService();
       };
       setPrefill();
       document.addEventListener("i18n-applied", setPrefill);
@@ -201,6 +237,16 @@
       document.addEventListener("i18n-applied", silentPass);
       window.addEventListener("pageshow", silentPass);
       silentPass();
+      // A client who arrived from a priced card should not have to hunt for the figure
+      // the card just showed them. The ladder's values are the English strings that
+      // reach the inbox, so match on those, and only accept a rung the filter left in.
+      const amount = Number((params.get("amt") || "").replace(/[^0-9]/g, ""));
+      if (amount > 0) {
+        const rung = "GH\u20B5" + amount.toLocaleString("en-US");
+        const match = [].filter.call(budgetSel.options,
+          (o) => o.value === rung && !o.hidden)[0];
+        if (match) budgetSel.value = rung;
+      }
     }
 
     const FORM_EMAIL = "https://formsubmit.co/ajax/howelldaniel533@gmail.com";

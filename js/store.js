@@ -180,7 +180,11 @@
   // Unpriced cards, and any pay that cannot reach Paystack, end up here: the
   // contact form with the item already written into the message.
   function quote(item) {
-    location.href = "contact.html?item=" + encodeURIComponent(item.name);
+    // The same handoff a catalog card makes: the package's own id names the service the
+    // enquiry is for, and its price is the rung the client is already looking at.
+    location.href = "contact.html?item=" + encodeURIComponent(item.name) +
+      "&cat=" + encodeURIComponent(item.id) +
+      (item.price ? "&amt=" + item.price : "");
   }
 
   function record(item, reference) {

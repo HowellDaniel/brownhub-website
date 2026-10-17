@@ -235,7 +235,14 @@
     priceEl.textContent = price;
     priceEl.hidden = !price;
     descEl.textContent = card.dataset.desc;
-    quoteBtn.href = "contact.html?item=" + encodeURIComponent(name);
+    // The enquiry form filters its budget list by the service it is given, so the card
+    // hands over its own internal category — English, never translated — and its single
+    // figure when it has one. A GH₵300 banner should not arrive asking for a
+    // Custom Graphic Design budget that starts at GH₵500.
+    var priced = /^GH₵(\d{1,3}(?:,\d{3})*)$/.exec(price);
+    quoteBtn.href = "contact.html?item=" + encodeURIComponent(name) +
+      "&cat=" + encodeURIComponent(card.dataset.cat || "") +
+      (priced ? "&amt=" + priced[1].replace(/,/g, "") : "");
     renderMore(card);
     modal.classList.add("open");
     document.body.style.overflow = "hidden";
