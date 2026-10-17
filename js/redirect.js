@@ -6,9 +6,7 @@
   var m = /^\/([A-Za-z][A-Za-z0-9_-]{0,31})\/?$/.exec(location.pathname);
   if (!m) return;
   var t = "/" + m[1] + ".html";
-  var known = ["/", "/index.html", "/services.html", "/catalog.html",
-    "/about.html", "/contact.html", "/privacy.html", "/legal.html", "/security.html"];
-  var moved = ["/websites.html", "/engineering.html"];
+  var known = ["/", "/index.html", "/services.html", "/engineering.html",
+    "/catalog.html", "/about.html", "/contact.html", "/privacy.html", "/legal.html", "/security.html"];
   if (known.indexOf(t) !== -1) location.replace(t + location.search + location.hash);
-  else if (moved.indexOf(t) !== -1) location.replace("/index.html" + location.search + location.hash);
 })();

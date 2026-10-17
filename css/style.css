@@ -3513,3 +3513,83 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
      the floor that was measured for them. */
   html.js-pstory .pstory__pin{--stage-pay:min(var(--stage-dug), max(0px, calc(var(--stage-h) - 390px)))}
 }
+
+/* --- the home teaser that points at the engineering page (engineering.html) ---
+   The engineering bands moved off the home page into their own document, and the
+   nav tab now travels there instead of scrolling back to a home anchor. What stays
+   here is the announcement: one sentence, the five topics the moved bands answer,
+   and the two actions. The chips are the plain variant so the accent set on the
+   home page still belongs to the bands, not to a signpost. */
+body[data-nav="engineering"]{--nav-ink:var(--accent-2)}
+.eng-teaser .section__head{max-width:44rem}
+.eng-teaser__topics{display:flex;flex-wrap:wrap;gap:var(--t-2);
+  margin:0 0 var(--t-5);max-width:52rem;list-style:none;padding:0}
+.eng-teaser__topics .chip{align-self:auto;min-height:34px;text-align:center}
+.eng-teaser__topics .chip:hover,.eng-teaser__topics .chip:focus-visible{
+  border-color:var(--accent);color:var(--accent);background:rgba(var(--accent-rgb),.1)}
+/* The band's own heading is left-aligned, so a row of chips and a pair of buttons
+   hanging in the middle of the column read as a second, unfinished arrangement.
+   `.section__more` is centred by the base sheet, and the token-era rule that followed
+   it never named justify-content, so the centre still wins — this has to. */
+.eng-teaser .section__more{justify-content:flex-start}
+@media (max-width:719px){
+  .eng-teaser__topics{gap:var(--t-1)}
+}
+
+/* ==========================================================================
+   THE MEASURE, AND THE AIR ABOVE A LABEL  (desktop 1440 + laptop 1280 sweep)
+   Copy was capped in rem. A rem cap is a width, so the line it makes depends on
+   the size of the face inside it: a 44rem cap holds 78 characters at 18px and 105
+   at 14.7px, and the site's small print sits at 14–15px. The sweep found six blocks
+   carrying 86–130 characters on a line — the reel note, the catalog note (which had
+   no cap at all and laid its whole sentence out as one 807px line), the cost window's
+   closing paragraph and the FAQ intro. `min(rem, ch)` keeps every old ceiling and
+   adds a character ceiling, so a line never grows past a readable count however small
+   the type. Phones are untouched: their column is already narrower than either cap.
+
+   The second half is a label problem. An eyebrow is not a paragraph, it is the name of
+   the heading under it, and the default margin left 4px of ink — 0px in the engineering
+   hero — between the two, which reads as one block of type set at the wrong size. The
+   card's type tag had the same 2–4px against its title, and a band heading followed by
+   its intro had 4px. Each now carries enough ink gap to read as a label plus a title.
+   ========================================================================== */
+.section__head p{max-width:min(44rem,64ch)}
+.page-hero p{max-width:min(44rem,62ch)}
+.eng-cost__window p{max-width:min(44rem,62ch)}
+.checklist li{max-width:62ch}
+.faq details p{max-width:64ch}
+.reel__note{max-width:min(44rem,58ch)}
+.webcat__note{max-width:min(44rem,56ch);margin-left:auto;margin-right:auto}
+.cta__inner p{max-width:min(44rem,62ch)}
+/* The catalog's own invitation card is a 1264px slab with a centred sentence in it, and
+   the sentence had no ceiling at all: 87 characters on a line, the eye having to find its
+   way back across the whole card to the next one. A centred block needs its own margins
+   as well as its width, or the cap pushes the text to one side of the card. */
+.catalog-cta p{max-width:min(44rem,64ch);margin-inline:auto}
+.eyebrow{margin-bottom:.5rem}
+.webcat__type{margin-bottom:.6rem}
+.section__head h2 + p{margin-top:.4rem}
+/* The address and the directions link under it are two paragraphs, and at 3px of ink the
+   link reads as the last line of the address rather than the action it is. */
+.contact-info__card p + p{margin-top:.5rem}
+/* The page hero zeroes every paragraph inside it (`.page-hero p{margin:0}`), so a label
+   and the buttons under the standfirst lost their air to a rule written before them.
+   Naming the hero in the selector is what it takes to outrank it. */
+.page-hero .eyebrow{margin-bottom:.5rem}
+.page-hero .hero__actions{margin-top:var(--t-4)}
+
+/* ==========================================================================
+   THE RAIL CHIP WAITS FOR A MARGIN  (1180–1779px)
+   The lit node of the section rail prints the band's own heading beside its stone, and
+   that chip is 13rem wide: it reaches 275px from the left edge. The page shell is 1360px
+   wide, so below 1780px the shell touches both edges and the band's heading starts 88px
+   in — the chip's words land on top of them, on every pinned band, on the two widths
+   this studio's own laptops are set to. Above 1780 the centred shell leaves a real
+   margin and the chip has somewhere to sit; inside that range it goes back to being a
+   hover reveal, which is what it was before it was ever printed.
+   ========================================================================== */
+@media (min-width:1180px) and (max-width:1779.98px){
+  .story-rail__btn[data-active="true"] .story-rail__label{max-width:0;opacity:0;padding-inline:0}
+  .story-rail__btn[data-active="true"]:hover .story-rail__label,
+  .story-rail__btn[data-active="true"]:focus-visible .story-rail__label{max-width:13rem;opacity:1;padding-inline:.55rem}
+}

@@ -601,6 +601,14 @@
   function evaluate() {
     const on = room.matches && !reduce.matches;
     root.classList.toggle("js-pinband", on);
+    /* The phone rules for this stage were written against `js-pstory`, because the
+       process story was the first band to pin and the collection rails were built
+       with its rail classes. A page that ships only collection bands — the catalog's
+       shelf, the engineering page — never ran pstory.js, so it never got the class and
+       its rail kept the desktop arrangement on a phone: the page name printed over the
+       card title it names. Same gate, same predicate, so on the home page the two
+       scripts only ever agree. */
+    root.classList.toggle("js-pstory", on);
     bands.forEach((b) => { if (on) b.layout(); else b.setPaged(false); });
     if (on) follow();
   }

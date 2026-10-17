@@ -16,8 +16,8 @@
     { g: "Pages", t: "Customer experience", h: "index.html#customer-experience", k: "experience rail drag carousel how it feels" },
     { g: "Pages", t: "Testimonials", h: "index.html#reviews", k: "reviews testimonials clients say feedback stars rating what our clients have to say" },
     { g: "Pages", t: "Services", h: "services.html", k: "what we do pricing packages" },
-    { g: "Pages", t: "Website Design & Development", h: "index.html#web-software", k: "website web design development software app hosting domain landing page" },
-    { g: "Pages", t: "Website & Software Engineering", h: "index.html#build", k: "software engineering web development code app dashboard api secure hosting build systems" },
+    { g: "Pages", t: "Website Design & Development", h: "engineering.html#web-software", k: "website web design development software app hosting domain landing page" },
+    { g: "Pages", t: "Website & Software Engineering", h: "engineering.html#build", k: "software engineering web development code app dashboard api secure hosting build systems" },
     { g: "Pages", t: "Catalog", h: "catalog.html", k: "shop items products prints" },
     { g: "Pages", t: "About", h: "about.html", k: "team story accra company" },
     { g: "Pages", t: "Contact", h: "contact.html", k: "email phone whatsapp quote enquiry" },
@@ -32,7 +32,7 @@
     { g: "Services", t: "Brochure & Company Profile Design", h: "services.html#brochures-books", k: "brochure company profile catalogue magazine" },
     { g: "Services", t: "Packaging Design", h: "services.html#packaging", k: "packaging label box sticker bottle food" },
     { g: "Services", t: "Custom Graphic Design", h: "services.html#custom", k: "custom anything illustration menu book cover" },
-    { g: "Services", t: "Website or Software", h: "index.html#web-software", k: "website web software app system dashboard" },
+    { g: "Services", t: "Website or Software", h: "engineering.html#web-software", k: "website web software app system dashboard" },
 
     { g: "Catalog", t: "Flyers & printing", h: "catalog.html?cat=print", k: "collection category shelf print flyer leaflet business card" },
     { g: "Catalog", t: "Banners & signage", h: "catalog.html?cat=banners", k: "collection category shelf banner signage pull up backdrop flag" },
@@ -69,7 +69,7 @@
     // The website catalog is its own shelf, so it gets its own rows. Every label
     // is a string that already exists on the page, which keeps the dictionaries
     // honest: nothing here needs a translation that is not already a key.
-    { g: "Catalog", t: "The website catalog", h: "index.html#web-catalog", k: "website web development catalog items pages app hosting software" },
+    { g: "Catalog", t: "The website catalog", h: "engineering.html#web-catalog", k: "website web development catalog items pages app hosting software" },
     { g: "Catalog", t: "Business websites and landing pages", h: "index.html?q=Business%20websites%20and%20landing%20pages#web-catalog", k: "collection shelf website landing page business pages" },
     { g: "Catalog", t: "Online catalogs and booking tools", h: "index.html?q=Online%20catalogs%20and%20booking%20tools#web-catalog", k: "collection shelf shop catalog booking enquiry form whatsapp" },
     { g: "Catalog", t: "Web apps and internal dashboards", h: "index.html?q=Web%20apps%20and%20internal%20dashboards#web-catalog", k: "collection shelf app dashboard records stock reports payments login" },

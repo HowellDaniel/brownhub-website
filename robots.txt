@@ -28,10 +28,10 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-# websites.html and engineering.html are folded into the home page. They are still
-# served and still must be readable: each one answers with noindex and hands the
-# visitor on, and a crawler blocked from reading it would keep the old page in the
-# index instead of following it to the new home. They are simply not listed below.
+# websites.html is a stub: the website work moved to engineering.html. It is still
+# served and still must be readable: it answers with noindex and hands the visitor
+# on, and a crawler blocked from reading it would keep the old page in the index
+# instead of following it to its new home. It is simply not listed in the sitemap.
 
 # One exception: /mobile/ is the native-app build folder, not a page. It holds a
 # package manifest and build notes, so a crawler indexing it would only be noise.
