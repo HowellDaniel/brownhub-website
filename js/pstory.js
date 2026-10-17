@@ -22,7 +22,9 @@
   if (!band) return;
   const slides = [].slice.call(band.querySelectorAll(".pstory__slide"));
   const steps = [].slice.call(band.querySelectorAll(".pstory__step"));
+  const pin = band.querySelector(".pstory__pin");
   const run = band.querySelector(".pstory__run");
+  const rail = band.querySelector(".pstory__rail");
   const skip = band.querySelector(".pstory__skip");
   const N = slides.length;
   if (N < 2 || steps.length !== N || !run) return;
@@ -35,12 +37,39 @@
      arrives on a phone as it does on a desktop. A step is one screenful of story, and
      the CSS stacks its picture over its words when the screen is a column. */
   const room = matchMedia("(min-width:340px) and (min-height:520px)");
-  let pinned = false, index = -1, queued = false;
+  let pinned = false, index = -1, queued = false, decided = false, pending;
 
   /* The nav condenses as you scroll and js/scroll.js keeps --nav-h on its real
      height, so the sticky offset is read rather than guessed. */
   const navH = () => parseFloat(root.style.getPropertyValue("--nav-h")) || 72;
   const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
+
+  /* What the bottom of the screen owns, asked the same way js/pinband asks it: the queue
+     is only charged against a stage that stands on a phone's screenful, which is the one
+     regime that names --rail-h. On a wide screen the notices keep a lane of their own and
+     owe the stage nothing. */
+  const charge = () => {
+    const r = getComputedStyle(root);
+    if (!(parseFloat(r.getPropertyValue("--rail-h")) || 0)) return 0;
+    return parseFloat(r.getPropertyValue("--queue-h")) || 0;
+  };
+
+  /* Whether the standing stage holds a whole step in the room the queue left it. The
+     container query already gives the step's picture up when the box runs out, so a
+     hidden visual says the same thing the height does, from the CSS's own arithmetic;
+     asking both means neither number is trusted alone. */
+  function fits() {
+    const vis = slides[0].querySelector(".pstory__visual");
+    if (vis && getComputedStyle(vis).display === "none") return false;
+    return pin.offsetHeight <= innerHeight - navH() - charge() + 1;
+  }
+
+  /* The one place an arrangement swap cannot be felt, and the reason js/pinband.js asks
+     the same question: the stage and the stack are nowhere near the same height, so the
+     swap moves every section below the story — including the one being read. */
+  function belowReader() {
+    return band.getBoundingClientRect().top >= innerHeight;
+  }
 
   function set(i) {
     if (i === index) return;
@@ -87,7 +116,15 @@
     if (!pinned) return;
     set(Math.round(progress() * (N - 1)));
   }
+  let paidAt = 0;
   function onScroll() {
+    /* The scroll is what says the story has come back below the reader, so it is what pays
+       the arrangement debt evaluate() kept. The rect is read at most four times a second
+       and only while something is actually waiting. */
+    if (pending !== undefined && Date.now() - paidAt > 250) {
+      paidAt = Date.now();
+      if (belowReader()) { pending = undefined; evaluate(); }
+    }
     if (pinned && !queued) { queued = true; requestAnimationFrame(follow); }
   }
 
@@ -103,7 +140,7 @@
   /* The rail is a row of buttons, so arrow keys should walk it the way they walk
      any other group rather than leaving the page behind — and on a row that reads
      right to left, the arrow that means onwards points the other way. */
-  band.querySelector(".pstory__rail").addEventListener("keydown", (e) => {
+  rail.addEventListener("keydown", (e) => {
     const back = root.dir === "rtl";
     const fwd = back ? "ArrowLeft" : "ArrowRight", away = back ? "ArrowRight" : "ArrowLeft";
     const d = e.key === fwd || e.key === "ArrowDown" ? 1
@@ -123,8 +160,30 @@
   }
 
   function evaluate() {
-    const want = room.matches && !reduce.matches;
     release();
+    let want = room.matches && !reduce.matches;
+    /* A stage cannot say whether it fits until it is standing: the step's own height and
+       the container query that guards its picture are both written against .js-pstory. So
+       it is built, asked, and taken back down in the same frame — one extra pass at the
+       few moments the page is re-laying itself out anyway. */
+    if (want) {
+      root.classList.add("js-pstory");
+      want = fits();
+      if (!want) root.classList.remove("js-pstory");
+    }
+    /* A stage collapsed into a stack, or a stack raised into a stage, moves every section
+       below it by a screen or more — including the one the reader has reached. So the story
+       only ever changes its arrangement while it still lies below the viewport, and the debt
+       is paid from the scroll path when the reader comes back above it. The class is put
+       back to whatever the reader was last shown, because the measuring pass above wrote it
+       either way. */
+    if (decided && want !== pinned && !belowReader()) {
+      pending = want;
+      root.classList.toggle("js-pstory", pinned);
+      return;
+    }
+    pending = undefined;
+    decided = true;
     if (want === pinned) return;
     pinned = want;
     root.classList.toggle("js-pstory", pinned);
@@ -147,12 +206,15 @@
   addEventListener("scroll", onScroll, { passive: true });
   room.addEventListener("change", evaluate);
   reduce.addEventListener("change", evaluate);
-  addEventListener("resize", () => { release(); if (pinned) evaluate(); }, { passive: true });
+  /* Re-asked on every pass, pinned or not: a story that stood aside because the bottom
+     queue left it no room comes back the moment the queue shrinks, and nothing else on
+     the page would notice. */
+  addEventListener("resize", evaluate, { passive: true });
   /* The stage now stands on a screenful shorter than the window, because the install
      pill and the chat bubble live at the bottom of a phone and the row of stones has
      to be above them. When that queue changes shape the run is a different length, so
      the held geometry is dropped and the step it is on is read again. */
-  addEventListener("queue-change", () => { release(); if (pinned) evaluate(); });
+  addEventListener("queue-change", evaluate);
   /* Translation rewrites the rail labels and can wrap a headline onto a second
      line, which changes nothing about the step it is on but does move the stage. */
   addEventListener("i18n-applied", () => { release(); if (pinned) { index = -1; follow(); } });

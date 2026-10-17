@@ -34,6 +34,10 @@
   "use strict";
   const doc = document, root = doc.documentElement;
   const PAGE = 3;
+  /* The narrowest frame trim() is allowed to leave a picture. css/style.css names it per
+     width as --pin-floor: a phone cuts a picture narrower than a desktop will, because the
+     alternative to the crop is the band standing aside and no story at all. */
+  const FLOOR = 120;
   /* A self-turning band keeps its own clock. A picture gets a step to travel in and a
      hold to be read in; the last page holds longer, because the row is cut back to the
      first card instead of sliding the whole way back. The stage is asked for twice a
@@ -55,6 +59,16 @@
      visitor leaves the page. Only a device that can actually hover gets held. */
   const canHover = matchMedia("(hover: hover)");
   const navH = () => parseFloat(root.style.getPropertyValue("--nav-h")) || 72;
+  /* How much of the screen the bottom queue charges the stage. Only a phone asks the stage
+     to pay: --rail-h is named inside that media query, and it is the rail's payment and the
+     body's padding that the number buys back. Where the notices lift over a lane of their
+     own instead, they charge nothing, and a notice arriving changes nothing this band has
+     to know about. */
+  const charge = () => {
+    const r = getComputedStyle(root);
+    if (!(parseFloat(r.getPropertyValue("--rail-h")) || 0)) return 0;
+    return parseFloat(r.getPropertyValue("--queue-h")) || 0;
+  };
   const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
   const el = (t, c) => { const n = doc.createElement(t); n.className = c; return n; };
   /* The stone wears the first card's own name, and every card name is already a
@@ -74,6 +88,8 @@
     this.controls = (band.dataset.pinControls || "").split(",")
       .map((s) => s.trim()).filter(Boolean).map((s) => band.querySelector(s)).filter(Boolean);
     this.paged = false;
+    this.decided = false;
+    this.pending = undefined;
     this.index = -1;
     this.axis = band.dataset.pinDir === "x" ? "x" : "y";
     this.page = Math.max(1, parseInt(band.dataset.pinPage, 10) || PAGE);
@@ -131,19 +147,42 @@
     const relayout = () => this.ask();
     if (typeof ResizeObserver === "function") new ResizeObserver(relayout).observe(this.strip);
     new MutationObserver(relayout).observe(this.strip, { attributes: true, subtree: true, attributeFilter: ["hidden"] });
-    const refill = () => {
-      /* Only a window that actually changed size is allowed to ask for its picture
-         back: a pass that both took the height and gave it back would never settle. */
-      this.strip.style.removeProperty("--pin-media-h");
+    let seen = this.pin.offsetHeight, owed = charge(), box = innerWidth + "x" + innerHeight;
+    const refill = (grown) => {
+      /* Only a window that actually changed size is allowed to ask for its picture back: a
+         pass that both took the height and gave it back would never settle. A queue that
+         merely changed shape is not — handing the picture its natural height grows the card
+         and slides whatever is printed along the bottom of it down the screen, which at
+         390x844 on the home page measured 119px of movement and 0.088 of the shift score
+         for a chat teaser arriving at the bottom edge. A stale cut reads as a picture
+         cropped a little wider, and that is the lesser of the two. */
+      seen = this.pin.offsetHeight;
+      owed = charge();
+      if (grown || this.belowReader()) this.strip.style.removeProperty("--pin-media-h");
       relayout();
     };
-    addEventListener("resize", refill, { passive: true });
+    addEventListener("resize", () => {
+      const now = innerWidth + "x" + innerHeight;
+      const grown = now !== box;
+      box = now;
+      refill(grown);
+    }, { passive: true });
     /* The bottom of the screen belongs to a queue the page did not build — the install
        pill, the chat bubble, a notice that arrives a second after the stage is laid
        out — and on a phone the stage now stands on a screenful shorter than the whole
        window. When that edge moves, the picture is asked for back and the row is
-       measured against the room the stage has now. */
-    addEventListener("queue-change", refill);
+       measured against the room the stage has now.
+
+       Where the stage is never asked to pay the queue, neither number moves and a notice
+       arriving changes nothing about this band. Asking anyway was not free: measured at
+       1440x900 on the catalog, one pass fired by the consent bar lifted the window four
+       pixels and moved the card's own text block sixty-seven, for 0.045 of the shift
+       score and no visible reason. So the queue is only answered when the room the stage
+       got out of it actually changed. */
+    addEventListener("queue-change", () => {
+      if (this.pin.offsetHeight === seen && charge() === owed) return;
+      refill();
+    });
     addEventListener("i18n-applied", relayout);
     if (this.auto) this.hold();
   };
@@ -231,12 +270,16 @@
      non-event — a stale cut reads as a slightly wider crop, while a value that traded
      places with its own effect on the row would never settle. */
   Band.prototype.trim = function (over) {
-    if (over <= 0) return;
+    if (over <= 0) return 0;
     const card = this.cards[0];
     const m = card && (card.querySelector(".media") || card);
     const h = m.getBoundingClientRect().height;
-    const next = Math.max(120, Math.round(h - over));
+    const floor = parseFloat(getComputedStyle(this.band).getPropertyValue("--pin-floor")) || FLOOR;
+    const next = Math.max(floor, Math.round(h - over));
     if (next !== h) this.strip.style.setProperty("--pin-media-h", next + "px");
+    /* Whatever the picture could not give up is the row's own debt, and a debt the picture
+       cannot pay is a page that cannot be shown whole. */
+    return Math.max(0, Math.round(over - Math.max(0, h - next)));
   };
 
   /* How far the window has to reach past the container to touch both edges of the
@@ -326,22 +369,54 @@
     this.strip.style.transition = "";
   };
 
+  /* A band the window cannot hold whole is no use to anybody: the cards go back to the
+     plain grid, every clamp this driver wrote comes off, and a visitor standing inside a
+     run that no longer exists is put back at the band's top rather than left in the air. */
+  Band.prototype.standAside = function (wasRun, inside, anchor) {
+    this.setPaged(false);
+    this.breaks();
+    this.uncard();
+    this.win.style.height = "";
+    this.strip.style.removeProperty("--pin-media-h");
+    if (wasRun && inside) scrollTo({top: anchor, behavior: "auto"});
+  };
+
+  /* The one place an arrangement swap cannot be felt. A stage and a plain grid are nowhere
+     near the same height, so the swap rewrites the document under everyone: measured at
+     390x844 on the home page, the Customer experience band was allowed to stand aside after
+     the reader had scrolled past it and the section they had reached jumped a whole screen —
+     a shift of 1.0, worse than the 0.62 the first pass was meant to cure. Only a band that
+     still lies below the viewport can change its shape, because everything it moves is off
+     the screen. A band the reader is standing in, or has left behind, keeps its shape. */
+  Band.prototype.belowReader = function () {
+    return this.band.getBoundingClientRect().top >= innerHeight;
+  };
+
   Band.prototype.layout = function () {
     this.release();
     const wasRun = this.run.offsetHeight, wasIndex = this.index;
+    const wasMedia = this.strip.style.getPropertyValue("--pin-media-h");
     const anchor = this.top(), inside = scrollY >= anchor - 2 && scrollY <= anchor + wasRun + 2;
     this.cards = [].slice.call(this.strip.children).filter((c) => c.nodeType === 1 && !c.hidden);
     const n = Math.ceil(this.cards.length / this.page);
+    /* The one number that says whether this band is still being asked the same question:
+       the room a stage has is a product of the window, the card set, the page size and,
+       on a phone, the notices at the bottom of the screen — and nothing else may overturn
+       a measured decision until one of those moves. */
+    const ctx = innerWidth + "x" + innerHeight + "/" + this.cards.length + "/" + this.page +
+      "/" + charge();
+    if (ctx !== this.ctx) { this.ctx = ctx; this.aside = false; }
+    if (this.aside) return;
+    const below = !this.decided || this.belowReader();
+    if (this.decided && this.paged !== (n >= 2) && !below) {
+      this.pending = n >= 2;
+      return;
+    }
     this.setPaged(n > 1);
     if (n < 2) {
-      this.breaks();
-      this.uncard();
-      /* The window's height is only a clamp for the stage, and a stage that is gone
-         must not leave one behind: the plain grid would spill out of it and whatever
-         the band still has below would sit on top of the cards. */
-      this.win.style.height = "";
-      this.strip.style.removeProperty("--pin-media-h");
-      if (wasRun && inside) scrollTo({top: anchor, behavior: "auto"});
+      this.decided = true;
+      this.pending = undefined;
+      this.standAside(wasRun, inside, anchor);
       return;
     }
     this.pages = n;
@@ -364,7 +439,33 @@
        row overflows keeps the pass converging: the shortened row fits, and a value that
        does not change the layout schedules no second pass. */
     const room = this.spare();
-    this.trim(h - room);
+    const cut = this.trim(h - room);
+    /* And if the picture gives up everything it is allowed to and the row still does not
+       stand, the stage is not cramped, it is impossible: a 1024x600 window and a phone
+       holding five hundred pixels of notices both leave less screen than one card needs.
+       What the band does about it is not to show the card cut through its own words — it
+       is to stop pretending and lay the set out as the plain grid the rest of the site
+       uses, where every card is whole and the notices just keep the bottom. The answer is
+       re-asked whenever the window, the set or the queue moves. */
+    if (cut > 0) {
+      /* The debt only shows up on a pass that measured the shortfall — and a pass that
+         measured it with the reader anywhere but below the band has no right to answer it
+         by tearing the stage down. The picture is put back exactly as the last applied pass
+         left it, so this pass changed nothing anybody can see. */
+      if (this.decided && !below) {
+        if (wasMedia) this.strip.style.setProperty("--pin-media-h", wasMedia);
+        else this.strip.style.removeProperty("--pin-media-h");
+        this.pending = false;
+        return;
+      }
+      this.aside = true;
+      this.decided = true;
+      this.pending = undefined;
+      this.standAside(wasRun, inside, anchor);
+      return;
+    }
+    this.decided = true;
+    this.pending = undefined;
     const page = Math.max(200, Math.min(h, room));
     this.win.style.height = page + "px";
     /* On a phone the stage is a whole screenful tall while a single card may be only
@@ -487,6 +588,13 @@
   };
 
   Band.prototype.follow = function () {
+    /* The scroll is the only thing that says the band has come back below the reader, so
+       it is what pays an arrangement debt. A quarter of a second is the same hold the
+       anchor already keeps, which leaves an ordinary frame free of extra reads. */
+    if (this.pending !== undefined && Date.now() - (this.paidAt || 0) > 250) {
+      this.paidAt = Date.now();
+      if (this.belowReader()) { this.pending = undefined; this.aside = false; this.ask(); return; }
+    }
     if (!this.paged) return;
     const i = Math.round(clamp((scrollY - this.top()) / this.span()) * (this.pages - 1));
     if (!this.auto) { this.set(i); return; }

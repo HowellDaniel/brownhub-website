@@ -3613,3 +3613,157 @@ body[data-nav="engineering"]{--nav-ink:var(--accent-2)}
    ========================================================================== */
 html.is-flying *,html.is-flying *::before,html.is-flying *::after{
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+/* ==========================================================================
+   THE STONES KEEP THE BOTTOM EDGE, AND THE QUEUE LIFTS OVER THEM
+   Every rule that keeps a phone's stage clear of its notices is written inside
+   `@media (max-width:719px)`, and a wide screen never needed any of them: the stage
+   there keeps a whole screenful, so the stone row is that screenful's last 88px and the
+   bottom queue is left to stand wherever it likes. It does not like the bottom edge.
+   Measured at 1440x900 on a first visit to the catalog, the rail spans 812..900 and the
+   consent bar — full width, 81 tall, fixed to the edge at z-index 9990 — spans 819..900.
+   Every stone sat under that bar, and the row that turns the shelf could not be clicked
+   for the whole length of the band. At 768x1024 the same bar is 132 tall and covers the
+   rail twice over.
+
+   Lifting the rail out of the way is not available: the queue owns 277..900 of that edge
+   (the bar, the quote card over it, the pill over that), so no height the rail can be
+   given escapes the column. So the lane belongs to the stones and the notices pay for it,
+   which is one number read the same way --cookie-h has always been read: the bar lifts
+   off the viewport's bottom edge by the lane, and everything that raises itself over the
+   bar lifts with it. The install pill's --lift takes the lane inside the cookie term and
+   not outside it, because --lead-h already measures from the edge up to the card's own
+   top and would pay for the lane twice.
+
+   The lane is only ever charged on a page that has a stage to fill it: pinband.js puts
+   `js-pinband` on the root under its own gate and clears it on a page with no pinned
+   band, so the bar still sleeps at the edge of a short window and of every page that
+   never had stones.
+   ========================================================================== */
+@media (min-width:720px){
+  :root{--rail-lane:0px}
+  html.js-pinband{--rail-lane:88px}
+  .cookie-notice{bottom:var(--rail-lane)}
+  .leadask{bottom:calc(1rem + var(--cookie-h,0px) + var(--rail-lane) + env(safe-area-inset-bottom));
+    max-height:calc(58vh - var(--cookie-h,0px) - var(--rail-lane))}
+  .install{--lift:max(calc(var(--cookie-h,0px) + var(--rail-lane)), var(--lead-h,0px))}
+  .chat-widget{bottom:calc(1.5rem + var(--cookie-h,0px) + var(--rail-lane) + env(safe-area-inset-bottom))}
+  .chat-widget__panel{max-height:min(380px, calc(100vh - 6rem - var(--cookie-h,0px) - var(--rail-lane) - env(safe-area-inset-bottom)))}
+  .footer__bottom{padding-bottom:calc(max(calc(var(--cookie-h,0px) + var(--rail-lane)), var(--lead-h,0px)) + 1rem)}
+  .locale.is-open .locale__panel{max-height:calc(100vh - var(--locale-top,56px) - 16px - var(--cookie-h,0px) - var(--rail-lane))}
+}
+
+/* ==========================================================================
+   A STONE IS TOLD WHERE IT STANDS, AND THE NAME IS WRITTEN IN THE SPACE KEPT FOR IT
+   The catalog turned 0.126-0.194 of its viewport while a visitor scrolled it, and the
+   single most repeated entry in that score was the rail's own button: dy of ±36 and dh of
+   ∓36, once per page turn, on every one of the band's nine pages. It is the name printing
+   itself. An upright step is a pill of 13/20 type over a 24px stone with a 4px gap; the
+   same step active is a bare 18/28 name over a 56px stone — 88px of box against 52, and
+   since the rail packs its steps against its own bottom edge, the box grows upward and
+   the rect the shift meter watches moves every time the band turns a page. The width
+   moves with it, which drags every other stone along the hairline.
+
+   The phone already solved this by taking the name out of the flow, and the wide rail can
+   do the same thing more plainly: give every step a lane of its own and give every lane
+   the same three numbers — a 28px name slot, a 14px stem, a 24px stone — and the box stops
+   being a question about which page is showing. The name keeps its size and the stone
+   keeps its colour; what changes is only how the space is claimed. The active stone still
+   grows to the 40px square the old rule drew, but as a `scale` upon a 24px box rather than
+   a 56px one, so it paints outside its lane the way a rotated square always did while
+   leaving the layout alone; its icon counter-scales by the same ratio and stays the 18px
+   mark it has always been. The hidden names stay in the flow rather than going to
+   `display:none`, because a lane that is only kept when nothing is in it is not kept.
+   ========================================================================== */
+@media (min-width:720px){
+  .pstory__step{flex:1 1 0;min-width:0;gap:14px}
+  .pstory__step-label{display:block;width:100%;min-width:0;height:28px;line-height:28px;padding:0;
+    text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pinband--x .pstory__step:not([data-active="true"]) .pstory__step-label,
+  .pinband--one .pstory__step:not([data-active="true"]) .pstory__step-label,
+  .pinband--paged .pstory__step:not([data-active="true"]) .pstory__step-label{display:block;visibility:hidden}
+  .pinband--x .pstory__step,
+  .pinband--one .pstory__step,
+  .pinband--paged .pstory__step{gap:14px}
+  .pstory__step[data-active="true"],
+  .pinband--x .pstory__step[data-active="true"],
+  .pinband--one .pstory__step[data-active="true"]{gap:14px}
+  .pstory__diamond-in{transition:scale .2s var(--ease-out),background-color .2s,border-color .2s}
+  .pstory__step[data-active="true"] .pstory__diamond{width:24px;height:24px;bottom:-1px}
+  .pstory__step[data-active="true"] .pstory__diamond-in{scale:1.6667}
+  .pstory__step[data-active="true"] .pstory__icon{scale:.6}
+  /* The stem runs the length of the gap it is standing in: 24px up from the box's own
+     bottom edge is the top of the stone, and 14px is exactly where the name begins. */
+  .pstory__step[data-active="true"]::before{bottom:24px;height:14px}
+}
+
+/* ==========================================================================
+   A PICTURE CUTS TO ITS FLOOR, AND THE STAGE GOES WHEN IT RUNS OUT OF PICTURE
+   The phone's stage pays the bottom queue out of its own screenful, up to the limit
+   written above, and what is left is the room a page has to stand in. When the row is
+   taller than the room, js/pinband.js takes the difference off the picture — the one part
+   of a card free to shrink without losing a word — down to this floor. If the card still
+   does not stand, the band stops pretending: the set goes back to the plain grid, where
+   every card is whole and the notices simply keep the bottom until the visitor dismisses
+   one. That is what a 1024x600 window and a phone holding five hundred pixels of notices
+   have in common, and neither of them is answered by slicing a card through its own
+   price line.
+
+   A phone cuts narrower than a desktop, because the two arguments are not the same size.
+   Measured at 390x844 with only the consent bar up, the stage keeps 222px of window and
+   the catalog's card is 262 tall: the 40px the picture gives up is exactly the difference
+   between the collection turning sideways and the collection falling back to a grid. A
+   wide screen has room for its picture and never reaches the floor, so it keeps the
+   120px the driver carries as its default.
+   ========================================================================== */
+@media (max-width:719px){
+  .pinband{--pin-floor:72px}
+}
+
+/* ==========================================================================
+   THE PICTURE KEEPS ITS LINE WHEN A NOTICE ARRIVES
+   A phone stage centres its contents in whatever column of screen the notices
+   left it. So every notice that lands at the bottom edge takes a slice off that
+   column, and the heading and the shelf slide up into the gap it opens — and
+   back down when the notice goes away. Measured at 390x844 on the home page:
+   the bottom queue easing from 521px to 428px gave the stage body thirty-one
+   more pixels to spend, half of that thirty-one — fifteen — fell on the shelf,
+   and the whole of it scored 0.079 in the same breath as the chat bubble
+   lifting over the consent bar. Nothing was cropped and nothing was hidden; the
+   page moved under the reader for the price of a notice appearing.
+
+   The story band never had this trouble, because it has always stacked from the
+   top of its stage. The collection bands are set to do the same. The air that
+   used to split above and below the picture now collects under it, which is the
+   one part of the screen the queue stands in anyway; the heading keeps touch
+   with the top of the stage, the shelf keeps its line, and whatever the
+   notices decide to do below is none of their business.
+   ========================================================================== */
+@media (max-width:719px){
+  .pinband--paged .pinband__body{justify-content:flex-start}
+}
+
+/* ==========================================================================
+   THE STONES STEP OVER THE NOTICES WITHOUT MOVING THE PAGE
+   The rail owes the queue a step: as the notices at the bottom of a phone grow, the
+   row of stones stands higher so the page it names stays in the reader's eye. That
+   step was written as a bottom offset, which means the layout has to be worked out
+   again to make it — and the row of stones is inside a stage a screenful tall, so
+   the move is counted against the page. Measured at 390x844 on the home page: the
+   consent bar easing off lifted the stones thirty-one pixels for 0.035 of the shift
+   score, on the very same frame as the chat bubble.
+
+   A transform carries the identical step and asks the layout for nothing at all,
+   which is how the install pill has long cleared the same queue for free. The
+   stones are told to stand at the bottom of the stage and be lifted by the number
+   the queue owns; the escape hatch rides the same lift, one band higher, and both
+   keep exactly the line they held a moment before.
+   ========================================================================== */
+@media (max-width:719px){
+  .pinband--paged .pinband__pin > .pstory__rail,
+  html.js-pstory .pstory__pin > .pstory__rail{
+    bottom:0;transform:translateY(calc(-1 * var(--stage-pay)))}
+  html.js-pstory .pstory__skip,
+  html[dir="rtl"].js-pstory .pstory__skip{
+    bottom:var(--rail-h);transform:translateY(calc(-1 * var(--stage-pay)))}
+}
