@@ -158,8 +158,8 @@
         "catalog-mid": "Something else",
         "home-banner": "Something else",
         // The software shelf on engineering.html: a page, an app, a shop or care.
-        // These are the job the page itself prices at GH₵1,500 — GH₵5,000, so they
-        // must not arrive asking for a graphic-design budget that starts at GH₵500.
+        // The window those jobs belong to is the one the Website-or-Software option
+        // carries, so they must not arrive asking for a graphic-design budget.
         pages: "Website or Software",
         shop: "Website or Software",
         apps: "Website or Software",
