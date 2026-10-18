@@ -122,6 +122,7 @@
   function money(v) {
     // The locale's own currency name would print "GHS 1,200"; buyers here read
     // the symbol, so the number is grouped locally and the symbol is fixed.
+    // Whatever this returns goes through noI18n() at each call site — see why there.
     try {
       return "GH\u20B5" + new Intl.NumberFormat(undefined, {
         minimumFractionDigits: 0, maximumFractionDigits: 2
@@ -129,6 +130,16 @@
     } catch (e) {
       return "GH\u20B5" + v;
     }
+  }
+
+  // Money and account data must read exactly as they get banked or copied, so the
+  // dictionary is told to leave these nodes alone. It would otherwise rewrite a
+  // figure whenever that string happens to be a key — "GH₵250" and "GH₵500" are,
+  // because the hand-written price spans in the HTML needed localising, and a slot
+  // priced GH₵350 is not one. Two cards reordered and one did not.
+  function noI18n(n) {
+    n.setAttribute("data-i18n-off", "");
+    return n;
   }
 
   function emailOf() {
@@ -295,13 +306,13 @@
     return li;
   }
 
-  // A label and a value that must not be translated: the dictionary rewrites the
-  // text nodes it recognises and leaves an unknown account number exactly alone,
-  // which is the safe direction for a string that sends money.
+  // A label the dictionary may translate, and a value it may not: the account
+  // number, the account name and the exact amount are what the buyer sends, and
+  // a re-worded figure is a payment that does not match.
   function dataRow(label, value, copyable) {
     var row = el("div", "pay-xfer__row");
     row.appendChild(el("span", "pay-xfer__k", label));
-    row.appendChild(el("span", "pay-xfer__v", value));
+    row.appendChild(noI18n(el("span", "pay-xfer__v", value)));
     if (copyable) {
       var b = el("button", "pay-xfer__copy", "Copy");
       b.type = "button";
@@ -342,7 +353,7 @@
     head.appendChild(el("p", "pay-xfer__title", "Transfer to our own bank account"));
     var lead = el("p", "pay-xfer__item");
     lead.appendChild(el("span", null, item.name));
-    lead.appendChild(el("strong", null, money(item.price)));
+    lead.appendChild(noI18n(el("strong", null, money(item.price))));
     head.appendChild(lead);
     box.appendChild(head);
 
@@ -417,7 +428,7 @@
     // An unpriced card says nothing about money: the button already asks for a
     // quote, and a repeated line would read like a missing price.
     if (priced) {
-      c.appendChild(el("p", "pay-price")).appendChild(el("strong", null, money(item.price)));
+      c.appendChild(el("p", "pay-price")).appendChild(noI18n(el("strong", null, money(item.price))));
       c.appendChild(el("p", "pay-methods", "Card, mobile money or Apple Pay — or transfer to our account"));
     }
     var actions = el("div", "pay-actions");
