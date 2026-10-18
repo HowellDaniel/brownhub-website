@@ -209,27 +209,55 @@
       const bandFloor = (o) => Number((o && o.dataset.bandMin) || 0);
       const serviceFloor = (o) => Number((o && o.dataset.budgetMin) || 0);
       const serviceCeil = (o) => Number((o && o.dataset.budgetMax) || 0);
-      // clear=false hides the bands outside the window and touches nothing else,
-      // which is what every non-user pass uses: a service put in the form by a
-      // re-request or restored by the browser arrives with its budget already
+      const outside = (o, min, max) => {
+        const f = bandFloor(o);
+        return !!f && (f < min || (!!max && f > max));
+      };
+      // Out-of-window bands leave the document, they are not merely marked hidden. A
+      // phone builds its picker from the option nodes rather than from their styles,
+      // so iOS Safari and Android Chrome both keep listing a hidden option: on a
+      // handset every service offered the whole ladder from GH₵100 while the desktop
+      // list looked correct. Removing the node is the one rule every engine obeys, and
+      // `hidden` stays alongside it for the engines that honour it and for screen
+      // readers, which must not read out a band the picker cannot offer. Never
+      // `disabled`: that leaves FormData entirely, so an answer already on file would
+      // vanish between the page and the inbox.
+      const rungs = [].slice.call(budgetSel.options).filter((o) => bandFloor(o) > 0);
+      // clear=false hides nothing that a visitor answered: a service put in the form by
+      // a re-request or restored by the browser arrives with its budget already
       // chosen, and that answer is not ours to throw away.
-      const fitBudget = (clear) => {
+      const fit = (clear) => {
         const svc = serviceSel.selectedOptions[0];
         const min = serviceFloor(svc);
         const max = serviceCeil(svc);
-        const off = (f) => !!f && (f < min || (!!max && f > max));
+        if (clear && (min || max) && outside(budgetSel.selectedOptions[0], min, max)) budgetSel.value = "";
+        const chosen = budgetSel.selectedOptions[0];
         let dropped = 0;
-        [].forEach.call(budgetSel.options, (o) => {
-          // hidden, never disabled: a disabled option leaves FormData entirely.
-          o.hidden = off(bandFloor(o));
-          if (o.hidden) dropped++;
+        rungs.forEach((o) => {
+          const gone = outside(o, min, max);
+          o.hidden = gone;
+          if (gone && o !== chosen) {
+            if (o.parentNode === budgetSel) budgetSel.removeChild(o);
+            dropped++;
+          } else {
+            // Appended in ladder order, so a band coming back after a service change
+            // returns to its own place in the list instead of to the bottom.
+            budgetSel.appendChild(o);
+          }
         });
         budgetNote.hidden = !dropped;
-        if (!clear || !(min || max)) return;
-        if (off(bandFloor(budgetSel.selectedOptions[0]))) budgetSel.value = "";
       };
-      const userPick = () => fitBudget(true);
-      const silentPass = () => fitBudget(false);
+      // js/accounts.js fills both pickers from a stored enquiry and looks a band up by
+      // its value, so the ladder has to be whole while it does; it calls fit() after.
+      window.BHBudget = {
+        expand: () => {
+          rungs.forEach((o) => { o.hidden = false; budgetSel.appendChild(o); });
+          budgetNote.hidden = true;
+        },
+        fit: () => fit(false)
+      };
+      const userPick = () => fit(true);
+      const silentPass = () => fit(false);
       serviceSel.addEventListener("change", userPick);
       serviceSel.addEventListener("input", userPick);
       // i18n-applied is when accounts.js refills both fields, so the picker has

@@ -1150,8 +1150,7 @@
     closeModal();
     var head = t("I'm sending this again:") + " " + fmtDate(r.created_at) + "\n\n" + (r.message || "") + "\n\n";
     if (message.value.indexOf(head) !== 0) message.value = head + message.value;
-    pickOption(document.getElementById("service"), en(r.service));
-    pickOption(document.getElementById("budget"), en(r.budget));
+    fillPicks(en(r.service), en(r.budget));
     message.scrollIntoView({ behavior: "smooth", block: "center" });
     setTimeout(function () { message.focus(); }, 400);
   }
@@ -1164,15 +1163,23 @@
     });
   }
 
+  // The enquiry form only keeps the budget bands its service can actually use, and a
+  // stored enquiry can name a band that is off the document right now. So the ladder is
+  // handed back whole, both fields are filled, and the form trims it again for the
+  // service this request turned out to be.
+  function fillPicks(svc, budget) {
+    if (window.BHBudget) window.BHBudget.expand();
+    pickOption(document.getElementById("service"), svc);
+    pickOption(document.getElementById("budget"), budget);
+    if (window.BHBudget) window.BHBudget.fit();
+  }
+
   // A re-request clicked on another page: restore its service and budget here.
   var q = new URLSearchParams(location.search);
   var from = configured ? q.get("rereq") : null;
   var fromBudget = configured ? q.get("rebud") : null;
   if (from || fromBudget) {
-    var applyFrom = function () {
-      pickOption(document.getElementById("service"), from);
-      pickOption(document.getElementById("budget"), fromBudget);
-    };
+    var applyFrom = function () { fillPicks(from, fromBudget); };
     applyFrom();
     document.addEventListener("i18n-applied", applyFrom);
   }
