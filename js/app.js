@@ -4,15 +4,21 @@
 
   function tr(s) { return (window.I18N && I18N.t) ? I18N.t(s) : s; }
 
-  /* An installed copy asks for its own new build.
-     A service worker is otherwise only compared against the network when a document
-     starts up, so a phone that keeps BrownHub in the app switcher — which is exactly
-     what an installed app is for — never re-reads /sw.js, and that copy goes on
-     serving the day-old shell out of its cache while the browser tab, which is opened
-     fresh every time, looks fine. Nothing here reloads the visitor's page: the worker
-     already answers navigations from the network first, so a re-read only moves the
-     fallback it holds and the headers it injects onto the next one. */
+  var standalone = window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: fullscreen)").matches || navigator.standalone === true;
+  var KEY = "brownhub-install";
+  var deferred = null;
+  var pill = null;
+
   if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+    /* An installed copy asks for its own new build.
+       A service worker is otherwise only compared against the network when a document
+       starts up, so a phone that keeps BrownHub in the app switcher — which is exactly
+       what an installed app is for — never re-reads /sw.js, and that copy goes on
+       serving the day-old shell out of its cache while the browser tab, which is opened
+       fresh every time, looks fine. Nothing here reloads the visitor's page: the worker
+       already answers navigations from the network first, so a re-read only moves the
+       fallback it holds and the headers it injects onto the next one. */
     var swreg = null;
     function recheck() {
       if (swreg && swreg.update) swreg.update().catch(function () {});
@@ -20,7 +26,7 @@
     window.addEventListener("load", function () {
       navigator.serviceWorker
         .register("/sw.js")
-        .then(function (r) { swreg = r; })
+        .then(function (r) { swreg = r; watchBuild(r); })
         .catch(function () {});
     });
     document.addEventListener("visibilitychange", function () {
@@ -30,13 +36,93 @@
     /* A tablet pinned to a wall, or a phone left on a desk with the screen kept awake
        by a client's quote page, never fires either event above. */
     setInterval(recheck, 10 * 60 * 1000);
-  }
 
-  var standalone = window.matchMedia("(display-mode: standalone)").matches ||
-    window.matchMedia("(display-mode: fullscreen)").matches || navigator.standalone === true;
-  var KEY = "brownhub-install";
-  var deferred = null;
-  var pill = null;
+    /* A standing-by build is announced, not imposed.
+       The worker used to call skipWaiting() the moment it finished installing, so the
+       studio's new code arrived underneath a phone that was mid-scroll. It now waits, and
+       this is the card that asks. `waiting` is a build that arrived while the app was shut
+       — the common case, since the card is up the second the app opens; `updatefound` is
+       one that arrives while it is running, which the re-check above goes and finds. A
+       browser tab is not asked (it re-reads the network on every navigation anyway) unless
+       it arrives with ?upd=1, which is how the card is proven on a desk. */
+    var BKEY = "brownhub-build";
+    var buildCard = null;
+    var takingBuild = false;
+    function showBuild() {
+      if (buildCard) return;
+      if (!standalone && !/[?&]upd=1(?:&|$)/.test(location.search)) return;
+      try { if (sessionStorage.getItem(BKEY) === "off") return; } catch (e) {}
+      var msg = tr("A new version of BrownHub Studio is ready.");
+      buildCard = doc.createElement("div");
+      buildCard.className = "install install--build install--in";
+      buildCard.setAttribute("role", "region");
+      buildCard.setAttribute("aria-label", msg);
+      /* One card owns the bottom edge: an install prompt left standing here would sit on
+         top of this one, and a visitor being asked to update has already installed. */
+      if (pill) pill.hidden = true;
+
+      var line = doc.createElement("p");
+      var go = doc.createElement("button");
+      var no = doc.createElement("button");
+      /* The worker answers over the network and the dictionary does too, and whichever
+         lands first builds this card — so the words are painted by a function the
+         translation event calls again, not by one read taken here. */
+      function paint() {
+        var m = tr("A new version of BrownHub Studio is ready.");
+        line.textContent = m;
+        go.textContent = tr("Update");
+        no.setAttribute("aria-label", tr("Not now"));
+        buildCard.setAttribute("aria-label", m);
+      }
+      paint();
+      addEventListener("i18n-applied", paint);
+      buildCard.appendChild(line);
+
+      go.type = "button";
+      go.className = "btn btn--primary install__go";
+      go.addEventListener("click", function () {
+        if (!swreg || !swreg.waiting) { location.reload(); return; }
+        takingBuild = true;
+        swreg.waiting.postMessage("skip-waiting");
+        /* A worker that is already activating on its own never answers the message, so
+           the card cannot simply wait on controllerchange forever. */
+        setTimeout(function () { if (takingBuild) location.reload(); }, 4000);
+      });
+      buildCard.appendChild(go);
+
+      no.type = "button";
+      no.className = "install__no";
+      no.textContent = "\u00d7";
+      no.addEventListener("click", function () {
+        try { sessionStorage.setItem(BKEY, "off"); } catch (e) {}
+        buildCard.hidden = true;
+        reserve();
+      });
+      buildCard.appendChild(no);
+
+      doc.body.appendChild(buildCard);
+      own(buildCard);
+      requestAnimationFrame(reserve);
+      setTimeout(reserve, 700);
+    }
+    function watchBuild(reg) {
+      if (reg.waiting) showBuild();
+      reg.addEventListener("updatefound", function () {
+        var w = reg.installing;
+        if (!w) return;
+        w.addEventListener("statechange", function () {
+          /* With no controller there is no older build for this one to wait behind — that
+             is a first visit, and the worker activates on its own. */
+          if (w.state === "installed" && navigator.serviceWorker.controller) showBuild();
+        });
+      });
+    }
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      if (!takingBuild) return;
+      takingBuild = false;
+      location.reload();
+    });
+  }
 
   var phone = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
   // The printed and on-screen code points at ?app=1, which is the one address that
@@ -94,7 +180,9 @@
   }
 
   function show(how) {
-    if (pill || standalone || (remembered() && !asked)) return;
+    /* A build card already standing here would be covered by this one — the worker can
+       answer before the 2.5 s timer that brings the install prompt in. */
+    if (pill || buildCard || standalone || (remembered() && !asked)) return;
     pill = doc.createElement("div");
     pill.className = "install" + (how === "qr" ? " install--qr" : "");
     pill.setAttribute("role", "region");

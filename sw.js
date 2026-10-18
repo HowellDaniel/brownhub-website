@@ -1,4 +1,4 @@
-const CACHE = "brownhub-v52";
+const CACHE = "brownhub-v53";
 const OFFLINE = "/offline.html";
 const SHELL = [OFFLINE, "/css/offline.css?v=1", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png",
   "/icons/maskable-512.png", "/icons/apple-touch-icon.png", "/images/logo.png", "/images/favicon.png"];
@@ -7,8 +7,18 @@ const SHELL = [OFFLINE, "/css/offline.css?v=1", "/manifest.webmanifest", "/icons
 // is left completely alone. Only our own static files may ever be stored.
 const MINE = new Set([location.hostname, "www.brownhub283.com"]);
 
+// A new build installs itself into a waiting room, not onto the screen.
+// This used to call skipWaiting() the moment the shell was cached, which swapped the
+// studio's new code and pictures under a phone that was already open mid-scroll. Now
+// the worker stands by in "installed", the page notices it and asks the visitor whether
+// to take the update, and only the answer below (or the app being closed, which lets any
+// waiting worker activate on its own) moves it in.
+//
+// Because the browser only ever compares THIS file's bytes, a deploy that touches
+// nothing here — an HTML or CSS or data change — shows no installed copy the new build
+// at all unless the cache name above is renamed. Rename it every time you ship.
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).catch(() => {}).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).catch(() => {}));
 });
 
 self.addEventListener("activate", (e) => {

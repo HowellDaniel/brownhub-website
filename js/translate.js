@@ -136,7 +136,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=95")
+    return fetch("i18n/" + code + ".json?v=96")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }
