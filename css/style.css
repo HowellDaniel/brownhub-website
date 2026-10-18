@@ -3767,3 +3767,11 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
   html[dir="rtl"].js-pstory .pstory__skip{
     bottom:var(--rail-h);transform:translateY(calc(-1 * var(--stage-pay)))}
 }
+
+/* ==========================================================================
+   A rail frame whose picture has not been asked for yet is a plate, not a
+   broken picture: it keeps the box the rail measured and shows the band's own
+   ground, and the picture arrives inside it without moving anything.
+   ========================================================================== */
+#catalog-flow .media img:not([src]),
+.flow .media img:not([src]){visibility:hidden}
