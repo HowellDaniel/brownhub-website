@@ -3709,15 +3709,20 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
    have in common, and neither of them is answered by slicing a card through its own
    price line.
 
-   A phone cuts narrower than a desktop, because the two arguments are not the same size.
-   Measured at 390x844 with only the consent bar up, the stage keeps 222px of window and
-   the catalog's card is 262 tall: the 40px the picture gives up is exactly the difference
-   between the collection turning sideways and the collection falling back to a grid. A
-   wide screen has room for its picture and never reaches the floor, so it keeps the
-   120px the driver carries as its default.
+   A phone cuts its floor where a desktop never reaches one, and the sweep that set this
+   number is the picture height each home band's stage asks for at each height of the
+   bottom queue, measured at 390x844: nothing up asks for 273px, the consent bar (428px)
+   takes the portfolio band to the grid and the experience band to 104px, and the lead card
+   open at the bottom (623px) takes that picture down to 73px — 50px wide, a thumbnail of a
+   flyer whose whole point is its headline. The smallest ask that is still a stage, not a
+   stamp, was 191px (portfolio, one notice dismissed). So the floor sits at 150px: every
+   picture the phone can show whole stays pinned, and every one it cannot is handed back to
+   the grid instead of printed at postage-stamp size. A wide screen has room for its
+   picture and never reaches the floor, so it keeps the 120px the driver carries as its
+   default.
    ========================================================================== */
 @media (max-width:719px){
-  .pinband{--pin-floor:72px}
+  .pinband{--pin-floor:150px}
 }
 
 /* ==========================================================================
@@ -3775,3 +3780,297 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
    ========================================================================== */
 #catalog-flow .media img:not([src]),
 .flow .media img:not([src]){visibility:hidden}
+
+/* ==========================================================================
+   A THUMB GETS WHAT A CURSOR GETS.
+   Every effect on this site hangs off one of three things a finger never does:
+   it hovers, it moves a pointer inside a pane, or it parks a pointer somewhere
+   after leaving. So a phone visitor lost the play badge, the hero's scroll cue,
+   the testimonial window, the specular glass and half the picture clips — and
+   kept the ones that latch, because a tap leaves :hover switched on until the
+   next navigation. This pass does three jobs in one place: it takes the latching
+   lifts off, hands the same feedback back as a press, and gives the touch device
+   the effects it was never granted.
+   Two things stay desktop-only on purpose: the fixed .story-rail and the
+   .social-rail, because the pinned stage's own diamond rail and the bottom queue
+   already own that edge on a phone; and the nav mega panel, which the drawer
+   replaces.
+   ========================================================================== */
+@media (hover:none){
+  /* --- what a tap must not leave behind --- */
+  .shot:hover,.card:hover,.feature:hover{border-color:var(--border);transform:none}
+  .shot:hover img,.product-card:hover img{scale:1.16}
+  .filter__btn:hover{color:var(--text-muted);border-color:var(--border)}
+  .theme-toggle:hover{border-color:var(--border);color:var(--text-muted)}
+  .btn--primary:hover{transform:none}
+  .footer-social a:hover,.footer-social a:focus-visible,
+  .social-rail__btn:hover,.social-rail__btn:focus-visible{
+    color:var(--text-muted);border-color:var(--border);background:none;translate:0 0;outline:none}
+  .card:hover .card__icon,.card:hover .icon-tile,.feature:hover .icon-tile{
+    background:rgba(var(--accent-rgb),.10);color:var(--accent);border-color:rgba(var(--accent-rgb),.22);transform:none}
+  .nav__link:hover::after{right:100%}
+  html[dir="rtl"] .nav__link:hover::after{left:100%}
+
+  /* --- the same feedback, earned by the press instead --- */
+  /* No transform on a stage card: the pinned driver owns that axis and a lift
+     would snap the card out of the pan it is standing in. */
+  .card:active,.feature:active,.product-card:active{
+    border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--t-shadow)}
+  .shot:active{border-color:var(--accent);box-shadow:var(--t-shadow)}
+  .shot:active img,.product-card:active img{scale:1.25}
+  .shot:active .media::before,.product-card:active .media::before{opacity:1}
+  .card:active .card__icon,.card:active .icon-tile,.feature:active .icon-tile{
+    background:var(--accent-fill);color:#fff;border-color:var(--accent-fill)}
+  .filter__btn:active{color:var(--text);border-color:var(--accent);scale:.96}
+  .btn:active,.theme-toggle:active{scale:.97}
+  .footer-social a:active,.social-rail__btn:active{
+    color:#fff;border-color:var(--accent-fill);background:var(--accent-fill)}
+  .nav__link:active::after{right:0}
+  html[dir="rtl"] .nav__link:active::after{left:0}
+
+  /* --- the specular glass: a finger never parks inside a pane, so the light
+         has to arrive with the press, and --gy has to be moved inside the box
+         it lights (its resting -60% sits outside every card on the site). --- */
+  :is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success),
+  .faq details{--gx:50%;--gy:34%}
+  :is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.shot,.form-success):active::after,
+  .faq details:active::after{opacity:1}
+  .site-header{--gy:78%}
+  .site-header:active::after{opacity:1}
+
+  /* --- what the phone was never granted --- */
+  /* The play badge: on a wide screen it grows under a cursor, but a touch
+     visitor has no cursor to arrive, and the card is the zoom control. */
+  .shot__zoom{opacity:.9;scale:1}
+  /* The customer-experience rail's photos played their loop under a pointer
+     only; is-view is what js/scroll.js already gives every frame on screen. */
+  html.js-scroll .exp__card.is-view .media>img{
+    animation:bh-clip-intro 2.6s ease-out 1,bh-clip-loop 13s ease-in-out 2.6s infinite}
+  html.js-scroll .exp__card.is-view .media::after{animation:bh-scrub 13s linear 2.6s infinite}
+}
+
+/* The hero's scroll cue was switched off with the hero's full height, but the
+   page still runs 20 screens below it — a phone visitor deserves to know. */
+@media (max-width:900px){
+  .hero::after{display:block;height:28px;bottom:.65rem}
+}
+
+/* The testimonial wall: on a wide screen each column is a window with the
+   quotes drifting through it and fading at the edges. On a phone the window was
+   never cut, so the drift ran off the bottom of an unclipped box and the text
+   sheared hard at the edge; and a pointer that stops the wall does not exist, so
+   the press does it instead. */
+@media (max-width:640px){
+  .tst--live .tst__col,.tst--measuring .tst__col{height:var(--tst-h);
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 13%,#000 87%,transparent 100%);
+    mask-image:linear-gradient(to bottom,transparent 0,#000 13%,#000 87%,transparent 100%)}
+  .tst:active .tst__track{animation-play-state:paused}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html.js-scroll .exp__card.is-view .media>img,
+  html.js-scroll .exp__card.is-view .media::after{animation:none}
+  .shot:active,.card:active,.feature:active,.product-card:active,.filter__btn:active,
+  .btn:active,.theme-toggle:active{transform:none;scale:1}
+}
+
+/* ==========================================================================
+   THE BAND LABEL IS A LABEL, NOT A PARAGRAPH.
+   .section__head p (0,1,1) outranks .eyebrow (0,1,0) and paints every band's
+   kicker at the body size — 18px where the token says 14px — at both widths.
+   Naming the parent lifts the label back over it without touching the prose
+   that shares the head.
+   ========================================================================== */
+.section__head .eyebrow,.section__head .hero__eyebrow{
+  font-size:var(--t-fs-20);line-height:var(--t-lh-medium);margin:0}
+
+/* Display type keeps the wide screen's tracking and leading when it is set at
+   32px on a 342px measure, where the same -0.035em closes the counters and the
+   1.15 leading crowds the descenders. Loosen both for the phone only. */
+@media (max-width:719px){
+  .hero h1,.page-hero h1{line-height:1.22;letter-spacing:-.018em}
+  .section__head h2{line-height:1.24;letter-spacing:-.02em}
+}
+
+/* ==========================================================================
+   A PICTURE THAT IS TALLER THAN ITS BOX SHOWS ALL OF ITSELF.
+   101 of the 182 catalog frames are portrait while every box on the site is
+   1/1, 4/3, 16/9 or 2/1, so object-fit:cover threw away the headline, the
+   dates and the call to action of the studio's own work — the one thing the
+   card exists to show. In the one-picture stage the piece gets its own ground
+   instead: a mat cut to the picture, so the shadow that lifts it off the card
+   follows the artwork, not a wide empty panel, and the img is never asked for
+   more than the file carries — which is what keeps a phone's 430px tier reading
+   sharp at that phone's own pixel density.
+   The cut is arithmetic, not content. The mat's height is the number
+   js/pinband.js writes when the row has no room for it (--pin-media-h) and the
+   width is that height times the frame's own stamped size (--art-w/--art-h, tools/
+   markart.py); sizing the mat off the img's pixels instead made the stage
+   depend on when the picture decoded, and the driver — which measures the row
+   once, before a lazy file has arrived — cancelled the whole desktop story.
+   The img fills the mat it is given, so contain paints it whole and edge to edge.
+   Cropping stays right for the rails and the grid, where a full piece would be
+   too small to read.
+   ========================================================================== */
+.pinband--paged.pinband--one .media[data-art="tall"]{
+  --mat-h:var(--pin-media-h,min(46vh,380px));
+  background:var(--bg-alt);padding:10px;
+  height:var(--mat-h);width:calc((var(--mat-h) - 20px) * var(--art-w,430) / var(--art-h,760) + 20px);
+  aspect-ratio:auto;max-width:100%;margin-inline:auto;overflow:visible}
+.pinband--paged.pinband--one .media[data-art="tall"]>img{
+  width:100%;height:100%;max-width:100%;max-height:100%;
+  aspect-ratio:auto;object-fit:contain;scale:1;
+  /* a filter:drop-shadow() here costs a pinned band 4.5x its frame time —
+     measured p95 30ms against 142ms on the throttled phone engine */
+  box-shadow:0 10px 22px rgba(27,11,12,.34)}
+.pinband--paged.pinband--one .media[data-art="tall"]::before{inset:10px}
+.pinband--paged.pinband--one .media[data-art="tall"]::after{left:10px;right:10px;bottom:10px}
+
+/* ==========================================================================
+   A PHONE ASKS THE PICTURE FOR NO MORE THAN ITS OWN FILE CARRIES
+   The stage gives a portrait piece the whole column of screen the notices left it,
+   which at 390x844 measured a mat 186 wide out of a file that reached the phone
+   430 device px wide: 143 CSS px at that engine's three pixels per point. Every
+   pixel past that was the phone inventing detail, and a blurry headline is the one
+   thing this mat exists to save. So the ask is capped at the file's own height
+   divided by the phone's density — the same number the markup's `sizes` clause
+   already promises (143 = 430/3, 190 = 570/3), which is why it is arithmetic and
+   not a new download. A wider mat would hold a bigger picture only if the bigger
+   picture were fetched, and fetching it is what the last pass spent two megabytes
+   of the phone's first load taking back out.
+   The stamp is a bare number, so it is multiplied by 1px before anything is added to
+   it: a calc() that adds a number to a length is thrown away whole, and a discarded
+   --mat-h leaves the mat sizing itself to the picture again — 586px tall at 390 wide,
+   which is the very ask this cap exists to refuse.
+   ========================================================================== */
+@media (max-width:719px){
+  .pinband--paged.pinband--one .media[data-art="tall"]{
+    --mat-h:min(var(--pin-media-h,46vh),calc(var(--art-h,760) * 1px / 3 + 20px))}
+}
+
+/* ==========================================================================
+   THE WIDE PIECE GETS THE SAME MAT, TURNED NINETY DEGREES
+   A landscape picture in the stage was given the whole column and told to cover a
+   box of the band's own shape, so `object-fit:cover` cut its sides away and then
+   asked the file for more pixels than it holds: measured at 390x844 on a phone of
+   three device pixels per point, a printed-materials strip 759 px wide was being
+   stretched into a 340x352 box — 0.24 of a real pixel per device pixel, and four
+   fifths of the strip cropped out. The same arithmetic that caps a tall piece
+   caps a wide one: the box is cut from the file's own shape (`aspect-ratio` from
+   the two stamped numbers, which is why the stamp is two numbers) and its width is
+   refused past what the phone's copy of that file fills at its density.
+   The width is the leading term here, so the driver's cut lands as a max-height
+   rather than as the box — but the cut is then handed back to the width as well,
+   because a mat that keeps its full width while losing its height is a wide panel
+   of ground beside a smaller picture, which is the very thing the tall mat refuses.
+   Measured at 390x844 on a square piece clamped to 195px: the mat held 271 wide and
+   the picture filled 175 of it, 48px of ground on either side. With the cut spent on
+   both edges the mat is 195x195 and the piece is whole and edge to edge again.
+   ========================================================================== */
+.pinband--paged.pinband--one .media[data-art="wide"]{
+  /* Two numbers the width is refused past: what the file fills at this engine's own
+     density, and what the driver's cut leaves once the picture's shape is honoured.
+     The unset cut falls back to a length no stage can reach, so the second term only
+     ever binds on a pass that actually asked for room. */
+  --mat-cap:calc(var(--art-w,760) / 2 * 1px + 20px);
+  --mat-fit:calc((var(--pin-media-h,10000px) - 20px) * var(--art-w,760) / var(--art-h,570) + 20px);
+  background:var(--bg-alt);padding:10px;
+  width:min(100%,var(--mat-cap),var(--mat-fit));
+  height:auto;max-height:var(--pin-media-h,none);
+  aspect-ratio:var(--art-w,760) / var(--art-h,570);
+  max-width:100%;margin-inline:auto;overflow:visible}
+.pinband--paged.pinband--one .media[data-art="wide"]>img{
+  width:100%;height:100%;max-width:100%;max-height:100%;
+  aspect-ratio:auto;object-fit:contain;scale:1;
+  box-shadow:0 10px 22px rgba(27,11,12,.34)}
+.pinband--paged.pinband--one .media[data-art="wide"]::before{inset:10px}
+.pinband--paged.pinband--one .media[data-art="wide"]::after{left:10px;right:10px;bottom:10px}
+
+/* Three pixels per point on the pocket engine, two on a desk — the density each
+   viewport is measured at, and the number that makes the cap above the file's own
+   native width instead of a guess at it. */
+@media (max-width:719px){
+  .pinband--paged.pinband--one .media[data-art="wide"]{
+    --mat-cap:calc(var(--art-w,760) / 3 * 1px + 20px)}
+}
+
+/* ==========================================================================
+   A LABEL LEADS LIKE A LABEL AND CARRIES LIKE ONE, BOTH WAYS ROUND
+   Read out of the engine at 390x844 and 1440x900 on four pages — the two readings
+   came back identical, which is the point: this is not a phone defect, it is five
+   roles the body's own running leading reaches on every screen.
+     .shot figcaption span   11.8px  book 400  leading 1.75  tracking 0.83
+     #companies span         12.0px  book 400  leading 1.75  tracking 0.72
+     .tl__date               14.0px  semi 600  leading 1.75  tracking 0.56
+     .footer__ai-label       12.0px  semi 600  leading 1.75  tracking 1.08
+     .webcat__type           12.5px  bold 700  leading 1.75  tracking 0.62
+   A label is one line of tracked capitals and is paid 1.75 lines of it, and the two
+   that carry the smallest ink on the page carry it at book weight. So the family
+   takes the token's small leading and at least the token's medium.
+   This buys no picture height, which is worth saying because it was the reason given
+   for it. Put the nameplate back at 1.75 and the driver's cut is byte-identical: the
+   stage chrome stays 80,80,80,80,80,181,84 and --pin-media-h stays
+   192,192,192,192,192,91,188 at every band. A caption box is measured apart from its
+   picture, and at 11.8px the span's own line box (16px tall) is smaller than the
+   three-line heading it sits under (64px) and the figcaption's own padding (11/14px),
+   so shortening one line of it moves nothing the driver can see.
+   ========================================================================== */
+/* The leading is for the whole family; the weight only for the two that arrive at
+   book, because the milestone date and the summary label already carry a semibold and
+   a rule that names a weight takes it away from them too. The fifth member,
+   .webcat__type, was found by sweeping the other pages: 12.5px capitals at the body's
+   1.75, one line deep on a phone, and it takes the leading without being named.
+   The two capitals that run past one line keep their air: the cost-band lead wraps to
+   two lines at 14px and the eyebrow chips are box-sized, so neither is named here. */
+.shot figcaption span,#companies span,.tl__date,.footer__ai-label,.webcat__type{
+  line-height:var(--t-lh-small)}
+.shot figcaption span,#companies span{font-weight:var(--t-fw-medium)}
+
+/* The band heading on a wide screen leads looser than the hero it sits under: 40px at
+   1.30 against the hero's 48px at 1.15, and a two-line heading at 1.30 reads as two
+   separate sentences. The phone is already loosened above (a 26px head wraps to three
+   lines and needs the air), so this only meets the desk halfway down. */
+@media (min-width:720px){
+  .section__head h2{line-height:1.2}
+}
+
+/* ==========================================================================
+   A PHONE'S HANDED-BACK CATALOG GRID HAD ONE CARD A ROW, AND EVERY PICTURE IN
+   IT WAS BEING STRETCHED: TWO CARDS A ROW MAKES THE SAME FILES PIXEL-TRUE
+   The files are the ceiling and they are not going up today: the biggest catalog
+   frame is 760px and a handful sit at 570 and 430. Measured in the phone engine at
+   390x844 (dpr 3), the stacked grid gave each card 340 CSS px of picture, which asks
+   for 1020 device px, so every frame the walk reached came back soft — 760px files at
+   served 0.75, 608 at 0.60, 570 at 0.56, pull-up-design-2's 430w candidate at 0.42.
+   The pinned stage never reads soft, because its own cut lands the picture at 79-253px
+   wide, under what the file holds: the same walk over a staged shelf returns 26 frames
+   and SOFT none. Only the handback — where the shelf goes when the window cannot pay
+   for a stage — was asking a small file for a wide box.
+   Two cards a row lands each picture at 157 CSS px = 471 device px (measured: card 159,
+   imgbox 157, need 471), and the same bytes then fill the box at 1.21-1.61. Across the
+   13 frames the walk reaches, only pull-up-design-2 stays under 1.0 at 0.91, because 430
+   is that file's own ceiling and no geometry can raise it. No file is re-downloaded at a
+   larger size, so nothing is added to what the phone pays to open the page, and the wide
+   screen already does this: a 481-900px window has shown two product cards a row for as
+   long as this stylesheet had a responsive block, and only the pocket was left stacked.
+   ========================================================================== */
+/* Scoped to the state the driver itself names, and that scoping was earned. Keying this
+   off `.cards--3:has(.product-card)` instead reached into the live stage too — the staged
+   shelf's own card bodies came back at 15px on the name and .7rem in the body, and its
+   runway went from 13,225px to 0. `.pinband--plain` is set only by js/pinband.js's
+   standAside(), after the band has decided it cannot pay for a stage, and cleared the
+   moment it stages again, so nothing here can touch a stage or the measurement that
+   decides. Reduced motion is covered on the same marker: the driver's off branch names
+   the grid plain too, and an arrangement is not an animation.
+   What this does NOT change, measured in the same handback state with the block lifted:
+   the two 0.21 jumps a lead card arriving costs (the staged card set collapsing as the
+   grid takes it back) are byte-identical either way — 0.4260 without, 0.4252 with. That
+   jump belongs to the handback itself, not to the column count. */
+@media (max-width:480px){
+  .pinband--plain.cards--3,.pinband--plain.cards--2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* The body of a 157px card cannot pay the desk's 1.2rem. The name drops one step on
+     the ramp and the body takes the phone's own gutter, so a two-word title still
+     reaches two lines and the price line stays on one. */
+  .pinband--plain .product-card__body{padding:.7rem .75rem}
+  .pinband--plain .product-card h3{font-size:var(--t-fs-25)}
+}

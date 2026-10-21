@@ -40,6 +40,17 @@
     const url = img.getAttribute("data-src");
     if (!url) return;
     img.removeAttribute("data-src");
+    /*
+      A parked frame keeps its picture choices out of srcset on purpose: an img with a
+      srcset and no src is still a source, so the frame would download the moment the
+      markup parsed and the whole rail would be back to asking for twenty-six pictures
+      at once. The list travels in data-srcset and is handed over with the address.
+    */
+    const set = img.getAttribute("data-srcset");
+    if (set) {
+      img.removeAttribute("data-srcset");
+      img.srcset = set;
+    }
     img.src = url;
   }
 

@@ -374,6 +374,10 @@
      run that no longer exists is put back at the band's top rather than left in the air. */
   Band.prototype.standAside = function (wasRun, inside, anchor) {
     this.setPaged(false);
+    /* Named on the grid itself, and only here: a band that has not decided yet looks exactly
+       like a band that has decided to stand aside, and the stylesheet must not re-arrange
+       cards out from under the measurement that is still deciding. */
+    this.strip.classList.add("pinband--plain");
     this.breaks();
     this.uncard();
     this.win.style.height = "";
@@ -673,6 +677,9 @@
     this.paged = want;
     this.release();
     this.band.classList.toggle("pinband--paged", want);
+    /* Coming back out of the plain grid takes the marker off first: the row the next pass
+       measures has to be the row the stage will get, not the one the grid handed back. */
+    if (want) this.strip.classList.remove("pinband--plain");
     this.run.hidden = !want;
     this.rail.hidden = !want;
     if (want) return;
@@ -717,7 +724,10 @@
        card title it names. Same gate, same predicate, so on the home page the two
        scripts only ever agree. */
     root.classList.toggle("js-pstory", on);
-    bands.forEach((b) => { if (on) b.layout(); else b.setPaged(false); });
+    /* A visitor who asked for less motion still gets the same grid: the handback below
+       is an arrangement, not an animation, and a phone reading one card a row out of it
+       is a smaller picture than the file they already paid for. */
+    bands.forEach((b) => { if (on) b.layout(); else { b.setPaged(false); b.strip.classList.add("pinband--plain"); } });
     if (on) follow();
   }
   room.addEventListener("change", evaluate);
