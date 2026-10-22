@@ -25,6 +25,16 @@ cancel itself at random.
 
 Idempotent: it matches frames it stamped before, in either spelling (`--art-r:W/H`
 from the first pass, `--art-w/--art-h` from this one), and rewrites them.
+
+`.pstory__visual` is stamped too. It is not a `.media` frame — the process story's
+picture is a panel the stage stretches to fill its column — but it carries the same
+liability: at 1440x900 on a two-pixel engine the panel is 741 CSS px wide and the
+flyer inside it holds 608 pixels, so `cover` was asked to invent two thirds of what
+it painted. Only the file's own width can answer that, so the panel's file gets
+stamped like every other picture.
+
+FRAME matches both the plain and the already-stamped spelling and rebuilds only the
+opening tag, so a frame's other attributes survive a second pass.
 """
 import re
 import subprocess
@@ -34,7 +44,9 @@ PAGES = ["index.html", "catalog.html", "services.html", "engineering.html"]
 CUTOFF = 0.95  # below this the piece is portrait, at or above it landscape
 
 FRAME = re.compile(
-    r'<div class="media"[^>]*><img (?P<pre>[^>]*?)(?P<lazy>data-)?src="(?P<path>[^"]+)"')
+    r'(?P<open><(?P<tag>div|span) class="(?P<cls>media|pstory__visual)"(?P<attrs>[^>]*)>)'
+    r'<img (?P<pre>[^>]*?)(?P<lazy>data-)?src="(?P<path>[^"]+)"')
+STAMPED = re.compile(r'\s*(?:data-art|style)="[^"]*"')
 
 _cache = {}
 
@@ -76,8 +88,10 @@ def main():
             w, h = d
             kind = "tall" if (w / h) < CUTOFF else "wide"
             counts[kind] += 1
-            return ('<div class="media" data-art="%s" style="--art-w:%d;--art-h:%d"><img %s'
-                    % (kind, w, h, m.group(0)[m.start("pre") - m.start():]))
+            keep = STAMPED.sub("", m.group("attrs"))
+            open_ = ('<%s class="%s"%s data-art="%s" style="--art-w:%d;--art-h:%d">'
+                     % (m.group("tag"), m.group("cls"), keep, kind, w, h))
+            return open_ + m.group(0)[m.end("open") - m.start():]
 
         out = FRAME.sub(sub, src)
         if out != src:

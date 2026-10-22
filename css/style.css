@@ -4074,3 +4074,55 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
   .pinband--plain .product-card__body{padding:.7rem .75rem}
   .pinband--plain .product-card h3{font-size:var(--t-fs-25)}
 }
+
+/* ==========================================================================
+   THE PROCESS PANEL IS CUT FROM THE PICTURE IT CARRIES, NOT FROM ITS COLUMN
+   Read out of the engine at 1440x900 on a two-pixel Mac: the story's picture is a
+   741x477 panel and the flyer inside it holds 608x760 pixels. `cover` paid for the
+   width by scaling 1.22 and took the other half of the flyer's height away, so the
+   panel was painted from 0.41 of a real pixel per device pixel — the softest picture
+   left anywhere on the site, and the only one showing the studio's own work at full
+   column width. The four frames read 0.54 / 0.41 / 0.51 / 0.54 (portrait, flyer,
+   book design, print samples).
+   This is not the catalog's mistake, where the file was big and the `sizes` clause
+   was small: no copy of these four files larger than 800 pixels exists on disk, and
+   the harvest that would fetch them is a separate ask of the owner. So the only
+   honest lever is the box. A 608-pixel flyer cannot fill 741 CSS px at two pixels
+   per point, and no CSS can make it — the box has to come down to what the file is.
+   The cut lands on both edges at once, which is the rule the stage mats keep: a
+   panel that kept its width while losing its height would be a dark slab beside a
+   smaller picture. Here the panel *is* the frame — border, radius, shadow, ground —
+   so shrinking it shrinks the mount around the art and the freed column is the page's
+   own background, not a mat. The words take the space back.
+   Two edges, two divisors: the width is refused past the file's own pixels at this
+   engine's density, and the height the same way, so `cover` on a box cut to the
+   picture's shape paints it whole, at one scale, with nothing left to invent.
+   ========================================================================== */
+@media (min-width:720px) and (min-resolution:1.5dppx){
+  /* The row was split 40/58 for a picture that filled its half. A picture cut to its
+     own pixels no longer needs 58 parts of it, and the words were the ones being
+     starved: at 1440 the text column measured 465 CSS px against the 44rem (704) the
+     measure rule allows it. So the row trades back — 64/36 puts the words at 704 and
+     leaves the picture 396, which is the widest of the four caps. */
+  html.js-pstory .pstory__slide{grid-template-columns:minmax(0,64fr) minmax(0,36fr)}
+  html.js-pstory .pstory__slide:nth-child(even){grid-template-columns:minmax(0,36fr) minmax(0,64fr)}
+  html.js-pstory .pstory__visual{
+    --mat-d:2;
+    width:min(100%,calc(var(--art-w,760) * 1px / var(--mat-d)));
+    height:auto;max-height:min(100%,calc(var(--art-h,760) * 1px / var(--mat-d)));
+    aspect-ratio:var(--art-w,760)/var(--art-h,600);
+    align-self:center;justify-self:center}
+  /* The 1.16 overscan exists to give the picture somewhere to drift: js/scroll.js
+     slides it 26px on the wheel and the extra edge keeps a ground from showing. A
+     panel cut to exactly the file's pixels has no spare edge to drift on, so the
+     drift and its overscan both stand down here — the picture holds still rather
+     than painting the last 16% of its softness back. */
+  html.js-pstory .pstory__visual img{scale:1;translate:0 0}
+}
+
+/* Three pixels per point — a tablet at a desk width, and the same arithmetic at the
+   density the pocket engine runs at. Below the 720px gate nothing here binds: at
+   390x844 the stage already hands this picture up, and the panel measures 340x54. */
+@media (min-width:720px) and (min-resolution:2.5dppx){
+  html.js-pstory .pstory__visual{--mat-d:3}
+}

@@ -173,7 +173,17 @@ func step() {
         frame { step() }
     }
 }
-emulate { step() }
+/* A published page keeps its own <meta> CSP, and CDP `Runtime.evaluate` is refused by
+   it (EvalError) — which would leave the live build unreadable.  `Page.setBypassCSP` is
+   the debugger's own switch for exactly this.  Local mirrors strip the tag instead, so
+   the bypass stays opt-in and never masks a CSP defect the probe is meant to catch. */
+func bypass(_ done: @escaping () -> Void) {
+    guard ProcessInfo.processInfo.environment["CDP_BYPASS_CSP"] == "1" else { done(); return }
+    cdp.send("Page.enable", [:], timeout: 30) { _ in
+        cdp.send("Page.setBypassCSP", ["enabled": true], timeout: 30) { _ in done() }
+    }
+}
+bypass { emulate { step() } }
 sem.wait()
 cdp.task.cancel(with: .goingAway, reason: nil)
 exit(0)
