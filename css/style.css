@@ -2872,9 +2872,16 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
    language strip whose active tab is raised and merges straight into the code
    card below it, gutter of line numbers and all. Borrowed here as the geometry
    and the behaviour only. Twilio's navy and its syntax palette are not copied —
-   the card is the site's own ink and every token colour is a warm tint of the
-   brand's red and gold, chosen so each one clears 4.5:1 against that ink
-   (#a8867e comments 5.8:1, #f4545a keywords 5.7:1, #d98f5a numbers 7.3:1).
+   the card is the site's own ink and every token colour is a tint of it, chosen so
+   each one clears 4.5:1 against that ink (#a8867e comments 5.8:1, #f4545a keywords
+   5.7:1, #d98f5a numbers 7.3:1).
+   The tints were then spread apart. They all sat between 344° and 34° of hue — a
+   50° arc with attribute names at 32° and their own values at 34° — so the card read
+   as one colour no matter how carefully it was marked up, and the pair that collides
+   hardest is the one a reader parses by colour: a name and the string after it.
+   Strings moved to olive (80°, 10.9:1) and called functions to a deeper rose
+   (344°, 9.9:1), which puts daylight between the two families the eye actually
+   matches. Everything else keeps its warm tint and its contrast.
    The card stays ink in the light theme on purpose: it is the band's picture,
    and a picture that changes with the display mode is a different picture.
    ========================================================================== */
@@ -2887,8 +2894,8 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
   --cs-key:#f4545a;     /* keywords */
   --cs-e:#ff9d80;       /* tags, selectors, types, named constants */
   --cs-a:#e8b070;       /* attribute and property names */
-  --cs-s:#ffd39b;       /* strings */
-  --cs-f:#f6c1c9;       /* called functions */
+  --cs-s:#b4cd82;       /* strings */
+  --cs-f:#ff9fb8;       /* called functions */
   --cs-n:#d98f5a;       /* numbers */
   position:relative;margin:var(--t-6) auto 0;max-width:min(100%,60rem)}
 .codeshow__head{font-size:var(--t-h1);line-height:var(--t-lh-tight);
@@ -2916,6 +2923,30 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
   padding:.85rem var(--t-4) calc(.55rem + var(--t-bw));margin-bottom:calc(-1 * var(--t-bw));
   border-color:var(--cs-line) var(--cs-line) transparent}
 .codeshow__tab:focus-visible{outline:var(--t-bw2) solid var(--accent);outline-offset:2px}
+
+/* Each language owns one colour, and it owns only its own mark. Five tabs of the
+   same grey-tan glyph say nothing about what is behind them; five hues say it before
+   the word is read. The hues are the ones those languages already wear in the wild —
+   HTML's orange, CSS's azure, JavaScript's gold, TypeScript's periwinkle, the
+   database green — pulled a little toward this brand's warmth and none of them used
+   as a logo, because a hand-drawn mark borrowed from a trademark is the worst of both.
+   They are spread around the wheel rather than parked near each other: 21° / 44° /
+   116° / 206° / 250°, so the closest pair — the two warm golds, HTML and JavaScript —
+   still sit 23° apart and every other pair is further. TypeScript was lifted from
+   #a48ff5 to #ab9cf7 for a different reason: it was the only mark under 7:1 on the
+   strip ground at full strength (6.73), and a hue that fails there cannot be dimmed.
+   All five now clear 7.5:1 at full and, dimmed to the .78 they rest at, the weakest
+   measures 4.55 on #26100f and 4.72 on #1b0b0c — over the 3:1 a graphic needs to be a
+   useful cue, and the tab that leans on it the least is the one with the word beside it.
+   The selected tab also prints its hue as a two-pixel chip along its own top edge:
+   the raised tab is the one place the strip can say "this colour belongs to this
+   panel" without painting the whole tab in it. */
+.codeshow__tab--html{--cs-lang:#ff8a4d}
+.codeshow__tab--css{--cs-lang:#79b8e8}
+.codeshow__tab--js{--cs-lang:#e8c25a}
+.codeshow__tab--ts{--cs-lang:#ab9cf7}
+.codeshow__tab--sql{--cs-lang:#8fd18a}
+.codeshow__tab[aria-selected="true"]{box-shadow:inset 0 2px 0 var(--cs-lang)}
 
 /* One fixed height for every language, so clicking a tab cannot shove the rest of
    the page up or down. Each panel scrolls both ways inside it. */
@@ -3063,8 +3094,14 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
    alone because Python and PHP are famous; a hand-drawn mark is not, and a
    visitor should not have to guess which of two brace-y glyphs is TypeScript. */
 .codeshow__tab{display:inline-flex;align-items:center;gap:.5rem}
-.codeshow__ico{flex:none;width:20px;height:20px;opacity:.72;transition:opacity .2s,color .2s}
-.codeshow__tab:hover .codeshow__ico,.codeshow__tab[aria-selected="true"] .codeshow__ico{opacity:1}
+/* The hue lands on the mark only, never on the word: a tab label tinted in a
+   language's brand colour stops being readable text and becomes a second logo.
+   .78 rather than 1 at rest because the strip holds four neighbours and the raised
+   tab is the one that should be brightest; it is still over 4.5:1 for every hue. */
+.codeshow__ico{flex:none;width:20px;height:20px;color:var(--cs-lang,currentColor);
+  opacity:.78;transition:opacity .2s,color .2s}
+.codeshow__tab:hover .codeshow__ico{opacity:.92}
+.codeshow__tab[aria-selected="true"] .codeshow__ico{opacity:1}
 
 /* The frontier. Twilio's is a 10px inline-block "▎" that blinks on a one-second
    step; it rides the last character written, which is why the driver keeps
@@ -4179,15 +4216,29 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
      far side of the picture; 720 rather than 640 because a 400px mat beside a
      220px column is the same words at a narrower measure than the plain grid. */
   /* A desk now has a floor of its own, because turning the card sideways made the
-     room reachable: the sweep cut the picture to whatever the window had left, and at
-     1280x720 the catalog's window is 258 tall, so the flyer stopped at 205 — a 105px
-     wide picture, a stamp by the same measure the phone used to pick its 150. 230 of
-     mat is the smallest cut that still prints a 430x760 flyer 138 CSS px wide; below
-     that the band hands the set back to the plain grid, where the same flyer is 302
-     wide and whole. Measured at dpr2: 1366x768 asks 274 (keeps the stage, 144x254),
-     1440x800 asks 319 (169x299), 1440x900 asks 394 (212x374), 1280x720 asks 205 (goes
-     to the grid). */
-  .pinband--one{--pin-one-w:720px;--pin-floor:230px;--mat-d:1}
+     room reachable: the sweep cut the picture to whatever the window had left, and a
+     short window used to leave less than a picture needs. 230 of mat is the smallest cut
+     that still prints a 430x760 flyer 138 CSS px wide; below that the band hands the set
+     back to the plain grid, where the same flyer is a 241px stamp and whole.
+     Measured at dpr2 with the air below taken out: 1280x720 keeps the stage at 341 of mat
+     (202x341), 1366x768 at 390 (229x390), 1440x900 at 490 (286x490). */
+  .pinband--one{--pin-one-w:900px;--pin-floor:230px;--mat-d:1;--pin-desk-h:min(58vh,560px)}
+  /* The second half of the complaint is not the cap, it is the air. At 1440x900 on two
+     pixels the stage body is 687 tall and the window only kept 451: 32 of padding above
+     the heading, 48 of gap across two seams, 25.6 of the search box's own bottom margin,
+     and then the card spent 27.36 top and bottom of its own padding on the space between
+     its picture and its edge. The picture is the only thing in the row free to give, so
+     all of that came off it — `trim` measures the media, and a card's padding sits outside
+     the measurement. Cut to 16/12/0/12 the window keeps 516 (heading 91.5 + search 39 +
+     two 12 gaps + 16 of padding out of 687) and the flyer paints 490 of mat instead of
+     394 — 286x490 against 232x394, half again the picture from the same stage. The
+     horizontal padding stays: a name against the card's edge is unreadable, and
+     `.product-card` clips, so some vertical air still feeds the mat's own shadow.
+     Vertical only, never horizontal, because the row shares its width with words. */
+  .pinband--paged.pinband--one .pinband__body{padding-top:var(--t-3);gap:var(--t-2)}
+  .pinband--paged.pinband--one .pinband__body>.catalog-search{margin-bottom:0}
+  .pinband--paged.pinband--one .pinband__window .product-card{
+    padding-top:var(--t-2);padding-bottom:var(--t-2)}
   .pinband--paged.pinband--one .pinband__window .shots>*,
   .pinband--paged.pinband--one .pinband__window .cards>*{
     display:flex;align-items:center;gap:var(--t-4)}
@@ -4203,6 +4254,25 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
      (380) was neither: too small for a 760px-tall file at two pixels, too big for
      a 600px-tall one, and it asked an 800x600 screenshot for 380 of height it
      cannot fill without inventing a fifth of itself.
+     The ceiling reads `--art-max-h/--art-max-w` before `--art-h/--art-w`, and that is the
+     whole of the second half of this pass. The first half turned the card sideways and then
+     capped the picture at the file named by its `src` — 430 pixels — because the phone
+     could not be asked to carry more. The shelf is not the phone: a wider copy of the
+     same artwork (724 for the pull-up, 1080 for the printed strip, 1439 for the social
+     set) has sat on disk since the two-tier pass, offered to any engine that asks for
+     the box it fills. Nothing asked. So the desk mat is now refused past the LARGEST
+     copy's own pixels, and given the stage's height rather than a 46vh habit, which is
+     what lets a flyer print 286 CSS px wide on a two-pixel Mac instead of 232 — and it
+     is honest at that size because the copy behind it holds 724 for the 572 device pixels
+     it paints, a fill of 1.27 rather than a stretch.
+     A frame with no wider copy keeps its old ceiling and simply shows more of its own
+     ground; nothing here can invent detail. The desk pays for this: asking for the copy
+     the mat fills moves a two-pixel Mac from the 61KB base tier to the 205KB hi copy of
+     the pull-up flyer, for each frame it actually walks to — the lazy parking is what
+     keeps that bill to the frames on screen. A one-pixel desk pays exactly what it paid
+     before, because `sizes` names 430 and the smallest candidate at least 430 is still
+     the base file. The pocket branch never moves: the phone was deliberately handed back
+     the small copy, and measures byte-for-byte the same as the build before this one.
      The cut is offered to the two shelves that stood up as a row, not to every
      frame in the stage: the experience band's picture is absolutely positioned
      inside a card that owns its own height (`.exp__card{height:min(42vh,420px)}`
@@ -4212,12 +4282,15 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
      takes its size from the card, which is what it did before this layer. */
   .pinband--paged.pinband--one .pinband__window .shots .media[data-art="tall"],
   .pinband--paged.pinband--one .pinband__window .cards .media[data-art="tall"]{
-    --mat-h:min(var(--pin-media-h,46vh),calc(var(--art-h,760) * 1px / var(--mat-d) + 20px))}
+    --mat-h:min(var(--pin-media-h,var(--pin-desk-h,46vh)),
+                calc(var(--art-max-h,var(--art-h,760)) * 1px / var(--mat-d) + 20px))}
   .pinband--paged.pinband--one .pinband__window .shots .media[data-art="wide"],
   .pinband--paged.pinband--one .pinband__window .cards .media[data-art="wide"]{
     /* 60% is the row's share: a picture that takes the whole card would push the
        name off the edge, and a name off the edge is a card nobody can order. */
-    --mat-cap:min(60%,calc(var(--art-w,760) * 1px / var(--mat-d) + 20px))}
+    --mat-cap:min(60%,calc(var(--art-max-w,var(--art-w,760)) * 1px / var(--mat-d) + 20px));
+    --mat-fit:calc((min(var(--pin-media-h,10000px),var(--pin-desk-h,46vh)) - 20px)
+                   * var(--art-w,760) / var(--art-h,570) + 20px)}
 }
 @media (min-width:720px) and (min-resolution:1.5dppx){.pinband--one{--mat-d:2}}
 @media (min-width:720px) and (min-resolution:2.5dppx){.pinband--one{--mat-d:3}}

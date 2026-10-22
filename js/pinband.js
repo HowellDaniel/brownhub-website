@@ -275,7 +275,15 @@
     const m = card && (card.querySelector(".media") || card);
     const h = m.getBoundingClientRect().height;
     const floor = parseFloat(getComputedStyle(this.band).getPropertyValue("--pin-floor")) || FLOOR;
-    const next = Math.max(floor, Math.round(h - over));
+    /* Rounded down, so the picture always gives at least what the row asked for. Rounding
+       to nearest handed back half a pixel often enough to matter: at 1440x900 on two pixels
+       the shelf's row was 548 against 516.5 of room, the flyer gave up 522 -> 491 where
+       490.5 was asked, and the half pixel left over was reported as a debt of one. The next
+       pass measured a row 517 tall against the same room, could not give a fraction of a
+       pixel, and called the stage impossible — so the whole pinned shelf fell back to the
+       plain grid and the visitor saw a 241-pixel stamp instead of the 490-pixel mat the
+       same code had just measured out. A shortfall is a whole pixel or it is nothing. */
+    const next = Math.max(floor, Math.floor(h - over));
     if (next !== h) this.strip.style.setProperty("--pin-media-h", next + "px");
     /* Whatever the picture could not give up is the row's own debt, and a debt the picture
        cannot pay is a page that cannot be shown whole. */

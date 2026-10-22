@@ -11,12 +11,15 @@
 
   /* Measured off the reference band: its Python panel went 20 -> 130 -> 240 ->
      615 characters in 12.3s of live sampling — 595 new characters over 12.3s,
-     which is 48.4 characters a second, and this page's longest card (620) reads
-     in about thirteen seconds. Twilio types only the panel it opens on and leaves
-     the other six already written; here every language types the first time you
-     reach it, because four silent tabs out of five read as a broken effect rather
-     than as a choice. */
-  var RATE = 48.4;
+     which is 48.4 characters a second. That pace was the reference's, not the
+     owner's: asked to read the code rather than watch it arrive, he wanted it two
+     thirds as quick, so the clock runs at 65% of the measured figure. The longest
+     card on this page (620 characters) now takes about twenty seconds instead of
+     thirteen, which is still inside one patient look at a panel.
+     Twilio types only the panel it opens on and leaves the other six already
+     written; here every language types the first time you reach it, because four
+     silent tabs out of five read as a broken effect rather than as a choice. */
+  var RATE = 31.5;
   var CARET = "▎";
 
   function typer(panel) {
