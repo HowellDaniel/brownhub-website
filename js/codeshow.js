@@ -10,11 +10,13 @@
      the markup, so a visitor with scripting off still reads the HTML card. */
 
   /* Measured off the reference band: its Python panel went 20 -> 130 -> 240 ->
-     615 characters in 12.3s of live sampling, which is 27.2 characters a second.
-     Twilio types only the panel it opens on and leaves the other six already
-     written; here every language types the first time you reach it, because four
-     silent tabs out of five read as a broken effect rather than as a choice. */
-  var RATE = 27.2;
+     615 characters in 12.3s of live sampling — 595 new characters over 12.3s,
+     which is 48.4 characters a second, and this page's longest card (620) reads
+     in about thirteen seconds. Twilio types only the panel it opens on and leaves
+     the other six already written; here every language types the first time you
+     reach it, because four silent tabs out of five read as a broken effect rather
+     than as a choice. */
+  var RATE = 48.4;
   var CARET = "▎";
 
   function typer(panel) {
@@ -58,18 +60,26 @@
        that sit on those edges. Moving the caret is the only DOM insertion the panel
        makes, and doing it once per line instead of once per frame is what stops
        js/scroll.js watching a mutation sixty times a second. */
-    var at = 0, shown = -1, caretLine = -1;
+    var at = 0, shown = -1, caretLine = -1, spent = 0;
     atoms.forEach(function (a) { a.line.style.display = "none"; });
 
+    /* `budget` counts every character the clock has earned since the panel began,
+       so the part of it still available to this frame is what lies past `spent` —
+       the characters the cursor has already passed. Spending the whole ask against
+       the lines still to come let each frame buy the finished ones again, and the
+       frontier ran away from the clock: the last five lines of a 620-character card
+       went up in one frame and the panel looked poured rather than typed. */
     function paint(budget) {
-      var left = budget;
+      var want = Math.floor(budget);
+      var left = want - spent;
       while (at < atoms.length && left >= atoms[at].len) {
         fill(atoms[at], atoms[at].len);
+        spent += atoms[at].len;
         at++;
-        left -= atoms[at - 1].len;
+        left = want - spent;
       }
       var frontier = Math.min(at, atoms.length - 1);
-      if (at < atoms.length) fill(atoms[frontier], left);
+      if (at < atoms.length) fill(atoms[frontier], Math.max(0, left));
       if (frontier === shown) return false;
       for (var k = shown + 1; k <= frontier; k++) atoms[k].line.style.display = "";
       shown = frontier;

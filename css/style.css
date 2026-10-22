@@ -3717,9 +3717,10 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
    flyer whose whole point is its headline. The smallest ask that is still a stage, not a
    stamp, was 191px (portfolio, one notice dismissed). So the floor sits at 150px: every
    picture the phone can show whole stays pinned, and every one it cannot is handed back to
-   the grid instead of printed at postage-stamp size. A wide screen has room for its
-   picture and never reaches the floor, so it keeps the 120px the driver carries as its
-   default.
+   the grid instead of printed at postage-stamp size. A wide screen carried no floor of its
+   own when this was written, because its stage was always taller than any picture it could
+   show; the shelf turned sideways in the last layer of this file reached it anyway, and
+   that layer sets the desk number.
    ========================================================================== */
 @media (max-width:719px){
   .pinband{--pin-floor:150px}
@@ -4126,3 +4127,97 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
 @media (min-width:720px) and (min-resolution:2.5dppx){
   html.js-pstory .pstory__visual{--mat-d:3}
 }
+
+/* ==========================================================================
+   THE SHELF PUTS ITS PICTURE BESIDE THE WORDS, NOT UNDER THEM
+   Read out of the engine at 1440x900 on a two-pixel Mac. Every one-card shelf
+   stood its card up as a column — picture, then the name and the link under it —
+   and then the driver measured that column against the room the stage had left
+   and cut the picture for overrunning it. The catalog's 26-frame shelf is the
+   clearest case: the stage 775 tall, the window 451, the words 193 of it, so a
+   430x760 flyer was trimmed to a 258px mat and painted 135 CSS px wide, out of a
+   file that reaches the browser 430 device px. That is a fifth of the shelf's
+   width spent on air at either side of a stamp, and the honest ceiling for the
+   same file at this density is 215 wide by 380 tall.
+     window 451  card 640x451  mat 155x258  picture 135x238   fill 1.59
+   The shortfall belongs to the arrangement, not to the picture: a card turned
+   sideways has no height for the words to eat, so the row that fits is also the
+   row that lets the frame stand at the height its own file carries. Three bands
+   take it — the catalog shelf, the home portfolio and the website catalog — and
+   the experience band keeps its stacked card, because its words are an overlay
+   painted on the picture rather than a block under it.
+   Same gate as the pinned layer itself (720px), so a phone keeps the arrangement
+   and the sizes clause the last pass measured for it, byte for byte.
+   The markup's promise follows the same arithmetic: a file W wide, shown W/2 CSS
+   px at two pixels per point, wants its own base tier. Every shelf frame said
+   `700px` for a picture 135 CSS px wide, and Blink walked up to the hi/ copy for
+   2.59 times the pixels it could show — on a 26-frame shelf. The hi/ files still
+   serve the zoom modal, which builds them from its own allowlist in js/catalog.js.
+
+   Measured after, at dpr2 with the sizes clause and the row both in:
+     1440x900  catalog 212x374 fill 1.01   portfolio 215x380 fill 1.00   web-catalog 378x278 fill 1.06
+     1366x768  catalog 144x254 fill 1.49   portfolio 170x301 fill 1.26   web-catalog 380x280 fill 1.05
+     1440x800  catalog 169x299
+     1280x720  the catalog shelf reaches its new floor and hands the set to the plain grid
+               (whole 302x302 cards), while the other two keep their stage at 132x233 and 337x248.
+   Before the row, the same bands at 1440x900 painted 135x238, 180x318 and 273x200; the
+   experience band's 204x360 is the one picture this layer deliberately leaves alone.
+   At one pixel per point the row never binds — the same 212x374 box simply gets the 430w tier it
+   already holds instead of the 724w hi/ copy the old `700px` sizes clause asked for. A phone is
+   untouched by construction: every rule here sits under `min-width:720px`, and the three bands
+   measured byte-for-byte identical to the committed build at 390x844 on three pixels (157x157,
+   162x121, 341x450, all plain grid). `?lang=ar` mirrors the row (media 169-309 wide parked at
+   421-438 from the card's left edge, words on the remaining side, both inside) at 210x371 /
+   215x380 / 378x278 with no overflow. Under reduced motion the layer is inert — js-pinband never
+   lands, so `.pinband--paged` matches nothing and the grid prints with whole pictures. A buffered
+   layout-shift observer across boot and a walk of every band reports 0.0000 on all three pages,
+   the same as the committed build.
+   ========================================================================== */
+@media (min-width:720px){
+  /* The card's own row. The measure the words were already given (a 640 column
+     with the mat centred in it) is handed back to them in a narrower band on the
+     far side of the picture; 720 rather than 640 because a 400px mat beside a
+     220px column is the same words at a narrower measure than the plain grid. */
+  /* A desk now has a floor of its own, because turning the card sideways made the
+     room reachable: the sweep cut the picture to whatever the window had left, and at
+     1280x720 the catalog's window is 258 tall, so the flyer stopped at 205 — a 105px
+     wide picture, a stamp by the same measure the phone used to pick its 150. 230 of
+     mat is the smallest cut that still prints a 430x760 flyer 138 CSS px wide; below
+     that the band hands the set back to the plain grid, where the same flyer is 302
+     wide and whole. Measured at dpr2: 1366x768 asks 274 (keeps the stage, 144x254),
+     1440x800 asks 319 (169x299), 1440x900 asks 394 (212x374), 1280x720 asks 205 (goes
+     to the grid). */
+  .pinband--one{--pin-one-w:720px;--pin-floor:230px;--mat-d:1}
+  .pinband--paged.pinband--one .pinband__window .shots>*,
+  .pinband--paged.pinband--one .pinband__window .cards>*{
+    display:flex;align-items:center;gap:var(--t-4)}
+  .pinband--paged.pinband--one .pinband__window .shots>*>.media,
+  .pinband--paged.pinband--one .pinband__window .cards>*>.media{flex:none;margin-inline:0}
+  .pinband--paged.pinband--one .pinband__window .shot figcaption,
+  .pinband--paged.pinband--one .pinband__window .product-card__body{
+    flex:1 1 auto;min-width:0}
+
+  /* The mat is cut to the pixels the file holds at the density this engine paints
+     at — the same `--mat-d` walk the process story's panels use, and the desk
+     counterpart of the /3 cap the pocket rules already carry. The old constant
+     (380) was neither: too small for a 760px-tall file at two pixels, too big for
+     a 600px-tall one, and it asked an 800x600 screenshot for 380 of height it
+     cannot fill without inventing a fifth of itself.
+     The cut is offered to the two shelves that stood up as a row, not to every
+     frame in the stage: the experience band's picture is absolutely positioned
+     inside a card that owns its own height (`.exp__card{height:min(42vh,420px)}`
+     with `.exp__card .media{inset:0}`), so a mat cut to the file's shape hangs
+     out of the card it is painted on — measured 400 of frame in a 378 card, 11.9
+     of it sheared off by the window's own clip. A card whose words are an overlay
+     takes its size from the card, which is what it did before this layer. */
+  .pinband--paged.pinband--one .pinband__window .shots .media[data-art="tall"],
+  .pinband--paged.pinband--one .pinband__window .cards .media[data-art="tall"]{
+    --mat-h:min(var(--pin-media-h,46vh),calc(var(--art-h,760) * 1px / var(--mat-d) + 20px))}
+  .pinband--paged.pinband--one .pinband__window .shots .media[data-art="wide"],
+  .pinband--paged.pinband--one .pinband__window .cards .media[data-art="wide"]{
+    /* 60% is the row's share: a picture that takes the whole card would push the
+       name off the edge, and a name off the edge is a card nobody can order. */
+    --mat-cap:min(60%,calc(var(--art-w,760) * 1px / var(--mat-d) + 20px))}
+}
+@media (min-width:720px) and (min-resolution:1.5dppx){.pinband--one{--mat-d:2}}
+@media (min-width:720px) and (min-resolution:2.5dppx){.pinband--one{--mat-d:3}}
