@@ -100,14 +100,18 @@ usleep(500_000)
 /* `--window-size` has a 500px floor in headless Chrome, so a phone frame cannot be
    asked for on the command line.  CDP_W/CDP_H (+ optional CDP_DPR) override the real
    device metrics instead, which is what a 390px audit needs. */
-func emulate(_ done: @escaping () -> Void) {
-    let env = ProcessInfo.processInfo.environment
-    guard let w = Int(env["CDP_W"] ?? ""), let h = Int(env["CDP_H"] ?? "") else { done(); return }
-    let dpr = Double(env["CDP_DPR"] ?? "1") ?? 1
+func metrics(_ w: Int, _ h: Int, _ dpr: Double, _ done: @escaping () -> Void) {
     cdp.send("Emulation.setDeviceMetricsOverride",
              ["width": w, "height": h, "deviceScaleFactor": dpr, "mobile": true], timeout: 30) { _ in
         cdp.send("Emulation.setTouchEmulationEnabled", ["enabled": true], timeout: 30) { _ in done() }
     }
+}
+
+func emulate(_ done: @escaping () -> Void) {
+    let env = ProcessInfo.processInfo.environment
+    guard let w = Int(env["CDP_W"] ?? ""), let h = Int(env["CDP_H"] ?? "") else { done(); return }
+    let dpr = Double(env["CDP_DPR"] ?? "1") ?? 1
+    metrics(w, h, dpr, done)
 }
 
 func touch(_ kind: String, _ x: Int, _ y: Int, _ done: @escaping () -> Void) {
@@ -167,6 +171,23 @@ func step() {
         }
         return
     }
+    /* A rotation is the only way to make a matchMedia listener fire, and a media gate is
+       exactly what the pinned layer decides on.  `#metrics WxH` re-issues the device
+       override mid-run so a probe can watch the two drivers answer the same change. */
+    if expr.hasPrefix("#metrics ") {
+        let parts = String(expr.dropFirst(9)).split(separator: "x")
+        guard parts.count == 2, let w = Int(parts[0]), let h = Int(parts[1]) else {
+            print("### [\(index)] BAD-METRICS " + expr); index += 1; step(); return
+        }
+        let env = ProcessInfo.processInfo.environment
+        let dpr = Double(env["CDP_DPR"] ?? "1") ?? 1
+        metrics(w, h, dpr) {
+            print("### [\(index)] METRICS \(w)x\(h)")
+            index += 1
+            step()
+        }
+        return
+    }
     evaluate(expr) { out in
         print("### [\(index)] " + out)
         index += 1
@@ -183,7 +204,20 @@ func bypass(_ done: @escaping () -> Void) {
         cdp.send("Page.setBypassCSP", ["enabled": true], timeout: 30) { _ in done() }
     }
 }
-bypass { emulate { step() } }
+/* Boot-time questions cannot be answered from a script the probe injects after
+   `load`: by then the page has already decided its first arrangement, and a buffered
+   PerformanceObserver reports the scroll position of the *callback*, not of the entry.
+   `CDP_EARLY=<path>` registers a probe file with `Page.addScriptToEvaluateOnNewDocument`
+   so it runs at document-start on the navigation the probe is about to make. */
+func early(_ done: @escaping () -> Void) {
+    guard let path = ProcessInfo.processInfo.environment["CDP_EARLY"],
+          let src = try? String(contentsOfFile: path, encoding: .utf8) else { done(); return }
+    cdp.send("Page.enable", [:], timeout: 30) { _ in
+        cdp.send("Page.addScriptToEvaluateOnNewDocument", ["source": src], timeout: 30) { _ in done() }
+    }
+}
+
+bypass { early { emulate { step() } } }
 sem.wait()
 cdp.task.cancel(with: .goingAway, reason: nil)
 exit(0)

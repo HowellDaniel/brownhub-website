@@ -748,14 +748,18 @@
   function evaluate() {
     const on = room.matches && !reduce.matches;
     root.classList.toggle("js-pinband", on);
-    /* The phone rules for this stage were written against `js-pstory`, because the
-       process story was the first band to pin and the collection rails were built
-       with its rail classes. A page that ships only collection bands — the catalog's
-       shelf, the engineering page — never ran pstory.js, so it never got the class and
-       its rail kept the desktop arrangement on a phone: the page name printed over the
-       card title it names. Same gate, same predicate, so on the home page the two
-       scripts only ever agree. */
-    root.classList.toggle("js-pstory", on);
+    /* This stage never writes `js-pstory`, and cannot afford to. The rails here are built
+       with the process story's markup classes, so every rule that arranges one of them —
+       the phone's short stones, the hairline under them — is written twice over, as
+       `html.js-pstory .pstory__rail` for the story and `.pinband--paged .pstory__rail` for
+       a band that is actually paging; measured at 390x844, taking the class off a catalog
+       shelf changes nothing but the height of a rail that is hidden either way. What the
+       class is for on the home page belongs to js/pstory.js alone: it stands the story's
+       stage up, asks the screen — and the notices at the bottom of it — whether the step
+       fits, and takes it back down when it does not. A second writer of the same class,
+       answering only the media query, hands the stage straight back after that answer,
+       and on a phone holding four hundred pixels of notices the story is then a clipped
+       strip of itself. */
     /* A visitor who asked for less motion still gets the same grid: the handback below
        is an arrangement, not an animation, and a phone reading one card a row out of it
        is a smaller picture than the file they already paid for. */
