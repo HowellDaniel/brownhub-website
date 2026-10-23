@@ -29,11 +29,6 @@
   travels right to left on its own clock, one picture at a time, and the visitor's own
   scroll takes the wheel back the moment they move. The stage, the turn and the rail are
   the same as they were — only the hand that moves the shelf changes.
-
-  On a desk, a band showing one picture to a page stands it sideways in a wide card: the
-  mat on one side, the name and the category on the other. A tall flyer leaves the words
-  a column of air under them, and the next picture in the shelf is asked to fill it —
-  mirrored, fading, pointing the way the shelf turns. See reflect().
 */
 (() => {
   "use strict";
@@ -63,10 +58,6 @@
      leaves no pointerleave behind, so a band that pauses for it stays paused until the
      visitor leaves the page. Only a device that can actually hover gets held. */
   const canHover = matchMedia("(hover: hover)");
-  /* The reflection is a desk arrangement, because it is the desk's one-card row that puts
-     the words beside the picture instead of under it. Below this width the card is stacked
-     again and there is no column of air beside a mat to fill. */
-  const desk = matchMedia("(min-width:720px)");
   const navH = () => parseFloat(root.style.getPropertyValue("--nav-h")) || 72;
   /* How much of the screen the bottom queue charges the stage. Only a phone asks the stage
      to pay: --rail-h is named inside that media query, and it is the rail's payment and the
@@ -103,7 +94,6 @@
     this.axis = band.dataset.pinDir === "x" ? "x" : "y";
     this.page = Math.max(1, parseInt(band.dataset.pinPage, 10) || PAGE);
     this.rtl = false;
-    this.lead0 = 0;
     this.auto = band.hasAttribute("data-pin-auto");
     this.walk = 0;
     this.touched = 0;
@@ -143,11 +133,6 @@
     if (this.axis === "x") this.band.classList.add("pinband--x");
     if (this.page === 1) this.band.classList.add("pinband--one");
     this.rail.addEventListener("keydown", (e) => this.arrow(e));
-    /* A picture the shelf has not been handed yet has no resolved source to mirror, so the
-       reflection is asked for again when one lands. `load` does not bubble, so the listener
-       is on the capture side of the window. It is not a loop: the pass that answers a load
-       writes a source it already has, and a source it already has wakes no second load. */
-    if (this.page === 1) this.win.addEventListener("load", () => this.reflect(this.index), true);
   };
 
   /* The grid's own box is the only reliable signal that the card set changed: both
@@ -346,22 +331,47 @@
     const count = this.cards.length;
     this.strip.style.width = Math.ceil(count * basis + Math.max(0, count - 1) * gap) + "px";
     this.rtl = getComputedStyle(this.strip).direction === "rtl";
-    this.lead0 = one ? (avail - basis) / 2 : 0;
-    /* The track's own box is asked for once, after every write this pass makes: a
-       shelf of thirty cards read it thirty times, and a read that follows a write is
-       the page being rebuilt to answer it. */
+    /* Every box this pass needs is asked for once, after every write it makes: a shelf of
+       thirty cards read thirty times, and a read that follows a write is the page being
+       rebuilt to answer it. */
     const s = this.strip.getBoundingClientRect();
-    this.at = this.groups.map((g) => Math.round(this.lead(g[0], s) - this.lead0));
+    /* A page is parked centred on the card it actually shows, not on the widest one the
+       shelf holds: a portrait picture's card is clamped to --pin-tall-w, and an offset
+       taken from the uniform basis leaves it standing half of the freed column off the
+       near side. The width is read from the two numbers the CSS promises rather than from
+       the card's own box, because this pass is the one that writes the height the mat is
+       cut to — measure the card here and you measure it before its own picture has been
+       given its size, which is the page parked 73px off centre. The selector is the one
+       the clamp is written with, so the two cannot disagree about which cards clamp. */
+    /* An engine that drops the :has() rule never clamps the card, so it must not be given
+       a centring computed as though it had. */
+    const tall = one && CSS.supports("selector(:has(*))")
+      ? parseFloat(getComputedStyle(this.band).getPropertyValue("--pin-tall-w")) || 0 : 0;
+    this.at = this.groups.map((g) => {
+      const c = g[0];
+      const hold = one ? (tall && c.querySelector(":scope > .media[data-art='tall']") ? Math.min(basis, tall) : basis) : 0;
+      return Math.round(this.lead(c, s) - (one ? (avail - hold) / 2 : 0));
+    });
     return Math.max.apply(null, this.cards.map((c) => c.offsetHeight));
   };
 
   /* How far the card that leads a page sits inside the track, counted from the edge the
-     row reads from. offsetLeft is the tempting answer and is wrong on half the page: a
-     right-to-left row numbers its cards backwards from the far edge, so the pan it
-     produces pulls the shelf clean off the stage. Two rects are used instead, and since
-     the track travels with its own cards, their difference is the one number a sliding
-     shelf cannot corrupt. */
+     row reads from. A raw offsetLeft is wrong on half the page: a right-to-left row numbers
+     its cards backwards from the far edge, and the pan it produces pulls the shelf clean
+     off the stage — so the number is mirrored from the track's own width when the row runs
+     backwards. The rects are the fallback, and they carry a cost the layout box does not:
+     every card in this shelf wears a 3D turn, and a rotateY moves a card's painted box
+     without moving the place the shelf pans from. Measured at 1440x900 on a two-pixel Mac,
+     that difference is 14px on a 900-wide card and 73px on a 620 one — the page parked
+     off-centre by exactly half of it, because the centring spends that number twice.
+     The track is `position:relative` for this axis, so the layout box is available; the
+     rect pair is only for an engine or a band where it is not. */
   Band.prototype.lead = function (card, s) {
+    if (card.offsetParent === this.strip) {
+      return this.rtl
+        ? this.strip.offsetWidth - card.offsetWidth - card.offsetLeft
+        : card.offsetLeft;
+    }
     const r = card.getBoundingClientRect();
     return this.rtl ? s.right - r.right : r.left - s.left;
   };
@@ -389,7 +399,6 @@
     this.strip.style.width = "";
     this.strip.style.translate = "";
     this.strip.style.transition = "";
-    this.unreflect();
   };
 
   /* A band the window cannot hold whole is no use to anybody: the cards go back to the
@@ -581,7 +590,6 @@
         for (let k = 0; k < this.groups[p].length; k++) this.groups[p][k].inert = p !== i;
       }
     }
-    this.reflect(i);
   };
 
   /* The pin is sticky, so once it is stuck its own rect has stopped telling the
@@ -656,63 +664,6 @@
     const next = this.walk >= this.pages - 1 ? 0 : this.walk + 1;
     this.walk = next;
     this.set(next, next !== 0);
-  };
-
-  /* The column of air under a desk card's words. Standing the card sideways beside a tall
-     mat leaves the name and its category floating in the middle of a column the picture has
-     already outgrown, so the next picture in the shelf is asked to lie there as a
-     reflection — what a real reflection does under a shelf of printed work, and a hint of
-     the page the rail is heading for.
-
-     Three rules keep it from costing the stage anything. It is measured into the gap it is
-     given and absolutely positioned inside the words' own column, so it adds no height to
-     the row and hands trim() no debt — a reflection that could widen a card is a reflection
-     that would tear the pinned shelf down. One node per band travels from card to card and
-     only ever changes its source, so a turn costs no new element and no new decode. And it
-     mirrors a source the shelf has already resolved and loaded: a picture that has not been
-     handed over yet is not asked for, so this layer downloads nothing. */
-  Band.prototype.reflect = function (i) {
-    const card = this.page === 1 && this.paged && desk.matches && i >= 0
-      ? (this.groups[i] || [])[0] : null;
-    /* The cards whose words are an overlay on the picture (the experience band) own their
-       height and have no column beside the mat to fill, and they carry neither of the two
-       nodes this is painted into — so the arrangement that has room is the only one asked. */
-    const col = card && card.querySelector(":scope > figcaption, :scope > .product-card__body");
-    const media = card && (card.querySelector(".media") || card);
-    const next = card ? this.cards[(this.cards.indexOf(card) + 1) % this.cards.length] : null;
-    const from = next && next.querySelector("img");
-    const url = from && from.complete ? from.currentSrc || from.getAttribute("src") || "" : "";
-    /* The row centres the column against the picture, so half of what the picture is taller
-       by lies under the words. 14px of that stays as air: a reflection that runs to the very
-       edge of a card reads as a second picture rather than as the first one's reflection. */
-    const h = col && media ? Math.floor((media.offsetHeight - col.offsetHeight) / 2) - 14 : -1;
-    /* 64 is the shortest strip that reads as a reflection rather than as a sliver of
-       somebody else's picture. The Website & Software shelf sits at 75 — its words carry
-       a type line and a price, so the column is taller and the air is thinner — and it is
-       the same air the visitor sees on the home page, so it gets the same answer. */
-    if (!col || !url || h < 64) return this.unreflect();
-    const node = this.rf || (this.rf = el("span", "pinband__reflect"));
-    if (!node.firstChild) {
-      node.setAttribute("aria-hidden", "true");
-      const born = doc.createElement("img");
-      born.alt = "";
-      born.decoding = "async";
-      node.appendChild(born);
-    }
-    if (node.parentNode !== col) col.appendChild(node);
-    node.style.setProperty("--reflect-h", h + "px");
-    const pic = node.firstChild;
-    /* The key is the asked-for address, not pic.src: the node stands inside the window
-       whose load events this same pass listens to, so a comparison that never agrees
-       would have the mirror's own arrival re-point it, forever. */
-    if (pic.dataset.mirror !== url) {
-      pic.dataset.mirror = url;
-      pic.src = url;
-    }
-  };
-
-  Band.prototype.unreflect = function () {
-    if (this.rf && this.rf.parentNode) this.rf.parentNode.removeChild(this.rf);
   };
 
   /* The run ends exactly where the stage stops being a stage, so a band is only worth
