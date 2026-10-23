@@ -31,6 +31,11 @@
 
     var w = 0, h = 0, dpr = 1, pts = [], raf = 0, shown = true, dot, line;
     var LINK = 122;
+    /* Only a canvas marked data-pt-react is stirred by the pointer; every other
+       field on the site keeps the plain drift it has always had. */
+    var react = cv.hasAttribute("data-pt-react");
+    var REACH = +(cv.dataset.ptReach || 138);
+    var lastX = -1e4, lastY = -1e4, bonds = 0, tick = 0;
 
     function resize() {
       var r = cv.getBoundingClientRect();
@@ -41,14 +46,14 @@
       cv.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      var want = Math.max(18, Math.min(64, Math.round(w * h / 24000)));
-      while (pts.length < want) pts.push({ x: Math.random() * w, y: Math.random() * h, vx: 0, vy: 0, r: 0 });
+      var want = Math.max(18, Math.min(react ? 96 : 64, Math.round(w * h / (react ? 15000 : 24000))));
+      while (pts.length < want) pts.push({ x: Math.random() * w, y: Math.random() * h, vx: 0, vy: 0, bx: 0, by: 0, r: 0 });
       if (pts.length > want) pts.length = want;
       pts.forEach(function (p) {
         if (!p.vx) {
           var a = Math.random() * Math.PI * 2, s = 0.14 + Math.random() * 0.2;
-          p.vx = Math.cos(a) * s;
-          p.vy = Math.sin(a) * s;
+          p.vx = p.bx = Math.cos(a) * s;
+          p.vy = p.by = Math.sin(a) * s;
         }
         if (!p.r) p.r = 0.9 + Math.random() * 1.5;
       });
@@ -57,7 +62,8 @@
       line = mixer(root, cv.dataset.ptLine ? "--" + cv.dataset.ptLine + "-rgb" : "--accent-2-rgb", "177,125,65");
     }
 
-    function paint(static_only) {
+    function paint(static_only, cx, cy) {
+      var live = cx > -1e3;
       ctx.clearRect(0, 0, w, h);
       ctx.lineWidth = 1;
       for (var a = 0; a < pts.length; a++) {
@@ -72,23 +78,82 @@
           ctx.stroke();
         }
       }
-      ctx.fillStyle = dot(static_only ? "0.5" : "0.62");
-      for (var n = 0; n < pts.length; n++) {
+      /* The cursor is not a dot among dots: it is a node every nearby particle
+         reaches for, so the network reads as touched rather than merely drawn. */
+      bonds = 0;
+      if (live) {
+        var reach = REACH * 1.25;
+        ctx.lineWidth = 1.15;
+        for (var n = 0; n < pts.length; n++) {
+          var ox = pts[n].x - cx, oy = pts[n].y - cy;
+          var od = Math.hypot(ox, oy);
+          if (od > reach) continue;
+          bonds++;
+          ctx.strokeStyle = line(((1 - od / reach) * 0.5).toFixed(3));
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(pts[n].x, pts[n].y);
+          ctx.stroke();
+        }
+        var halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, REACH);
+        halo.addColorStop(0, line("0.16"));
+        halo.addColorStop(1, line("0"));
+        ctx.fillStyle = halo;
         ctx.beginPath();
-        ctx.arc(pts[n].x, pts[n].y, pts[n].r, 0, Math.PI * 2);
+        ctx.arc(cx, cy, REACH, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = dot("0.9");
+        ctx.beginPath();
+        ctx.arc(cx, cy, 2.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = dot(static_only ? "0.5" : "0.62");
+      for (var m = 0; m < pts.length; m++) {
+        ctx.beginPath();
+        ctx.arc(pts[m].x, pts[m].y, pts[m].r, 0, Math.PI * 2);
         ctx.fill();
       }
     }
 
     function frame() {
+      var cx = -1e4, cy = -1e4;
+      if (react) {
+        /* One rect read per animated frame, at most — the canvas does not move
+           while the page does, so the pointer has to be re-based each time. */
+        var box = cv.getBoundingClientRect();
+        cx = lastX - box.left;
+        cy = lastY - box.top;
+        if (cx < 0 || cy < 0 || cx > box.width || cy > box.height) { cx = cy = -1e4; }
+      }
       for (var i = 0; i < pts.length; i++) {
         var p = pts[i];
+        if (cx > -1e3) {
+          var ox = p.x - cx, oy = p.y - cy;
+          var d = Math.hypot(ox, oy);
+          if (d < REACH && d > 0.01) {
+            var f = (1 - d / REACH) * (1 - d / REACH) * 0.15;
+            /* Push outward and slide along the tangent, so the dots flow around
+               the hand instead of scattering flatly in front of it. */
+            p.vx += (ox / d) * f - (oy / d) * f * 0.8;
+            p.vy += (oy / d) * f + (ox / d) * f * 0.8;
+          }
+        }
+        /* Whatever the pointer gave the field leaks back toward the particle's
+           own drift speed, so the network settles rather than running forever. */
+        p.vx += (p.bx - p.vx) * 0.016;
+        p.vy += (p.by - p.vy) * 0.016;
+        var sp = Math.hypot(p.vx, p.vy);
+        if (sp > 1.5) { p.vx = p.vx / sp * 1.5; p.vy = p.vy / sp * 1.5; }
         p.x += p.vx;
         p.y += p.vy;
         if (p.x < -20) p.x = w + 20; else if (p.x > w + 20) p.x = -20;
         if (p.y < -20) p.y = h + 20; else if (p.y > h + 20) p.y = -20;
       }
-      paint(false);
+      paint(false, cx, cy);
+      if (react && ++tick % 20 === 0) {
+        var out = document.getElementById(cv.dataset.ptCount || "");
+        if (out) out.textContent = String(bonds);
+      }
       raf = requestAnimationFrame(frame);
     }
 
@@ -100,6 +165,15 @@
       if (!raf) return;
       cancelAnimationFrame(raf);
       raf = 0;
+    }
+
+    if (react && !still) {
+      /* Bound to the document, not the canvas: the field sits behind the copy
+         and takes no pointer events of its own, and the loop is the one that
+         decides whether the position landed inside it. */
+      var track = function (e) { lastX = e.clientX; lastY = e.clientY; };
+      document.addEventListener("pointermove", track, { passive: true });
+      document.addEventListener("pointerdown", track, { passive: true });
     }
 
     resize();
@@ -210,4 +284,83 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
   });
+
+  /* ---- pointer depth ----
+     Layers marked [data-depth] travel with the cursor as well as with the page,
+     so a hero reads as a stack of planes set at different distances rather than
+     one flat picture. The pointer term is eased toward its target frame by frame
+     — that lag is what makes the movement read as fluid rather than twitchy —
+     and all three terms leave as custom properties, because js/scroll.js already
+     writes --py on these same elements and the stylesheet has to compose the two
+     rather than have one overwrite the other. A finger is ignored: it is already
+     busy scrolling, and moving the planes under it would fight the page. Once
+     every layer has settled the loop parks itself and waits to be woken. */
+  (function () {
+    var nodes = [].slice.call(document.querySelectorAll("[data-depth]"));
+    if (!nodes.length || still) return;
+
+    var groups = [];
+    var layers = nodes.map(function (el) {
+      var host = el.closest("[data-depth-host]") || el.closest(".hero") || el.parentElement;
+      if (!host) return null;
+      var g = null;
+      for (var i = 0; i < groups.length; i++) if (groups[i].host === host) { g = groups[i]; break; }
+      if (!g) { g = { host: host, layers: [] }; groups.push(g); }
+      var L = { el: el, amp: parseFloat(el.dataset.depth) || 1, host: host, x: 0, y: 0, out: "" };
+      g.layers.push(L);
+      return L;
+    }).filter(Boolean);
+    if (!layers.length) return;
+
+    var px = -1e4, py = -1e4, raf = 0, watching = true;
+
+    function wake() { if (!raf && watching) raf = requestAnimationFrame(frame); }
+
+    document.addEventListener("pointermove", function (e) {
+      if (e.pointerType === "touch") return;
+      px = e.clientX; py = e.clientY;
+      wake();
+    }, { passive: true });
+    addEventListener("scroll", wake, { passive: true });
+    addEventListener("resize", wake, { passive: true });
+    document.addEventListener("visibilitychange", function () {
+      watching = !document.hidden;
+      if (watching) wake();
+    });
+
+    function frame() {
+      raf = 0;
+      var moving = false;
+      for (var g = 0; g < groups.length; g++) {
+        var box = groups[g].host.getBoundingClientRect();
+        if (box.width < 1 || box.height < 1) continue;
+        var nx = 0, ny = 0;
+        if (px >= box.left && px <= box.right && py >= box.top && py <= box.bottom) {
+          nx = (px - box.left - box.width / 2) / (box.width / 2);
+          ny = (py - box.top - box.height / 2) / (box.height / 2);
+        }
+        /* -0.5 as the host enters at the bottom of the screen, +0.5 as it leaves
+           at the top, so the planes part around the middle of the pass. */
+        var span = box.height + innerHeight;
+        var prog = Math.max(0, Math.min(1, (innerHeight - box.top) / span)) - 0.5;
+        for (var i = 0; i < groups[g].layers.length; i++) {
+          var L = groups[g].layers[i];
+          L.x += (nx - L.x) * 0.075;
+          L.y += (ny - L.y) * 0.075;
+          if (Math.abs(nx - L.x) > 0.002 || Math.abs(ny - L.y) > 0.002) moving = true;
+          var mx = (L.x * L.amp * -26).toFixed(1) + "px";
+          var my = (L.y * L.amp * -16).toFixed(1) + "px";
+          var sy = (prog * L.amp * box.height * 0.12).toFixed(1) + "px";
+          if (mx + my + sy === L.out) continue;
+          L.out = mx + my + sy;
+          L.el.style.setProperty("--mx", mx);
+          L.el.style.setProperty("--my", my);
+          L.el.style.setProperty("--sy", sy);
+        }
+      }
+      if (moving) wake();
+    }
+
+    wake();
+  })();
 })();
