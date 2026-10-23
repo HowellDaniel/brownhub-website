@@ -4294,3 +4294,62 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
 }
 @media (min-width:720px) and (min-resolution:1.5dppx){.pinband--one{--mat-d:2}}
 @media (min-width:720px) and (min-resolution:2.5dppx){.pinband--one{--mat-d:3}}
+
+/* ==========================================================================
+   THE NEXT PICTURE LAID AS A REFLECTION IN THE DESK STAGE'S AIR  (js/pinband.js)
+
+   Read out of the engine at 1440x900 on a two-pixel Mac, the owner's complaint about
+   the pinned stage was not about the picture, it was about the space beside it: turning
+   the card sideways gave the flyer 286x490 of mat, and the words on the far side are a
+   title and a category — 91 CSS px of them in a column that stands 490 tall. The rest
+   is the page's own ground, and a shelf that shows one picture to a page has a next
+   picture to say something with. It is laid there upside down and fading, the way a
+   reflection lies under a printed sheet on a lit table, and it names the page the rail
+   is travelling towards.
+
+   Three rules keep it from costing the stage anything, and the first is why the node is
+   absolutely positioned rather than a flex child: js/pinband.js's trim() measures the
+   picture and cuts it to whatever the window has left, and any arrangement that could
+   make the row taller hands that pass a new debt — a debt the picture cannot pay is a
+   page that cannot be shown whole, and the band answers by tearing the pinned shelf
+   down to a plain grid of 241px stamps. A box taken out of flow widens nothing, so the
+   row measures exactly as it did before this layer was added: the driver measures the
+   air under the words, writes it as --reflect-h, and the reflection is poured into it.
+
+   The second is that it costs no bytes. The node mirrors only a source the shelf has
+   already resolved and loaded — the next card's own currentSrc — so it paints from the
+   cache the picture is already sitting in, and a frame the visitor has not been handed
+   yet is left unmirrored rather than asked for. One node per band travels from card to
+   card and only changes its source, so a turn costs no new element and no new decode.
+
+   The third is scope: the desk gate, and only the two columns the desk row actually
+   creates. The pocket stacks the words back under the picture, the plain grid does the
+   same, and the experience band's words are an overlay painted on the picture rather
+   than a column beside it — it carries neither figcaption nor a body, so it is refused
+   by construction and not by a name. Below the gate the node is display:none, and
+   js/pinband.js takes it off the card as well.
+   ========================================================================== */
+.pinband__reflect{display:none}
+@media (min-width:720px){
+  .pinband--paged.pinband--one .pinband__window .shots>*>figcaption,
+  .pinband--paged.pinband--one .pinband__window .cards>*>.product-card__body{position:relative}
+  .pinband--paged.pinband--one .pinband__window .pinband__reflect{
+    display:block; position:absolute; top:100%; inset-inline:0;
+    height:var(--reflect-h,0); overflow:hidden; pointer-events:none;
+    border-radius:calc(var(--radius) - 6px);
+    /* Strongest at the line it is standing on and gone before the card's own edge —
+       a reflection that stops short reads as the surface running out, not as a picture. */
+    -webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.5) 40%,transparent 88%);
+            mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.5) 40%,transparent 88%)}
+  .pinband--paged.pinband--one .pinband__window .pinband__reflect img{
+    position:absolute; inset:0; display:block; width:100%; height:100%;
+    /* aspect-ratio, scale and translate all come back off: .shot img and
+       .product-card img lean every picture on a card 16% closer than it is drawn and
+       hold it 0 var(--py) off its row, and a reflection is neither of those things.
+       Seen as pixels, the first weight was too honest: a dim copy of a white flyer at
+       .42 read as a second cropped card, not as its reflection. The definition goes as
+       well as the brightness — a matte surface gives back a soft image, and the blur
+       spends two pixels of the strip's own edge, so the sides stop being cut lines. */
+    aspect-ratio:auto; object-fit:cover; object-position:center;
+    scale:1 -1; translate:0; transition:none; opacity:.34; filter:blur(2px)}
+}
