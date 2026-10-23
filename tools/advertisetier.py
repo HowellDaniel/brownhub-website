@@ -9,12 +9,17 @@ pixel width — the browser then picks it when the desk branch's demand (sizes a
 dpr2) exceeds the base, and a phone naming 190px keeps the light file.
 
 Run tools/markart.py afterwards: --art-max-w/--art-max-h is read off this srcset.
+
+A frame parked by js/flow.js holds its address in `data-src`, so its choices have to travel in
+`data-srcset` — an `<img>` with a srcset and no src is still a source, and the whole rail would
+download at parse. `fill()` hands the list over with the address, and `sizes` is inert on a parked
+frame, so tools/sizetier.py can write the clause while the frame waits.
 """
 import os, re, subprocess, sys
 
 ROOT = "/Users/brownhub/Documents/Qoder/2026-09-16/5bb3bd1c"
 PAGES = ("index.html", "catalog.html")
-FRAME = re.compile(r'(<div class="media"[^>]*>\s*<img src="images/catalog/([^"]+\.jpg)"[^>]*?)>')
+FRAME = re.compile(r'(<div class="media"[^>]*>\s*<img (?:data-)?src="images/catalog/([^"]+\.jpg)"[^>]*?)>')
 
 
 def width(path):
@@ -44,10 +49,13 @@ def main():
             if "catalog/hi/" + base in whole:
                 return m.group(0)
             entry = "images/catalog/hi/%s %dw" % (base, hw)
+            parked = "data-src=" in whole
+            setname = "data-srcset" if parked else "srcset"
             if "srcset=" in whole:
-                new = re.sub(r'srcset="([^"]*)"', lambda s: 'srcset="%s, %s"' % (s.group(1), entry), whole, count=1)
+                new = re.sub(r'(?:data-)?srcset="([^"]*)"',
+                             lambda s: '%s="%s, %s"' % (setname, s.group(1), entry), whole, count=1)
             else:
-                new = whole + ' srcset="images/catalog/%s %dw, %s"' % (base, bw, entry)
+                new = whole + ' %s="images/catalog/%s %dw, %s"' % (setname, base, bw, entry)
             added.append(base)
             return new + ">"
 
