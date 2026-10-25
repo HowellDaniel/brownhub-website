@@ -1,0 +1,14 @@
+{
+  "_how_to_add": "One object per partner in \"partners\": { \"name\": \"…\", \"role\": \"what it does for us, one short line\", \"url\": \"https://…\" }. A company belongs here only where the studio has a live account with it and can point at the work it does — the band stays hidden while this list is empty, and nothing here is invented. No logos: a logo is a trademark we have not been given permission to place, so the name carries the claim in text.",
+  "partners": [
+    { "name": "Paystack", "role": "Card, bank and mobile money payments", "url": "https://paystack.com" },
+    { "name": "Supabase", "role": "Client accounts, requests and chat history", "url": "https://supabase.com" },
+    { "name": "Arkesel", "role": "Verification texts to Ghanaian numbers", "url": "https://arkesel.com" },
+    { "name": "FormSubmit", "role": "The enquiry form and voice notes, relayed to us", "url": "https://formsubmit.co" },
+    { "name": "GitHub Pages", "role": "Where this site is served from", "url": "https://pages.github.com" },
+    { "name": "Porkbun", "role": "Registers brownhub283.com", "url": "https://porkbun.com" },
+    { "name": "WhatsApp Business", "role": "The catalog and the order line", "url": "https://business.whatsapp.com" },
+    { "name": "Google Business Profile", "role": "The studio's verified listing on Google", "url": "https://business.google.com" },
+    { "name": "Google Gemini", "role": "The chat assistant's answers, through our relay", "url": "https://ai.google.dev" }
+  ]
+}

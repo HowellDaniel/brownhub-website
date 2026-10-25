@@ -174,4 +174,36 @@
       })
       .catch(() => {});
   }
+
+  /* The partner rail is the other half of the same proof: the companies the money,
+     the logins and the messages actually move through. A link only goes out if the
+     file gives a plain http(s) address, because a rail whose href comes from a data
+     file is a place a bad URL could hide. No logos: a logo is a trademark nobody has
+     licensed us to place, so the name carries the claim in text. */
+  const OUT = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M4.4 2.2h5.2v5.2"/><path d="M9.6 2.2 5.4 6.4"/><path d="M7.4 9.8H2.2V4.6"/></svg>';
+  const partnerBand = doc.getElementById("partners");
+  const partnerItems = doc.getElementById("partners-items");
+  if (partnerBand && partnerItems) {
+    fetch("data/partners.json", { cache: "no-cache" })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((d) => {
+        const list = (Array.isArray(d) ? d : (d && d.partners) || []).filter((p) => p && p.name);
+        if (!list.length) return;
+        partnerItems.innerHTML = list.map((p) => {
+          const href = /^https?:\/\/\S+$/i.test(String(p.url || "").trim()) ? p.url.trim() : "";
+          const name = "<strong>" + esc(p.name) +
+            (href ? OUT : "") + "</strong>";
+          const role = p.role ? "<span>" + esc(p.role) + "</span>" : "";
+          return href
+            ? '<a class="company company--out" href="' + esc(href) +
+              '" target="_blank" rel="noopener noreferrer">' + name + role + "</a>"
+            : '<div class="company">' + name + role + "</div>";
+        }).join("");
+        partnerBand.hidden = false;
+        if (window.BROWNHUB_FLOW) window.BROWNHUB_FLOW.refresh();
+      })
+      .catch(() => {});
+  }
 })();

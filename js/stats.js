@@ -22,10 +22,14 @@
 
   /* The count starts on screen at zero and is filled by BROWNHUB_COUNT when the
      band scrolls into view; a value that is not a number means the studio has not
-     counted this yet, so no card is built for it at all. */
+     counted this yet, so no card is built for it at all.
+     A figure may also be written as the year it began. An age typed into a file
+     goes stale on its own birthday and nobody is awake at midnight to edit JSON,
+     so the year is what is stored and the difference is what is drawn. */
   function metric(m) {
-    const n = Number(m && m.value);
-    if (!m || !isFinite(n) || m.value === null || m.value === "" || n < 0) return "";
+    if (!m) return "";
+    const n = m.since ? new Date().getFullYear() - Number(m.since) : Number(m.value);
+    if (!isFinite(n) || m.value === null || m.value === "" || n < 0) return "";
     return '<article class="kpi"><p class="kpi__num"><span data-count="' +
       n + '">0</span></p><h3 class="kpi__label">' + esc(m.label || "") + "</h3>" +
       (m.note ? '<p class="kpi__note">' + esc(m.note) + "</p>" : "") + "</article>";

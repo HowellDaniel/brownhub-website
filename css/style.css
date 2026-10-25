@@ -4393,3 +4393,27 @@ body[data-nav="journal"]{--nav-ink:var(--accent)}
 .jask h2{font-size:var(--t-h2);line-height:var(--t-h2-lh);max-width:36rem}
 .jask p{color:var(--text-muted);max-width:38rem}
 .jask__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--t-2)}
+
+/* ── the partner rail, and the sixth figure in the numbers band ────────────────
+   A partner chip is the client wall's box with two things changed: the line under
+   the name is a sentence rather than an uppercase sector word, and the whole chip
+   is a link out, so it needs a width that can hold a sentence and a hover a pointer
+   can find. The numbers band gained a card, and the 15rem floor that fitted five
+   inside the shell left the sixth stranded alone on a second row: an auto-fit floor
+   cannot be asked to land on exactly six, so the wide and middle widths now name
+   their own column count and only the narrow ones keep the floor. */
+.partners-band{padding-top:clamp(1rem,2.5vw,2.5rem)}
+.company--out{min-width:200px;max-width:min(72vw,270px);color:inherit;text-align:start;
+  transition:border-color .2s ease,transform .2s ease}
+.company--out:hover,.company--out:focus-visible{border-color:var(--accent)}
+.company--out:hover{transform:translateY(-2px)}
+.company--out strong{display:flex;align-items:center;gap:.4rem}
+.company--out svg{flex:none;width:.72rem;height:.72rem;color:var(--text-muted)}
+.company--out span{font-size:var(--t-fs-20);line-height:1.45;letter-spacing:0;text-transform:none}
+html[dir="rtl"] .company--out svg{transform:scaleX(-1)}
+@media (min-width:720px) and (max-width:1239px){
+  .kpi__grid{grid-template-columns:repeat(3,1fr)}
+}
+@media (min-width:1240px){
+  .kpi__grid{grid-template-columns:repeat(6,1fr)}
+}
