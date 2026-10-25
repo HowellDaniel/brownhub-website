@@ -19,7 +19,6 @@ Allow: /contact.html
 Allow: /privacy.html
 Allow: /legal.html
 Allow: /security.html
-Allow: /blog.html
 Allow: /blog/
 
 # Optional: allow common AI crawlers to read the site content.
@@ -34,6 +33,7 @@ Allow: /
 # served and still must be readable: it answers with noindex and hands the visitor
 # on, and a crawler blocked from reading it would keep the old page in the index
 # instead of following it to its new home. It is simply not listed in the sitemap.
+# blog.html is a stub for the same reason: the journal's index is the shorter /blog/.
 
 # One exception: /mobile/ is the native-app build folder, not a page. It holds a
 # package manifest and build notes, so a crawler indexing it would only be noise.

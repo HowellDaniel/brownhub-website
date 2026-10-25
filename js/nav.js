@@ -60,7 +60,7 @@
       ["Custom Graphic Design", "Something unusual? We design that too.", "services.html#custom", "wand"],
       ["Websites & Software", "A hosted site or an app for the brand.", "engineering.html#web-software", "monitor"],
       ["Website & Software Engineering", "The whole engineering side: builds, stack, security and care.", "engineering.html#build", "code"],
-      ["The Studio Journal", "How the work gets done: print files, briefs, turnaround.", "blog.html", "journal"]
+      ["The Studio Journal", "How the work gets done: print files, briefs, turnaround.", "blog/", "journal"]
     ]},
     { h: "Popular in the catalog", items: [
       ["Banners & signage", "Pull-up stands, backdrops and ABS boards.", "catalog.html?q=Banners", "banner"],

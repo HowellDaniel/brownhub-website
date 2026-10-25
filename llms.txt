@@ -37,7 +37,7 @@ Logos, brand identity systems, print and packaging — designed to make brands s
 
 ## Journal
 The studio writes down how the work actually gets done — print files, briefs, turnaround times, localisation cost.
-- Index: https://www.brownhub283.com/blog.html
+- Index: https://www.brownhub283.com/blog/
 - Feed (RSS): https://www.brownhub283.com/feed.xml
 - What "print-ready" actually means: https://www.brownhub283.com/blog/print-ready.html
 - How to brief a flyer and get it back the same week: https://www.brownhub283.com/blog/brief-a-flyer.html

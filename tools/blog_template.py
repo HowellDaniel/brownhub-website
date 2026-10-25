@@ -79,6 +79,12 @@ def shell(page, title, desc, type_="website", published=None):
                         '  <link rel="alternate" type="application/rss+xml"'
                         ' title="BrownHub Journal" href="/feed.xml">\n  <link rel="stylesheet"')
     body = HEADER.replace('<body data-nav="privacy">', '<body data-nav="journal">')
+    # Every page this module writes is the journal, so its own nav tab lights — the same
+    # way About lights on about.html. Done before the paths are lifted, so it is written
+    # once here rather than in each page's main.
+    body = body.replace('<a href="blog/" class="nav__link">Blog</a>',
+                        '<a href="blog/" class="nav__link nav__link--active" '
+                        'aria-current="page">Blog</a>')
     if root:
         head, body, FOOTER_ = lift(head, root), lift(body, root), lift(FOOTER, root)
     else:
@@ -150,7 +156,10 @@ def card(post, root):
 
 
 def index_page(posts):
-    cards = "".join(card(p, "") for p in posts)
+    # The index lives inside blog/, so every path it writes is one directory deep: the
+    # cards reach their posts by coming back up and going down again, which is how the
+    # address reads /blog/print-ready.html rather than /blog/blog/print-ready.html.
+    cards = "".join(card(p, "../") for p in posts)
     main = """<main>
     <section class="page-hero">
       <div class="container">
@@ -176,27 +185,62 @@ def index_page(posts):
         <p>Send the size, the date it is needed and whatever you already have. The studio
         reads every enquiry itself and replies the day it arrives.</p>
         <p class="jask__actions">
-          <a href="contact.html" class="btn btn--primary">Start a project</a>
-          <a href="catalog.html" class="btn btn--ghost">See the catalog</a>
+          <a href="../contact.html" class="btn btn--primary">Start a project</a>
+          <a href="../catalog.html" class="btn btn--ghost">See the catalog</a>
         </p>
       </div>
     </section>
   </main>""" % (len(posts), date_label(posts[0]["date"]), cards)
 
     graph = ('{\n "@context": "https://schema.org",\n "@graph": [\n'
-             '  {\n   "@type": "CollectionPage",\n   "@id": "%sblog.html",\n'
-             '   "url": "%sblog.html",\n   "name": "BrownHub Journal",\n'
+             '  {\n   "@type": "CollectionPage",\n   "@id": "%sblog/",\n'
+             '   "url": "%sblog/",\n   "name": "BrownHub Journal",\n'
              '   "description": "Notes on design, print and the web from BrownHub in Accra.",\n'
              '   "isPartOf": {"@type": "WebSite", "@id": "%s", "name": "BrownHub", "url": "%s"},\n'
              '   "hasPart": [\n%s\n   ]\n  }\n ]\n}\n'
              % (SITE, SITE, SITE, SITE,
                 ",\n".join("   " + ld_post(p).replace("\n", "\n   ") for p in posts)))
-    out = shell("blog.html",
+    out = shell("blog/",
                 "BrownHub Journal — notes on design, print and websites from Accra",
                 "Notes from a design studio in Accra: what a print-ready file is, how to "
                 "brief a flyer, how long a logo really takes, and what carrying forty "
                 "languages costs.").replace(MARK, main)
     return out.replace("</head>", jsonld(graph) + "</head>")
+
+
+def moved_page():
+    """blog.html is the address the site already printed: the footer of every page, the
+    search index, the mega panel, the sitemap and the feed. It cannot simply 404, so it
+    answers with a redirect instead and hands its place to /blog/, where the index now
+    lives.
+
+    The move is a meta refresh rather than a script: the site's content policy allows only
+    its own files to run, so an inline redirect would be blocked before it started."""
+    main = """<main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Journal</p>
+        <h1>The studio journal has a shorter address</h1>
+        <p>It is at <a href="/blog/">brownhub283.com/blog</a>. This page moves you there;
+        if it does not, use that link.</p>
+      </div>
+    </section>
+  </main>"""
+    out = shell("blog.html",
+                "BrownHub Journal — notes on design, print and websites from Accra",
+                "Notes from a design studio in Accra: what a print-ready file is, how to "
+                "brief a flyer, how long a logo really takes, and what carrying forty "
+                "languages costs.").replace(MARK, main)
+    # One index for the same notes: the canonical names /blog/ and this page asks to be
+    # left out of the results, while `follow` lets its links keep passing weight to them.
+    out = out.replace('<link rel="canonical" href="%sblog.html">' % SITE,
+                      '<link rel="canonical" href="%sblog/">' % SITE)
+    out = out.replace('<meta property="og:url" content="%sblog.html">' % SITE,
+                      '<meta property="og:url" content="%sblog/">' % SITE)
+    return out.replace("</head>",
+                       '  <meta http-equiv="refresh" content="0;url=/blog/">\n'
+                       '  <meta name="robots" content="noindex,follow">\n'
+                       "</head>")
 
 
 def post_page(post, posts):
@@ -214,7 +258,7 @@ def post_page(post, posts):
     main = """<main>
     <section class="page-hero">
       <div class="container">
-        <p class="eyebrow"><a href="../blog.html">Journal</a></p>
+        <p class="eyebrow"><a href="./">Journal</a></p>
         <h1>%s</h1>
         <p>%s</p>
         <p class="jlead">%s · %s</p>
@@ -231,7 +275,7 @@ def post_page(post, posts):
       <div class="container">
         <div class="section__head section__head--split">
           <h2>More from the journal</h2>
-          <a href="../blog.html" class="card__link">All notes →</a>
+          <a href="./" class="card__link">All notes →</a>
         </div>
         <div class="cards cards--2 jgrid">
 %s        </div>
@@ -263,7 +307,7 @@ def feed_page(posts):
                     for p in posts)
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n  <channel>\n'
-            '    <title>BrownHub Journal</title>\n    <link>%sblog.html</link>\n'
+            '    <title>BrownHub Journal</title>\n    <link>%sblog/</link>\n'
             '    <description>Notes on design, print and the web from BrownHub, a graphic '
             'design and website studio in Accra, Ghana.</description>\n'
             '    <language>en</language>\n    <lastBuildDate>%s</lastBuildDate>\n'

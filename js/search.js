@@ -27,7 +27,7 @@
     { g: "Pages", t: "Catalog", h: "catalog.html", k: "shop items products prints" },
     { g: "Pages", t: "About", h: "about.html", k: "team story accra company" },
     { g: "Pages", t: "Contact", h: "contact.html", k: "email phone whatsapp quote enquiry" },
-    { g: "Pages", t: "The studio journal", h: "blog.html", k: "journal blog notes article print ready bleed cmyk dpi proof flyer brief turnaround logo languages localisation" },
+    { g: "Pages", t: "The studio journal", h: "blog/", k: "journal blog notes article print ready bleed cmyk dpi proof flyer brief turnaround logo languages localisation" },
     { g: "Pages", t: "My requests", h: "", act: "acct", k: "login account sign in history orders" },
 
     { g: "Services", t: "Logo Design", h: "services.html#logo-brand", k: "logo mark symbol brand" },

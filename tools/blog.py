@@ -7,7 +7,7 @@ same head, nav, footer, CSP and JSON-LD the rest of the site carries. Nothing is
 in the browser at visit time: a page that only exists after JavaScript runs is a page no
 search engine and no reader on a slow phone can find.
 
-    python3 tools/blog.py            regenerate blog/*.html, blog.html and data/posts.json
+    python3 tools/blog.py            regenerate blog/*.html, blog/, blog.html and data/posts.json
     python3 tools/blog.py --check    exit non-zero if the committed pages differ
 
 The markdown subset is deliberately small — headings, paragraphs, emphasis, links, images,
@@ -179,7 +179,7 @@ SITEMAP_TAIL = "  <!-- END JOURNAL -->"
 
 
 def sitemap_block(posts):
-    urls = ['    <loc>%sblog.html</loc>\n    <lastmod>%s</lastmod>'
+    urls = ['    <loc>%sblog/</loc>\n    <lastmod>%s</lastmod>'
             '\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>'
             % (SITE, posts[0]["date"])]
     urls += ['    <loc>%sblog/%s.html</loc>\n    <lastmod>%s</lastmod>'
@@ -240,7 +240,11 @@ def main():
     written = {}
     for p in posts:
         written["blog/%s.html" % p["slug"]] = T.post_page(p, posts)
-    written["blog.html"] = T.index_page(posts)
+    # The index is the directory, so the address a reader types and the address the nav
+    # prints are the same page: /blog/. What used to be the index stays as a redirect,
+    # because the footers, the search index and the feed all carried that filename.
+    written["blog/index.html"] = T.index_page(posts)
+    written["blog.html"] = T.moved_page()
     written["feed.xml"] = T.feed_page(posts)
     src, written["sitemap.xml"] = patch_sitemap(os.path.join(ROOT, "sitemap.xml"), posts)
     written["data/posts.json"] = json.dumps({
