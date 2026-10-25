@@ -10,8 +10,15 @@
 
   var doc = document;
   var header = doc.querySelector(".site-header");
-  var link = header && header.querySelector('.nav__menu a[href="services.html"]');
+  var link = header && header.querySelector('.nav__menu a[href$="services.html"]');
   if (!link) return;
+
+  /* Every link in the panel is written as a site path, and this page may sit a
+     directory deep — a journal post at /blog/x.html would otherwise ask the
+     browser for /blog/services.html. The wordmark already resolves to the page
+     it is on, so its own href is the root as this document sees it. */
+  var logo = header.querySelector(".nav__logo");
+  var ROOT = logo ? new URL(".", new URL(logo.getAttribute("href"), doc.baseURI)).href : "";
 
   var P = {
     nib: '<path d="M15.6 3.4 20.6 8.4 9.4 19.6l-5.2.8.8-5.2 10.6-10.6Z"/><path d="M13.4 5.6 18.4 10.6"/>',
@@ -25,7 +32,8 @@
     banner: '<path d="M4.6 4.4h14.8v11.2H4.6z"/><path d="M9 19.6h6M12 15.6v4"/><path d="M8 9.2h8"/>',
     frame: '<rect x="4.4" y="4.4" width="15.2" height="15.2" rx="1.8"/><rect x="8" y="8" width="8" height="8" rx="1"/>',
     printer: '<path d="M7 8.6V3.8h10v4.8"/><path d="M4.6 8.6h14.8a2 2 0 0 1 2 2v5.2h-4.2v-2.4H6.8v2.4H2.6v-5.2a2 2 0 0 1 2-2Z"/><path d="M6.8 15.8h10.4v4.4H6.8z"/>',
-    bag: '<path d="M5.2 8.2h13.6l1.2 12.4H4L5.2 8.2Z"/><path d="M9 8.2V6.4a3 3 0 0 1 6 0v1.8"/>'
+    bag: '<path d="M5.2 8.2h13.6l1.2 12.4H4L5.2 8.2Z"/><path d="M9 8.2V6.4a3 3 0 0 1 6 0v1.8"/>',
+    journal: '<path d="M5.2 4.6h11.4a2.4 2.4 0 0 1 2.4 2.4v12.4H7.6a2.4 2.4 0 0 1-2.4-2.4V4.6Z"/><path d="M7.8 8.6h8M7.8 11.8h8M7.8 15h5"/>'
   };
 
   function icon(k) {
@@ -35,7 +43,7 @@
   }
 
   function row(r) {
-    return '<li class="mega__row"><a href="' + r[2] + '"' + (r[4] ? ' target="' + r[4] + '" rel="noopener"' : '') + '>' + icon(r[3]) +
+    return '<li class="mega__row"><a href="' + ROOT + r[2] + '"' + (r[4] ? ' target="' + r[4] + '" rel="noopener"' : '') + '>' + icon(r[3]) +
       '<span class="mega__body"><span class="mega__title">' + r[0] + "</span>" +
       '<span class="mega__desc">' + r[1] + "</span></span></a></li>";
   }
@@ -51,7 +59,8 @@
       ["Packaging Design", "Labels, boxes and bottles built to shelf size.", "services.html#packaging", "box"],
       ["Custom Graphic Design", "Something unusual? We design that too.", "services.html#custom", "wand"],
       ["Websites & Software", "A hosted site or an app for the brand.", "engineering.html#web-software", "monitor"],
-      ["Website & Software Engineering", "The whole engineering side: builds, stack, security and care.", "engineering.html#build", "code"]
+      ["Website & Software Engineering", "The whole engineering side: builds, stack, security and care.", "engineering.html#build", "code"],
+      ["The Studio Journal", "How the work gets done: print files, briefs, turnaround.", "blog.html", "journal"]
     ]},
     { h: "Popular in the catalog", items: [
       ["Banners & signage", "Pull-up stands, backdrops and ABS boards.", "catalog.html?q=Banners", "banner"],
@@ -78,8 +87,8 @@
       '<section class="mega__rail"><div class="mega__card">' +
         '<h2 class="mega__head">Start a project</h2>' +
         '<p>Tell us about your next project and get a free consultation within 24 hours.</p>' +
-        '<a href="contact.html" class="btn btn--primary btn--sm">Start your project</a>' +
-        '<a href="catalog.html" class="card__link">Order an item from the catalog</a>' +
+        '<a href="' + ROOT + 'contact.html" class="btn btn--primary btn--sm">Start your project</a>' +
+        '<a href="' + ROOT + 'catalog.html" class="card__link">Order an item from the catalog</a>' +
       "</div></section>" +
     "</div>";
   header.appendChild(panel);

@@ -45,6 +45,20 @@
     croatian: "hr", slovak: "sk", finnish: "fi", romanian: "ro", bengali: "bn",
     tamil: "ta", tagalog: "tl", filipino: "tl" };
   var ATTRS = ["placeholder", "title", "alt", "aria-label"];
+  /* The dictionaries live at the root of the site, but this script is asked for
+     them by name relative to the page it runs on — and a page is not always at
+     the root. A journal post at /blog/x.html would otherwise fetch
+     /blog/i18n/ar.json, get a 404, and the catch below would quietly throw the
+     visitor back to English and delete their saved language. The wordmark
+     already points at the root of the tree this document is standing in, so its
+     own href is the only honest answer. */
+  var ROOT = (function () {
+    var logo = document.querySelector(".nav__logo");
+    if (!logo) return "";
+    try {
+      return new URL(".", new URL(logo.getAttribute("href"), document.baseURI)).href;
+    } catch (e) { return ""; }
+  })();
   var dicts = {};
   var rmaps = {};
   var records = [];
@@ -136,7 +150,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch("i18n/" + code + ".json?v=96")
+    return fetch(ROOT + "i18n/" + code + ".json?v=97")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }

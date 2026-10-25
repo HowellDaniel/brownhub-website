@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>BrownHub Journal</title>
+    <link>https://www.brownhub283.com/blog.html</link>
+    <description>Notes on design, print and the web from BrownHub, a graphic design and website studio in Accra, Ghana.</description>
+    <language>en</language>
+    <lastBuildDate>Sun, 25 Oct 2026 09:00:00 +0000</lastBuildDate>
+    <atom:link href="https://www.brownhub283.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>How to brief a flyer and get it back the same week</title>
+      <link>https://www.brownhub283.com/blog/brief-a-flyer.html</link>
+      <guid isPermaLink="true">https://www.brownhub283.com/blog/brief-a-flyer.html</guid>
+      <pubDate>Sun, 25 Oct 2026 09:00:00 +0000</pubDate>
+      <description>The five things a designer needs before the first layout, and what each one costs you in days when it arrives late.</description>
+      <category>Briefs</category>
+      <category>Turnaround</category>
+    </item>
+    <item>
+      <title>We rewrote this site into forty languages by hand</title>
+      <link>https://www.brownhub283.com/blog/forty-languages-by-hand.html</link>
+      <guid isPermaLink="true">https://www.brownhub283.com/blog/forty-languages-by-hand.html</guid>
+      <pubDate>Sun, 25 Oct 2026 09:00:00 +0000</pubDate>
+      <description>Why the studio deleted a machine-translation proxy, what it cost, and what a hand-written dictionary actually holds.</description>
+      <category>Website</category>
+      <category>Translating</category>
+    </item>
+    <item>
+      <title>A logo in a week, and what happens on each day</title>
+      <link>https://www.brownhub283.com/blog/logo-in-a-week.html</link>
+      <guid isPermaLink="true">https://www.brownhub283.com/blog/logo-in-a-week.html</guid>
+      <pubDate>Sun, 25 Oct 2026 09:00:00 +0000</pubDate>
+      <description>The six stages the studio runs in a week, laid out day by day, with the decisions that belong to you and the ones that do not.</description>
+      <category>Branding</category>
+      <category>Process</category>
+    </item>
+    <item>
+      <title>What “print-ready” actually means</title>
+      <link>https://www.brownhub283.com/blog/print-ready.html</link>
+      <guid isPermaLink="true">https://www.brownhub283.com/blog/print-ready.html</guid>
+      <pubDate>Sun, 25 Oct 2026 09:00:00 +0000</pubDate>
+      <description>Bleed, colour mode, resolution, fonts and the one printed proof — what a printer has to settle before they touch your file.</description>
+      <category>Print</category>
+      <category>Files</category>
+    </item>
+  </channel>
+</rss>

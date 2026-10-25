@@ -4334,3 +4334,62 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
 }
 @media (min-width:720px) and (min-resolution:1.5dppx){.pinband--one{--mat-d:2}}
 @media (min-width:720px) and (min-resolution:2.5dppx){.pinband--one{--mat-d:3}}
+
+/* ==========================================================================
+   THE STUDIO JOURNAL. Written by tools/blog.py into blog/*.html on the shell it
+   lifts out of privacy.html, so the reading surface is the legal column the site
+   already owns: a 220px contents rail beside a 46rem measure at 901px and up, one
+   stack below it. This layer only has to undo the three things the legal column
+   does for a policy that a note must not do for prose.
+
+   One: `.legal p` sets the muted ink, which is right for a policy you skim and
+   wrong for 700 words you read — a note runs in --text. Two: the site's reset
+   takes every list marker away (`ul{list-style:none}`), so a note's lists have to
+   be given theirs back along with the padding the reset zeroed. Three: `.legal h2`
+   is 1.2rem with 1.9rem of top space, sized for a numbered clause, not for the
+   sections a note turns between.
+
+   The byline sits in the page hero, which zeroes every paragraph inside it (the
+   measure rule `.page-hero p{margin:0}`), so `.jlead` buys its own gap back rather
+   than fighting that rule's specificity. Cards reuse `.card` and `.chip--plain`
+   whole and only open the link up to fill the box, so the whole note is one target.
+   Edges are logical (`*-inline-start`) because the journal reads right-to-left in
+   Arabic, Hebrew, Persian and Urdu exactly as the rest of the site does.
+   ========================================================================== */
+body[data-nav="journal"]{--nav-ink:var(--accent)}
+.page-hero .jlead{margin-top:var(--t-3);display:flex;flex-wrap:wrap;align-items:center;
+  gap:.5em;font-size:var(--t-small);color:var(--text-muted)}
+
+.journal__post{max-width:44rem;font-size:1.06rem;line-height:1.78;color:var(--text)}
+.journal__post>p{color:var(--text);margin:0 0 var(--t-4)}
+.journal__post h2{font-size:1.42rem;line-height:1.25;font-weight:700;letter-spacing:-.015em;
+  color:var(--text);margin:var(--t-6) 0 var(--t-3)}
+.journal__post h3{font-size:1.16rem;font-weight:600;color:var(--text);margin:var(--t-5) 0 var(--t-2)}
+.journal__post h4{font-size:1.02rem;font-weight:600;color:var(--text);margin:var(--t-4) 0 var(--t-1)}
+.journal__post>*:last-child{margin-bottom:0}
+.journal__post ul,.journal__post ol{list-style:disc;padding-inline-start:1.4em;margin:0 0 var(--t-4)}
+.journal__post ol{list-style:decimal}
+.journal__post li{margin:.4em 0;color:var(--text)}
+.journal__post li::marker{color:var(--accent-2)}
+.journal__post blockquote{margin:0 0 var(--t-4);padding-inline-start:var(--t-4);
+  border-inline-start:var(--t-bw2) solid var(--accent-2);color:var(--text-muted);font-style:italic}
+.journal__post blockquote p{margin:0;color:inherit}
+.journal__post hr{border:0;border-top:var(--t-bw) solid var(--border);margin:var(--t-6) 0}
+.journal__post code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;
+  padding:.12em .42em;border-radius:var(--t-r-sm);background:var(--bg-alt);color:var(--text)}
+.journal__post img{border-radius:var(--t-r-lg);margin:0 0 var(--t-4)}
+.journal__post a{color:var(--accent);font-weight:600;text-decoration:underline;
+  text-decoration-thickness:1px;text-underline-offset:2px}
+
+.jcard{padding:0;overflow:hidden}
+.jcard__hit{display:block;height:100%;padding:var(--t-5);color:inherit}
+.jcard__hit:hover{color:inherit}
+.jcard__meta{font-size:var(--t-small);color:var(--text-muted);margin:.4rem 0 .7rem}
+.jcard__desc{font-size:.98rem;line-height:1.65;margin:0}
+.jcard__tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:var(--t-3)}
+.jcard__tags .chip{font-size:.8rem}
+
+.jask .container{display:grid;justify-items:center;gap:var(--t-3)}
+.jask h2{font-size:var(--t-h2);line-height:var(--t-h2-lh);max-width:36rem}
+.jask p{color:var(--text-muted);max-width:38rem}
+.jask__actions{display:flex;flex-wrap:wrap;justify-content:center;gap:var(--t-2)}

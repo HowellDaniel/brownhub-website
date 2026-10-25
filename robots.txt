@@ -19,6 +19,8 @@ Allow: /contact.html
 Allow: /privacy.html
 Allow: /legal.html
 Allow: /security.html
+Allow: /blog.html
+Allow: /blog/
 
 # Optional: allow common AI crawlers to read the site content.
 User-agent: GPTBot

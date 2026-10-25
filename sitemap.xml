@@ -54,4 +54,36 @@
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+  <!-- BEGIN JOURNAL (tools/blog.py — do not edit between the markers) -->
+  <url>
+    <loc>https://www.brownhub283.com/blog.html</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.brownhub283.com/blog/brief-a-flyer.html</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.brownhub283.com/blog/forty-languages-by-hand.html</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.brownhub283.com/blog/logo-in-a-week.html</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.brownhub283.com/blog/print-ready.html</loc>
+    <lastmod>2026-10-25</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <!-- END JOURNAL -->
 </urlset>

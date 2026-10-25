@@ -6,6 +6,12 @@
   var trigger = doc.getElementById("nav-search");
   if (!header || !trigger) return;
 
+  /* Every href in the index is a site path. The page this runs on may sit a directory
+     below the root — a journal note at /blog/x.html has no /blog/services.html to find —
+     so the wordmark's own resolved address says where this document's root is. */
+  var logo = header.querySelector(".nav__logo");
+  var ROOT = logo ? new URL(".", new URL(logo.getAttribute("href"), doc.baseURI)).href : "";
+
   function TR(s) { return (window.I18N && I18N.t) ? I18N.t(s) : s; }
 
   // Labels are the site's own English strings, so every one of them is already a
@@ -21,6 +27,7 @@
     { g: "Pages", t: "Catalog", h: "catalog.html", k: "shop items products prints" },
     { g: "Pages", t: "About", h: "about.html", k: "team story accra company" },
     { g: "Pages", t: "Contact", h: "contact.html", k: "email phone whatsapp quote enquiry" },
+    { g: "Pages", t: "The studio journal", h: "blog.html", k: "journal blog notes article print ready bleed cmyk dpi proof flyer brief turnaround logo languages localisation" },
     { g: "Pages", t: "My requests", h: "", act: "acct", k: "login account sign in history orders" },
 
     { g: "Services", t: "Logo Design", h: "services.html#logo-brand", k: "logo mark symbol brand" },
@@ -213,7 +220,7 @@
 
     var a = doc.createElement("a");
     a.className = "search__hit";
-    a.href = e.h || "#";
+    a.href = e.h ? ROOT + e.h : "#";
     if (!e.h) a.setAttribute("role", "button");
 
     var t = doc.createElement("span");
@@ -234,7 +241,7 @@
         close();
         var acct = doc.getElementById("acct-open");
         if (acct) acct.click();
-        else window.location.href = "contact.html";
+        else window.location.href = ROOT + "contact.html";
       } else if (e.act === "cookie") {
         /* the preference centre is built by cookies.js on every page */
         ev.preventDefault();

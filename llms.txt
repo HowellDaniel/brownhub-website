@@ -33,7 +33,16 @@ Logos, brand identity systems, print and packaging — designed to make brands s
 - Legal and terms of business: https://www.brownhub283.com/legal.html
 - Privacy policy: https://www.brownhub283.com/privacy.html
 - Security: https://www.brownhub283.com/security.html
-- No cookies or analytics scripts are loaded on this site; only language, theme and session preferences are stored in the visitor's browser.
+- No advertising or third-party analytics scripts are loaded on this site. The visitor's own browser keeps language, theme, cookie consent, sign-in session and chat history. With consent to the Analytics category only, the studio's own script records an anonymous page read; a refusal writes nothing.
+
+## Journal
+The studio writes down how the work actually gets done — print files, briefs, turnaround times, localisation cost.
+- Index: https://www.brownhub283.com/blog.html
+- Feed (RSS): https://www.brownhub283.com/feed.xml
+- What "print-ready" actually means: https://www.brownhub283.com/blog/print-ready.html
+- How to brief a flyer and get it back the same week: https://www.brownhub283.com/blog/brief-a-flyer.html
+- A logo in a week, and what happens on each day: https://www.brownhub283.com/blog/logo-in-a-week.html
+- We rewrote this site into forty languages by hand: https://www.brownhub283.com/blog/forty-languages-by-hand.html
 
 ## Contact
 Use the contact page to request a quote or start a project:
