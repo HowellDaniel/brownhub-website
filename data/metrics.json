@@ -1,5 +1,5 @@
 {
-  "_how_to_add": "Everything in this file is published as a fact about the studio, so a number belongs here only once it is true. metrics: value is the real count, label the words under it, note one short line of proof. A metric left as \"value\": null is never rendered, which is how a figure the studio has not counted hides itself instead of showing a made-up placeholder; the two business counts below came from our own records, and a real number typed in counts up on its own. A figure written as \"since\": 2022 instead of a value is the current year minus that year, so an age keeps itself true rather than waiting for someone to edit it. milestones: date is a day we can point to in our own records, title and text one line each. The English words double as the translation keys, so a rewritten line falls back to English in every other language until it is added again to i18n/*.json.",
+  "_how_to_add": "Everything in this file is published as a fact about the studio, so a number belongs here only once it is true. metrics: value is the real count, label the words under it, note one short line of proof. A metric left as \"value\": null is never rendered, which is how a figure the studio has not counted hides itself instead of showing a made-up placeholder; the two business counts below came from our own records, and a real number typed in counts up on its own. A figure written as \"since\": 2022 instead of a value is the current year minus that year, so an age keeps itself true rather than waiting for someone to edit it. milestones: date is a year, a span or a day we can point to in our own records, oldest first, and title and text one line each. The English words double as the translation keys, so a rewritten line falls back to English in every other language until it is added again to i18n/*.json.",
   "metrics": [
     { "value": 9, "label": "Design services", "note": "Listed one by one on the About page." },
     { "value": 26, "label": "Catalog items", "note": "Photographed from finished work." },
@@ -9,12 +9,17 @@
     { "since": 2022, "label": "Years of experience", "note": "The studio opened in 2022." }
   ],
   "milestones": [
+    { "date": "2022", "title": "The studio opens", "text": "BrownHub starts taking design and print work in Accra." },
+    { "date": "2022 – 2026", "title": "Four years before the website", "text": "The work came through WhatsApp, church and event print." },
     { "date": "17 Sep 2026", "title": "The first site goes up", "text": "Catalog, FAQ and a chat assistant, live on day one." },
     { "date": "20 Sep 2026", "title": "The catalog comes onto the site", "text": "Items open in the page, ordered through the assistant." },
     { "date": "20 Sep 2026", "title": "Translated by hand", "text": "Hand-written dictionaries replace a translate proxy." },
     { "date": "23 Sep 2026", "title": "Clients get an account", "text": "A login that holds each client's own requests." },
     { "date": "24 Sep 2026", "title": "Bookable and payable online", "text": "Four services payable by card or mobile money." },
     { "date": "25 Sep 2026", "title": "Our own address", "text": "The site moves to brownhub283.com." },
-    { "date": "26 Sep 2026", "title": "Forty languages", "text": "Every page rewritten into forty languages." }
+    { "date": "26 Sep 2026", "title": "Forty languages", "text": "Every page rewritten into forty languages." },
+    { "date": "28 Sep 2026", "title": "It installs like an app", "text": "The site goes onto the home screen and opens offline." },
+    { "date": "25 Oct 2026", "title": "The journal opens", "text": "We start writing down how the work actually goes." },
+    { "date": "26 Oct 2026", "title": "Nine names on the wall", "text": "The businesses we have worked for, written out by us." }
   ]
 }
