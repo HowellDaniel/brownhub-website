@@ -197,9 +197,11 @@
     if (how === "qr") {
       // A still image rather than a canvas drawn at run time: it is the same file
       // the studio prints on a card, so what a visitor scans is what we verified.
+      // Root-relative, like /sw.js above: this element is built at the page's own
+      // depth, so "images/…" resolves to /blog/images/… on a journal page.
       var code = doc.createElement("img");
       code.className = "install__qr";
-      code.src = "images/qr-app.png?v=2";
+      code.src = "/images/qr-app.png?v=2";
       code.width = 104;
       code.height = 104;
       code.alt = tr("QR code linking to the BrownHub Studio app");
