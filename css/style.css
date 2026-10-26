@@ -4429,3 +4429,35 @@ html[dir="rtl"] .company--out svg{transform:scaleX(-1)}
    words a visitor sees.
    ========================================================================== */
 .company{max-width:min(78vw,30rem)}
+
+/* ==========================================================================
+   THE NUMBERS, AS FLAT TILES
+   Second look at the owner's reference strip. What he is pointing at is the
+   flatness: one solid tinted rectangle per figure, no hairline, no frost, no
+   sheen, nothing lifting off the page — the number centred in its own field of
+   air with a small letter-spaced word under it. So the glass comes off this band
+   entirely and the fill becomes --bg-alt, the same tint the rest of the site
+   already uses for an inset surface. The figure keeps the studio's own bronze and
+   its own single face; the reference's serif is its brand, not part of the layout.
+   The proof line stays under the label — the band's own heading promises every
+   number here can be checked, and a flat tile is no reason to hide the receipt.
+   ========================================================================== */
+.kpi{background-color:var(--bg-alt);background-image:none;border-color:transparent;
+  box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
+  justify-items:center;align-content:center;text-align:center;gap:var(--t-1)}
+.kpi::after{display:none}
+.kpi__label{font-size:clamp(11px,.8vw,13px);font-weight:var(--t-fw-semi);line-height:1.5;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--text);max-width:24ch}
+.kpi__note{font-size:var(--t-fs-10);line-height:1.5;max-width:26ch}
+
+/* A phone shows one column here, which turns six tiles into six full-width bars —
+   the reference is a strip of tiles, so two-up keeps that shape and halves the
+   scroll. Measured at 390px: 165px tiles, the longest label ("YEARS OF EXPERIENCE")
+   taking two lines, nothing clipped. */
+@media (max-width:719px){
+  .kpi__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi{padding:clamp(16px,4.5vw,22px) 10px}
+  .kpi__num{font-size:clamp(30px,8.5vw,38px)}
+  .kpi__label{font-size:10px;letter-spacing:.07em}
+  .kpi__note{font-size:11px}
+}
