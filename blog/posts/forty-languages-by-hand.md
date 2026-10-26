@@ -24,14 +24,14 @@ putting your warranty in writing in a language you do not speak.
 
 Hand-written dictionaries, one JSON file per language, keyed by the English sentence itself.
 Right now there are thirty-nine files: twelve of them are full dictionaries covering the
-whole site, eleven hold the complete set of 1,091 strings, and the other twenty-seven carry a
-178-string core — the nav, the hero, the prices, the enquiry form, the things a first-time
+whole site, eleven hold the complete set of 1,109 strings, and the other twenty-seven carry a
+196-string core — the nav, the hero, the prices, the enquiry form, the things a first-time
 visitor actually reads. The twelfth full one, Twi, sits three keys short, and those three are
 the journal's own byline words, so a Twi reader sees "Published" and "min read" in English.
 That is the design working, not failing: any string absent from a dictionary falls back to
 English rather than being invented on the spot by someone who does not speak it.
 
-Seventeen thousand eight hundred and ninety-five translated strings, in total. Nobody
+Eighteen thousand five hundred and ninety-seven translated strings, in total. Nobody
 machine-checked them for meaning, because you cannot machine-check meaning.
 
 ## What the work is really like
