@@ -4417,3 +4417,15 @@ html[dir="rtl"] .company--out svg{transform:scaleX(-1)}
 @media (min-width:1240px){
   .kpi__grid{grid-template-columns:repeat(6,1fr)}
 }
+
+/* ==========================================================================
+   THE CLIENT WALL, IN BLOCK LETTERS
+   The owner set the nine client names himself, all of them capitalised, and the
+   longest is thirty-eight characters. A card that wide cannot sit inside a 390px
+   phone, so the wall's own cards now take the cap the partners rail has always
+   had: the name wraps instead of running past the edge, and the rail keeps
+   rolling. No text-transform here — the letters are block because that is how
+   the file spells them, so the printed book and the PDF mirror read the same
+   words a visitor sees.
+   ========================================================================== */
+.company{max-width:min(78vw,30rem)}

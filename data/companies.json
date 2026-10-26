@@ -1,19 +1,14 @@
 {
-  "_how_to_add": "One object per client in \"companies\": { \"name\": \"…\", \"sector\": \"…\" }. Publish a name only where the client has agreed to appear on the site — the band stays hidden while this list is empty, and nothing here is invented. The sector is one short word (Events, Church, Retail, School, Corporate) and is optional.",
+  "_how_to_add": "One object per client in \"companies\": { \"name\": \"…\", \"sector\": \"…\" }. Publish a name only where the client has agreed to appear on the site — the band stays hidden while this list is empty, and nothing here is invented. The sector is one short word (Events, Church, Retail, School, Corporate) and is optional. Names are written in block letters because the studio's owner set the wall that way; a new name goes in the same case.",
   "companies": [
-    { "name": "Winners Chapel International Dzorwulu", "sector": "Church" },
-    { "name": "ChrisprintGh", "sector": "Print" },
-    { "name": "Mark Blue Print", "sector": "Print" },
-    { "name": "Ama Screen Print", "sector": "Print" },
-    { "name": "Star Print", "sector": "Print" },
-    { "name": "Awal Printing Press", "sector": "Print" },
-    { "name": "OB PRINT Media", "sector": "Print" },
-    { "name": "Jerry Printing", "sector": "Print" },
-    { "name": "Print Up Stairs", "sector": "Print" },
-    { "name": "Christopher Book Design", "sector": "Publishing" },
-    { "name": "GRA Trade", "sector": "Corporate" },
-    { "name": "PPATLE Uganda", "sector": "Corporate" },
-    { "name": "Glory", "sector": "Brand" },
-    { "name": "JetelBee", "sector": "Healthy Living" }
+    { "name": "MEDICAL WASTE (SERVICES LIMITED)" },
+    { "name": "CHRISPRINTGH", "sector": "Print" },
+    { "name": "WINNERS' CHAPEL INTERNATIONAL DZORWULU", "sector": "Church" },
+    { "name": "BRA SPA" },
+    { "name": "HOWELL'S CREATION" },
+    { "name": "UCS SECURITY SERVICES LIMITED" },
+    { "name": "UCS FACILITY MANAGEMENT" },
+    { "name": "JETEL BEE", "sector": "Healthy Living" },
+    { "name": "UPSA LAW SCHOOL" }
   ]
 }
