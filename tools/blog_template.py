@@ -165,9 +165,7 @@ def index_page(posts):
       <div class="container">
         <p class="eyebrow">Journal</p>
         <h1>What the studio has worked out</h1>
-        <p>Notes on getting design right: what a file needs before it goes to a printer,
-        how a brief stops a job, what carrying forty languages costs, and how long a logo
-        really takes. Written by whoever did the work.</p>
+        <p>Notes on getting design right: what a file needs before it goes to a printer, how a brief stops a job, what carrying forty languages costs, and how long a logo really takes. Written by whoever did the work.</p>
         <p class="jlead" data-i18n-off>%d notes · last one %s</p>
       </div>
     </section>
@@ -182,8 +180,7 @@ def index_page(posts):
     <section class="section section--alt jask" id="journal-ask">
       <div class="container">
         <h2>Want the same answer about your own job?</h2>
-        <p>Send the size, the date it is needed and whatever you already have. The studio
-        reads every enquiry itself and replies the day it arrives.</p>
+        <p>Send the size, the date it is needed and whatever you already have. The studio reads every enquiry itself and replies the day it arrives.</p>
         <p class="jask__actions">
           <a href="../contact.html" class="btn btn--primary">Start a project</a>
           <a href="../catalog.html" class="btn btn--ghost">See the catalog</a>
