@@ -4616,3 +4616,114 @@ main > section,.site-footer{position:relative}
   background:radial-gradient(62% 44% at 84% 2%,rgba(var(--accent-rgb),.16),transparent 66%),
     linear-gradient(180deg,rgba(0,0,0,0) 26%,var(--hold-ink) 100%);
   translate:0 var(--hold-shift,0px)}
+
+
+/* ==========================================================================
+   THE PICTURE BENEATH THE SHADE, HELD BY THE SAME NUMBER.
+   The shade alone is a gradient on a near-black slab: it moves, but there is
+   nothing fixed for the words to travel across, so on the dark display mode the
+   owner could not see it. Each band now carries one photograph behind that shade,
+   pinned with the same `--hold-shift` the shade already uses — no second reader of
+   the scroll, no second loop — so the band's ink and words ride up over a picture
+   that stays where it is. That is the reference's whole trick: the picture never
+   moves; the page does.
+
+   Why these pictures. The band is #1b0b0c, sRGB 0.106. A photograph whose own
+   average is darker than that has nothing to show: it merges into the slab and
+   the owner reports no effect, which is exactly what the first attempt produced.
+   A photograph that is bright everywhere is worse — it lifts the whole band into
+   a grey wash and drags `--text-muted` under the AA floor. What reads is the
+   reference's own pattern: a dark frame, one lit subject. Every plate below is a
+   piece of the studio's work photographed on a dark wall — Cill's Closet, HJ
+   Creation, Howell's Easy Learning, the GHANA cap, the Winners' Chapel flyer —
+   plus the dark desk photographs for the software and journal bands. The wall is
+   near the band's value; the lit piece is the picture.
+
+   Where the picture is allowed to be bright. `--plate-pos` steers each crop's lit
+   subject away from the words: the sign sits right of the heading, the keyboard
+   away from the copy, never under a paragraph. The veil is therefore a *lift*,
+   not a blackout — it takes the brightest subject pixel down to about sRGB 0.30
+   at the top of the plate (luminance 0.07, muted text 4.9:1) while leaving the
+   wall within a few points of the band colour. Brighter would not hide the
+   photograph any better; it would only make the picture disappear again.
+
+   Three rules the plate is shaped by:
+
+   1. One screenful from the band's own top, like the shade, and for the same
+      reason: the lower edge never crosses the fold as a visible line. A soft mask
+      fades the top ~7% and the bottom 12% into whatever the band already paints,
+      so the plate has no edge at a band boundary either — the photo surfaces
+      under the words and dissolves again, never a rectangle pasted on the page.
+   2. It paints ABOVE the band's own ink and BELOW everything the band says.
+      `isolation: isolate` makes the band its own stacking context, then a negative
+      `z-index` puts the plate in the one slot between the background and the
+      in-flow content — the same slot css/style.css already gives nothing else.
+      (Without the isolation a negative child drops behind the band's background
+      and disappears; that is the trap this comment exists for.)
+   3. The photo may not cost the words their contrast. The veil is tuned per band
+      against the brightest pixel each crop actually puts under text, measured in
+      the engine rather than guessed; the bands whose content runs the full width
+      (the review wall, the client wall) carry the heaviest veil, the bands with a
+      clear margin carry the lightest.
+   ========================================================================== */
+[data-hold]{isolation:isolate;
+  --plate-rgb:20,8,9;--plate-a:.28;--plate-bright:.82;--plate-sat:1.12;
+  --plate-pos:50% 45%}
+[data-hold].section--alt{--plate-rgb:32,13,12}
+/* `.cta` is ink in BOTH display modes, so it keeps the dark plate and the dark veil. */
+html[data-theme="light"] [data-hold]:not(.cta){
+  --plate-rgb:255,251,247;--plate-a:.64;--plate-bright:1.15;--plate-sat:.72}
+html[data-theme="light"] [data-hold].section--alt:not(.cta){--plate-rgb:247,235,223}
+
+/* The crop, per band: the lit piece is steered out from under the copy. */
+#why{--plate-pos:58% 44%}
+#catalog-flow{--plate-pos:64% 50%}
+#web-software{--plate-pos:50% 60%}
+#companies{--plate-pos:50% 34%}
+#partners{--plate-pos:60% 50%}
+#milestones{--plate-pos:72% 50%}
+#journal{--plate-pos:64% 46%}
+#faq{--plate-pos:86% 46%}
+section.cta{--plate-pos:50% 40%}
+
+/* The strength, per band: the copy decides. A band whose words cross the whole
+   picture takes the dim tier — bright .45 over the .58 veil holds its worst
+   pixel at about sRGB .25, inside the AA floor for muted ink (<= .258). Bands
+   with a clear margin keep the picture bright enough to read as a photograph.
+   Scoped away from the light theme, whose white veil lifts every pixel anyway. */
+html:not([data-theme="light"]) #why,
+html:not([data-theme="light"]) #catalog-flow{--plate-bright:.82;--plate-a:.28}
+html:not([data-theme="light"]) #reviews{--plate-bright:.68;--plate-a:.46}
+html:not([data-theme="light"]) section.cta{--plate-bright:.66;--plate-a:.5}
+html:not([data-theme="light"]) .about-band,
+html:not([data-theme="light"]) #web-software,
+html:not([data-theme="light"]) #faq,
+html:not([data-theme="light"]) #stats,
+html:not([data-theme="light"]) #companies,
+html:not([data-theme="light"]) #partners,
+html:not([data-theme="light"]) #milestones,
+html:not([data-theme="light"]) #journal{--plate-bright:.45;--plate-a:.58}
+
+.hold-plate{position:absolute;inset:0 0 auto 0;height:100lvh;z-index:-1;
+  overflow:hidden;pointer-events:none;translate:0 var(--hold-shift,0px);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 88%,transparent 100%);
+  mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 88%,transparent 100%)}
+.hold-plate img{display:block;width:100%;height:100%;object-fit:cover;
+  object-position:var(--plate-pos);
+  filter:brightness(var(--plate-bright)) saturate(var(--plate-sat));
+  animation:hold-drift 38s ease-in-out infinite alternate}
+.hold-plate::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(var(--plate-rgb),var(--plate-a)) 0%,
+    rgba(var(--plate-rgb),calc(var(--plate-a) + .1)) 55%,
+    rgba(var(--plate-rgb),calc(var(--plate-a) + .32)) 100%)}
+@keyframes hold-drift{
+  from{scale:1.08;translate:-1.6% 0}
+  to{scale:1.16;translate:1.6% -1.2%}}
+@media (max-width:900px){
+  .hold-plate img{animation-duration:52s}
+}
+@media (prefers-reduced-motion:reduce){
+  .hold-plate{translate:none}
+  .hold-plate img{animation:none;scale:1.08;translate:none}
+}
