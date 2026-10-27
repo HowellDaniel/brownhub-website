@@ -116,6 +116,24 @@
     "</div>";
   header.appendChild(panel);
 
+  /* The luggage service has its own app, so the feed can name its address.
+     When data/haul.json carries haul.app, the Luggage item and its row in the
+     panel open the app instead of the page that describes it. An empty or
+     malformed value changes nothing, so a site without a hosted app keeps the
+     haul.html page rather than a dead link — and the fetch is never cached, so
+     setting one address in the feed is the whole release. */
+  fetch(new URL("data/haul.json", ROOT || doc.baseURI).href, { cache: "no-store" })
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (feed) {
+      var app = feed && feed.haul && feed.haul.app;
+      if (typeof app !== "string" || !/^https?:\/\//i.test(app)) return;
+      var links = navList.querySelectorAll('a[href$="haul.html"]');
+      for (var i = 0; i < links.length; i++) links[i].href = app;
+      var rows = panel.querySelectorAll('a[href$="haul.html"]');
+      for (var j = 0; j < rows.length; j++) rows[j].href = app;
+    })
+    .catch(function () { /* the written page is the fallback */ });
+
   var caret = doc.createElement("button");
   caret.type = "button";
   caret.className = "nav__caret";
