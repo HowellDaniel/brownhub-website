@@ -252,11 +252,19 @@
     });
   });
 
-  /* ---- hero depth ----
-     The clip behind the headline travels at a fraction of the page, so the band
-     reads as a window into a deeper space rather than a wallpaper. Only the
-     picture moves and only by `translate`, which is not layout: the hero's own
-     box never changes size or position, so nothing shifts under a reader. */
+  /* ---- hero pin ----
+     The clip holds its place in the viewport while the band scrolls past it, so
+     the picture reads as a window onto something that is not printed on the page.
+     It is a screenful tall and anchored to the top of the stage, so translating
+     it down by exactly how far the page has travelled under the band leaves it
+     covering the whole visible window at every scroll position — the stage's own
+     `overflow:hidden` trims what hangs below. `translate` is not layout: the
+     hero's box never changes size or place, so nothing shifts under a reader.
+
+     The property goes on the hero, not the clip, because the veil and the dots
+     are its siblings and have to travel by the same amount: the thing that holds
+     still is the finished picture, gradient and all. A custom property set on
+     the clip would stop at its own box. */
   [].slice.call(document.querySelectorAll(".hero__film")).forEach(function (film) {
     if (still) return;
     var hero = film.closest(".hero") || film.parentNode;
@@ -266,12 +274,11 @@
     function measure() {
       queued = false;
       var r = hero.getBoundingClientRect();
-      var span = r.height + window.innerHeight;
-      if (span < 1 || r.bottom < 0 || r.top > window.innerHeight) return;
-      // -1 when the band has just entered at the bottom, +1 as it leaves the top.
-      var p = (window.innerHeight - r.top) / span;
-      var drift = (Math.max(0, Math.min(1, p)) - 0.5) * r.height * 0.07;
-      film.style.setProperty("--film-shift", drift.toFixed(1) + "px");
+      if (r.bottom < 0 || r.top > window.innerHeight) return;
+      // While the band still shows its own top edge, the page carries the
+      // picture; from the moment it passes under the viewport it stops.
+      var y = Math.max(0, -r.top);
+      hero.style.setProperty("--film-shift", y.toFixed(1) + "px");
     }
 
     function onScroll() {

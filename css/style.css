@@ -3131,7 +3131,7 @@ html[dir="rtl"].js-pstory .pstory__skip{right:auto;
 @keyframes csCaret{0%,49.9%{opacity:1}50%,100%{opacity:0}}
 
 @media (max-width:640px){
-  .codeshow__ico{width:16px;height:16px}
+  .codeshow__ico{width:16px;height:16px;stroke-width:2.1}
   .codeshow__tab{gap:.35rem}
 }
 
@@ -4460,4 +4460,65 @@ html[dir="rtl"] .company--out svg{transform:scaleX(-1)}
   .kpi__num{font-size:clamp(30px,8.5vw,38px)}
   .kpi__label{font-size:10px;letter-spacing:.07em}
   .kpi__note{font-size:11px}
+}
+
+/* ==========================================================================
+   THE PICTURE HOLDS STILL AND THE PAGE RIDES OVER IT. The owner pointed at a
+   reference where the photograph keeps its place while the next section's flat
+   background travels up across it, so a clip reads as something playing behind
+   the page rather than printed on it. The recording proves the mechanic is the
+   difference in speed, not an overlap: a static overlap is invisible on a phone
+   and shortens the picture window on a desk, which is what the first attempt
+   here did. Four moves, no new bytes:
+
+   1. The hero grows by `--pin` at the bottom and by the same amount again in
+      its own padding, so the words, the buttons and the veil keep the exact
+      box they were measured in and the extra length is bare picture sitting
+      below the fold. On the desk the band is min-height-driven and the padding
+      takes the same amount back, so the content box is (100svh - nav - 2P) both
+      ways. On a phone it has no min-height, so the padding alone adds the strip.
+   2. The clip becomes exactly a screenful tall, anchored to the top of the
+      stage, and js/ambient.js translates it down by however far the page has
+      scrolled under the band. It stops moving relative to the viewport while
+      the hero's own bottom edge — and the opaque section behind it — ride up
+      across it. `translate` and `scale` are not layout, so nothing shifts.
+   3. The veil and the dots are pinned with the clip — one screenful, translated
+      by the same `--film-shift` the picture gets — because the still object is
+      the *composition*, not the raw frames. Veiling the picture on the hero's
+      own box while the picture holds still leaves the strip the hero gained
+      (`--pin`) sitting below the veil's edge: a hard-edged band of full-bright
+      video between the veil and the oncoming section, which is the one thing
+      that reads as broken. Locked together, the veil's bottom stop is the
+      section's own ink and its edge meets the band's edge at the exact pixel
+      the hero's top passes under the viewport, so the seam is always covered.
+      The copy is not pinned and only ever travels up into the darkest part of
+      the gradient, so it can gain contrast on the ride out but never lose it.
+      The band that rides over is opaque and paints above the hero's own
+      stacking context, which `.hero--film`'s `isolation:isolate` keeps closed.
+   4. A pinned screenful needs edges to spare: at 1.0 the clip's lower edge sits
+      on the fold, so the breathing runs 1.16 to 1.26, which gives 72px more
+      picture top, bottom and both sides than the box it covers.
+
+   Reduced motion has no pin, so `--pin` goes to a zero LENGTH — a bare `0` is
+   not addable to a px inside calc(), and both rules would then fail at
+   computed-value time and take the hero's min-height and padding with it. With
+   `0px` the padding, the cue, the veil and the poster all collapse back to the
+   shape the page ships with today, and the still poster keeps its own
+   full-bleed 1.06 lift.
+   ========================================================================== */
+.hero--film{--pin:34svh;
+  min-height:calc(100svh - var(--nav-h) + var(--pin));
+  padding-bottom:calc(clamp(5rem,11vh,8rem) + var(--pin))}
+.hero--film .hero__film{top:0;bottom:auto;height:100svh}
+.hero--film .hero__veil,.hero--film .hero__dots{top:0;bottom:auto;height:100svh;
+  translate:0 var(--film-shift,0px)}
+.hero--film::after{bottom:calc(1.3rem + var(--pin))}
+@keyframes hero-breathe{from{scale:1.16}to{scale:1.26}}
+.hero--film .hero__film{scale:1.16}
+@media (max-width:900px){
+  .hero--film{--pin:22svh;min-height:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .hero--film{--pin:0px}
+  .hero--film .hero__film{scale:1.06;bottom:0;height:100%}
 }

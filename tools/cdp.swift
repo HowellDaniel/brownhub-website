@@ -217,7 +217,20 @@ func early(_ done: @escaping () -> Void) {
     }
 }
 
-bypass { early { emulate { step() } } }
+/* The site's own service worker answers style.css and the scripts from its cache,
+   so a probe that reloads a tab keeps reading the previous build no matter what
+   the origin sends — `Cache-Control: no-store` on the mirror is not enough, the
+   page never reaches it.  `Network.setBypassServiceWorker` is the debugger's
+   switch for this, and it is opt-in for the same reason the CSP bypass is: a
+   probe that silently skipped the worker would never catch a worker bug. */
+func noSW(_ done: @escaping () -> Void) {
+    guard ProcessInfo.processInfo.environment["CDP_BYPASS_SW"] == "1" else { done(); return }
+    cdp.send("Network.enable", [:], timeout: 30) { _ in
+        cdp.send("Network.setBypassServiceWorker", ["bypass": true], timeout: 30) { _ in done() }
+    }
+}
+
+noSW { bypass { early { emulate { step() } } } }
 sem.wait()
 cdp.task.cancel(with: .goingAway, reason: nil)
 exit(0)
