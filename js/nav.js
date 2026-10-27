@@ -60,6 +60,7 @@
       ["Custom Graphic Design", "Something unusual? We design that too.", "services.html#custom", "wand"],
       ["Websites & Software", "A hosted site or an app for the brand.", "engineering.html#web-software", "monitor"],
       ["Website & Software Engineering", "The whole engineering side: builds, stack, security and care.", "engineering.html#build", "code"],
+      ["Luggage Collection & Delivery", "Bags from the door to the airport, a hotel or another city.", "haul.html", "bag"],
       ["The Studio Journal", "How the work gets done: print files, briefs, turnaround.", "blog/", "journal"]
     ]},
     { h: "Popular in the catalog", items: [
@@ -72,6 +73,28 @@
   ];
 
   doc.documentElement.classList.add("js-nav");
+
+  /* Haul is a studio service now, so it belongs in the top row next to Contact —
+     added here, from one place, because the nav is written into every page and a
+     journal post must resolve the path against the site root, not its own folder.
+     The home and services pages carry the link in their HTML as well (the service
+     worker keeps this file cache-first), so skip when it is already there. */
+  var navList = link.parentNode.parentNode;
+  var haulLink = navList.querySelector('a[href$="haul.html"]');
+  if (!haulLink) {
+    var contact = navList.querySelector('.nav__link[href$="contact.html"]');
+    var haulLi = doc.createElement("li");
+    var haulA = doc.createElement("a");
+    haulA.className = "nav__link";
+    haulA.href = ROOT + "haul.html";
+    haulA.textContent = "Luggage";
+    haulLi.appendChild(haulA);
+    if (contact && contact.parentNode && contact.parentNode.parentNode === navList) {
+      navList.insertBefore(haulLi, contact.parentNode.nextSibling);
+    } else {
+      navList.appendChild(haulLi);
+    }
+  }
 
   var panel = doc.createElement("div");
   panel.className = "mega";
