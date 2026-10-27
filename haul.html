@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The same theme script the studio pages use: it reads the saved choice (or the
+     device's) and puts data-theme on <html> before the first paint, so this page
+     opens in the colour the visitor already chose on brownhub283.com. -->
+<script src="js/theme.js?v=2"></script>
 <title>BrownHub Haul — luggage collection & delivery | BrownHub Studio</title>
 <meta name="description" content="BrownHub Haul is BrownHub Studio's luggage service: we collect bags from a home or office in Accra, track them on a live manifest, and hand them over at Kotoka, a hotel or another city against a four-digit PIN.">
 <link rel="canonical" href="https://www.brownhub283.com/haul.html">
@@ -22,7 +26,17 @@
   --bg:#1b0b0c; --bg-alt:#26100f; --surface:#331517; --border:#4d2726;
   --text:#f2e4de; --text-muted:#c3a79f; --accent:#f4545a; --accent-fill:#de2a2f;
   --accent-2:#b17d41; --radius:14px; --max-w:1140px;
+  --accent-rgb:244,84,90; --accent-2-rgb:177,125,65;
+  --accent-fill-d:#c8232a; --header:rgba(27,11,12,.85);
   --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+html[data-theme="light"]{
+  --bg:#fffbf7; --bg-alt:#f8efe7; --surface:#ffffff; --border:#e9d6c6;
+  --text:#26100f; --text-muted:#6e5248; --accent:#c82027; --accent-fill:#c82027;
+  --accent-2:#8a5e28;
+  --accent-rgb:200,32,39; --accent-2-rgb:138,94,40;
+  --accent-fill-d:#a8181f; --header:rgba(255,251,247,.88);
+  --shadow:0 10px 30px rgba(38,16,15,.08);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;
@@ -30,7 +44,7 @@ body{background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothi
 a{color:inherit;text-decoration:none}
 img{max-width:100%;height:auto;display:block}
 .wrap{width:100%;max-width:var(--max-w);margin-inline:auto;padding:0 1.25rem}
-header{border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;background:rgba(27,11,12,.85);backdrop-filter:blur(12px)}
+header{border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;background:var(--header);backdrop-filter:blur(12px)}
 .nav{display:flex;align-items:center;gap:1.4rem;height:72px}
 .nav img{height:36px;width:auto}
 .nav nav{display:flex;gap:1.4rem;margin-left:auto;font-size:.92rem;color:var(--text-muted)}
@@ -44,7 +58,7 @@ h1 em{font-style:normal;color:var(--accent)}
 .cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.6rem}
 .btn{display:inline-flex;align-items:center;gap:.5rem;border-radius:999px;padding:.72rem 1.25rem;font-weight:600;font-size:.94rem;border:1px solid var(--border)}
 .btn.primary{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
-.btn.primary:hover{background:#c8232a}
+.btn.primary:hover{background:var(--accent-fill-d)}
 .btn.ghost{color:var(--text)}
 .btn.ghost:hover{border-color:var(--accent)}
 .btn[hidden]{display:none}
@@ -57,8 +71,8 @@ h2{font-size:1.35rem;letter-spacing:-.02em;margin-bottom:.3rem}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;box-shadow:var(--shadow)}
 .card h3{font-size:1rem;margin-bottom:.35rem}
 .card p{color:var(--text-muted);font-size:.9rem}
-.card .n{display:inline-grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;background:rgba(244,84,90,.12);color:var(--accent);font-size:.8rem;font-weight:700;margin-bottom:.6rem}
-.app-band{background:linear-gradient(150deg,rgba(244,84,90,.12),rgba(177,125,65,.12));border:1px solid var(--border);border-radius:calc(var(--radius) + 4px);padding:1.5rem;display:grid;gap:1rem;grid-template-columns:1.4fr auto;align-items:center}
+.card .n{display:inline-grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;background:rgba(var(--accent-rgb),.12);color:var(--accent);font-size:.8rem;font-weight:700;margin-bottom:.6rem}
+.app-band{background:linear-gradient(150deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-2-rgb),.12));border:1px solid var(--border);border-radius:calc(var(--radius) + 4px);padding:1.5rem;display:grid;gap:1rem;grid-template-columns:1.4fr auto;align-items:center}
 .app-band h2{margin-bottom:.2rem}
 .app-band p{color:var(--text-muted);font-size:.94rem}
 .app-band .by{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.5rem}
@@ -66,7 +80,7 @@ footer{border-top:1px solid var(--border);padding:1.8rem 0;color:var(--text-mute
 .foot{display:grid;gap:1.2rem;grid-template-columns:1.4fr 1fr 1fr}
 footer h3{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.35rem}
 footer a:hover{color:var(--text)}
-.copy{margin-top:1.4rem;font-size:.78rem;color:#a08a82}
+.copy{margin-top:1.4rem;font-size:.78rem;color:var(--text-muted);opacity:.85}
 @media (max-width:720px){
   .nav nav{display:none}
   .app-band{grid-template-columns:1fr}
