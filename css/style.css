@@ -4522,3 +4522,97 @@ html[dir="rtl"] .company--out svg{transform:scaleX(-1)}
   .hero--film{--pin:0px}
   .hero--film .hero__film{scale:1.06;bottom:0;height:100%}
 }
+
+/* ==========================================================================
+   EVERY BAND HOLDS ITS OWN SHADE, THE WAY THE HERO HOLDS ITS PICTURE.
+   The same differential motion the owner pointed at, carried down the whole
+   page: each band's colour shade keeps its place in the viewport while its words
+   and the band behind it ride past, so a slab reads as a plane the page travels
+   over instead of paint printed on it. `data-hold` marks the home page's bands;
+   the pinned stages are left alone — home's portfolio, customer experience and
+   process story, and the catalogue page's shelf — because a band cannot hold two
+   different things still at once.
+
+   Five rules the shape of this is forced into:
+
+   1. The shade is exactly ONE SCREENFUL measured from the band's own top, and
+      js/ambient.js moves it down by exactly how far that top has travelled under
+      the viewport. Those two together put the shade's lower edge on the fold at
+      every scroll position — either the band's top is still on screen and the
+      shade runs past the bottom of it, or the top has gone and the shade sits
+      from 0 to the fold. Its edge is therefore never visible, and the band needs
+      no height of its own to hold: a short band holds a shade just as well as a
+      tall one, which a version clamped inside the band could not do.
+
+      The screenful is `lvh`, the tallest the viewport can be, not `svh`: a phone
+      retracts its URL bar as the reader scrolls down, the visible viewport then
+      grows past the small height, and a shade whose ink ends at svh leaves a hard
+      horizontal edge across a band taller than one screen. `lvh` is as stable as
+      `svh` — the height the pinned stages chose for the same non-breathing reason
+      — but it is true in both toolbar states, so the edge is at or below the fold
+      either way. When the bar is showing, the excess hangs over the band below,
+      which paints its own opaque slab over it like any other overhang.
+   2. So the shade hangs over the band below. That costs nothing, because every
+      band paints its own ink, and a later band in the same root stacking context
+      paints over an earlier band's overhang. Plain sections used to carry no
+      background of their own and let the page through; here they get the page's
+      own colour, byte for byte the same pixels, but opaque, so the overhang is
+      covered rather than shown. Nothing sits between two bands but bands.
+      The covering half of that needs the neighbour to be a PAINTING operand in
+      the same step as the shade, which `position: relative` buys: a band that is
+      still static lays its own background — and its words — down a step EARLIER
+      than any positioned box, so an overhang riding over it stays visible on top
+      of that band's own text instead of being covered. Measured at both widths
+      and in both display modes, every neighbour paints an opaque slab of its own
+      colour, so being a later operand is enough; three of them had never been
+      positioned — the experience rail, the process story, the page footer.
+      `position: relative` moves nothing: it creates no stacking context
+      (`z-index` stays `auto`), it leaves a `fixed` descendant alone, no section
+      changed height at either width, and no `absolute` or `fixed` descendant
+      changed the box it is measured against. Three `sticky` descendants do have
+      to re-resolve `offsetParent` onto a nearer positioned box — the `#why` aside
+      onto its container, the experience and process pins onto their sections —
+      because that is what `relative` means; each was measured with a
+      byte-identical rect before and after.
+   3. No clipping anywhere, on purpose. Two of these bands carry a sticky column
+      (the `#why` aside, the FAQ's rail card) and an `overflow` clip on the band
+      quietly kills the stickiness inside it.
+   4. The shade fades INTO a shadow toward the fold, so the words only ever travel
+      across a surface darker than the slab under them: light text gains contrast
+      on the ride (measured across the ten held bands that are on the page at
+      load, every dark-theme line gains, none loses; four more wait on their
+      data), and in the light display mode the ink and muted inks hold AA
+      throughout — 15.39 and 6.04 with the full wash on. The one colour that could
+      not pay for a darker ground was the brand red used as text: it starts at 4.85
+      on an alternating band and the wash alone took it under AA, so the two accent
+      families that stand on band colour take the theme's own deeper red instead.
+      The `.cta` slab is ink in BOTH display modes, so it keeps the dark shadow there.
+   5. On an alternating band this layer takes over from the accent bloom that
+      `.section--alt::before` already drew at css/style.css:527 — same radial,
+      slightly stronger and now anchored to the held plane instead of the band's
+      own top, because it is the plane that is standing still. Alt bands that are
+      NOT held (every other page, and this page's pinned portfolio band) keep that
+      rule untouched; no band loses a decoration, it is one layer per band either way.
+
+   With scripting off, or for a visitor who asked for less motion, no shift is
+   ever written: the shade sits at each band's own top screenful and the page
+   reads as it does now, only still.
+   ========================================================================== */
+[data-hold]{position:relative;--hold-ink:rgba(0,0,0,.4)}
+html[data-theme="light"] [data-hold]:not(.cta){--hold-ink:rgba(104,58,32,.17)}
+/* The wash costs the brand red its AA margin where it stands bare on an alternating
+   band: measured 4.85 -> 3.91 at the fold on #f7ebdf, under the 4.5 floor. The two
+   families that ever stand on band colour rather than on a card are the ghost pill's
+   label and `.card__link`, so under a held band they take the deeper red the theme
+   already owns for hover — 5.13 against the darkest slice of the wash, and the pill's
+   ring stays the brand red, which only needs 3:1. */
+html[data-theme="light"] [data-hold]:not(.cta) .btn--ghost,
+html[data-theme="light"] [data-hold]:not(.cta) .card__link{color:var(--accent-fill-hover)}
+[data-hold].section:not(.section--alt){background:var(--bg)}
+main > section,.site-footer{position:relative}
+[data-hold] > .container{position:relative;z-index:1}
+[data-hold]::before{content:"";position:absolute;inset:0 0 auto 0;height:100lvh;
+  pointer-events:none;
+  background:radial-gradient(62% 44% at 84% 2%,rgba(var(--accent-rgb),.16),transparent 66%),
+    linear-gradient(180deg,rgba(0,0,0,0) 26%,var(--hold-ink) 100%);
+  translate:0 var(--hold-shift,0px)}

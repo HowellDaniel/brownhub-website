@@ -74,6 +74,34 @@ func evaluate(_ expr: String, _ done: @escaping (String) -> Void) {
 }
 
 func shot(_ path: String, _ done: @escaping () -> Void) {
+    /* `CDP_SHOT=viewport` asks for the surface the browser is actually showing.  The
+       clip below re-rasterizes the whole document, and that path misplaces `sticky`
+       and `fixed` boxes and drops a pseudo-element held by `translate`: a probe that
+       photographed a held shade on and off read both frames as identical because the
+       layer was in neither crop.  This mode still needs device-metrics emulation: with
+       none active, every capture — plain, viewport-clipped or clipped at `scrollY` —
+       returned the top of the document however far the probe had scrolled, so issue
+       `#metrics` (or set `CDP_W`/`CDP_H`) before the shot that matters. */
+    let write: ([String: Any]) -> Void = { res in
+        if let data = ((res["result"] as? [String: Any])?["data"] as? String),
+           let raw = Data(base64Encoded: data) {
+            try? raw.write(to: URL(fileURLWithPath: path))
+        }
+        done()
+    }
+    if ProcessInfo.processInfo.environment["CDP_SHOT"] == "viewport" {
+        /* The clip is asked for in viewport coordinates with `captureBeyondViewport`
+           off — the surface the reader is looking at, not a re-rasterized document. */
+        evaluate("(JSON.stringify({y:Math.round(window.scrollY),w:innerWidth,h:innerHeight}))") { raw in
+            let box = (try? JSONSerialization.jsonObject(with: Data(raw.utf8))) as? [String: Any]
+            let w = (box?["w"] as? Int) ?? 1440
+            let h = (box?["h"] as? Int) ?? 900
+            cdp.send("Page.captureScreenshot", ["format": "png", "captureBeyondViewport": false,
+                                                "clip": ["x": 0, "y": 0, "width": w, "height": h, "scale": 1]],
+                     timeout: 90, write)
+        }
+        return
+    }
     /* Under device emulation Page.captureScreenshot keeps taking the top of the
        document, so the shot is clipped to where the probe actually scrolled. */
     evaluate("(JSON.stringify({y:Math.round(window.scrollY),w:innerWidth,h:innerHeight}))") { raw in
@@ -85,13 +113,7 @@ func shot(_ path: String, _ done: @escaping () -> Void) {
         } else {
             params = ["format": "png"]
         }
-        cdp.send("Page.captureScreenshot", params, timeout: 90) { res in
-            if let data = ((res["result"] as? [String: Any])?["data"] as? String),
-               let raw = Data(base64Encoded: data) {
-                try? raw.write(to: URL(fileURLWithPath: path))
-            }
-            done()
-        }
+        cdp.send("Page.captureScreenshot", params, timeout: 90, write)
     }
 }
 

@@ -292,6 +292,79 @@
     window.addEventListener("resize", onScroll, { passive: true });
   });
 
+  /* ---- band hold ----
+     The hero's stillness, given to every colour band on the page. Each `[data-hold]`
+     section carries one screenful of its own shade (css/style.css), and the shade
+     keeps its place in the viewport while the band's words — and the band behind
+     it — ride past, so the slab reads as a plane the page travels over rather than
+     paint printed on it. `translate` only: no band's box ever changes size or
+     place, so nothing shifts under a reader.
+
+     The rule is one line, and it is the hero's rule: the shade moves down by
+     exactly how far the band's top has moved up under the viewport. The two
+     travels are equal and opposite, so their sum is zero and the shade stands
+     still — and because it is a screenful tall (the tallest one a viewport can
+     be), its lower edge sits at the fold or below it whatever the band's size.
+     A band shorter than a screenful keeps its shade at the top edge and holds
+     just the same; no travel to win, no clamp to write, so every band on the
+     page takes the effect, not only the four tall enough to afford one.
+
+     Three things make this safe to run on fourteen bands instead of one:
+
+     - Every box is READ before any property is WRITTEN. A `getBoundingClientRect`
+       after a style write forces a fresh layout, so interleaving the two would
+       cost a layout per band per frame; batched, the whole pass costs one.
+     - The band's own height is never needed to drive it, so nothing has to be
+       remembered from boot. Three of these bands (#stats, #companies, #milestones)
+       are hidden until their data arrives and the review wall grows as it fills:
+       the shade of a band that appears mid-visit is set by the next frame it is
+       on screen, and a band whose box changes size under a reader never needs a
+       re-measure, because the travel never depended on the box. That is why there
+       is no ResizeObserver here — the pass reads the live rect every time.
+     - A band still `hidden` measures zero high, so it is passed over: nothing is
+       written to a slab that is not on the page.
+
+     Anything off screen in either direction is skipped outright; a band that has
+     left the viewport keeps the last shift it was given, which is the frame where
+     its shade sat at the fold, so re-entering reads as the same plane arriving. */
+  (function () {
+    if (still) return;
+    var marked = [].slice.call(document.querySelectorAll("[data-hold]"));
+    if (!marked.length) return;
+    var bands = marked.map(function (el) { return { el: el, top: 0, bot: 0, h: 0, shift: -1 }; });
+
+    var queued = false;
+    function paint() {
+      queued = false;
+      var vh = window.innerHeight;
+      var i;
+      for (i = 0; i < bands.length; i++) {
+        var r = bands[i].el.getBoundingClientRect();
+        bands[i].top = r.top;
+        bands[i].bot = r.bottom;
+        bands[i].h = r.height;
+      }
+      for (i = 0; i < bands.length; i++) {
+        var b = bands[i];
+        if (!b.h || b.top > vh || b.bot < 0) continue;
+        var y = b.top < 0 ? -b.top : 0;
+        if (Math.abs(y - b.shift) < 0.4) continue;
+        b.shift = y;
+        b.el.style.setProperty("--hold-shift", y.toFixed(1) + "px");
+      }
+    }
+
+    function onScroll() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(paint);
+    }
+
+    paint();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+  })();
+
   /* ---- pointer depth ----
      Layers marked [data-depth] travel with the cursor as well as with the page,
      so a hero reads as a stack of planes set at different distances rather than
