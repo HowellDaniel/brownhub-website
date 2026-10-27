@@ -4599,15 +4599,26 @@ html[dir="rtl"] .company--out svg{transform:scaleX(-1)}
    reads as it does now, only still.
    ========================================================================== */
 [data-hold]{position:relative;--hold-ink:rgba(0,0,0,.4)}
-html[data-theme="light"] [data-hold]:not(.cta){--hold-ink:rgba(104,58,32,.17)}
+/* Under a picture the light veil IS the shade: a .17 brown wash laid over a white
+   plate only pulls the ground back down. Measured on the milestones band, which
+   sets its dates in accent-2, the wash cost 0.7 of a ratio point — 4.22 even at a
+   .94 veil, against 4.54 at .80 with it lifted. The accent radial still paints. */
+html[data-theme="light"] [data-hold]:not(.cta):not(.band--ink){--hold-ink:rgba(104,58,32,0)}
 /* The wash costs the brand red its AA margin where it stands bare on an alternating
    band: measured 4.85 -> 3.91 at the fold on #f7ebdf, under the 4.5 floor. The two
    families that ever stand on band colour rather than on a card are the ghost pill's
    label and `.card__link`, so under a held band they take the deeper red the theme
    already owns for hover — 5.13 against the darkest slice of the wash, and the pill's
    ring stays the brand red, which only needs 3:1. */
-html[data-theme="light"] [data-hold]:not(.cta) .btn--ghost,
-html[data-theme="light"] [data-hold]:not(.cta) .card__link{color:var(--accent-fill-hover)}
+html[data-theme="light"] [data-hold]:not(.cta):not(.band--ink) .btn--ghost,
+html[data-theme="light"] [data-hold]:not(.cta):not(.band--ink) .card__link{color:var(--accent-fill-hover)}
+/* In the dark theme those same two families stand bare on the plate too: measured
+   3.97-4.35:1 in the brand red over a dim ground, a few tenths short of the floor.
+   One step lighter (L .316) clears 4.5 against the brightest pixel either column
+   meets, so the band keeps its photograph instead of sinking to the deep tier for
+   the sake of two links. The pill's ring stays the brand red. */
+html:not([data-theme="light"]) [data-hold] .btn--ghost,
+html:not([data-theme="light"]) [data-hold] .card__link{color:#f96a70}
 [data-hold].section:not(.section--alt){background:var(--bg)}
 main > section,.site-footer{position:relative}
 [data-hold] > .container{position:relative;z-index:1}
@@ -4670,10 +4681,27 @@ main > section,.site-footer{position:relative}
   --plate-rgb:20,8,9;--plate-a:.28;--plate-bright:.82;--plate-sat:1.12;
   --plate-pos:50% 45%}
 [data-hold].section--alt{--plate-rgb:32,13,12}
-/* `.cta` is ink in BOTH display modes, so it keeps the dark plate and the dark veil. */
-html[data-theme="light"] [data-hold]:not(.cta){
-  --plate-rgb:255,251,247;--plate-a:.64;--plate-bright:1.15;--plate-sat:.72}
-html[data-theme="light"] [data-hold].section--alt:not(.cta){--plate-rgb:247,235,223}
+/* The light veil is a wash of the theme's own paper, so the plate reads as a pale
+   ghost of the photograph. Measured: .64 left the darkest patch of a picture at
+   L .35-.50 under the copy, and muted ink on it fell to 2.7-3.6:1 — on the home
+   page as shipped. .80 clears most bands and .86 clears the rest; the darkest
+   pixel under a line of text is the bound, because on a pale ground it is the
+   ground's own floor. The accent gold also takes one step deeper under the veil:
+   `.eng-cost__label` sets 14px in it over a card that tints itself with the same
+   hue, and the shipped #8a5e28 measured 4.02 there against 4.5. */
+html[data-theme="light"] [data-hold]:not(.cta):not(.band--ink){
+  --plate-rgb:255,251,247;--plate-a:.86;--plate-bright:1.15;--plate-sat:.72;
+  --accent:#b41c22;--accent-2:#66421b}
+html[data-theme="light"] [data-hold].section--alt:not(.cta):not(.band--ink){--plate-rgb:247,235,223}
+/* `.cta` and `.band--ink` are ink in BOTH display modes: they re-scope --text to
+   the cream ink and keep it under a dark ground, so they keep the dark plate and
+   the dark veil, and the tier they carry in `data-plate` applies in this mode too. */
+html[data-theme="light"] [data-hold].cta{--plate-rgb:20,8,9;--plate-a:.74;--plate-bright:.36;--plate-sat:1.12}
+html[data-theme="light"] [data-hold].band--ink{--plate-rgb:20,8,9;--plate-a:.58;--plate-bright:.45;--plate-sat:1.12}
+html[data-theme="light"] [data-hold]:is(.cta,.band--ink)[data-plate="vivid"]{--plate-bright:.82;--plate-a:.28}
+html[data-theme="light"] [data-hold]:is(.cta,.band--ink)[data-plate="mid"]{--plate-bright:.62;--plate-a:.44}
+html[data-theme="light"] [data-hold]:is(.cta,.band--ink)[data-plate="dim"]{--plate-bright:.45;--plate-a:.58}
+html[data-theme="light"] [data-hold]:is(.cta,.band--ink)[data-plate="deep"]{--plate-bright:.36;--plate-a:.74}
 
 /* The crop, per band: the lit piece is steered out from under the copy. */
 #why{--plate-pos:58% 44%}
@@ -4686,23 +4714,18 @@ html[data-theme="light"] [data-hold].section--alt:not(.cta){--plate-rgb:247,235,
 #faq{--plate-pos:86% 46%}
 section.cta{--plate-pos:50% 40%}
 
-/* The strength, per band: the copy decides. A band whose words cross the whole
-   picture takes the dim tier — bright .45 over the .58 veil holds its worst
-   pixel at about sRGB .25, inside the AA floor for muted ink (<= .258). Bands
-   with a clear margin keep the picture bright enough to read as a photograph.
-   Scoped away from the light theme, whose white veil lifts every pixel anyway. */
-html:not([data-theme="light"]) #why,
-html:not([data-theme="light"]) #catalog-flow{--plate-bright:.82;--plate-a:.28}
-html:not([data-theme="light"]) #reviews{--plate-bright:.68;--plate-a:.46}
-html:not([data-theme="light"]) section.cta{--plate-bright:.66;--plate-a:.5}
-html:not([data-theme="light"]) .about-band,
-html:not([data-theme="light"]) #web-software,
-html:not([data-theme="light"]) #faq,
-html:not([data-theme="light"]) #stats,
-html:not([data-theme="light"]) #companies,
-html:not([data-theme="light"]) #partners,
-html:not([data-theme="light"]) #milestones,
-html:not([data-theme="light"]) #journal{--plate-bright:.45;--plate-a:.58}
+/* The strength travels with the band as `data-plate`, on every page, because the
+   copy decides and only a per-band measurement knows. The numbers were read off
+   home — `vivid` where the text keeps a margin, `mid` where it keeps less, `dim`
+   wherever words cross the whole picture, `deep` where an accent-red link or ghost
+   button needs the ground at its darkest. Each home band carries its own tier in
+   the markup now; the old id rules above it are gone, so one mechanism rules the
+   whole site. Scoped away from the light theme, whose white veil lifts every
+   pixel anyway and whose non-ink bands all share one tier. */
+html:not([data-theme="light"]) [data-hold][data-plate="vivid"]{--plate-bright:.82;--plate-a:.28}
+html:not([data-theme="light"]) [data-hold][data-plate="mid"]{--plate-bright:.62;--plate-a:.44}
+html:not([data-theme="light"]) [data-hold][data-plate="dim"]{--plate-bright:.45;--plate-a:.58}
+html:not([data-theme="light"]) [data-hold][data-plate="deep"]{--plate-bright:.36;--plate-a:.74}
 
 .hold-plate{position:absolute;inset:0 0 auto 0;height:100lvh;z-index:-1;
   overflow:hidden;pointer-events:none;translate:0 var(--hold-shift,0px);
