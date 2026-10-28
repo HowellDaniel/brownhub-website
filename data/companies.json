@@ -1,5 +1,5 @@
 {
-  "_how_to_add": "One object per client in \"companies\": { \"name\": \"…\", \"sector\": \"…\", \"logo\": \"…\" }. Publish a name only where the client has agreed to appear on the site — the band stays hidden while this list is empty, and nothing here is invented. The sector is one short word (Events, Church, Retail, School, Corporate) and is optional. Names are written in block letters because the studio's owner set the wall that way; a new name goes in the same case. The logo is optional too, and is a path under images/ — the marks live in images/clients/, cut to the company's own emblem on white and no wider than it needs to be. A name with no logo is not a gap: three of the nine below have no mark we hold a right file for, and the wall shows the name alone rather than a guess at a picture.",
+  "_how_to_add": "One object per client in \"companies\": { \"name\": \"…\", \"sector\": \"…\", \"logo\": \"…\" }. Publish a name only where the client has agreed to appear on the site — the band stays hidden while this list is empty, and nothing here is invented. The sector is one short word (Events, Church, Retail, School, Corporate) and is optional. Names are written in block letters because the studio's owner set the wall that way; a new name goes in the same case, and takes the spelling the company's own artwork uses. The logo is optional too, and is a path under images/ — the marks live in images/clients/, cut to the company's own emblem on transparency and no wider than it needs to be, so it sits on the plate's near-white in either theme. A name with no logo is not a gap: one of the ten below has no mark we hold a right file for, and the wall shows the name alone rather than a guess at a picture. Every mark here was drawn by the company itself and handed over by the owner; none was traced, searched for or redrawn.",
   "companies": [
     {
       "name": "MEDICAL WASTE (SERVICES LIMITED)",
@@ -16,7 +16,8 @@
       "logo": "images/clients/winners-chapel.png"
     },
     {
-      "name": "BRA SPA"
+      "name": "BRA SPA",
+      "logo": "images/clients/bra-spa.png"
     },
     {
       "name": "HOWELL'S EASY LEARNING"
@@ -30,8 +31,14 @@
       "logo": "images/clients/ucs-facility.png"
     },
     {
-      "name": "JETEL BEE",
-      "sector": "Healthy Living"
+      "name": "JATELBEE",
+      "sector": "Healthy Living",
+      "logo": "images/clients/jatelbee.png"
+    },
+    {
+      "name": "FRIMSCO PAINTING",
+      "sector": "Painting",
+      "logo": "images/clients/frimsco-painting.png"
     },
     {
       "name": "UPSA LAW SCHOOL",
