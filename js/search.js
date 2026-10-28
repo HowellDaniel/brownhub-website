@@ -25,6 +25,7 @@
     { g: "Pages", t: "Website Design & Development", h: "engineering.html#web-software", k: "website web design development software app hosting domain landing page" },
     { g: "Pages", t: "Website & Software Engineering", h: "engineering.html#build", k: "software engineering web development code app dashboard api secure hosting build systems" },
     { g: "Pages", t: "Catalog", h: "catalog.html", k: "shop items products prints" },
+    { g: "Pages", t: "Photo gallery", h: "gallery.html", k: "pictures photos images gallery portfolio all work" },
     { g: "Pages", t: "About", h: "about.html", k: "team story accra company" },
     { g: "Pages", t: "Contact", h: "contact.html", k: "email phone whatsapp quote enquiry" },
     { g: "Pages", t: "The studio journal", h: "blog/", k: "journal blog notes article print ready bleed cmyk dpi proof flyer brief turnaround logo languages localisation" },

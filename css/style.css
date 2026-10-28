@@ -4746,7 +4746,87 @@ html:not([data-theme="light"]) [data-hold][data-plate="deep"]{--plate-bright:.36
 @media (max-width:900px){
   .hold-plate img{animation-duration:52s}
 }
+/* A plate that is a banner, not a photograph. The catalog's slot band holds the
+   studio's own school banner, a 3:1 artwork: cropped to fill a screenful it
+   showed one magnified slice of the lettering and cost two stops of sharpness,
+   so its box takes the artwork's own ratio and the whole banner runs the width
+   of the band. The plate's mask still fades both its edges, and the hold still
+   pins it to the fold. */
+[data-plate-fit="wide"] .hold-plate{height:auto;aspect-ratio:3/1}
 @media (prefers-reduced-motion:reduce){
   .hold-plate{translate:none}
   .hold-plate img{animation:none;scale:1.08;translate:none}
 }
+
+/* ===== The home welcome card =====
+   The owner asked for the arriving-offer card other sites show: a picture, an
+   offer and one action, on the way into the home page. It is the studio's own
+   offer, not another company's creative. It sits above the cookie notice
+   (9990) and below the cookie settings dialog (9995), so a visitor who opens
+   those settings from the card's backdrop still gets the dialog on top. */
+.promo{position:fixed;inset:0;z-index:9992;display:grid;place-items:center;padding:1rem;
+  padding-bottom:calc(1rem + var(--cookie-h,0px))}
+/* A visitor who has not answered the cookie question yet must still be able to
+   answer it with the card up, so the consent bar sits above the dim and the card
+   keeps clear of the height cookies.js publishes for it. */
+body.promo-open .cookie-notice{z-index:9993}
+.promo[hidden]{display:none}
+.promo__backdrop{position:absolute;inset:0;background:rgba(16,6,7,.62)}
+.promo__card{position:relative;width:min(430px,100%);max-height:calc(100vh - 2rem - var(--cookie-h,0px));
+  max-height:calc(100dvh - 2rem - var(--cookie-h,0px));
+  overflow-y:auto;overscroll-behavior:contain;background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;box-shadow:var(--shadow);animation:promo-in .28s ease-out both}
+.promo__img{width:100%;height:168px;object-fit:cover;object-position:50% 44%;display:block;border-bottom:1px solid var(--border)}
+.promo__body{padding:1.25rem 1.4rem 1.5rem}
+.promo__eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.45rem}
+.promo__title{font-size:1.35rem;line-height:1.25;margin-bottom:.5rem}
+.promo__desc{color:var(--text-muted);font-size:.95rem;line-height:1.55;margin-bottom:1.15rem}
+.promo__actions{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem .9rem}
+.promo__close{position:absolute;top:.6rem;inset-inline-end:.6rem;width:36px;height:36px;border-radius:50%;border:none;
+  background:rgba(12,4,5,.62);color:#fff;font-size:1.4rem;line-height:1;cursor:pointer;
+  display:grid;place-items:center;z-index:1}
+.promo__close:hover,.promo__close:focus-visible{background:rgba(12,4,5,.88)}
+.promo__close:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@keyframes promo-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+body.promo-open{overflow:hidden}
+@media (max-width:640px){
+  .promo{place-items:end center;padding:.75rem;
+    padding-bottom:calc(.75rem + max(env(safe-area-inset-bottom,0px), var(--cookie-h,0px)))}
+  .promo__card{border-radius:18px}
+  .promo__img{height:126px}
+  .promo__body{padding:1.1rem 1.2rem 1.3rem}
+  .promo__close{width:40px;height:40px}
+}
+@media (prefers-reduced-motion:reduce){.promo__card{animation:none}}
+
+/* ---------- Catalog photo gallery (gallery.html) ----------
+   Every picture in the catalog on one page, so image search meets each one as
+   its own <img> instead of behind a data attribute. Columns rather than a grid:
+   the photos keep the crop they were photographed with, and 166 of them still
+   fill the width evenly on a phone and a desk. */
+.gal-top{padding-bottom:0}
+.gal-jump{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;list-style:none;margin:0}
+.gal-jump a{display:inline-block;padding:.45rem .95rem;border:1px solid var(--border);border-radius:999px;
+  background:var(--surface);color:var(--text-muted);font-size:.85rem;font-weight:600;transition:border-color .2s,color .2s}
+.gal-jump a:hover,.gal-jump a:focus-visible{border-color:var(--accent);color:var(--text)}
+.gal-cat .section__head{margin-bottom:2rem}
+.gal-cat+.gal-cat{border-top:1px solid var(--border)}
+.gal-item+.gal-item{margin-top:2.6rem}
+.gal-item h3{font-size:1.05rem;margin-bottom:1rem}
+.gal-item h3 a{color:var(--text);transition:color .2s}
+.gal-item h3 a:hover,.gal-item h3 a:focus-visible{color:var(--accent)}
+.gal-item h3 a::after{content:" →";color:var(--accent)}
+.gal-grid{list-style:none;columns:210px;column-gap:.7rem}
+.gal-cell{break-inside:avoid;margin:0 0 .7rem}
+.gal-link{display:block;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface);
+  transition:border-color .2s}
+.gal-link:hover,.gal-link:focus-visible{border-color:var(--accent)}
+.gal-link img{width:100%;height:auto;display:block}
+.gal-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:640px){
+  .gal-grid{columns:2;column-gap:.55rem}
+  .gal-cell{margin-bottom:.55rem}
+  .gal-item+.gal-item{margin-top:2rem}
+  .gal-jump a{font-size:.8rem;padding:.4rem .8rem}
+}
+@media (prefers-reduced-motion:reduce){.gal-link{transition:none}}

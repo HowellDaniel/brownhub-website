@@ -779,7 +779,12 @@
 
   function start() {
     if (seenThisVisit()) return;
-    setTimeout(showTeaser, 1500);
+    // The welcome card owns the screen first; the teaser waits its turn.
+    const later = () => {
+      if (document.body.classList.contains("promo-open")) { setTimeout(later, 1200); return; }
+      showTeaser();
+    };
+    setTimeout(later, 1500);
   }
   start();
 

@@ -14,6 +14,7 @@ Allow: /
 Allow: /index.html
 Allow: /services.html
 Allow: /catalog.html
+Allow: /gallery.html
 Allow: /about.html
 Allow: /contact.html
 Allow: /privacy.html
