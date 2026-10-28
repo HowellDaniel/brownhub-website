@@ -9,7 +9,11 @@
 # the same ca-pub-… number that goes into js/store.js. Paste a number that is
 # not yours and you are declaring that stranger the owner of this site's inventory.
 #
-#   google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+# The slot is deliberately not a number. AdSense publisher ids are digits only,
+# so a line that still reads as words can never earn money for a stranger even
+# if the "#" in front of it is deleted by mistake.
+#
+#   google.com, pub-PUT-YOUR-OWN-ID-HERE, DIRECT, f08c47fec0942fa0
 #
 # The hash at the end is Google's own fixed identifier for itself, not a secret
 # and not something to invent: it is the same on every AdSense site.
