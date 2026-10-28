@@ -13,6 +13,7 @@ BrownHub is a graphic design and website company in Accra, Ghana, helping busine
 - Packaging Design
 - Marketing & Advertising Graphics
 - Custom Graphic Design
+- Luggage collection and delivery in Accra, handed over against a four-digit PIN: https://www.brownhub283.com/haul.html
 - Website design and development: https://www.brownhub283.com/engineering.html#web-software
 - Website and software engineering (web apps, client accounts, payments, dashboards, hosting): https://www.brownhub283.com/engineering.html#build
 
@@ -26,6 +27,7 @@ Logos, brand identity systems, print and packaging — designed to make brands s
 
 ## Company details
 - Website: https://www.brownhub283.com/
+- About the studio, both halves of it: https://www.brownhub283.com/about.html
 - Email: howelldaniel533@gmail.com
 - Email (also): anghadaniel621@gmail.com
 - Phone (calls): +233 53 558 3460
@@ -38,7 +40,7 @@ Logos, brand identity systems, print and packaging — designed to make brands s
 - Legal and terms of business: https://www.brownhub283.com/legal.html
 - Privacy policy: https://www.brownhub283.com/privacy.html
 - Security: https://www.brownhub283.com/security.html
-- No advertising or third-party analytics scripts are loaded on this site. The visitor's own browser keeps language, theme, cookie consent, sign-in session and chat history. With consent to the Analytics category only, the studio's own script records an anonymous page read; a refusal writes nothing.
+- No advertising script and no analytics script run until the visitor says yes in the cookie centre. The visitor's own browser keeps language, theme, cookie consent, sign-in session and chat history. With consent to the Analytics category only, the studio's own script records an anonymous page read; a refusal writes nothing. With consent to the Advertising category the page loads Google's ad tag, which then sets its own cookies to choose and measure the ads; without it no ad request is made at all, and an ad slot Google does not fill stays hidden.
 
 ## Journal
 The studio writes down how the work actually gets done — print files, briefs, turnaround times, localisation cost.
