@@ -1,14 +1,39 @@
 {
-  "_how_to_add": "One object per client in \"companies\": { \"name\": \"…\", \"sector\": \"…\" }. Publish a name only where the client has agreed to appear on the site — the band stays hidden while this list is empty, and nothing here is invented. The sector is one short word (Events, Church, Retail, School, Corporate) and is optional. Names are written in block letters because the studio's owner set the wall that way; a new name goes in the same case.",
+  "_how_to_add": "One object per client in \"companies\": { \"name\": \"…\", \"sector\": \"…\", \"logo\": \"…\" }. Publish a name only where the client has agreed to appear on the site — the band stays hidden while this list is empty, and nothing here is invented. The sector is one short word (Events, Church, Retail, School, Corporate) and is optional. Names are written in block letters because the studio's owner set the wall that way; a new name goes in the same case. The logo is optional too, and is a path under images/ — the marks live in images/clients/, cut to the company's own emblem on white and no wider than it needs to be. A name with no logo is not a gap: five of the nine below have no mark we hold a right file for, and the wall shows the name alone rather than a guess at a picture.",
   "companies": [
-    { "name": "MEDICAL WASTE (SERVICES LIMITED)" },
-    { "name": "CHRISPRINTGH", "sector": "Print" },
-    { "name": "WINNERS' CHAPEL INTERNATIONAL DZORWULU", "sector": "Church" },
-    { "name": "BRA SPA" },
-    { "name": "HOWELL'S CREATION" },
-    { "name": "UCS SECURITY SERVICES LIMITED" },
-    { "name": "UCS FACILITY MANAGEMENT" },
-    { "name": "JETEL BEE", "sector": "Healthy Living" },
-    { "name": "UPSA LAW SCHOOL" }
+    {
+      "name": "MEDICAL WASTE (SERVICES LIMITED)",
+      "logo": "images/clients/medical-waste.png"
+    },
+    {
+      "name": "CHRISPRINTGH",
+      "sector": "Print"
+    },
+    {
+      "name": "WINNERS' CHAPEL INTERNATIONAL DZORWULU",
+      "sector": "Church",
+      "logo": "images/clients/winners-chapel.png"
+    },
+    {
+      "name": "BRA SPA"
+    },
+    {
+      "name": "HOWELL'S CREATION"
+    },
+    {
+      "name": "UCS SECURITY SERVICES LIMITED"
+    },
+    {
+      "name": "UCS FACILITY MANAGEMENT",
+      "logo": "images/clients/ucs-facility.png"
+    },
+    {
+      "name": "JETEL BEE",
+      "sector": "Healthy Living"
+    },
+    {
+      "name": "UPSA LAW SCHOOL",
+      "logo": "images/clients/upsa-law-school.png"
+    }
   ]
 }

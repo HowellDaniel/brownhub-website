@@ -157,18 +157,46 @@
 
   /* The client wall is the same promise in another shape: a name appears here only
      because the client allowed it, so an empty file leaves the band shut rather than
-     filling it with companies we have never met. */
+     filling it with companies we have never met.
+     A name may carry its mark. The file gives a path and the wall puts the picture
+     beside the words, because a logo is recognised in half a second and a name in
+     about two. Only a relative path under images/ is taken — a data file is the
+     owner's own, but a wall that would fetch any string in it is a wider door than
+     this site needs. Anything else, including a broken path, leaves the chip as it
+     always read: the name on its own. */
   const wall = doc.getElementById("companies");
   const wallItems = doc.getElementById("companies-items");
   if (wall && wallItems) {
+    const mark = (logo) =>
+      /^images\/[\w\-/]+\.png$/i.test(String(logo || "").trim()) ? String(logo).trim() : "";
     fetch("data/companies.json", { cache: "no-cache" })
       .then((r) => (r.ok ? r.json() : []))
       .then((d) => {
         const list = (Array.isArray(d) ? d : (d && d.companies) || []).filter((c) => c && c.name);
         if (!list.length) return;
-        wallItems.innerHTML = list.map((c) =>
-          '<div class="company"><strong>' + esc(c.name) + "</strong>" +
-          (c.sector ? "<span>" + esc(c.sector) + "</span>" : "") + "</div>").join("");
+        wallItems.innerHTML = list.map((c) => {
+          const src = mark(c.logo);
+          return '<div class="company' + (src ? " company--mark" : "") + '">' +
+            (src ? '<span class="company__plate"><img src="' + esc(src) +
+              '" alt="" loading="lazy" decoding="async"></span>' : "") +
+            '<span class="company__words"><strong>' + esc(c.name) + "</strong>" +
+            (c.sector ? "<span>" + esc(c.sector) + "</span>" : "") + "</span></div>";
+        }).join("");
+        // A plate whose picture has gone walks away with it: the name is the claim,
+        // the mark is the garnish. One listener on the rail, in the capture phase,
+        // because a resource error does not bubble and because the flow rail clones
+        // these chips to fill the loop — a listener bound to the original image is
+        // not on the copy, and the copy is what half the visitors scroll past.
+        if (!wallItems.dataset.markGuard) {
+          wallItems.dataset.markGuard = "1";
+          wallItems.addEventListener("error", (e) => {
+            const img = e.target;
+            if (!img || img.tagName !== "IMG") return;
+            const chip = img.closest(".company");
+            if (chip) chip.classList.remove("company--mark");
+            if (img.parentNode) img.parentNode.remove();
+          }, true);
+        }
         wall.hidden = false;
         if (window.BROWNHUB_FLOW) window.BROWNHUB_FLOW.refresh();
       })

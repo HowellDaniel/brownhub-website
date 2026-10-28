@@ -4830,3 +4830,30 @@ body.promo-open{overflow:hidden}
   .gal-jump a{font-size:.8rem;padding:.4rem .8rem}
 }
 @media (prefers-reduced-motion:reduce){.gal-link{transition:none}}
+/* ── the client wall's marks ───────────────────────────────────────────────────
+   A name takes about two seconds to read and a logo about half of that, so the
+   wall now carries each company's own mark beside its name. Two things decided
+   the arrangement:
+   · The plate is white in both themes. Every mark is prepared dark-on-white, so
+     one neutral ground lets all nine read the same way; a plate that took the
+     page's own surface would swallow a logo that arrived white-on-transparent.
+   · The marks are not one shape — a crest is square and a lockup is a strip — so the
+     plate fixes a height and lets its width follow the picture it was given, up to
+     the point where a chip would be mostly logo. Only the height is fixed, so the
+     row never changes size when a lazy picture arrives.
+   · The chip keeps its old shape when a company has no mark — the modifier class
+     is only on the chips that do, and js/reviews.js drops it if a picture 404s.
+   Grid columns are logical, so the plate moves to the right edge under Arabic by
+   itself; no second rule for RTL. */
+.company--mark{grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:.85rem}
+.company__words{display:grid;gap:.15rem;min-width:0}
+.company__plate{height:46px;min-width:46px;max-width:112px;padding:0 6px;flex:none;display:flex;
+  align-items:center;justify-content:center;overflow:hidden;
+  background:#fffbf7;border:1px solid var(--glass-fill-hair);border-radius:11px;
+  box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.company__plate img{height:34px;width:auto;max-width:100%;display:block}
+@media (max-width:640px){
+  .company--mark{column-gap:.7rem}
+  .company__plate{height:38px;min-width:38px;max-width:90px;border-radius:9px;padding:0 5px}
+  .company__plate img{height:28px}
+}

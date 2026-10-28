@@ -74,23 +74,29 @@
   var TOOLS = [];
 
   // ===== 5. Display ads =======================================================
-  // The ca-pub-... number from the AdSense snippet. While this is empty no ad
-  // script loads and no box appears, so an unapproved account cannot leave a
-  // grey rectangle where the work should be.
+  // Two numbers, both read off the AdSense dashboard, and the site stays quiet
+  // until the first one exists.
   //
-  // Pasting a key here is NOT the whole job, and this is the line that says so:
-  // every page's own content policy reads script-src 'self' https://js.paystack.co,
-  // so Google's ad script would be refused and the slot would stay invisible with
-  // no error in the page. When a key goes in, the same commit has to widen the
-  // policy in all nine documents and in sw.js:
-  //   script-src   + https://pagead2.googlesyndication.com https://adservice.google.com
-  //   frame-src    + https://googleads.g.doubleclick.net https://adsense.google.com
-  //   img-src      + https://*.doubleclick.net https://pagead2.googlesyndication.com
-  //   connect-src  + https://*.google-analytics.com https://pagead2.googlesyndication.com
-  //   style-src    + 'unsafe-inline' for the ad frames only if Google asks
-  // Until then this file loads nothing third-party here, and the visitor's choice
-  // in the cookie centre is what decides even after it: see renderAds().
+  //   ADSENSE       "ca-pub-XXXXXXXXXXXXXXXX" — the publisher id, from
+  //                 AdSense > Account > Account information.
+  //   ADSENSE_SLOT  "NNNNNNNNNN" — one ad unit's id, from AdSense > Ads > "By
+  //                 ad unit". Empty, the loader still runs and Google's own
+  //                 Auto ads switch chooses where pictures go; filled, the
+  //                 [data-store="ads"] box on this page becomes that unit.
+  //
+  // The old trap here was that pasting a key was only half the job: every
+  // document's content policy used to read script-src 'self' https://js.paystack.co,
+  // so Google's script was refused and the slot stayed invisible with no error
+  // in the page. That policy now admits the ad hosts in all nineteen documents,
+  // so a key lands and works on the next deploy with no second commit. The
+  // widening asks for nothing while ADSENSE is empty — this file then creates no
+  // tag and sends no request.
+  //
+  // And nothing at all loads until the visitor has said yes to advertising in the
+  // cookie centre; an ad Google does not fill leaves the box hidden rather than a
+  // grey rectangle where the work should be.
   var ADSENSE = "";
+  var ADSENSE_SLOT = "";
 
   var WA = "https://wa.me/233502954541";
   var CURRENCY = "GHS";
@@ -493,31 +499,69 @@
   // choice: no ad request for anyone who has not decided, and a second chance
   // when the decision arrives during the visit (the bhconsent event below).
   var adsFired = false;
+  var adsQueued = false;
+
+  // A half-pasted id is worse than none. Google would answer with a failing
+  // request and the visitor would be left holding the empty box the comment
+  // above promises never to show, so the shape is checked before anything loads.
+  function adClient() {
+    var v = typeof ADSENSE === "string" ? ADSENSE.trim() : "";
+    return /^ca-pub-\d{10,20}$/.test(v) ? v : "";
+  }
 
   function renderAds() {
-    var host = mount("ads");
-    if (!host) return;
+    var hosts = document.querySelectorAll('[data-store="ads"]');
+    if (!hosts.length) return;
+    var hide = function () {
+      Array.prototype.forEach.call(hosts, function (h) { h.hidden = true; });
+    };
+    // js/cookies.js is a defer tag after this one, so on this file's first pass
+    // window.bhConsent does not exist yet and a yes given on an earlier visit
+    // reads as "not decided". Every script tag on the page is defer, so they have
+    // all run by the time the document settles — wait for that instead of
+    // hiding the slot for the rest of the visit. The boxes ship hidden in the
+    // markup, so doing nothing here is already the safe state.
+    if (typeof window.bhConsent !== "function" && !adsQueued) {
+      adsQueued = true;
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", renderAds);
+      } else {
+        window.setTimeout(renderAds, 0);
+      }
+      return;
+    }
+    var client = adClient();
     var c = typeof window.bhConsent === "function" ? window.bhConsent() : {};
-    if (!ADSENSE || !c.decided || !c.advertising || adsFired) { host.hidden = true; return; }
+    if (!client || !c.decided || !c.advertising || adsFired) return hide();
     adsFired = true;
-    var ins = document.createElement("ins");
-    ins.className = "adsbygoogle";
-    ins.style.cssText = "display:block";
-    ins.setAttribute("data-ad-client", ADSENSE);
-    ins.setAttribute("data-ad-slot", "0");
-    ins.setAttribute("data-ad-format", "auto");
-    ins.setAttribute("data-full-width-responsive", "true");
-    host.appendChild(ins);
+
+    // A slot id means this page carries that unit; without one the loader alone
+    // runs and Auto ads brings its own containers, so no box of ours is opened.
+    var unit = /^\d{10,16}$/.test(String(ADSENSE_SLOT).trim()) ? hosts[0] : null;
+    if (unit) {
+      var ins = document.createElement("ins");
+      ins.className = "adsbygoogle";
+      ins.style.cssText = "display:block";
+      ins.setAttribute("data-ad-client", client);
+      ins.setAttribute("data-ad-slot", String(ADSENSE_SLOT).trim());
+      ins.setAttribute("data-ad-format", "auto");
+      ins.setAttribute("data-full-width-responsive", "true");
+      unit.appendChild(ins);
+    }
+    Array.prototype.forEach.call(hosts, function (h) { h.hidden = h !== unit; });
+
     var s = document.createElement("script");
-    s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + encodeURIComponent(ADSENSE);
+    s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + encodeURIComponent(client);
     s.async = true;
     s.crossOrigin = "anonymous";
-    // If the page's own content policy is still refusing the ad host — which it
-    // will until the directives named above are widened — the frame simply does
-    // not appear. Hiding the mount is the honest answer; an empty box is not.
-    s.onerror = function () { host.hidden = true; };
-    host.appendChild(s);
-    try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* not approved yet */ }
+    // Refused by the network, a filter list or a policy this file no longer
+    // sets: every box closes again rather than sit waiting for an ad that is
+    // not coming.
+    s.onerror = hide;
+    document.head.appendChild(s);
+    if (unit) {
+      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) { /* not approved yet */ }
+    }
   }
 
   // The paid placements, once someone has bought one. An empty or malformed file

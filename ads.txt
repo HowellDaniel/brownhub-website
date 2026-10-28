@@ -1,0 +1,15 @@
+# ads.txt — which companies are allowed to sell this site's ad space.
+#
+# Google reads this file before it will pay for an impression on the domain, so
+# a site with display ads and no ads.txt serves them and earns nothing.
+#
+# Nothing is listed yet because no ad is sold here. The line below is the one
+# Google's own AdSense help tells every publisher to publish; it becomes live
+# the moment it stops being a comment, and the publisher number in it has to be
+# the same ca-pub-… number that goes into js/store.js. Paste a number that is
+# not yours and you are declaring that stranger the owner of this site's inventory.
+#
+#   google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+#
+# The hash at the end is Google's own fixed identifier for itself, not a secret
+# and not something to invent: it is the same on every AdSense site.
