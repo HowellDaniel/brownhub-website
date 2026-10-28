@@ -10,6 +10,9 @@ include:
 # tools/ is the Swift that draws images/qr-app.png — nothing on a page links to it.
 # ads/ is the display-ad kit uploaded to Google and Meta; the networks hold their
 # own copy, so serving a second one from this domain would only add weight.
+# The trailing slash is load-bearing: the Pages build matches a bare directory name
+# as a substring of the path, so "ads" also swallowed the root ads.txt — which
+# AdSense reads to verify the domain, and which 404ed until it was written here.
 # None of it is ever linked from a page, so the site loses nothing by not shipping
 # it — and an attacker loses the map of it.
 exclude:
@@ -17,4 +20,4 @@ exclude:
   - "sql"
   - "mobile"
   - "tools"
-  - "ads"
+  - "ads/"
