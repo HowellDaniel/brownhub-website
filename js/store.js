@@ -74,8 +74,11 @@
   var TOOLS = [];
 
   // ===== 5. Display ads =======================================================
-  // Two numbers, both read off the AdSense dashboard, and the site stays quiet
-  // until the first one exists.
+  // Two numbers, both read off the AdSense dashboard. The account is still at
+  // "Requires review", so Google answers these requests with nothing until it
+  // approves the site — the requests themselves are how it sees the code is
+  // installed. ADSENSE has to name the same publisher as the line in the root
+  // ads.txt, or these pages hand their revenue to whoever owns the other number.
   //
   //   ADSENSE       "ca-pub-XXXXXXXXXXXXXXXX" — the publisher id, from
   //                 AdSense > Account > Account information.
@@ -95,7 +98,7 @@
   // And nothing at all loads until the visitor has said yes to advertising in the
   // cookie centre; an ad Google does not fill leaves the box hidden rather than a
   // grey rectangle where the work should be.
-  var ADSENSE = "";
+  var ADSENSE = "ca-pub-9752746325683248";
   var ADSENSE_SLOT = "";
 
   var WA = "https://wa.me/233502954541";
