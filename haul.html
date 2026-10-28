@@ -212,13 +212,23 @@ footer a:hover{color:var(--text)}
       if (h.phone) { var tel = document.getElementById("phone"); tel.textContent = h.phone; tel.href = "tel:" + h.phone.replace(/[^0-9+]/g, ""); }
       if (h.email) { var mail = document.getElementById("email"); mail.textContent = h.email; mail.href = "mailto:" + h.email; }
       if (h.whatsapp) { var wa = document.getElementById("wa-link"); wa.href = "https://wa.me/" + h.whatsapp; }
-      if (h.app) {
+      /* The same rule the nav applies: an address only becomes a button if it is
+       * an absolute http(s) URL, and never if it is a Cloudflare quick tunnel —
+       * that hostname belongs to one running cloudflared process and dies with
+       * it, so a button made from it is a dead link for every later visitor. */
+      var appUrl = (function (v) {
+        if (typeof v !== "string" || !v) return null;
+        var u;
+        try { u = new URL(v); } catch (e) { return null; }
+        if (!/^https?:$/.test(u.protocol)) return null;
+        if (/(^|\.)trycloudflare\.com$/i.test(u.hostname)) return null;
+        return u.href;
+      })(h.app);
+      if (appUrl) {
         ["open-app", "open-app-2", "open-app-3"].forEach(function (id) {
-          var a = document.getElementById(id); if (a) { a.href = h.app; a.hidden = false; }
+          var a = document.getElementById(id); if (a) { a.href = appUrl; a.hidden = false; }
         });
       }
-      var app = document.getElementById("open-app");
-      if (h.app) app.href = h.app;
     })
     .catch(function () { /* the static page is the fallback */ });
 })();

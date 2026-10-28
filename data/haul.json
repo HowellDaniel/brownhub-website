@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-27",
+  "updated": "2026-10-28",
   "parent": {
     "name": "BrownHub",
     "displayName": "BrownHub Studio",
@@ -48,7 +48,7 @@
   "haul": {
     "brand": "BrownHub Haul",
     "tagline": "luggage, handled",
-    "app": "https://asylum-identifies-hopes-themes.trycloudflare.com/#/book",
+    "app": "",
     "page": "https://www.brownhub283.com/haul.html",
     "whatsapp": "233535583460",
     "phone": "+233 55 398 0791",

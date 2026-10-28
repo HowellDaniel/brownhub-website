@@ -121,12 +121,27 @@
      panel open the app instead of the page that describes it. An empty or
      malformed value changes nothing, so a site without a hosted app keeps the
      haul.html page rather than a dead link — and the fetch is never cached, so
-     setting one address in the feed is the whole release. */
+     setting one address in the feed is the whole release.
+
+     A *.trycloudflare.com address is rejected on purpose. That hostname is
+     handed to one running `cloudflared` process and dies with it, so it can be
+     a valid URL the instant the feed is written and a name that no resolver
+     knows by the time a traveller clicks it — which is what happened to this
+     nav. A named tunnel on the studio's own domain is durable and still passes. */
+  function haulAppUrl(feed) {
+    var app = feed && feed.haul && feed.haul.app;
+    if (typeof app !== "string" || !app) return null;
+    var url;
+    try { url = new URL(app); } catch (e) { return null; }
+    if (!/^https?:$/.test(url.protocol)) return null;
+    if (/(^|\.)trycloudflare\.com$/i.test(url.hostname)) return null;
+    return app;
+  }
   fetch(new URL("data/haul.json", ROOT || doc.baseURI).href, { cache: "no-store" })
     .then(function (res) { return res.ok ? res.json() : null; })
     .then(function (feed) {
-      var app = feed && feed.haul && feed.haul.app;
-      if (typeof app !== "string" || !/^https?:\/\//i.test(app)) return;
+      var app = haulAppUrl(feed);
+      if (!app) return;
       var links = navList.querySelectorAll('a[href$="haul.html"]');
       for (var i = 0; i < links.length; i++) links[i].href = app;
       var rows = panel.querySelectorAll('a[href$="haul.html"]');
