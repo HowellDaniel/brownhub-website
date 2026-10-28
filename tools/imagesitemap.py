@@ -98,7 +98,16 @@ class ImgCollector(html.parser.HTMLParser):
 def absolute(path):
     p = re.sub(r"^\.?/", "", path)
     p = p.split("#")[0].split("?")[0]          # a cache-buster is not another picture
-    return SITE + "/" + p
+    # A page one directory down reaches the same picture as "../images/...".
+    # The sitemap has to name the one address that picture actually answers at.
+    segs = []
+    for seg in p.split("/"):
+        if seg == "..":
+            if segs:
+                segs.pop()
+        elif seg not in ("", "."):
+            segs.append(seg)
+    return SITE + "/" + "/".join(segs)
 
 
 def on_disk(loc):

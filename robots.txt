@@ -16,6 +16,7 @@ Allow: /services.html
 Allow: /engineering.html
 Allow: /catalog.html
 Allow: /gallery.html
+Allow: /gallery/
 Allow: /about.html
 Allow: /contact.html
 Allow: /haul.html
