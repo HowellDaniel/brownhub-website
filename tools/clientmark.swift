@@ -1,13 +1,15 @@
-// Cut a company's own artwork into a client-wall mark: key the white paper out to
-// transparency, trim to the art, resample to the width the wall wants.
+// Cut a company's own artwork into a client-wall mark: key the background out to
+// transparency, trim to the art, resample to the width the wall wants.  A photograph
+// of a printed logo keys by distance from the paper; a file that already carries
+// alpha keys by its own alpha.
 //
 //   swiftc -O tools/clientmark.swift -o /tmp/clientmark
 //   /tmp/clientmark analyze <source-image>
 //   /tmp/clientmark cut <source-image> <out.png> <target-width>
 //
-// analyze prints the EXIF orientation, the art bounding box and whether that box
-// touches an edge of the source — a mark that runs off the frame was photographed
-// or exported too tight, and the wall would show a letter cut in half.
+// analyze prints the EXIF orientation, the art bounding box, which keying it chose
+// and whether that box touches an edge of the source — a mark that runs off the frame
+// was photographed or exported too tight, and the wall would show a letter cut in half.
 import Foundation
 import CoreGraphics
 import ImageIO
@@ -50,13 +52,25 @@ ctx.draw(src, in: CGRect(x: 0, y: 0, width: W, height: H))
 // true ink colour, which a JPEG does not carry — and guessing it from the darkest
 // channel makes a saturated brand red read as 88% transparent, which is a bug, not a
 // keying. Anything past `hi` is solid ink; anything under `lo` is paper.
+//
+// A file that arrives with its own alpha — a Photoshop layer export, a vector's PNG
+// cut — is already keyed, and keying it again by distance from white is wrong twice
+// over: the empty corners usually carry black RGB, so the whole frame turns solid,
+// and white lettering inside a dark shape (a shield's own wordmark) would be punched
+// out as holes. Trust the file's alpha and leave its pixels alone.
+var transparent = 0
+for i in stride(from: 3, to: W * H * 4, by: 4) { if buf[i] < 250 { transparent += 1 } }
+let sourceAlpha = Double(transparent) > Double(W * H) * 0.02
 let lo = 8.0, hi = 64.0
 func alphaAt(_ x: Int, _ y: Int) -> Double {
     let i = (y * W + x) * 4
+    if sourceAlpha { return Double(buf[i + 3]) / 255.0 }
     let r = Double(buf[i]), g = Double(buf[i + 1]), b = Double(buf[i + 2])
     return (255.0 - min(min(r, g), b)) / 255.0
 }
 func keyedAlpha(_ x: Int, _ y: Int) -> Double {
+    let i = (y * W + x) * 4
+    if sourceAlpha { return Double(buf[i + 3]) / 255.0 }
     let d = alphaAt(x, y) * 255.0
     return max(0, min(1, (d - lo) / (hi - lo)))
 }
@@ -69,9 +83,16 @@ for y in 0..<H { for x in 0..<W where alphaAt(x, y) * 255.0 > lo {
 guard maxX >= 0 else { print("no ink found — the source is all white"); exit(1) }
 
 let bw = maxX - minX + 1, bh = maxY - minY + 1
-print("source            \(W)x\(H)  exif-orientation=\(orient)  \(src.alphaInfo == .none ? "opaque" : "has alpha")")
+var inkLum: Double = 0, inkN = 0
+for y in stride(from: minY, through: maxY, by: 3) { for x in stride(from: minX, through: maxX, by: 3)
+where alphaAt(x, y) > 0.5 {
+    let i = (y * W + x) * 4
+    inkLum += (Double(buf[i]) + Double(buf[i + 1]) + Double(buf[i + 2])) / 3.0; inkN += 1
+}}
+print("source            \(W)x\(H)  exif-orientation=\(orient)  \(src.alphaInfo == .none ? "opaque" : "has alpha")  keying=\(sourceAlpha ? "the file's own alpha" : "distance from white")")
 print("art bbox          x=\(minX) y=\(minY) \(bw)x\(bh)  (aspect \(String(format: "%.2f", Double(bw)/Double(bh))))")
 print("touches edges     left=\(minX == 0) right=\(maxX == W-1) top=\(minY == 0) bottom=\(maxY == H-1)")
+if inkN > 0 { print("mean ink lightness \(String(format: "%.0f", inkLum / Double(inkN)))/255 — the plate is #fffbf7, so a mark near 0 is dark-on-white and reads as it stands") }
 
 if mode == "analyze" {
     // Row profile: how tall each inked band is, so a band that is cut off mid-letter
@@ -110,7 +131,10 @@ for y in 0..<bh { for x in 0..<bw {
     let si = (sy * W + sx) * 4, di = (y * bw + x) * 4
     let a = keyedAlpha(sx, sy)
     pre[di + 3] = UInt8((a * 255).rounded())
-    for c in 0..<3 { pre[di + c] = UInt8(Double(buf[si + c]) * a) }
+    // Under the file's own alpha the buffer is already premultiplied — copying it is
+    // the identity. Under the paper key the pixels are opaque scans, so the key has
+    // to be applied here.
+    for c in 0..<3 { pre[di + c] = sourceAlpha ? buf[si + c] : UInt8(Double(buf[si + c]) * a) }
 }}
 let preProvider = CGDataProvider(data: Data(bytes: &pre, count: pre.count) as CFData)!
 guard let preImg = CGImage(width: bw, height: bh, bitsPerComponent: 8, bitsPerPixel: 32,
