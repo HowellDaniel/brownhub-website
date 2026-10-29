@@ -436,11 +436,12 @@ html[data-theme="light"]{--glass-fill:rgba(255,255,255,.66);--glass-fill-alt:rgb
 :is(.hero__card,.chat-widget__panel,.modal__card){box-shadow:var(--glass-inset),var(--shadow)}
 :is(.btn--primary,.avatar,.step__num,.chat-widget__toggle,.msg-mic,.form-success__icon,.chat-msg--user,.modal__close,.shot__zoom),.chat-widget__form button{
   background-image:var(--glass-sheen-grad);box-shadow:inset 0 1px 0 var(--glass-hair),0 6px 16px -9px rgba(0,0,0,.5)}
-/* The step digit is 15px/600 — small text, so it needs 4.5:1, and the sheen's
-   translucent white lift over the saturated fill measured 3.58 in light and 4.48 in
-   dark against it. The pill keeps the group's shadow and loses only the gloss, which
-   puts it back on its flat `--accent-fill`: 5.69 light, 4.69 dark. */
-.step__num{background-image:none}
+/* The step digit is 15px/600 and the visitor's own chat bubble carries 14px/400 — both
+   small text, so both need 4.5:1, and the sheen's translucent white lift over the
+   saturated fill measured 3.58 light / 4.48 dark under the digit and 3.75 / 4.50 under the
+   bubble's line. Each keeps the group's shadow and loses only the gloss, which puts them
+   back on their flat `--accent-fill`: 5.69 light, 4.69 dark. */
+.step__num,.chat-msg--user{background-image:none}
 :is(.filter__btn.is-active,.acct-tab.is-active){background-image:var(--glass-sheen-grad);box-shadow:inset 0 1px 0 var(--glass-hair)}
 /* These states repaint with the `background` shorthand, which would drop the sheen. */
 :is(.btn--primary:hover,.chat-widget__toggle:hover,.chat-widget__toggle:focus-visible,.msg-mic:hover,.footer-social a:hover,.footer-social a:focus-visible,.form-success__icon,.acct-tab.is-active,.filter__btn.is-active,.chat-widget__chips button:hover){background-image:var(--glass-sheen-grad)}
