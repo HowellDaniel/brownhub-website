@@ -32,7 +32,7 @@
     },
     {
       keys: ["hours", "open", "closed", "available", "weekend"],
-      html: `We're open Mon–Fri, 9am–6pm GMT. Messages sent outside those hours (here or on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a>) get answered the next working day.`
+      html: `We're open Mon–Sat, 8:30am–7pm GMT. Messages sent outside those hours (here or on <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a>) get answered the next working day.`
     },
     {
       keys: ["how long", "turnaround", "deadline", "delivery", "deliver", "when will", "rush", "urgent", "fast"],
