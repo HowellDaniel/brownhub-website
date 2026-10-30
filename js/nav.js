@@ -116,38 +116,11 @@
     "</div>";
   header.appendChild(panel);
 
-  /* The luggage service has its own app, so the feed can name its address.
-     When data/haul.json carries haul.app, the Luggage item and its row in the
-     panel open the app instead of the page that describes it. An empty or
-     malformed value changes nothing, so a site without a hosted app keeps the
-     haul.html page rather than a dead link — and the fetch is never cached, so
-     setting one address in the feed is the whole release.
-
-     A *.trycloudflare.com address is rejected on purpose. That hostname is
-     handed to one running `cloudflared` process and dies with it, so it can be
-     a valid URL the instant the feed is written and a name that no resolver
-     knows by the time a traveller clicks it — which is what happened to this
-     nav. A named tunnel on the studio's own domain is durable and still passes. */
-  function haulAppUrl(feed) {
-    var app = feed && feed.haul && feed.haul.app;
-    if (typeof app !== "string" || !app) return null;
-    var url;
-    try { url = new URL(app); } catch (e) { return null; }
-    if (!/^https?:$/.test(url.protocol)) return null;
-    if (/(^|\.)trycloudflare\.com$/i.test(url.hostname)) return null;
-    return app;
-  }
-  fetch(new URL("data/haul.json", ROOT || doc.baseURI).href, { cache: "no-store" })
-    .then(function (res) { return res.ok ? res.json() : null; })
-    .then(function (feed) {
-      var app = haulAppUrl(feed);
-      if (!app) return;
-      var links = navList.querySelectorAll('a[href$="haul.html"]');
-      for (var i = 0; i < links.length; i++) links[i].href = app;
-      var rows = panel.querySelectorAll('a[href$="haul.html"]');
-      for (var j = 0; j < rows.length; j++) rows[j].href = app;
-    })
-    .catch(function () { /* the written page is the fallback */ });
+  /* Luggage always opens haul.html, the page that describes the service. That
+     page carries the "Open BrownHub Haul" button, so the app never starts from a
+     nav click — a visitor reads what it is first, and haul.app only feeds the
+     button. The nav deliberately does not read the feed: a value that opens the
+     app straight from the header is a decision for the page, not for a menu. */
 
   var caret = doc.createElement("button");
   caret.type = "button";
