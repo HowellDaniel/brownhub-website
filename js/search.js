@@ -73,6 +73,8 @@
     { g: "Catalog", t: "More Winners' Chapel Flyers", h: "catalog.html?q=More%20Winners%27%20Chapel%20Flyers", k: "church programme flyer event service banquet winners chapel" },
     { g: "Catalog", t: "Gold Perspex", h: "catalog.html?q=Gold%20Perspex", k: "gold perspex acrylic plexiglass invite plaque award engraved mirror" },
     { g: "Catalog", t: "Logo Design Mockup", h: "catalog.html?q=Logo%20Design%20Mockup", k: "logo design brand identity mockup sign storefront 3d" },
+    { g: "Catalog", t: "Embroidery and Helmet Branding", h: "catalog.html?q=Embroidery%20and%20Helmet%20Branding", k: "embroidery helmet branding safety site cap workwear branded kit logo" },
+    { g: "Catalog", t: "Wedding Invitation Cards", h: "catalog.html?q=Wedding%20Invitation%20Cards", k: "wedding invitation card invite marriage ceremony printed card gold" },
 
     // The website catalog is its own shelf, so it gets its own rows. Every label
     // is a string that already exists on the page, which keeps the dictionaries

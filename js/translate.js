@@ -150,7 +150,7 @@
 
   function loadDict(code) {
     if (dicts[code]) return Promise.resolve(dicts[code]);
-    return fetch(ROOT + "i18n/" + code + ".json?v=108")
+    return fetch(ROOT + "i18n/" + code + ".json?v=109")
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { dicts[code] = d; return d; });
   }

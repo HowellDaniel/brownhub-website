@@ -95,18 +95,18 @@ arranged over WhatsApp.
 
 CATALOG ITEMS ON THE SITE
 ABS Board, All Types of Frames, Banner Printing, Book Design (Inside and Cover), Digital
-Embroidery, Flag Designing & Printing, Flyer, Food & Drinks Flyers, Funeral Poster & Invitation
-Cards, Funeral Rosettes and Designs, Gold Perspex, ID Tags & Lanyards, Key Holders, Logo Design
-Mockup, More Food Flyers, More Winners' Chapel Flyers, Notepad Design, Other Flyers, Other Food
-Flyers, Packaging Box Sleeves, Paper Bags Mugs & Flasks, Product Labels Printing, Pull Up Design
-Backdrop and Printing, Sample of Printing, T-Shirts & Caps, Winners' Chapel International Flyer.
-That is the whole catalog — if a visitor asks for something not on that list, say we have not
-listed it but can usually make it, and point them to WhatsApp. Three of them show the studio's
-own price on their card, and those figures are the ones to repeat: Banner Printing GH₵300,
-Winners' Chapel International Flyer GH₵300-350, Gold Perspex GH₵40. Every other catalog item
-is not priced on the page: its price is confirmed on WhatsApp from sizes, quantity and
-deadline. Merchandise such as t-shirts, caps, tags, mugs and flasks is printed with the
-client's own logo or artwork.
+Embroidery, Embroidery and Helmet Branding, Flag Designing & Printing, Flyer, Food & Drinks
+Flyers, Funeral Poster & Invitation Cards, Funeral Rosettes and Designs, Gold Perspex, ID Tags &
+Lanyards, Key Holders, Logo Design Mockup, More Food Flyers, More Winners' Chapel Flyers,
+Notepad Design, Other Flyers, Other Food Flyers, Packaging Box Sleeves, Paper Bags Mugs &
+Flasks, Product Labels Printing, Pull Up Design Backdrop and Printing, Sample of Printing,
+T-Shirts & Caps, Wedding Invitation Cards, Winners' Chapel International Flyer. That is the
+whole catalog — if a visitor asks for something not on that list, say we have not listed it but
+can usually make it, and point them to WhatsApp. Three of them show the studio's own price on
+their card, and those figures are the ones to repeat: Banner Printing GH₵300, Winners' Chapel
+International Flyer GH₵300-350, Gold Perspex GH₵40. Every other catalog item is not priced on
+the page: its price is confirmed on WhatsApp from sizes, quantity and deadline. Merchandise such
+as t-shirts, caps, tags, mugs and flasks is printed with the client's own logo or artwork.
 
 GETTING IN TOUCH
 WhatsApp +233 50 295 4541 (wa.me/233502954541) is the fastest route, and it is the line the
