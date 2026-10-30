@@ -3,21 +3,22 @@
 
   /* Groups rather than an alphabetical wall: the point is that a visitor finds
      their own language by eye. Each code owns a file in i18n/, and a language
-     added to a dictionary has to be added here too. Endonyms stay in their own
-     orthography, which collect() deliberately skips. */
+     added to a dictionary has to be added here too. The names are written in
+     English so the sheet reads as one list; the pane is skipped by collect(),
+     because a language name is a label and not prose to be translated. */
   var GROUPS = [
     ["Ghana and the region", [["en", "English"], ["tw", "Twi"]]],
-    ["Africa and the Middle East", [["sw", "Kiswahili"], ["ar", "العربية"], ["he", "עברית"],
-      ["fa", "فارسی"], ["af", "Afrikaans"]]],
-    ["Europe", [["fr", "Français"], ["de", "Deutsch"], ["es", "Español"], ["pt", "Português"],
-      ["it", "Italiano"], ["nl", "Nederlands"], ["el", "Ελληνικά"], ["sv", "Svenska"],
-      ["da", "Dansk"], ["fi", "Suomi"], ["pl", "Polski"], ["cs", "Čeština"],
-      ["sk", "Slovenčina"], ["hu", "Magyar"], ["ro", "Română"], ["bg", "Български"],
-      ["sr", "Српски"], ["hr", "Hrvatski"], ["ru", "Русский"], ["uk", "Українська"],
-      ["tr", "Türkçe"]]],
-    ["Asia", [["zh", "简体中文"], ["ja", "日本語"], ["ko", "한국어"], ["vi", "Tiếng Việt"],
-      ["th", "ไทย"], ["id", "Bahasa Indonesia"], ["ms", "Bahasa Melayu"], ["tl", "Tagalog"],
-      ["bn", "বাংলা"], ["ta", "தமிழ்"], ["hi", "हिन्दी"], ["ur", "اردو"]]]
+    ["Africa and the Middle East", [["sw", "Swahili"], ["ar", "Arabic"], ["he", "Hebrew"],
+      ["fa", "Persian"], ["af", "Afrikaans"]]],
+    ["Europe", [["fr", "French"], ["de", "German"], ["es", "Spanish"], ["pt", "Portuguese"],
+      ["it", "Italian"], ["nl", "Dutch"], ["el", "Greek"], ["sv", "Swedish"],
+      ["da", "Danish"], ["fi", "Finnish"], ["pl", "Polish"], ["cs", "Czech"],
+      ["sk", "Slovak"], ["hu", "Hungarian"], ["ro", "Romanian"], ["bg", "Bulgarian"],
+      ["sr", "Serbian"], ["hr", "Croatian"], ["ru", "Russian"], ["uk", "Ukrainian"],
+      ["tr", "Turkish"]]],
+    ["Asia", [["zh", "Chinese"], ["ja", "Japanese"], ["ko", "Korean"], ["vi", "Vietnamese"],
+      ["th", "Thai"], ["id", "Indonesian"], ["ms", "Malay"], ["tl", "Tagalog"],
+      ["bn", "Bengali"], ["ta", "Tamil"], ["hi", "Hindi"], ["ur", "Urdu"]]]
   ];
   var LANGS = [];
   var CODES = {};
@@ -95,7 +96,7 @@
     /* A code sample is not prose: the words inside it belong to the program, and a
        translated snippet is a snippet that no longer runs. */
     if (root.hasAttribute("data-i18n-off")) return;
-    // Language names stay in their own orthography, and the picker paints them itself.
+    // The picker paints its own English names; they are labels, not prose.
     if (root.id === "lang-select" || root.id === "locale-list") return;
   if (root.classList && (root.className === "locale__name" || root.className === "locale__group" ||
       root.classList.contains("locale__opt"))) return;
@@ -353,8 +354,8 @@
     localeBtn.setAttribute("aria-expanded", "false");
   }
 
-  // The current language is written the way its speakers write it, so the label
-  // and every option are excluded from translation by collect().
+  // The button names the current language, and every option carries the same
+  // English name, so collect() excludes the whole pane from translation.
   function sync() {
     if (!localeBtn) return;
     var name = "English";
