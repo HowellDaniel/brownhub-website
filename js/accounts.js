@@ -261,9 +261,9 @@
     } else {
       var menu = document.getElementById("nav-menu");
       if (menu) {
-        var last = menu.querySelector('a[href="contact.html"]');
-        // Sit just before Contact, the menu's last entry, whatever whitespace follows it.
-        menu.insertBefore(navLi, last ? last.parentNode : null);
+        // Only the pages without that row come here. Contact now sits under About,
+        // so the account button takes whatever slot is left at the end of the row.
+        menu.appendChild(navLi);
       }
     }
 

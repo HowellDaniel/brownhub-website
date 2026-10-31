@@ -7,7 +7,12 @@
    An arrival is a fresh visit, not every page: the clock is kept in this tab's
    own session, so walking from Home to Catalog stays lit, while coming back after
    half an hour away — or opening the site in a new tab — finds the room dark
-   again. Nothing is written that outlives the tab. */
+   again. Nothing is written that outlives the tab.
+
+   One exemption: a machine that never taps. Google's crawler and the link
+   unfurlers read the rendered page, and a headless renderer that sees only a
+   black room indexes a black room — and gets an AI summary of nothing. A person
+   with a mouse always gets the veil. */
 (function () {
   "use strict";
 
@@ -25,6 +30,18 @@
     } catch (e) { return true; }
     return !last || now - last > AWAY;
   }
+
+  /* A browser driven by a machine never taps, so for it the switch would be a
+     door, not a greeting. Both halves are needed: a crawler that announces
+     itself, and a headless renderer that does not. A person at a keyboard is
+     neither, so the human light show is untouched. */
+  function isMachine() {
+    if (navigator.webdriver) return true;
+    var ua = navigator.userAgent || "";
+    return /Googlebot|Google-InspectionTool|Bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot|HeadlessChrome|Lighthouse|PTST|Screaming Frog|facebookexternalhit|WhatsApp|TelegramBot|Twitterbot|LinkedInBot|Slackbot|Discordbot|Applebot|AhrefsBot|SemrushBot|bot$|\/bot[;. ]/i.test(ua);
+  }
+
+  if (isMachine()) return;
 
   if (!arrived()) return;
 

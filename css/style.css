@@ -4883,3 +4883,64 @@ html.lights-off,html.lights-off body{overflow:hidden}
 @media (max-width:400px){.light-overlay__btn{font-size:.98rem;padding:.9rem 1.6rem}}
 @media (prefers-reduced-motion:reduce){.light-overlay{transition:none}.light-overlay__btn{transition:none}}
 @media print{.light-overlay{display:none}html.lights-off,html.lights-off body{overflow:visible}}
+
+/* ---- The About dropdown ----
+   Eight tabs on one row was more bar than the bar. Blog and Contact are not peers
+   of Home or Services — they hang off the studio page — so they moved under About
+   and the row lost two of its eight. About itself stays, and still opens
+   about.html; the arrow beside it is a real button, because a visitor who cannot
+   hover still has to reach those two pages. With scripting off the panel is a
+   plain pair of links beside the parent, which is the same list the bar carried
+   yesterday: nothing in the nav depends on JS to be reachable. */
+.nav__item--drop{position:relative;display:flex;align-items:center;gap:2px}
+.nav__drop{display:flex;align-items:center;gap:var(--t-4)}
+html.js-nav .nav__drop{position:absolute;top:100%;inset-inline-start:0;z-index:4;
+  flex-direction:column;align-items:stretch;gap:0;min-width:11rem;padding:var(--t-1);
+  background:var(--surface);border:var(--t-bw) solid var(--border);border-radius:var(--t-r-lg);
+  box-shadow:var(--t-shadow-strong);opacity:0;visibility:hidden;transform:translateY(-6px);
+  transition:opacity .2s var(--ease-out),transform .2s var(--ease-out),visibility 0s .2s}
+html.js-nav .nav__item--drop.is-open>.nav__drop,
+html.js-nav .nav__item--drop:focus-within>.nav__drop{opacity:1;visibility:visible;transform:none;
+  transition:opacity .2s var(--ease-out),transform .2s var(--ease-out)}
+html.js-nav .nav__item--drop.is-open .nav__caret svg,
+html.js-nav .nav__item--drop:focus-within .nav__caret svg{rotate:180deg}
+.nav__drop .nav__link{display:block;padding:.5rem var(--t-1);border-radius:var(--t-r);
+  font-size:var(--t-small);white-space:nowrap}
+.nav__drop .nav__link:hover{background:var(--bg-alt)}
+/* The parent stays lit while the visitor is reading one of its two pages. */
+.nav__item--drop:has(.nav__drop .nav__link--active)>.nav__link{color:var(--nav-ink,var(--text))}
+@media (max-width:1180px){
+  .nav__item--drop{display:block}
+  .nav__drop{flex-direction:column;align-items:stretch;gap:.05rem}
+  html.js-nav .nav__drop{position:static;inset-inline-start:auto;min-width:0;padding:0;
+    background:none;border:0;border-radius:0;box-shadow:none;opacity:1;visibility:visible;
+    transform:none;transition:none;gap:.05rem;margin:.1rem 0 .35rem;padding-inline-start:.8rem;
+    border-inline-start:var(--t-bw) solid var(--border)}
+  .nav__menu .nav__drop .nav__link{padding:.45rem 0;font-size:1rem;border-radius:0}
+  .nav__menu .nav__drop .nav__link:hover{background:none}
+}
+@media (prefers-reduced-motion:reduce){html.js-nav .nav__drop{transition:none}}
+
+/* ---- Bring the social handles back to the right edge ----
+   The rail shipped behind two floors: min-width:1240px and min-height:700px. The
+   second one is what hid it. The commonest laptop screen in the world is 1366x768,
+   and Chrome leaves that about 640px of viewport — so the handles never appeared on
+   the very machine the floor was meant to protect. What the height floor really has
+   to clear is the rail itself (three 42px buttons and their gaps) plus the chat
+   bubble parked under it, and 480px does that. The width floor drops to 1180px, the
+   gate the drawer already uses: at 1180 the pill lands in a band's own 20px gutter
+   and the 26px of card padding, and never over the words. A phone still gets no
+   rail — its right edge belongs to the bottom queue and the chat bubble, and the
+   same three handles are already in its footer. */
+@media (min-width:1180px) and (min-height:480px){.social-rail{display:flex}}
+
+/* ---- The assistant's question keeps off the handles ----
+   With the rail on a laptop, its three buttons own the last 42px of the right
+   gutter, and the assistant's proactive question is anchored to the same corner —
+   it is wider than the chat bubble and reaches across, so on a 1366x768 screen the
+   question sat on top of the handles and they could not be clicked while it was up
+   (the bubble is z-200, the rail z-60). One button-width of clearance moves only the
+   transient question, and the bubble it hangs from stays in the corner. */
+@media (min-width:1180px) and (min-height:480px){
+  .chat-widget__teaser{right:3.5rem}
+}

@@ -10,6 +10,67 @@
 
   var doc = document;
   var header = doc.querySelector(".site-header");
+
+  /* Blog and Contact live under About now, written into every page rather than
+     built here: a visitor with scripting off still sees all three links, because
+     the panel is a plain list until this block gives it an open state. CSS holds
+     the keyboard door open (:focus-within); the arrow is the click and touch
+     answer, and the hover timer is the desktop one, so a tablet that reports no
+     fine pointer is never asked to hover. */
+  var drops = header ? header.querySelectorAll(".nav__item--drop") : [];
+  var shut = function () {
+    for (var s = 0; s < drops.length; s++) {
+      drops[s].classList.remove("is-open");
+      var shutBtn = drops[s].querySelector(":scope > .nav__caret");
+      if (shutBtn) shutBtn.setAttribute("aria-expanded", "false");
+    }
+  };
+  for (var d = 0; d < drops.length; d++) {
+    (function (li) {
+      var btn = li.querySelector(":scope > .nav__caret");
+      var panel = li.querySelector(":scope > .nav__drop");
+      if (!btn || !panel) return;
+      var timer = null;
+      function set(state) {
+        li.classList.toggle("is-open", state);
+        btn.setAttribute("aria-expanded", state ? "true" : "false");
+      }
+      function later(state, ms) {
+        clearTimeout(timer);
+        timer = setTimeout(function () { set(state); }, ms);
+      }
+      function hoverable() {
+        return window.matchMedia("(min-width:1181px) and (pointer:fine)").matches;
+      }
+      btn.setAttribute("aria-haspopup", "true");
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        set(!li.classList.contains("is-open"));
+      });
+      li.addEventListener("mouseenter", function () { if (hoverable()) later(true, 90); });
+      li.addEventListener("mouseleave", function () { if (hoverable()) later(false, 260); });
+      panel.addEventListener("click", function (e) {
+        if (e.target.closest && e.target.closest(".nav__link")) set(false);
+      });
+    })(drops[d]);
+  }
+  if (drops.length) {
+    doc.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") shut();
+    });
+    doc.addEventListener("pointerdown", function (e) {
+      for (var k = 0; k < drops.length; k++) {
+        if (drops[k].classList.contains("is-open") && !drops[k].contains(e.target)) shut();
+      }
+    });
+    // The drawer prints every link at its own width, so the burger closes the panel.
+    var drawer = doc.querySelector(".nav__toggle");
+    if (drawer) drawer.addEventListener("click", shut);
+    window.addEventListener("resize", function () {
+      if (!header.matches(":hover")) shut();
+    });
+  }
+
   var link = header && header.querySelector('.nav__menu a[href$="services.html"]');
   if (!link) return;
 
@@ -74,26 +135,24 @@
 
   doc.documentElement.classList.add("js-nav");
 
-  /* Haul is a studio service now, so it belongs in the top row next to Contact —
-     added here, from one place, because the nav is written into every page and a
-     journal post must resolve the path against the site root, not its own folder.
-     The home and services pages carry the link in their HTML as well (the service
-     worker keeps this file cache-first), so skip when it is already there. */
+  /* Haul is a studio service now, so it belongs in the top row — added here, from
+     one place, because the nav is written into every page and a journal post must
+     resolve the path against the site root, not its own folder. The home and
+     services pages carry the link in their HTML as well (the service worker keeps
+     this file cache-first), so skip when it is already there.
+     It takes the last slot: Contact moved under About, so the row now reads
+     Home, Services, Eng, Catalog, About, Luggage — which is also the order the two
+     pages that write Luggage by hand already had. */
   var navList = link.parentNode.parentNode;
   var haulLink = navList.querySelector('a[href$="haul.html"]');
   if (!haulLink) {
-    var contact = navList.querySelector('.nav__link[href$="contact.html"]');
     var haulLi = doc.createElement("li");
     var haulA = doc.createElement("a");
     haulA.className = "nav__link";
     haulA.href = ROOT + "haul.html";
     haulA.textContent = "Luggage";
     haulLi.appendChild(haulA);
-    if (contact && contact.parentNode && contact.parentNode.parentNode === navList) {
-      navList.insertBefore(haulLi, contact.parentNode.nextSibling);
-    } else {
-      navList.appendChild(haulLi);
-    }
+    navList.appendChild(haulLi);
   }
 
   var panel = doc.createElement("div");
