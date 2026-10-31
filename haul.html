@@ -6,7 +6,7 @@
 <!-- The same theme script the studio pages use: it reads the saved choice (or the
      device's) and puts data-theme on <html> before the first paint, so this page
      opens in the colour the visitor already chose on brownhub283.com. -->
-<script src="js/theme.js?v=2"></script>
+<script src="js/theme.js?v=2"></script><script src="js/lights.js?v=2"></script>
 <title>BrownHub Haul — Luggage Collection &amp; Delivery in Accra</title>
 <meta name="description" content="BrownHub Haul collects bags at any Accra address, tracks them on a live manifest and hands them over at Kotoka, a hotel or another city against a 4-digit PIN.">
 <link rel="canonical" href="https://www.brownhub283.com/haul.html">
@@ -90,6 +90,26 @@ footer a:hover{color:var(--text)}
   .app-band{grid-template-columns:1fr}
   .foot{grid-template-columns:1fr}
 }
+
+/* The studio's light switch, copied with the rest of the tokens: this page
+   stands alone, and its first frame is black like every other. */
+html.lights-off,html.lights-off body{overflow:hidden}
+.light-overlay{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;
+  padding:1.5rem;background:#0b0b0b;transition:opacity .55s ease,visibility .55s ease}
+.light-overlay::before{content:"";position:absolute;width:min(420px,72vw);height:min(420px,72vw);border-radius:50%;
+  background:radial-gradient(circle,rgba(177,125,65,.22),rgba(177,125,65,0) 68%);pointer-events:none}
+.light-overlay__btn{position:relative;display:inline-flex;align-items:center;justify-content:center;
+  padding:1rem 2rem;border-radius:999px;border:1px solid rgba(255,255,255,.16);
+  background:#b17d41;color:#150a05;font-family:inherit;font-weight:700;font-size:1.05rem;line-height:1.2;
+  cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.35),0 18px 55px rgba(177,125,65,.35);
+  transition:transform .2s ease,background-color .2s ease,box-shadow .2s ease}
+.light-overlay__btn:hover{background:#c08b4c;transform:scale(1.04);
+  box-shadow:0 0 0 1px rgba(0,0,0,.35),0 22px 65px rgba(177,125,65,.5)}
+.light-overlay__btn:focus-visible{outline:3px solid #fffbf7;outline-offset:4px}
+.light-overlay.is-lifting{opacity:0;visibility:hidden;pointer-events:none}
+@media (max-width:400px){.light-overlay__btn{font-size:.98rem;padding:.9rem 1.6rem}}
+@media (prefers-reduced-motion:reduce){.light-overlay{transition:none}.light-overlay__btn{transition:none}}
+@media print{.light-overlay{display:none}html.lights-off,html.lights-off body{overflow:visible}}
 </style>
 </head>
 <body>

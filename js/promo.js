@@ -55,5 +55,14 @@
   /* A link with a hash is someone on their way to a band, not someone arriving. */
   if (location.hash) return;
   var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* The light switch owns the first frame: the card opens once the veil lifts,
+     never underneath it, where its focus trap would fight the switch. */
+  var gate = document.getElementById("light-overlay");
+  if (gate && !document.documentElement.hasAttribute("data-lights")) {
+    document.addEventListener("lights-on", function () {
+      setTimeout(show, still ? 0 : 420);
+    }, { once: true });
+    return;
+  }
   setTimeout(show, still ? 350 : 900);
 })();

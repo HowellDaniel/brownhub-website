@@ -4862,3 +4862,24 @@ body.promo-open{overflow:hidden}
   .company__plate{height:38px;min-width:38px;max-width:90px;border-radius:9px;padding:0 5px}
   .company__plate img{height:28px}
 }
+
+/* The studio's light switch. Every visit's first page opens black — light mode,
+   dark mode or system, the veil does not care — and the one tap only lifts it.
+   The display mode underneath is already the visitor's own. Once per session. */
+html.lights-off,html.lights-off body{overflow:hidden}
+.light-overlay{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;
+  padding:1.5rem;background:#0b0b0b;transition:opacity .55s ease,visibility .55s ease}
+.light-overlay::before{content:"";position:absolute;width:min(420px,72vw);height:min(420px,72vw);border-radius:50%;
+  background:radial-gradient(circle,rgba(177,125,65,.22),rgba(177,125,65,0) 68%);pointer-events:none}
+.light-overlay__btn{position:relative;display:inline-flex;align-items:center;justify-content:center;
+  padding:1rem 2rem;border-radius:999px;border:1px solid rgba(255,255,255,.16);
+  background:#b17d41;color:#150a05;font-family:inherit;font-weight:700;font-size:1.05rem;line-height:1.2;
+  cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.35),0 18px 55px rgba(177,125,65,.35);
+  transition:transform .2s ease,background-color .2s ease,box-shadow .2s ease}
+.light-overlay__btn:hover{background:#c08b4c;transform:scale(1.04);
+  box-shadow:0 0 0 1px rgba(0,0,0,.35),0 22px 65px rgba(177,125,65,.5)}
+.light-overlay__btn:focus-visible{outline:3px solid #fffbf7;outline-offset:4px}
+.light-overlay.is-lifting{opacity:0;visibility:hidden;pointer-events:none}
+@media (max-width:400px){.light-overlay__btn{font-size:.98rem;padding:.9rem 1.6rem}}
+@media (prefers-reduced-motion:reduce){.light-overlay{transition:none}.light-overlay__btn{transition:none}}
+@media print{.light-overlay{display:none}html.lights-off,html.lights-off body{overflow:visible}}
