@@ -144,7 +144,7 @@
       // never translated, so it can name the service option outright — which is what
       // makes the budget filter line up, since each option carries its own window.
       // Guessing one service for every order used to put a GH₵500 floor under a
-      // GH₵300 banner and hide the studio's own GH₵450 social figure.
+      // printed banner and hide the studio's own GH₵450 social figure.
       const SERVICE_BY_CAT = {
         print: "Flyer & Poster Design",
         banners: "Flyer & Poster Design",
