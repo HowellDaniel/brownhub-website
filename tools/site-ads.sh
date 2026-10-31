@@ -7,8 +7,16 @@
 # same way it keeps the four layout studies.
 #
 # Every word on every creative is already published on brownhub283.com — the hero
-# line, the service names, GH₵300 as the lowest priced service in js/store.js, the
-# WhatsApp line, the domain. No figure is invented for an ad.
+# line, the service names, GH₵300 as the floor the studio's own budget picker opens
+# its design services at (the lowest data-budget-min on contact.html, and the
+# payable Flyers/Posters/Print package in js/store.js), the WhatsApp line, the
+# domain. No figure is invented for an ad, and none is left behind when the site
+# moves: re-read those three sources before a new set goes out.
+#
+# The colours come from the same ramp the site reads from — the two colours the logo
+# is actually drawn in, #EE3338 and #B17D40, stepped to the contrast floor. The kit
+# drifted from that once already, and a creative that disagrees with the page it
+# points at costs the click twice.
 #
 # Sizes are the networks' own standards. Google takes a static image per size at
 # that exact pixel dimension and caps the file at 150 KB; Meta wants the larger
@@ -48,15 +56,26 @@ cat > "$TMP/ad.tpl" <<'TPL'
 @font-face{font-family:"Hanken";src:file://__REPO__/fonts/hanken-grotesk-italic-latin.woff2;format("woff2");font-weight:400 800;font-style:italic;font-display:block}
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:__W__px;height:__H__px;overflow:hidden}
-body{font-family:"Hanken",-apple-system,"Helvetica Neue",sans-serif;background:#1b0b0c;color:#fffbf7;
+/* The kit reads from the same ramp the site reads from, and those are the same
+   numbers: css/style.css declares --brand-red/--brand-gold and the dark ramp's
+   --accent / --accent-2 / --text-muted, and every creative here is an ink band, so
+   it takes the dark values. A colour written twice is a colour that drifts, and
+   this one drifted for exactly one commit — see the header note. */
+:root{--ad-ink:#f2e4de;--ad-muted:#c3a79f;--ad-accent:#f0474c;--ad-gold:#b17d40;
+  --ad-gold-lift:#d8a86a;--ad-brand-red:238,51,56;--ad-brand-gold:177,125,64;
+  --ad-fill:#d62e32;--ad-grad:linear-gradient(135deg,#d62e32 0%,#bb4a2b 54%,#96692f 100%)}
+body{font-family:"Hanken",-apple-system,"Helvetica Neue",sans-serif;background:#1b0b0c;color:var(--ad-ink);
   -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
 
 /* The site's own picture: warm ink, a red aura off to one side, gold for the
-   eyebrow and a red pill for the action. Same order of information as the hero. */
+   eyebrow and a red pill for the action. Same order of information as the hero.
+   The aura's bloom is the mark's own #EE3338 at .55 rather than the old fill red at
+   .62 — the two composite to within five points of red over the ink, so the bloom
+   reads the same strength while the hue comes straight off the logo. */
 .ad{position:relative;width:100%;height:100%;display:flex;flex-direction:column;
   padding:var(--pad);gap:var(--gap);overflow:hidden;
-  background:radial-gradient(120% 130% at var(--aura), rgba(222,42,47,.62) 0%, rgba(222,42,47,0) 58%),
-             radial-gradient(90% 110% at 108% -12%, rgba(177,125,65,.34) 0%, rgba(177,125,65,0) 60%),
+  background:radial-gradient(120% 130% at var(--aura), rgba(var(--ad-brand-red),.55) 0%, rgba(var(--ad-brand-red),0) 58%),
+             radial-gradient(90% 110% at 108% -12%, rgba(var(--ad-brand-gold),.34) 0%, rgba(var(--ad-brand-gold),0) 60%),
              #1b0b0c}
 .ad:after{content:"";position:absolute;inset:0;border:var(--edge) solid rgba(233,214,198,.16);
   border-radius:var(--radius);pointer-events:none}
@@ -64,31 +83,35 @@ body{font-family:"Hanken",-apple-system,"Helvetica Neue",sans-serif;background:#
 .brand{display:flex;align-items:center;gap:var(--brandgap);flex:none}
 .badge{width:var(--badge);height:var(--badge);flex:none;border-radius:22%;background:#fff;
   background-image:url("file://__REPO__/images/logo.png");background-size:cover;background-position:center}
-.wordmark{font-size:var(--word);font-weight:800;letter-spacing:-.02em;line-height:1;color:#fffbf7}
-.wordmark i{font-style:normal;color:#f4545a}
+.wordmark{font-size:var(--word);font-weight:800;letter-spacing:-.02em;line-height:1;color:var(--ad-ink)}
+.wordmark i{font-style:normal;color:var(--ad-accent)}
 
 .head{font-size:var(--head);line-height:1.06;font-weight:800;letter-spacing:-.028em;flex:none}
-.head em{font-style:normal;color:#f4545a}
+.head em{font-style:normal;color:var(--ad-accent)}
 /* The 50px and 90px rails cannot hold a whole sentence, so those two cuts swap in
    the shortest true line the studio has: its published lowest price. */
 .head .tight{display:none}
 html[data-flagged] body{outline:6px solid #00e05a;outline-offset:-6px}
 
 .eyebrow{font-size:var(--eyebrow);font-weight:700;letter-spacing:.11em;text-transform:uppercase;
-  color:#d8a86a;flex:none}
-.list{font-size:var(--list);line-height:var(--listlh);color:#c3a79f;flex:none}
-.price{font-size:var(--price);font-weight:800;letter-spacing:-.02em;color:#fffbf7;flex:none}
-.price s{text-decoration:none;color:#b17d41;font-weight:700}
+  color:var(--ad-gold-lift);flex:none}
+.list{font-size:var(--list);line-height:var(--listlh);color:var(--ad-muted);flex:none}
+.price{font-size:var(--price);font-weight:800;letter-spacing:-.02em;color:var(--ad-ink);flex:none}
+.price s{text-decoration:none;color:var(--ad-gold);font-weight:700}
 
 .foot{margin-top:auto;display:flex;align-items:center;gap:var(--footgap);flex:none}
 /* inline-block, not flex: the label is a span plus a text node and a flex container
    drops the space between them, which reads as "Chat onWhatsApp" at large sizes. */
-.cta{display:inline-block;background:#de2a2f;color:#fff;
+/* The pill takes the site's --grad-brand verbatim, and it can: the fill is opaque, so
+   the type's ground is the gradient and nothing behind it. White on that pair measures
+   4.89 at the red end and 4.82 at the gold end — the site already ships it under
+   .btn--primary, which is the whole point of drawing an ad from the same ramp. */
+.cta{display:inline-block;background:var(--ad-grad);color:#fff;
   font-weight:800;font-size:var(--cta);line-height:1.15;padding:var(--ctapad);border-radius:999px;
-  box-shadow:0 .5em 1.4em -.5em rgba(222,42,47,.7);white-space:nowrap}
-.tel{font-size:var(--tel);color:#c3a79f;font-weight:600;white-space:nowrap}
-.url{font-size:var(--url);font-weight:800;letter-spacing:.01em;color:#fffbf7;white-space:nowrap}
-.url b{color:#f4545a}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 .5em 1.4em -.5em rgba(var(--ad-brand-red),.6);white-space:nowrap}
+.tel{font-size:var(--tel);color:var(--ad-muted);font-weight:600;white-space:nowrap}
+.url{font-size:var(--url);font-weight:800;letter-spacing:.01em;color:var(--ad-ink);white-space:nowrap}
+.url b{color:var(--ad-accent)}
 /* No QR code in any of these, deliberately. Every one of these frames is on a
    screen the viewer is already holding: a click does what a scan would do, and a
    code printed on a monitor is an obstacle rather than an invitation. The scan card
