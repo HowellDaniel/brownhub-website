@@ -5119,3 +5119,158 @@ html:not([data-theme="light"]) .chat-widget__teaser{--glass-fill:rgba(20,8,9,.93
    hero's own near-white ink read 4.26 — the same fill under pure white is 5.28, so
    the pills keep their frost and lose only the pink cast in their type. */
 .hero__card{color:#fff}
+
+/* ==========================================================================
+   THE ROOM HAS LAMPS — DARK MODE ONLY
+
+   Light mode is paper: a lit shape on cream has nowhere to be seen, so every
+   rule below is scoped out of it and none of it has to be unwound there. Dark
+   mode is the studio after hours, and it is the mode the site opens in, so it
+   is the mode that can carry light. Two bulbs only — the mark's own #EE3338 and
+   the wordmark's own #B17D40 — because a light show in a third colour is a
+   party, not a brand.
+
+   Four kinds of light, in the order they meet the eye:
+
+   1. LAMPS. Soft blooms set INTO the shade each colour band already paints
+      (`[data-hold]::before`), rather than on a layer of their own. A second
+      full-band layer is a second thing that can rise above a word, and the
+      shade is the layer the contrast floors were measured through — light
+      added inside it is measured the same way, nothing else moves.
+   2. A SEAM. The top edge of every band is a lit hairline with one glint that
+      travels along it. The pseudo is 2px tall, so what repaints each frame is
+      two pixels by the width of a band, not the band.
+   3. CATCH. The shapes you act on hold light: the primary button, the active
+      nav tab, the assistant's halo, a card under the hand, the rail's lit node.
+   4. THE LIGHT COMING ON. Once per visit, the moment the visitor taps the
+      studio's veil, a warm wash falls from above the fold to below it. It rides
+      `transform` only, and it never runs twice in a session.
+
+   Two brakes. A visitor who asked for less motion keeps every glow but loses
+   the travelling glint, the breathing headline and the arrival wash. A phone
+   keeps the lamps and the hairline but never animates them: fourteen bands each
+   repainting a line while the pocket device is still booting its pinned stage
+   is a cost paid for a decoration.
+   ========================================================================== */
+html:not([data-theme="light"]){
+  --lamp-gold:rgba(var(--brand-gold-rgb),.15);
+  --lamp-red:rgba(var(--brand-red-rgb),.15);
+  --glint:linear-gradient(90deg,rgba(var(--brand-red-rgb),0) 0,rgba(var(--brand-red-rgb),.55) 26%,
+    rgba(var(--brand-gold-rgb),.5) 54%,rgba(233,214,198,.42) 72%,rgba(233,214,198,0) 100%);
+  --lit-hair:linear-gradient(90deg,rgba(233,214,198,.04),rgba(233,214,198,.16) 46%,rgba(233,214,198,.04));
+  --lit-drop:0 0 26px -6px rgba(var(--brand-red-rgb),.62);
+}
+
+/* ---- 1. the lamps, inside the shade ---- */
+/* The bloom the shade already carried (top-right, the accent) keeps its exact
+   value and its exact place; two more lamps join it, one gold at the top-left
+   and one red low on the right, so a band reads as a room lit from two sides
+   rather than a slab with a hotspot. */
+html:not([data-theme="light"]) [data-hold]::before{
+  background:radial-gradient(62% 44% at 84% 2%,rgba(var(--accent-rgb),.16),transparent 66%),
+    radial-gradient(40% 26% at 5% 8%,var(--lamp-gold),transparent 74%),
+    radial-gradient(46% 30% at 96% 66%,var(--lamp-red),transparent 76%),
+    linear-gradient(180deg,rgba(0,0,0,0) 26%,var(--hold-ink) 100%)}
+
+/* ---- 2. the lit seam ---- */
+/* The glint is one layer 44% wide travelling the length of the seam. Its
+   keyframe stops are the two positions that put that layer wholly outside the
+   band at either end: -79% and 179%, because a background position of N% places
+   the N-th point of the image against the N-th point of the box. */
+html:not([data-theme="light"]) :is([data-hold],.site-footer)::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:2px;pointer-events:none;
+  background:var(--glint) 0 0/44% 100% no-repeat,var(--lit-hair) 0 0/100% 100% no-repeat;
+  animation:seam-glint 15s linear infinite}
+@keyframes seam-glint{
+  from{background-position:-79% 0,0 0}
+  to{background-position:179% 0,0 0}}
+/* Three phases, so the bands do not all light at once down the page. */
+html:not([data-theme="light"]) main > [data-hold]:nth-of-type(3n+1)::after{animation-delay:-2s}
+html:not([data-theme="light"]) main > [data-hold]:nth-of-type(3n+2)::after{animation-delay:-7s}
+html:not([data-theme="light"]) main > [data-hold]:nth-of-type(3n)::after{animation-delay:-11.5s}
+
+/* ---- 3. the shapes that catch light ---- */
+/* A primary button is the one place the brand pair is already opaque, so its
+   light goes outward rather than into it. `overflow:hidden` and the sweep share
+   one job: the sweep is a bar of white crossing a pill, and it must not be seen
+   leaving the pill. */
+html:not([data-theme="light"]) .btn--primary{position:relative;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),var(--lit-drop)}
+html:not([data-theme="light"]) .btn--primary::after{content:"";position:absolute;inset:0;
+  pointer-events:none;border-radius:inherit;
+  background:linear-gradient(105deg,rgba(255,255,255,0) 32%,rgba(255,255,255,.46) 50%,rgba(255,255,255,0) 68%);
+  transform:translate3d(-108%,0,0);transition:transform .6s var(--ease-out)}
+html:not([data-theme="light"]) .btn--primary:hover::after,
+html:not([data-theme="light"]) .btn--primary:focus-visible::after{transform:translate3d(108%,0,0)}
+html:not([data-theme="light"]) .btn--primary:hover,
+html:not([data-theme="light"]) .btn--primary:focus-visible{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 34px -4px rgba(var(--brand-red-rgb),.82)}
+
+/* Cards lift a pool of red under themselves; the catalog's product cards are
+   deliberately not in this list — the owner took a moving light off them once
+   already, and a picture that lights itself up on hover competes with the
+   picture. */
+html:not([data-theme="light"]) :is(.card,.feature,.collection,.kpi,.panel,.contact-info__card,
+  .map-card,.catalog-cta,.rail-card):hover{
+  box-shadow:var(--t-shadow),0 0 30px -8px rgba(var(--brand-red-rgb),.44)}
+
+/* The nav's lit tab and the scroll rule under it. */
+html:not([data-theme="light"]) .nav__link--active::after{box-shadow:0 4px 13px -1px rgba(var(--brand-red-rgb),.85)}
+html:not([data-theme="light"]) .nav__link:hover::after{box-shadow:0 4px 11px -2px rgba(var(--brand-red-rgb),.6)}
+html:not([data-theme="light"]) .nav__progress{box-shadow:0 0 12px rgba(var(--brand-red-rgb),.5)}
+html:not([data-theme="light"]) .site-header.is-glass-scrolled{
+  box-shadow:0 1px 0 rgba(var(--brand-red-rgb),.34),0 14px 34px -22px rgba(0,0,0,.9)}
+
+/* The assistant's halo is already breathing; it only gets a stronger bulb. */
+html:not([data-theme="light"]) .chat-widget__toggle::before{
+  background:radial-gradient(closest-side,rgba(var(--accent-rgb),.6),rgba(var(--accent-rgb),0) 76%)}
+
+/* The story rail's lit node, and the three controls whose outline is the only
+   thing standing between a keyboard visitor and a lost one. */
+html:not([data-theme="light"]) .story-rail__btn[data-active="true"] .story-rail__dot{
+  box-shadow:0 0 0 3px rgba(var(--accent-rgb),.16),0 0 16px rgba(var(--brand-red-rgb),.6)}
+html:not([data-theme="light"]) :is(.product-card,.shot,.filter__btn):focus-visible{
+  box-shadow:0 0 0 6px rgba(var(--brand-red-rgb),.2)}
+
+/* ---- 4. type that gives off light ---- */
+/* Only the words already set in a brand colour, and the display figures. The
+   shadow sits behind the glyph, so it lifts the ground the letter stands on:
+   every one of these is display or large type, where the floor is 3:1, and the
+   alpha is capped so the lift never reaches a point where body copy is judged
+   at 4.5. */
+html:not([data-theme="light"]) .text-accent{text-shadow:0 0 22px rgba(var(--accent-rgb),.42)}
+html:not([data-theme="light"]) :is(.eyebrow,.hero__eyebrow){text-shadow:0 0 18px rgba(var(--accent-2-rgb),.3)}
+html:not([data-theme="light"]) .kpi__num{text-shadow:0 0 28px rgba(var(--brand-red-rgb),.3)}
+html:not([data-theme="light"]) .hero .text-accent{animation:lamp-breathe 9s ease-in-out infinite alternate}
+@keyframes lamp-breathe{
+  from{text-shadow:0 0 18px rgba(var(--accent-rgb),.3)}
+  to{text-shadow:0 0 30px rgba(var(--accent-rgb),.55)}}
+
+/* ---- 5. the light coming on ---- */
+/* `html[data-lights="on"]` is set once, by js/lights.js, on the one page of a
+   visit where the veil was actually lifted — so this is once per visit, not
+   once per page. It starts wholly above the fold and ends wholly below it; the
+   9991 puts it under the welcome card, which opens on the same event and should
+   not be washed by the lamp that announced it. */
+html:not([data-theme="light"])[data-lights="on"] body::after{content:"";position:fixed;
+  left:0;right:0;top:-46vh;height:46vh;z-index:9991;pointer-events:none;
+  background:linear-gradient(180deg,rgba(var(--brand-red-rgb),0) 0%,rgba(var(--brand-red-rgb),.13) 40%,
+    rgba(var(--brand-gold-rgb),.13) 58%,rgba(233,214,198,.08) 76%,rgba(233,214,198,0) 100%);
+  animation:lights-up 1.45s cubic-bezier(.2,.62,.34,1) forwards}
+@keyframes lights-up{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,190vh,0)}}
+
+@media (max-width:900px){
+  html:not([data-theme="light"]) :is([data-hold],.site-footer)::after{
+    animation:none;background-position:-79% 0,0 0}
+}
+@media (prefers-reduced-motion:reduce){
+  html:not([data-theme="light"]) :is([data-hold],.site-footer)::after{
+    animation:none;background-position:28% 0,0 0}
+  html:not([data-theme="light"]) .hero .text-accent{animation:none}
+  html:not([data-theme="light"]) .btn--primary::after{display:none}
+  html:not([data-theme="light"])[data-lights="on"] body::after{display:none}
+}
+@media print{
+  html:not([data-theme="light"]) :is([data-hold],.site-footer)::after,
+  html:not([data-theme="light"])[data-lights="on"] body::after{display:none}
+}
