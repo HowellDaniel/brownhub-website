@@ -5274,3 +5274,19 @@ html:not([data-theme="light"])[data-lights="on"] body::after{content:"";position
   html:not([data-theme="light"]) :is([data-hold],.site-footer)::after,
   html:not([data-theme="light"])[data-lights="on"] body::after{display:none}
 }
+
+/* ---- the policy prose, justified ----
+   Both edges true is how a legal document reads, so the paragraphs the studio makes
+   promises in are justified: the `.legal` block on Privacy, Security and Terms, and
+   the two paragraph styles in the Cookie preferences panel. `hyphens` belongs to
+   that decision rather than sitting beside it — justify stretches spaces to fill the
+   line, and in a 46rem column with no hyphenation that leaves gaps wide enough to
+   look like table cells. It only works because every page carries a real lang. */
+.legal p,
+.cookie-modal__intro,
+.cookie-cat__desc{
+  text-align:justify;
+  text-justify:inter-word;
+  -webkit-hyphens:auto;
+  hyphens:auto;
+}
