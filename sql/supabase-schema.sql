@@ -41,7 +41,13 @@ create policy "clients insert own requests"
 -- No UPDATE or DELETE policy on purpose: clients cannot edit or erase their history.
 -- You change a client's status later from the Supabase dashboard (Table editor -> requests).
 
+/* Supabase grants every new public table ALL PRIVILEGES to anon and authenticated by
+   default, and RLS only gates SELECT/INSERT/UPDATE/DELETE — TRUNCATE is answered by the
+   privilege alone, with no policy in the way. So the grants themselves are trimmed to
+   exactly what each role does, and a signed-in client is left with read and write of
+   its own rows and nothing else. */
 revoke all on table public.requests from anon;
+revoke truncate, update, delete, references, trigger on table public.requests from authenticated;
 grant select, insert on table public.requests to authenticated;
 
 -- ---------------------------------------------------------------------------
@@ -69,23 +75,91 @@ create index if not exists chat_logs_created_idx
 
 alter table public.chat_logs enable row level security;
 
--- Write a transcript, with the sizes the page itself already caps at.
+/* A transcript, shape-checked rather than merely length-checked: the id the page mints,
+   a path on this site, a two-letter language, and the sizes the page itself caps at.
+   A stranger holding the publishable key can still file a row — that is the design —
+   but not one that is not in the form the page writes. */
 drop policy if exists "chat transcripts are write only" on public.chat_logs;
 create policy "chat transcripts are write only"
   on public.chat_logs for insert
   to anon
   with check (
-    length(visitor_id) between 1 and 40
+    visitor_id ~ '^[A-Za-z0-9_-]{8,40}$'
     and length(question) between 1 and 500
     and length(answer) <= 2000
-    and length(page) <= 200
-    and length(lang) <= 8
+    and (page = '' or page ~ '^/[A-Za-z0-9._/-]{0,199}$')
+    and lang ~ '^[A-Za-z][A-Za-z-]{1,7}$'
   );
 
 -- insert only, to anon only: the key a visitor's browser holds can file a row and
--- cannot select, update or delete one.
-revoke all on table public.chat_logs from anon;
+-- cannot select, update, delete or empty the table.
+revoke all on table public.chat_logs from anon, authenticated;
 grant insert on table public.chat_logs to anon;
+
+-- ---------------------------------------------------------------------------
+-- Bounded writes: the one thing a shape check cannot do is limit *how many* rows
+-- arrive, and an anonymous write endpoint that no one throttles is a slow-motion
+-- way to fill a free-tier database. The counter below is the throttle.
+--
+-- It cannot live in the policy: a policy that counted recent rows would run as anon,
+-- which has no SELECT policy on this table, so it would always see zero and always
+-- pass. It lives in a trigger instead, and the trigger function is SECURITY DEFINER,
+-- so its own read of the counter runs as the table owner and sees the real number.
+--
+-- A refused insert aborts its whole statement, including the increment it just made,
+-- which is why the counter sits at the cap rather than running away past it: the limit
+-- is a wall, not a speed bump. Proved on 2026-10-31 by setting the counter to the cap
+-- and putting a real row at it — 400 "chat archive is at its daily limit", and the
+-- counter had not moved.
+
+create table if not exists public.rate_counters (
+  key        text primary key,
+  day        date not null default current_date,
+  today      integer not null default 0,
+  total      integer not null default 0,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.rate_counters enable row level security;
+revoke all on table public.rate_counters from anon, authenticated;
+
+-- One atomic step: take a credit, tell the caller whether it is inside the cap.
+-- The upsert is the locking; two concurrent writers cannot both read the old number.
+create or replace function public.rate_take(p_key text, p_daily integer)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare n int; tot int;
+begin
+  insert into public.rate_counters (key, day, today, total, updated_at)
+  values (p_key, current_date, 1, 1, now())
+  on conflict (key) do update
+     set today = case when public.rate_counters.day = current_date
+                      then public.rate_counters.today + 1 else 1 end,
+         day = current_date,
+         total = public.rate_counters.total + 1,
+         updated_at = now()
+  returning today, total into n, tot;
+  return jsonb_build_object('ok', n <= p_daily, 'today', n, 'total', tot);
+end $$;
+
+create or replace function public.chat_log_capacity() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare used jsonb;
+begin
+  used := public.rate_take('chat_rows', 1000);
+  if (used ->> 'today')::int > 1000 then raise exception 'chat archive is at its daily limit'; end if;
+  if (used ->> 'total')::int > 20000 then raise exception 'chat archive is full'; end if;
+  return new;
+end $$;
+
+-- Neither function is callable from the site: the trigger runs as the owner, and an
+-- Edge Function that holds the service key is the only outside caller rate_take has.
+revoke all on function public.rate_take(text, integer) from public, anon, authenticated;
+revoke all on function public.chat_log_capacity() from public, anon, authenticated;
+grant execute on function public.rate_take(text, integer) to service_role;
+
+drop trigger if exists chat_log_capacity on public.chat_logs;
+create trigger chat_log_capacity before insert on public.chat_logs
+  for each statement execute function public.chat_log_capacity();
 
 -- Run this last to confirm it worked; it should print both tables with their policies.
 select to_regclass('public.requests') AS requests,

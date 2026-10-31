@@ -1,4 +1,21 @@
 (() => {
+  /* The service worker is what normally refuses to let this site be framed. But it
+     can only rewrite headers once it is installed, and GitHub Pages answers with no
+     security headers at all, so a visitor's very first load — and any load in a
+     private window — arrives with nothing between an attacker's iframe and the
+     sign-in panel or the contact form. This is that missing piece, and it is here
+     rather than in its own file because this one already runs before the first
+     frame is painted on every page. */
+  if (self !== top) {
+    // Ask to be let out first; a frame that is *allowed* to navigate its parent
+    // gets the whole site instead of a hollow one.
+    try { top.location.href = self.location.href; } catch (e) {}
+    // A sandboxed parent ignores the navigation above without throwing, and by the
+    // time this file has run the parser has opened <html> but painted nothing, so
+    // the refused case never shows a flash of the real page.
+    document.documentElement.style.display = "none";
+  }
+
   const KEY = "brownhub-theme";
   const MODES = ["light", "dark", "system"];
   const root = document.documentElement;
