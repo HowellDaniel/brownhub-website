@@ -28,18 +28,20 @@
    here from search still sees BrownHub, not a second brand. */
 :root{
   --bg:#1b0b0c; --bg-alt:#26100f; --surface:#331517; --border:#4d2726;
-  --text:#f2e4de; --text-muted:#c3a79f; --accent:#f4545a; --accent-fill:#de2a2f;
-  --accent-2:#b17d41; --radius:14px; --max-w:1140px;
-  --accent-rgb:244,84,90; --accent-2-rgb:177,125,65;
-  --accent-fill-d:#c8232a; --header:rgba(27,11,12,.85);
+  --text:#f2e4de; --text-muted:#c3a79f; --accent:#f0474c; --accent-fill:#d62e32;
+  --accent-ink:#f57b81;
+  --accent-2:#b17d40; --radius:14px; --max-w:1140px;
+  --accent-rgb:240,71,76; --accent-2-rgb:177,125,64;
+  --accent-fill-d:#c0262c; --header:rgba(27,11,12,.85);
   --shadow:0 10px 30px rgba(0,0,0,.35);
 }
 html[data-theme="light"]{
-  --bg:#fffbf7; --bg-alt:#f8efe7; --surface:#ffffff; --border:#e9d6c6;
-  --text:#26100f; --text-muted:#6e5248; --accent:#c82027; --accent-fill:#c82027;
-  --accent-2:#8a5e28;
-  --accent-rgb:200,32,39; --accent-2-rgb:138,94,40;
-  --accent-fill-d:#a8181f; --header:rgba(255,251,247,.88);
+  --bg:#fffbf7; --bg-alt:#f7ebdf; --surface:#ffffff; --border:#e9d6c6;
+  --text:#26100f; --text-muted:#6e5248; --accent:#ca2b30; --accent-fill:#d12c31;
+  --accent-ink:#b3262a;
+  --accent-2:#8c6333;
+  --accent-rgb:202,43,48; --accent-2-rgb:140,99,51;
+  --accent-fill-d:#b3262a; --header:rgba(255,251,247,.86);
   --shadow:0 10px 30px rgba(38,16,15,.08);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -75,7 +77,7 @@ h2{font-size:1.35rem;letter-spacing:-.02em;margin-bottom:.3rem}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;box-shadow:var(--shadow)}
 .card h3{font-size:1rem;margin-bottom:.35rem}
 .card p{color:var(--text-muted);font-size:.9rem}
-.card .n{display:inline-grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;background:rgba(var(--accent-rgb),.12);color:var(--accent);font-size:.8rem;font-weight:700;margin-bottom:.6rem}
+.card .n{display:inline-grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;background:rgba(var(--accent-rgb),.12);color:var(--accent-ink);font-size:.8rem;font-weight:700;margin-bottom:.6rem}
 .app-band{background:linear-gradient(150deg,rgba(var(--accent-rgb),.12),rgba(var(--accent-2-rgb),.12));border:1px solid var(--border);border-radius:calc(var(--radius) + 4px);padding:1.5rem;display:grid;gap:1rem;grid-template-columns:1.4fr auto;align-items:center}
 .app-band h2{margin-bottom:.2rem}
 .app-band p{color:var(--text-muted);font-size:.94rem}
@@ -97,14 +99,14 @@ html.lights-off,html.lights-off body{overflow:hidden}
 .light-overlay{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;
   padding:1.5rem;background:#0b0b0b;transition:opacity .55s ease,visibility .55s ease}
 .light-overlay::before{content:"";position:absolute;width:min(420px,72vw);height:min(420px,72vw);border-radius:50%;
-  background:radial-gradient(circle,rgba(177,125,65,.22),rgba(177,125,65,0) 68%);pointer-events:none}
+  background:radial-gradient(circle,rgba(177,125,64,.22),rgba(177,125,64,0) 68%);pointer-events:none}
 .light-overlay__btn{position:relative;display:inline-flex;align-items:center;justify-content:center;
   padding:1rem 2rem;border-radius:999px;border:1px solid rgba(255,255,255,.16);
-  background:#b17d41;color:#150a05;font-family:inherit;font-weight:700;font-size:1.05rem;line-height:1.2;
-  cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.35),0 18px 55px rgba(177,125,65,.35);
+  background-image:linear-gradient(135deg,#c19766 0%,#b17d40 100%);color:#150a05;font-family:inherit;font-weight:700;font-size:1.05rem;line-height:1.2;
+  cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.35),0 18px 55px rgba(177,125,64,.35);
   transition:transform .2s ease,background-color .2s ease,box-shadow .2s ease}
-.light-overlay__btn:hover{background:#c08b4c;transform:scale(1.04);
-  box-shadow:0 0 0 1px rgba(0,0,0,.35),0 22px 65px rgba(177,125,65,.5)}
+.light-overlay__btn:hover{background-image:linear-gradient(135deg,#cba375,#b98a53);transform:scale(1.04);
+  box-shadow:0 0 0 1px rgba(0,0,0,.35),0 22px 65px rgba(177,125,64,.5)}
 .light-overlay__btn:focus-visible{outline:3px solid #fffbf7;outline-offset:4px}
 .light-overlay.is-lifting{opacity:0;visibility:hidden;pointer-events:none}
 @media (max-width:400px){.light-overlay__btn{font-size:.98rem;padding:.9rem 1.6rem}}

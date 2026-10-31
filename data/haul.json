@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-28",
+  "updated": "2026-10-31",
   "parent": {
     "name": "BrownHub",
     "displayName": "BrownHub Studio",
@@ -17,9 +17,9 @@
     "border": "#e9d6c6",
     "text": "#26100f",
     "text-muted": "#6e5248",
-    "accent": "#c82027",
-    "accent-fill-hover": "#a8181f",
-    "accent-2": "#8a5e28",
+    "accent": "#ca2b30",
+    "accent-fill-hover": "#b3262a",
+    "accent-2": "#8c6333",
     "radius": "14px"
   },
   "studio": {

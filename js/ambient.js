@@ -58,8 +58,8 @@
         if (!p.r) p.r = 0.9 + Math.random() * 1.5;
       });
 
-      dot = mixer(root, cv.dataset.pt ? "--" + cv.dataset.pt + "-rgb" : "--accent-rgb", "244,84,90");
-      line = mixer(root, cv.dataset.ptLine ? "--" + cv.dataset.ptLine + "-rgb" : "--accent-2-rgb", "177,125,65");
+      dot = mixer(root, cv.dataset.pt ? "--" + cv.dataset.pt + "-rgb" : "--accent-rgb", "240,71,76");
+      line = mixer(root, cv.dataset.ptLine ? "--" + cv.dataset.ptLine + "-rgb" : "--accent-2-rgb", "177,125,64");
     }
 
     function paint(static_only, cx, cy) {
