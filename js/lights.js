@@ -1,14 +1,32 @@
 /* The studio's light switch.
-   Every visit opens black, first one or not — in light mode, dark mode or system,
-   the veil does not care — and one tap lifts it onto whatever display mode the
-   visitor already has. It is inline and blocking on purpose: the veil has to be
-   in the first frame, or the page flashes through before it goes dark. */
+   Each arrival opens black — in light mode, dark mode or system the veil does not
+   care — and one tap lifts it onto whatever display mode the visitor already has.
+   It is inline and blocking on purpose: the veil has to be in the first frame, or
+   the page flashes through before it goes dark.
+
+   An arrival is a fresh visit, not every page: the clock is kept in this tab's
+   own session, so walking from Home to Catalog stays lit, while coming back after
+   half an hour away — or opening the site in a new tab — finds the room dark
+   again. Nothing is written that outlives the tab. */
 (function () {
   "use strict";
 
+  var KEY = "lights-last-seen";
+  var AWAY = 30 * 60 * 1000;
   var root = document.documentElement;
   var media = window.matchMedia("(prefers-reduced-motion: reduce)");
   var overlay, button, down = false;
+
+  function arrived() {
+    var now = Date.now(), last = 0;
+    try {
+      last = Number(sessionStorage.getItem(KEY)) || 0;
+      sessionStorage.setItem(KEY, String(now));
+    } catch (e) { return true; }
+    return !last || now - last > AWAY;
+  }
+
+  if (!arrived()) return;
 
   overlay = document.createElement("div");
   overlay.id = "light-overlay";
