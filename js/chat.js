@@ -672,6 +672,9 @@
     stopCues();
     markSeen();
     panel.hidden = false;
+    // A saved place from a bigger screen is brought inside this one before the frame
+    // is painted, so the panel is never seen arriving.
+    paneSet(paneX, paneY);
     toggle.setAttribute("aria-expanded", "true");
     if (!greeted) {
       greeted = true;
@@ -704,6 +707,141 @@
     send(input.value);
     input.value = "";
   });
+
+  // ---- The panel can be pulled off the corner --------------------------------------
+  // It is screwed to the bottom right, which is exactly where a visitor wants it up
+  // to the moment it stands over the picture or the price they came for. Pressing the
+  // bar across the top of the panel — or the little rail cut into its left edge — and
+  // dragging walks the conversation away from the edge, and it is still there when
+  // they come back. Only the panel moves. The round button stays parked because the
+  // bottom queue measures the room the page must keep clear by it: a button that
+  // drifts up the screen would take a band of the layout with it.
+  // Both offsets are never positive, so the corner is the far wall: nothing can be
+  // shoved past it into the half of the screen nobody can reach.
+  const PANE_KEY = "brownhub-pane-pos";
+  const PAD = 12;    // never nearer than this to any edge of the screen
+  const NUDGE = 24;  // one keystroke on the rail
+  let paneX = 0, paneY = 0;
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(PANE_KEY) || "null");
+    if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
+      paneX = Math.min(saved.x, 0);
+      paneY = Math.min(saved.y, 0);
+    }
+  } catch (e) {}
+
+  function panePaint() {
+    panel.style.setProperty("--pane-x", paneX + "px");
+    panel.style.setProperty("--pane-y", paneY + "px");
+  }
+
+  function paneStore() {
+    try {
+      if (!paneX && !paneY) localStorage.removeItem(PANE_KEY);
+      else localStorage.setItem(PANE_KEY, JSON.stringify({ x: paneX, y: paneY }));
+    } catch (e) {}
+  }
+
+  // The painted rectangle is the untouched one plus the current offset, so the
+  // offset subtracted back gives the place the panel would have been on its own —
+  // which is what the clamp is measured against. That reading only holds of a box
+  // already wearing the offsets it is subtracted by, so they are put on first: a
+  // freshly opened panel wears none, and measuring it straight would count the saved
+  // offset twice and let a place from a bigger screen through. Painting to measure
+  // costs no frame — the clamp and its repaint land in the same task, so what is ever
+  // drawn is the clamped result.
+  // Only ever called while the panel is on screen: a hidden one reports nothing.
+  function paneLimits() {
+    panePaint();
+    const r = panel.getBoundingClientRect();
+    const left = r.left - paneX;
+    const top = r.top - paneY;
+    return {
+      xMin: PAD - left,
+      xMax: Math.min(0, document.documentElement.clientWidth - PAD - (left + r.width)),
+      yMin: PAD - top,
+      yMax: Math.min(0, document.documentElement.clientHeight - PAD - (top + r.height)),
+    };
+  }
+
+  function paneSet(nx, ny) {
+    if (panel.hidden) return;
+    const l = paneLimits();
+    paneX = Math.min(Math.max(nx, l.xMin), Math.max(l.xMax, l.xMin));
+    paneY = Math.min(Math.max(ny, l.yMin), Math.max(l.yMax, l.yMin));
+    panePaint();
+  }
+
+  const grip = document.createElement("span");
+  grip.className = "chat-widget__grip";
+  grip.setAttribute("role", "button");
+  grip.setAttribute("tabindex", "0");
+  // Three short rules cut into the panel's own edge — the same mark a drawer handle
+  // wears, and it costs the headroom no width.
+  grip.innerHTML = '<svg viewBox="0 0 8 20" aria-hidden="true" focusable="false">' +
+    '<path d="M1 3h6M1 10h6M1 17h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  head.insertBefore(grip, head.firstChild);
+
+  function paneLabel() {
+    const label = T("Move the chat box");
+    grip.setAttribute("aria-label", label);
+    grip.title = label;
+  }
+  paneLabel();
+  document.addEventListener("i18n-applied", paneLabel);
+
+  grip.addEventListener("keydown", (e) => {
+    const step = e.shiftKey ? NUDGE * 4 : NUDGE;
+    if (e.key === "ArrowLeft") paneSet(paneX - step, paneY);
+    else if (e.key === "ArrowRight") paneSet(paneX + step, paneY);
+    else if (e.key === "ArrowUp") paneSet(paneX, paneY - step);
+    else if (e.key === "ArrowDown") paneSet(paneX, paneY + step);
+    else return;
+    // The keys are the physical directions, even right to left: the box goes where
+    // the arrow points, not where the writing runs.
+    e.preventDefault();
+    paneStore();
+  });
+
+  function startDrag(e) {
+    // Anything you can press inside the bar keeps its own press: the close cross and
+    // the four header tools still answer to a click, and one pull still moves the box.
+    if (e.target.closest("button, a, input, textarea, select")) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (panel.hidden) return;
+    const l = paneLimits();
+    const px = e.clientX, py = e.clientY, ox = paneX, oy = paneY;
+    let moved = false;
+    function move(ev) {
+      const dx = ev.clientX - px, dy = ev.clientY - py;
+      // Six pixels short of a drag is a hand settling on the bar, not a pull.
+      if (!moved && Math.abs(dx) + Math.abs(dy) < 6) return;
+      moved = true;
+      ev.preventDefault();
+      paneX = Math.min(Math.max(ox + dx, l.xMin), l.xMax);
+      paneY = Math.min(Math.max(oy + dy, l.yMin), l.yMax);
+      panePaint();
+    }
+    function end() {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", end);
+      window.removeEventListener("pointercancel", end);
+      if (moved) paneStore();
+    }
+    window.addEventListener("pointermove", move, { passive: false });
+    window.addEventListener("pointerup", end);
+    window.addEventListener("pointercancel", end);
+  }
+
+  // The bar is the handle, and the rail at its edge is the same handle drawn where a
+  // visitor can see there is something to hold: one listener, because the rail lives
+  // in the bar and a second would pull the box twice as fast as the pointer.
+  head.addEventListener("pointerdown", startDrag);
+  // A narrower window, a keyboard opened, a phone turned upright: the box is pulled
+  // back inside the screen rather than left half off it.
+  window.addEventListener("resize", () => paneSet(paneX, paneY), { passive: true });
+  window.addEventListener("orientationchange", () => paneSet(paneX, paneY), { passive: true });
 
   // ---- It asks first, the way a front desk does ------------------------------------
   // Once per visit the assistant puts a line beside its own icon with three quick
