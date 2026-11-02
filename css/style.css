@@ -5359,17 +5359,24 @@ html:not([data-theme="light"])[data-lights="on"] body::after{content:"";position
   .light-load__arc{animation:none}
 }
 
-/* ---- the room is a lit maroon, and it leaves slowly ----
-   The veil was a neutral charcoal, which is a colour the studio never uses. It is
-   the brand's own dark red now — the room reads as already warm rather than empty,
-   which is what a light switch should leave behind on its way out.
-   The lift is no longer a snap. The old .55s fade cleared the page before the eye
-   had settled on it; the room now goes over 1.7s on a curve that starts and ends
+/* ---- two grounds: the room dark, then the room lit ----
+   The switch is thrown into a black room — that is what lights-off means — and the
+   moment it is thrown the room fills with the brand's own lit red, because the
+   loading happens with the light on. The step is the whole story: measured off the
+   rendered picture, the lit ground carries 6.25 times the light of the dark one, so
+   the tap is followed by a brightening the eye reads before it reads a number.
+   The colour travels over .9s so the room comes up rather than snapping on, and the
+   veil keeps the lit ground while it fades, so the page arrives out of a lit room.
+   The dark ground is the single base declaration above (#0b0b0b) and is not repeated
+   here — one writer per state.
+   What stays is the lift. The old .55s fade cleared the page before the eye had
+   settled on it; the room now goes over 1.7s on a curve that starts and ends
    gently, which is long enough to read as the picture arriving rather
    than as a switch being thrown — and it ends level with the lamp wash that
    rides down the screen on the same event. */
-.light-overlay{background:#441b1b;
-  transition:opacity 1.7s cubic-bezier(.42,0,.58,1),visibility 1.7s ease}
+.light-overlay{transition:opacity 1.7s cubic-bezier(.42,0,.58,1),visibility 1.7s ease,
+  background-color .9s ease}
+.light-overlay.is-lit{background:#441b1b}
 /* The ring gives way before the veil does, so the last thing on the black is the
    page coming up behind it rather than machinery winding down. */
 .light-load{transition:opacity .5s ease}

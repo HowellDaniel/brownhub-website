@@ -1,8 +1,10 @@
 /* The studio's light switch.
    Each arrival opens black — in light mode, dark mode or system the veil does not
-   care — and one tap lifts it onto whatever display mode the visitor already has.
-   It is inline and blocking on purpose: the veil has to be in the first frame, or
-   the page flashes through before it goes dark.
+   care — and one tap lights the room before it lifts it onto whatever display mode
+   the visitor already has. The dark ground is the switch waiting; the lit ground is
+   the loading, because by then the light is on. It is inline and blocking on
+   purpose: the veil has to be in the first frame, or the page flashes through
+   before it goes dark.
 
    An arrival is a fresh visit, not every page: the clock is kept in this tab's
    own session, so walking from Home to Catalog stays lit, while coming back after
@@ -59,6 +61,10 @@
     // dialog is left with nothing focused.
     overlay.focus({ preventScroll: true });
     overlay.removeChild(button);
+    // The switch has been thrown, so the room stops being dark. The class is added
+    // before the box goes in, so the first frame of the loading is already the
+    // brighter one and the brightening is the light coming on, not a repaint.
+    overlay.classList.add("is-lit");
 
     var box = document.createElement("div");
     box.className = "light-load";
