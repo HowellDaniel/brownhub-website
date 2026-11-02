@@ -3,7 +3,13 @@
 # history line, an argv vector, a log or this terminal.
 #
 #   printf '%s' 'new-key' | tools/rotate-secret.sh GEMINI_API_KEY
-#   tools/rotate-secret.sh ARKESEL_API_KEY < /path/to/file/holding/the/key
+#   tools/rotate-secret.sh ARKSEL_API_KEY < /path/to/file/holding/the/key
+#
+# The names are the ones the functions read, so copy them from there and not from
+# memory: send-sms wants ARKSEL_API_KEY (one L, not "ARKESEL") and ARKSEL_SENDER,
+# brownhub-assistant wants GEMINI_API_KEY. A write to any other name lands in the
+# store, shows in --check, and is read by nothing — the old key keeps working and
+# the rotation looks like it succeeded.
 #
 # The owner regenerates the key in the vendor's own dashboard; this only moves the
 # replacement into Supabase. Read-only listing: tools/rotate-secret.sh --check
