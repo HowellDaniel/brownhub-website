@@ -5400,3 +5400,205 @@ html:not([data-theme="light"])[data-lights="on"] body::after{content:"";position
 .chat-widget__grip:hover,.chat-widget__grip:focus-visible{opacity:1;color:var(--accent)}
 .chat-widget__grip:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .chat-widget__grip svg{width:8px;height:20px;display:block}
+
+/* ==========================================================================
+   THE LIGHT MODE'S OWN CATCH OF LIGHT
+
+   The sheet above built its whole atmosphere behind one gate —
+   `html:not([data-theme="light"])` — so every lamp, seam, sweep and glow was a
+   dark-theme privilege. Measured on the rendered page in Light: the band seam
+   reports `content:none`, the primary pill's sweep reports `none`, and every
+   text-shadow reports `none`. A visitor who chooses Light is not reading a lit
+   room, they are reading a page with nothing in it.
+
+   The gate was wrong in two directions, and the fix splits by GROUND instead of
+   by theme.
+
+   1. Five families paint themselves with ink whatever the mode is. `.hero`,
+      `.cta`, `.band--ink`, `.band--exp` and `.site-footer` all measure
+      rgb(27,11,12) with cream text on top while the theme says Light. They are
+      dark rooms inside a light theme, and they were being refused their lamps and
+      their glint because of a decision taken on `<html>` three ancestors away.
+   2. The paper grounds — ivory rgb(255,251,247) and parchment rgb(247,235,223) —
+      could not have taken those effects anyway. White on ivory is invisible, and
+      a glow behind dark ink is not light, it is dirt. What makes an object
+      legible on paper is the opposite of what makes one legible in the dark: the
+      shadow it throws, and the light along its top edge.
+
+   So Light gets two layers at once. The ink rooms are handed back the dark
+   theme's exact effects, re-declared on the elements that are actually ink. The
+   paper gets its own: a seam that is a cast shadow with warm gold travelling
+   along it, cards lifted off the page on a soft pool under a lit edge, the
+   primary pill carrying a specular sweep, display words set in the brand's own
+   gradient, and a sunrise falling down the arrival where the dark theme answers
+   with a lamp.
+
+   Every colour is measured against the ground it will sit on. The gradient's
+   three stops clear ivory at 4.96 / 5.28 / 5.17 and the deepest parchment at
+   4.06 / 4.32 / 4.23, so the display type passes AA as BODY copy and is not
+   merely passing as display. Gold (#b17d40) measures 3.47 on ivory, so it is
+   used on edges and seams and never on a word.
+
+   The two brakes are copied to every new rule rather than inherited: a phone
+   keeps the depth and the seam but never animates the glint, and a visitor who
+   asked for less motion keeps the pools, the edges and the gradient and loses
+   the travelling light, the breathing headline and the arrival wash.
+   ========================================================================== */
+
+/* ---- the tokens, split by ground ---- */
+html[data-theme="light"]{
+  --paper-hair:linear-gradient(90deg,rgba(38,16,15,0),rgba(38,16,15,.13) 46%,rgba(38,16,15,0));
+  --paper-glint:linear-gradient(90deg,rgba(177,125,64,0) 0,rgba(177,125,64,.52) 24%,
+    rgba(224,186,124,.74) 46%,rgba(202,43,48,.40) 70%,rgba(202,43,48,0) 100%);
+  --pool:0 10px 22px -12px rgba(38,16,15,.26);
+  --pool-lift:0 24px 42px -18px rgba(38,16,15,.40);
+  --edge-lit:inset 0 1px 0 rgba(255,255,255,.95);
+  --lamp-gold-p:rgba(var(--brand-gold-rgb),.15);
+  --lamp-red-p:rgba(var(--brand-red-rgb),.11);
+}
+
+/* The ink families keep the dark room's own values, so the rules that already
+   read these names need no new copy — the tokens simply exist again here. */
+html[data-theme="light"] :is(.hero,.cta,.band--ink,.band--exp,.site-footer){
+  --lamp-gold:rgba(var(--brand-gold-rgb),.15);
+  --lamp-red:rgba(var(--brand-red-rgb),.15);
+  --glint:linear-gradient(90deg,rgba(var(--brand-red-rgb),0) 0,rgba(var(--brand-red-rgb),.55) 26%,
+    rgba(var(--brand-gold-rgb),.5) 54%,rgba(233,214,198,.42) 72%,rgba(233,214,198,0) 100%);
+  --lit-hair:linear-gradient(90deg,rgba(233,214,198,.04),rgba(233,214,198,.16) 46%,rgba(233,214,198,.04));
+  --lit-drop:0 0 26px -6px rgba(var(--brand-red-rgb),.62);
+}
+
+/* ---- 1. the ink rooms inside Light, given back what Dark already had ---- */
+html[data-theme="light"] :is(.cta,.band--ink,.band--exp)[data-hold]::before{
+  background:radial-gradient(62% 44% at 84% 2%,rgba(var(--accent-rgb),.16),transparent 66%),
+    radial-gradient(40% 26% at 5% 8%,var(--lamp-gold),transparent 74%),
+    radial-gradient(46% 30% at 96% 66%,var(--lamp-red),transparent 76%),
+    linear-gradient(180deg,rgba(0,0,0,0) 26%,var(--hold-ink) 100%)}
+
+html[data-theme="light"] :is(.cta,.band--ink,.band--exp)[data-hold]::after,
+html[data-theme="light"] .site-footer::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:2px;pointer-events:none;
+  background:var(--glint) 0 0/44% 100% no-repeat,var(--lit-hair) 0 0/100% 100% no-repeat;
+  animation:seam-glint 15s linear infinite}
+
+html[data-theme="light"] .hero .text-accent{text-shadow:0 0 22px rgba(var(--accent-rgb),.42);
+  animation:lamp-breathe 9s ease-in-out infinite alternate}
+html[data-theme="light"] :is(.cta,.band--ink,.band--exp) .text-accent{text-shadow:0 0 22px rgba(var(--accent-rgb),.42)}
+html[data-theme="light"] :is(.cta,.band--ink,.band--exp,.site-footer) .kpi__num{text-shadow:0 0 28px rgba(var(--brand-red-rgb),.3)}
+
+/* ---- 2. the paper: a seam that is a shadow, with the sun along it ---- */
+html[data-theme="light"] main > [data-hold]:not(.cta):not(.band--ink):not(.band--exp)::before{
+  background:radial-gradient(62% 44% at 84% 2%,rgba(var(--accent-rgb),.07),transparent 66%),
+    radial-gradient(40% 26% at 5% 8%,var(--lamp-gold-p),transparent 74%),
+    radial-gradient(46% 30% at 96% 66%,var(--lamp-red-p),transparent 76%),
+    linear-gradient(180deg,rgba(255,255,255,0) 26%,rgba(38,16,15,.05) 100%)}
+
+html[data-theme="light"] main > [data-hold]:not(.cta):not(.band--ink):not(.band--exp)::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:2px;pointer-events:none;
+  background:var(--paper-glint) 0 0/44% 100% no-repeat,var(--paper-hair) 0 0/100% 100% no-repeat;
+  animation:seam-glint 15s linear infinite}
+
+/* Three phases down the page, in both layers, so the bands do not all light at
+   once. Re-declared because the dark copy of this rule is behind the old gate. */
+html[data-theme="light"] main > [data-hold]:nth-of-type(3n+1)::after{animation-delay:-2s}
+html[data-theme="light"] main > [data-hold]:nth-of-type(3n+2)::after{animation-delay:-7s}
+html[data-theme="light"] main > [data-hold]:nth-of-type(3n)::after{animation-delay:-11.5s}
+
+/* ---- 3. things on paper throw a shadow and carry a lit edge ---- */
+html[data-theme="light"] :is(.section,.section--alt):not(.cta):not(.band--ink):not(.band--exp)
+  :is(.card,.feature,.panel,.contact-info__card,.map-card,.catalog-cta,.rail-card,.kpi,.step){
+  box-shadow:var(--edge-lit),var(--pool)}
+
+/* The lift is a deliberate break with the no-lift rule the twilio port wrote at
+   `.card:hover{transform:none}`: on ivory a shadow alone reads as a smudge, and
+   it is the movement of the object away from the page that sells the pool. The
+   catalog's product cards stay out of this, on the owner's standing order. */
+html[data-theme="light"] :is(.section,.section--alt):not(.cta):not(.band--ink):not(.band--exp)
+  :is(.card,.feature,.panel,.contact-info__card,.map-card,.catalog-cta,.rail-card,.kpi,.step,.collection):hover{
+  box-shadow:var(--edge-lit),var(--pool-lift);transform:translateY(-4px);
+  border-color:rgba(38,16,15,.18)}
+
+html[data-theme="light"] .btn--primary{position:relative;overflow:hidden;
+  box-shadow:inset 0 0 0 var(--t-bw2) var(--accent-fill),0 12px 24px -12px rgba(var(--brand-red-rgb),.62)}
+html[data-theme="light"] .btn--primary::after{content:"";position:absolute;inset:0;
+  pointer-events:none;border-radius:inherit;
+  background:linear-gradient(105deg,rgba(255,255,255,0) 32%,rgba(255,255,255,.55) 50%,rgba(255,255,255,0) 68%);
+  transform:translate3d(-108%,0,0);transition:transform .6s var(--ease-out)}
+html[data-theme="light"] .btn--primary:hover::after,
+html[data-theme="light"] .btn--primary:focus-visible::after{transform:translate3d(108%,0,0)}
+html[data-theme="light"] .btn--primary:hover,
+html[data-theme="light"] .btn--primary:focus-visible{
+  box-shadow:inset 0 0 0 var(--t-bw2) var(--accent-fill-hover),0 18px 30px -12px rgba(var(--brand-red-rgb),.74)}
+
+/* The header is glass over paper, so what it earns on scroll is a cast shadow —
+   the one thing that tells a visitor the strip is above the page and not part of
+   it. The nav's lit tab and the scroll rule take the same red the dark theme
+   uses, held lighter so it does not bleed on ivory. */
+html[data-theme="light"] .site-header.is-glass-scrolled{
+  box-shadow:0 1px 0 rgba(38,16,15,.08),0 16px 34px -26px rgba(38,16,15,.55)}
+html[data-theme="light"] .nav__link--active::after{box-shadow:0 4px 12px -2px rgba(var(--brand-red-rgb),.5)}
+html[data-theme="light"] .nav__link:hover::after{box-shadow:0 4px 10px -3px rgba(var(--brand-red-rgb),.38)}
+html[data-theme="light"] .nav__progress{box-shadow:0 0 10px rgba(var(--brand-red-rgb),.4)}
+
+/* The assistant's bubble sits on paper, so it gets a pool rather than a bulb. */
+html[data-theme="light"] .chat-widget__toggle{
+  box-shadow:0 14px 28px -12px rgba(var(--brand-red-rgb),.6),0 2px 6px rgba(38,16,15,.18)}
+
+html[data-theme="light"] .story-rail__btn[data-active="true"] .story-rail__dot{
+  box-shadow:0 0 0 3px rgba(var(--brand-red-rgb),.14),0 2px 8px -2px rgba(38,16,15,.4)}
+html[data-theme="light"] :is(.product-card,.shot,.filter__btn):focus-visible{
+  box-shadow:0 0 0 6px rgba(var(--brand-red-rgb),.22)}
+
+/* ---- 4. words set in the brand's own colour, on paper ---- */
+/* Not a glow: a gradient laid into the letter. The three stops are the mark's
+   red running to the wordmark's gold, and each one clears both paper grounds by
+   more than the 4.5 a line of body copy would need. The ground set carries
+   `.page-hero` as well as `.section`, because every accent that sits in a
+   heading lives in one: catalog.html:95, about.html:95, services.html:223 and
+   contact.html:92 all put their `<h1> .text-accent` in a `.page-hero`, and index's
+   only heading accent is in the `.hero`, which is ink in both modes and keeps its
+   lamp instead. Without `.page-hero` in the set the rule matched nothing at all. */
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  html[data-theme="light"] :is(.section,.section--alt,.page-hero):not(.cta):not(.band--ink):not(.band--exp)
+    :is(h1,h2,h3) .text-accent{
+    background-image:var(--grad-brand);-webkit-background-clip:text;background-clip:text;
+    color:transparent;-webkit-text-fill-color:transparent}
+  html[data-theme="light"] :is(.section,.section--alt,.page-hero):not(.cta):not(.band--ink):not(.band--exp)
+    .kpi__num{
+    background-image:var(--grad-brand);-webkit-background-clip:text;background-clip:text;
+    color:transparent;-webkit-text-fill-color:transparent}
+}
+
+/* ---- 5. the sunrise, where the dark theme has its lamp ---- */
+html[data-theme="light"][data-lights="on"] body::after{content:"";position:fixed;
+  left:0;right:0;top:-46vh;height:46vh;z-index:9991;pointer-events:none;
+  background:linear-gradient(180deg,rgba(var(--brand-red-rgb),0) 0%,rgba(var(--brand-red-rgb),.06) 36%,
+    rgba(var(--brand-gold-rgb),.15) 56%,rgba(255,255,255,.55) 76%,rgba(255,255,255,0) 100%);
+  animation:lights-up 1.45s cubic-bezier(.2,.62,.34,1) forwards}
+
+/* The brakes. Each one repeats the three seam selectors in full, and not
+   `:is([data-hold],.site-footer)`: the paper seam's own selector carries
+   `main > [data-hold]:not(.cta):not(.band--ink):not(.band--exp)` — five class-level
+   terms — while a bare `:is([data-hold],…)` carries two, so the brake LOSES the
+   specificity contest and the glint keeps running on a phone and under
+   `prefers-reduced-motion`. Measured at 390px: animation-name still `seam-glint`.
+   Equal selectors, written later, are what make the brake bite. */
+@media (max-width:900px){
+  html[data-theme="light"] main > [data-hold]:not(.cta):not(.band--ink):not(.band--exp)::after,
+  html[data-theme="light"] :is(.cta,.band--ink,.band--exp)[data-hold]::after,
+  html[data-theme="light"] .site-footer::after{
+    animation:none;background-position:-79% 0,0 0}
+}
+@media (prefers-reduced-motion:reduce){
+  html[data-theme="light"] main > [data-hold]:not(.cta):not(.band--ink):not(.band--exp)::after,
+  html[data-theme="light"] :is(.cta,.band--ink,.band--exp)[data-hold]::after,
+  html[data-theme="light"] .site-footer::after{
+    animation:none;background-position:28% 0,0 0}
+  html[data-theme="light"] .hero .text-accent{animation:none}
+  html[data-theme="light"] .btn--primary::after{display:none}
+  html[data-theme="light"][data-lights="on"] body::after{display:none}
+}
+@media print{
+  html[data-theme="light"] :is([data-hold],.site-footer)::after,
+  html[data-theme="light"][data-lights="on"] body::after{display:none}
+}
