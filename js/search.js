@@ -50,7 +50,7 @@
     { g: "Catalog", t: "Pull Up Design, Backdrop and Printing", h: "catalog.html?q=Pull%20Up%20Design%2C%20Backdrop%20and%20Printing", k: "banner pull up stand backdrop event printing" },
     { g: "Catalog", t: "All Types of Frames", h: "catalog.html?q=All%20Types%20of%20Frames", k: "frame award plaque photo certificate glass" },
     { g: "Catalog", t: "Flyer", h: "catalog.html?q=Flyer", k: "flyer printing event wedding funeral church" },
-    { g: "Catalog", t: "Sample of Printing", h: "catalog.html?q=Sample%20of%20Printing", k: "print sample business card letterhead receipt poster" },
+    { g: "Catalog", t: "Sample of Designs and Printing", h: "catalog.html?q=Sample%20of%20Designs%20and%20Printing", k: "print sample business card letterhead receipt poster" },
     { g: "Catalog", t: "Banner Printing", h: "catalog.html?q=Banner%20Printing", k: "banner printing vinyl fabric memorial church event signage" },
     { g: "Catalog", t: "Book Design (Inside and Cover)", h: "catalog.html?q=Book%20Design%20%28Inside%20and%20Cover%29", k: "book cover inside layout typesetting manuscript" },
     { g: "Catalog", t: "ABS Board", h: "catalog.html?q=ABS%20Board", k: "abs board foam signage portrait display" },

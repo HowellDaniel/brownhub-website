@@ -100,7 +100,7 @@ Embroidery, Embroidery and Helmet Branding, Flag Designing & Printing, Flyer, Fo
 Flyers, Funeral Poster & Invitation Cards, Funeral Rosettes and Designs, Gold Perspex, ID Tags &
 Lanyards, Key Holders, Logo Design Mockup, More Food Flyers, More Winners' Chapel Flyers,
 Notepad Design, Other Flyers, Other Food Flyers, Packaging Box Sleeves, Paper Bags Mugs &
-Flasks, Product Labels Printing, Pull Up Design Backdrop and Printing, Sample of Printing,
+Flasks, Product Labels Printing, Pull Up Design Backdrop and Printing, Sample of Designs and Printing,
 T-Shirts & Caps, Wedding Invitation Cards, Winners' Chapel International Flyer. That is the
 whole catalog — if a visitor asks for something not on that list, say we have not listed it but
 can usually make it, and point them to WhatsApp. Two of them show the studio's own price on
