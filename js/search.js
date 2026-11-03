@@ -64,6 +64,7 @@
     { g: "Catalog", t: "Other Flyers", h: "catalog.html?q=Other%20Flyers", k: "flyer price list service menu promotion salon shop" },
     { g: "Catalog", t: "T-Shirts & Caps", h: "catalog.html?q=T-Shirts%20%26%20Caps", k: "t shirt polo cap hat branded print logo staff event" },
     { g: "Catalog", t: "Product Labels Printing", h: "catalog.html?q=Product%20Labels%20Printing", k: "product label sticker bottle tub jar pack packaging print" },
+    { g: "Catalog", t: "Samples of Label Printing", h: "catalog.html?q=Samples%20of%20Label%20Printing", k: "label sticker sheet die cut cutter pack tub jar bottle food branding" },
     { g: "Catalog", t: "Paper Bags, Mugs & Flasks", h: "catalog.html?q=Paper%20Bags%2C%20Mugs%20%26%20Flasks", k: "paper bag mug flask bottle branded gift retail print" },
     { g: "Catalog", t: "Funeral Rosettes and Designs", h: "catalog.html?q=Funeral%20Rosettes%20and%20Designs", k: "funeral rosette memorial cloth portrait tribute design" },
     { g: "Catalog", t: "Funeral Poster & Invitation Cards", h: "catalog.html?q=Funeral%20Poster%20%26%20Invitation%20Cards", k: "funeral poster invitation card memorial programme obituary" },
