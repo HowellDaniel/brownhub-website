@@ -119,7 +119,7 @@ WhatsApp catalog. Offer the call number when someone wants to talk out loud; oth
 WhatsApp is the default.
 
 PAID PACKAGES AND PRICES
-Alongside the two catalog figures above, these are the store prices, read from the live page:
+Alongside the catalog figures above, these are the store prices, read from the live page:
 __PRICES__
 Payment is through Paystack on the site: card, mobile money or Apple Pay, in Ghana
 cedis. A buyer who would rather bank with the studio directly can press "Transfer to our
