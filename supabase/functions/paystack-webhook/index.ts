@@ -28,10 +28,17 @@
 //     -F 'metadata={"entrypoint_path":"index.ts","import_map_path":"","verify_jwt":false,"name":"paystack-webhook"}' \
 //     "https://api.supabase.com/v1/projects/rmvyrfqyxgupwuzxadyx/functions/deploy?slug=paystack-webhook"
 // Secrets it reads and never prints: PAYSTACK_SECRET_KEY (Settings -> API Keys &
-// Webhooks -> Live Secret Key), SUPABASE_SERVICE_ROLE_KEY and SUPABASE_URL.
+// Webhooks -> Live Secret Key), SUPABASE_SERVICE_ROLE_KEY and SUPABASE_URL, plus
+// ARKSEL_API_KEY and ARKSEL_SENDER for the owner's transaction alert below.
 
 const HOOK = "x-paystack-signature";
 const MAX_BODY = 65536;
+
+// Paystack's own "notify me" switches (Settings -> Preferences) have no API and
+// sit behind his login, so the alert that actually reaches him is built on the
+// rail this function already stands on. One text per payment, no more.
+const OWNER_MSISDN = "233535583460";
+const SMS_GATEWAY = "https://sms.arkesel.com/api/v2/sms/send";
 
 function hex(buf: ArrayBuffer): string {
   return Array.from(new Uint8Array(buf))
@@ -101,25 +108,84 @@ function paidEvent(body: Record<string, any>) {
   };
 }
 
-async function record(row: Record<string, unknown>): Promise<boolean> {
+async function record(row: Record<string, unknown>): Promise<{ stored: boolean; isNew: boolean }> {
   const url = (Deno.env.get("SUPABASE_URL") || "").replace(/\/$/, "");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-  if (!url || !key) return false;
+  if (!url || !key) return { stored: false, isNew: false };
   // ignore-duplicates is the idempotency: Paystack retries a delivery it does not
   // like the answer to, and the (reference, event) key makes a retry land once.
   // PostgREST needs that key named, not merely guessed from the index.
+  //
+  // It answers `representation` rather than `minimal` so the call can tell a fresh
+  // row from a swallowed redelivery: an empty array means the key already existed.
+  // That is what keeps one payment from texting him twice. The rows read back are
+  // never logged and never leave this function.
   const res = await fetch(`${url}/rest/v1/payments?on_conflict=reference,event`, {
     method: "POST",
     headers: {
       apikey: key,
       Authorization: `Bearer ${key}`,
       "content-type": "application/json",
-      Prefer: "resolution=ignore-duplicates,return=minimal",
+      Prefer: "resolution=ignore-duplicates,return=representation",
     },
     body: JSON.stringify(row),
     signal: AbortSignal.timeout(4000),
   }).catch(() => null);
-  return !!res && res.ok;
+  if (!res || !res.ok) return { stored: false, isNew: false };
+  let isNew = true;
+  try {
+    const written = await res.json();
+    if (Array.isArray(written)) isNew = written.length > 0;
+  } catch (_e) {
+    // An unreadable body is not a reason to lose the alert: a payment he is not
+    // told about is the worse failure than a payment announced twice.
+  }
+  return { stored: true, isNew };
+}
+
+// The reference is what he matches a buyer's claim against, the amount is what he
+// cares about, and the channel says whether to expect it from a bank or a phone.
+// "GHS" and not the cedi sign on purpose: SMS runs a 7-bit alphabet, and a glyph
+// outside it drops the message into Unicode and halves what fits.
+function alertText(row: Record<string, any>): string {
+  // Tested for the type, not coerced: Number(null) is 0 and 0 is a safe integer,
+  // so a missing amount would otherwise be texted to him as "GHS 0".
+  const coins = typeof row.amount_kobo === "number" && Number.isSafeInteger(row.amount_kobo)
+    ? row.amount_kobo / 100
+    : null;
+  const money = coins === null
+    ? "an amount Paystack did not report"
+    : `${row.currency || "GHS"} ${coins.toLocaleString("en", { maximumFractionDigits: 2 })}`;
+  const item = String(row.item || "an item the checkout did not name").slice(0, 40);
+  const channel = String(row.channel || "an unknown channel").replace(/_/g, " ").slice(0, 30);
+  const ref = String(row.reference || "").slice(0, 40);
+  return `BrownHub paid: ${money} through ${channel} for ${item}. Ref ${ref}.`.slice(0, 160);
+}
+
+async function alertOwner(message: string): Promise<void> {
+  const key = Deno.env.get("ARKSEL_API_KEY") || "";
+  const sender = Deno.env.get("ARKSEL_SENDER") || "";
+  if (!key || !sender) {
+    console.log("paystack alert skipped: ARKSEL_API_KEY or ARKSEL_SENDER is not set");
+    return;
+  }
+  // Awaiting, but never answering on the result: the money is already stored, and
+  // a 500 here makes Paystack redeliver the whole event over a text message.
+  const res = await fetch(SMS_GATEWAY, {
+    method: "POST",
+    headers: { "content-type": "application/json", "api-key": key },
+    body: JSON.stringify({ sender, recipients: [OWNER_MSISDN], message }),
+    signal: AbortSignal.timeout(5000),
+  }).catch(() => null);
+  if (!res) {
+    console.log("paystack alert not sent: Arkesel did not answer");
+    return;
+  }
+  const answer = await res.text().catch(() => "");
+  if (!res.ok || answer.indexOf('"success"') < 0) {
+    // Only the shape of the failure, never the key — it travels in a header.
+    console.log(`paystack alert not delivered: Arkesel HTTP ${res.status}${answer.indexOf("invalid") >= 0 ? ", number rejected" : ""}`);
+  }
 }
 
 // A webhook that answers anything other than 2xx is retried, so a stored row must
@@ -152,7 +218,7 @@ Deno.serve(async (req) => {
   // the table rather than hidden — the money question is always status = success.
   const wanted = /charge|transaction|payment/i.test(row.event) && !!row.reference;
   if (wanted) {
-    const ok = await record({
+    const stored = await record({
       reference: row.reference,
       event: row.event,
       amount_kobo: row.amount_kobo,
@@ -165,7 +231,10 @@ Deno.serve(async (req) => {
     });
     // Say so rather than answering 200 over a row that never landed: a silent
     // success here is how a payment ends up recorded nowhere twice over.
-    if (!ok) return new Response(JSON.stringify({ error: "not stored" }), { status: 500, headers: { "content-type": "application/json", "cache-control": "no-store" } });
+    if (!stored.stored) return new Response(JSON.stringify({ error: "not stored" }), { status: 500, headers: { "content-type": "application/json", "cache-control": "no-store" } });
+    // Only a row this call actually wrote, and only money that arrived. A refused
+    // charge is a row he reads when asked about, not something to be texted about.
+    if (stored.isNew && String(row.status || "").toLowerCase() === "success") await alertOwner(alertText(row));
   }
   // The reference is a public order number and the event name is not sensitive;
   // nothing else about a client is written to the logs.
