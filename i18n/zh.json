@@ -1219,5 +1219,13 @@
  "If anyone claims to be us and asks, do not send it. Report it instead, at the address further down this page.": "如果有人自称是我们并向您要，请不要发送。请改用本页下方的地址向我们举报。",
  "Tap to turn on the light": "轻触开灯",
  "Loading": "加载中",
- "Move the chat box": "移动聊天窗口"
+ "Move the chat box": "移动聊天窗口",
+ "Attach a document": "附加文件",
+ "Add an emoji": "添加表情",
+ "Remove this document": "移除此文件",
+ "Choose an emoji": "选择表情",
+ "That file will not do — a PDF, a Word or Excel document, a picture or a zip, up to 10 MB, three at most.": "这个文件不合适——请用 PDF、Word 或 Excel 文档、图片或 zip，最大 10 MB，最多三个。",
+ "Sending your document…": "正在发送您的文件…",
+ "Your document is on its way to our team. We will open it and reply — keep asking here in the meantime.": "您的文件已发给我们的团队。我们会打开并回复您——在此期间请继续在这里提问。",
+ "We could not send that document over the site. Attach it to a <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp message</a> or an <a href=\"mailto:howelldaniel533@gmail.com\">email</a> and we will take it from there.": "我们无法通过网站发送该文件。请把它附在一条<a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp 消息</a>或一封<a href=\"mailto:howelldaniel533@gmail.com\">邮件</a>里，我们从那里接手。"
 }

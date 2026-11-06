@@ -5602,3 +5602,108 @@ html[data-theme="light"][data-lights="on"] body::after{content:"";position:fixed
   html[data-theme="light"] :is([data-hold],.site-footer)::after,
   html[data-theme="light"][data-lights="on"] body::after{display:none}
 }
+
+/* ==========================================================================
+   THE CHAT BOX STANDS TALLER, AND THE COMPOSER CARRIES PAPER
+   ==========================================================================
+   Five separate rules had been telling the panel how tall it might get
+   (style.css:71, :96, :172, :2532, :3759), each written later than the last, so
+   the number anyone read depended on which viewport you were standing in. They
+   all said 380px in the end. Worse, none of them made the box 380px: a flex
+   column sizes to its content, and with `.chat-widget__messages` asking only
+   120px the conversation opened at a little under 300px and a paying client
+   scrolled inside it from the first answer. So the height is now carried by TWO
+   tokens on one place — `--chat-h` for the ceiling and `--chat-min` for the
+   floor — and both run through the same clearance clamp, which is what keeps
+   the floor from ever turning into an overflow.
+
+   The clamp is `100dvh - var(--chat-clear) - the bottom queue`, where
+   `--chat-clear` is the distance from the viewport edge up to where the panel
+   starts (94px on a desk: the widget's 1.5rem plus the launcher's own 56px plus
+   the .85rem gap; 84px on a phone, where the panel is fixed to the viewport),
+   plus `var(--nav-h)` — which js/scroll.js keeps at the header's real height,
+   so a condensed nav shortens the clearance and a wrapping one lengthens it
+   without anyone editing this rule — plus 12px of air. The cookie notice, the
+   quote card and the pinned band's rail lane are each subtracted the same way
+   the bottom queue already subtracts them from `bottom`.
+
+   Attachments ride the mail rail a voice note proved (js/chat.js:13): one POST
+   per document, so a second page is never assumed into existence. The picker
+   itself is `display:none` rather than removed, because a file input only has
+   to be in the document for `.click()` to hand the visitor the OS dialog.
+   ========================================================================== */
+:root{--chat-h:620px;--chat-min:420px;--chat-clear:calc(94px + var(--nav-h, 72px) + 12px)}
+
+.chat-widget__panel{
+  min-height:min(var(--chat-min), calc(100vh - var(--chat-clear) - var(--cookie-h,0px) - var(--rail-lane,0px) - env(safe-area-inset-bottom)));
+  min-height:min(var(--chat-min), calc(100dvh - var(--chat-clear) - var(--cookie-h,0px) - var(--rail-lane,0px) - env(safe-area-inset-bottom)));
+  max-height:min(var(--chat-h), calc(100vh - var(--chat-clear) - var(--cookie-h,0px) - var(--rail-lane,0px) - env(safe-area-inset-bottom)));
+  max-height:min(var(--chat-h), calc(100dvh - var(--chat-clear) - var(--cookie-h,0px) - var(--rail-lane,0px) - env(safe-area-inset-bottom)))}
+/* The messages list is the row that gives, and it gives before anything else.
+   `flex:1` alone would not do it: that is a 0% basis, so the list has nothing to
+   shrink from and the negative space lands on the chrome instead — measured, a
+   long restored thread squeezed the emoji sheet to 14px of padding with every
+   glyph still inside it. An auto basis and a 1000 shrink factor spend the whole
+   shortfall on the conversation first; the two new rows only shrink once it has
+   reached zero, which is what keeps the composer on screen in a 342px panel. */
+.chat-widget__messages{flex:1 1000 auto;min-height:0}
+.chat-widget__head,.chat-widget__chips,.chat-widget__form,
+.chat-widget__voice,.chat-widget__handoff{flex:none}
+.chat-widget__files,.chat-widget__emoji{flex:0 1 auto;min-height:0}
+/* With the sheet open the suggestions and the WhatsApp handoff are the things it
+   replaces, and their 60px is what keeps the fixed rows inside a short panel. */
+.chat-widget__panel:has(.chat-widget__emoji:not([hidden])) :is(.chat-widget__chips,.chat-widget__handoff){display:none}
+
+/* The composer row: four controls and a field, and the field is the one that
+   gives. Without min-width:0 a flex item refuses to shrink below its content. */
+.chat-widget__form{gap:.3rem;flex-wrap:nowrap}
+.chat-widget__form input{min-width:0}
+.chat-widget__comp{flex:none;align-self:center;width:32px;height:32px;border-radius:50%;
+  border:1px solid var(--border);background:var(--surface);color:var(--text-muted);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:border-color .2s,color .2s,background-color .2s}
+.chat-widget__comp:hover:not(:disabled),.chat-widget__comp:focus-visible{border-color:var(--accent);color:var(--accent)}
+.chat-widget__comp:disabled{opacity:.4;cursor:not-allowed}
+.chat-widget__comp svg{width:18px;height:18px;display:block}
+.chat-widget__comp[aria-expanded="true"]{border-color:var(--accent);color:var(--accent);background-color:rgba(var(--accent-rgb),.14)}
+.chat-widget__picker{display:none}
+
+/* The staged documents, and the one line of prose that explains a refusal.
+   Three tags and a refusal wrap to 155px on a 360px phone — a third of the whole
+   panel — so the row scrolls inside a cap rather than spending the composer's
+   room on paper that is already listed. */
+.chat-widget__files{display:flex;align-items:center;flex-wrap:wrap;gap:.35rem;
+  padding:.5rem .8rem;border-top:1px solid var(--border);background:var(--bg-alt);
+  font-size:.78rem;color:var(--text-muted);max-height:6.5rem;overflow-y:auto}
+/* display:flex beats the hidden attribute's own UA rule, so say it out loud. */
+.chat-widget__files[hidden]{display:none}
+.chat-widget__file-tag{display:flex;align-items:center;gap:.3rem;min-width:0;max-width:100%;
+  padding:.22rem .45rem;border:1px solid var(--border);border-radius:8px;background:var(--surface)}
+.chat-widget__file-tag b{font-weight:600;color:var(--text);max-width:11rem;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chat-widget__file-tag em{font-style:normal;flex:none}
+.chat-widget__file-x{flex:none;border:none;background:none;color:var(--text-muted);
+  font-size:1.05rem;line-height:1;padding:0 .12rem;cursor:pointer}
+.chat-widget__file-x:hover,.chat-widget__file-x:focus-visible{color:var(--accent)}
+.chat-widget__file-note{color:var(--accent);font-weight:600;flex:1 1 100%}
+
+/* The emoji sheet sits between the chips and the field, in the panel's own
+   column, so it never floats over the conversation it is writing into. */
+.chat-widget__emoji{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:2px;
+  max-height:min(168px,28dvh);overflow-y:auto;padding:.4rem .55rem;
+  border-top:1px solid var(--border);background:var(--bg-alt)}
+.chat-widget__emoji[hidden]{display:none}
+.chat-widget__emoji-pick{border:none;background:none;color:inherit;font-size:1.15rem;
+  line-height:1;padding:.34rem .2rem;border-radius:8px;cursor:pointer;text-align:center}
+.chat-widget__emoji-pick:hover,.chat-widget__emoji-pick:focus-visible{background-color:rgba(var(--accent-rgb),.18)}
+
+@media (max-width:640px){
+  :root{--chat-h:660px;--chat-min:400px;--chat-clear:calc(84px + var(--nav-h, 72px) + .5rem)}
+  /* The mic keeps its 46px tap target from the earlier pass; these two hold at
+     40px so the field still has somewhere to be. */
+  .chat-widget__form .chat-widget__comp{width:40px;height:40px}
+  .chat-widget__comp svg{width:20px;height:20px}
+  .chat-widget__emoji{grid-template-columns:repeat(7,minmax(0,1fr));max-height:min(190px,30dvh)}
+  .chat-widget__emoji-pick{font-size:1.3rem;padding:.4rem .2rem}
+  .chat-widget__file-tag b{max-width:9rem}
+}

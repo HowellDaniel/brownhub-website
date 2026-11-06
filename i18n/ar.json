@@ -1219,5 +1219,13 @@
  "If anyone claims to be us and asks, do not send it. Report it instead, at the address further down this page.": "إذا ادّعى أحد أنه نحن وطلب ذلك، فلا ترسله. بل أبلغ عنه إلى العنوان أدناه في هذه الصفحة.",
  "Tap to turn on the light": "اضغط لتشغيل الضوء",
  "Loading": "جارٍ التحميل",
- "Move the chat box": "نقل مربع المحادثة"
+ "Move the chat box": "نقل مربع المحادثة",
+ "Attach a document": "إرفاق مستند",
+ "Add an emoji": "إضافة رمز تعبيري",
+ "Remove this document": "إزالة هذا المستند",
+ "Choose an emoji": "اختر رمزًا تعبيريًا",
+ "That file will not do — a PDF, a Word or Excel document, a picture or a zip, up to 10 MB, three at most.": "هذا الملف لا يصلح — ملف PDF أو مستند Word أو Excel، أو صورة أو ملف zip، حتى 10 ميغابايت، ثلاثة على الأكثر.",
+ "Sending your document…": "جارٍ إرسال مستندك…",
+ "Your document is on its way to our team. We will open it and reply — keep asking here in the meantime.": "مستندك في طريقه إلى فريقنا. سنفتحه ونردّ عليك — وواصل سؤالك هنا في هذه الأثناء.",
+ "We could not send that document over the site. Attach it to a <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp message</a> or an <a href=\"mailto:howelldaniel533@gmail.com\">email</a> and we will take it from there.": "لم نتمكن من إرسال هذا المستند عبر الموقع. أرفقه بـ<a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">رسالة واتساب</a> أو بـ<a href=\"mailto:howelldaniel533@gmail.com\">بريد إلكتروني</a> ونكمل من هناك."
 }

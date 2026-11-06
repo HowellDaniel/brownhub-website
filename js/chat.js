@@ -704,8 +704,9 @@
   });
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    send(input.value);
-    input.value = "";
+    // sendComposer() lives at the bottom of this file with the attach layer that
+    // owns it; a plain file call still goes through send(), unchanged.
+    sendComposer();
   });
 
   // ---- The panel can be pulled off the corner --------------------------------------
@@ -1307,4 +1308,256 @@
     micBtn.disabled = true;
     micBtn.title = T("Voice recording is not supported in this browser");
   }
+
+  // ---- Documents and emoji: what else a visitor can put into a message ----------
+  // A brief that exists as a PDF, or a logo they already have as a picture, loses
+  // something in being described. The file therefore travels the rail a voice note
+  // already rides — the studio's inbox through FormSubmit — so no bucket is opened,
+  // nothing new is bought and no key is kept where one has never been kept.
+  // One POST per document rather than one POST with three parts, because the
+  // single-file shape is the one a voice note has proven against that endpoint;
+  // a second and third part under the same key is an assumption about someone
+  // else's mail form, and a silently dropped page is a promise broken to a client.
+  const FILE_MAX = 10 * 1024 * 1024;
+  const FILE_CAP = 3;
+  const FILE_KIND = /\.(pdf|docx?|xlsx?|pptx?|txt|rtf|csv|odt|ods|odp|zip|png|jpe?g|webp|gif|heic|svg|ai|psd|eps)$/i;
+  const EMOJI = ["😀", "😄", "😊", "😍", "🤔", "😅", "🙂", "😉", "😎", "🥳", "😢", "😭",
+    "😮", "👍", "👎", "🙏", "👏", "💪", "🤝", "✍️", "👀", "❤️", "🧡", "💛",
+    "💚", "💙", "💜", "⭐", "🔥", "✨", "✅", "❌", "❓", "❗", "💯", "🎉",
+    "🎨", "🖌️", "🖼️", "📐", "✂️", "📄", "📎", "📁", "📌", "💼", "📞", "📱",
+    "💻", "🌍", "🚀", "⏰", "📅", "💰", "🇬🇭", "🙌"];
+
+  const L_FILES = "Attach a document";
+  const L_EMOJI = "Add an emoji";
+  const L_REMOVE = "Remove this document";
+  const L_PANEL = "Choose an emoji";
+  const L_REJECT = "That file will not do — a PDF, a Word or Excel document, a picture or a zip, up to 10 MB, three at most.";
+  const L_SENDING = "Sending your document…";
+  const L_SENT = "Your document is on its way to our team. We will open it and reply — keep asking here in the meantime.";
+  const L_FAILED = "We could not send that document over the site. Attach it to a <a href=\"" + WA + "\" target=\"_blank\" rel=\"noopener\">WhatsApp message</a> or an <a href=\"mailto:howelldaniel533@gmail.com\">email</a> and we will take it from there.";
+
+  const CLIP_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 11.6 11.5 20.5a5 5 0 0 1-7.1-7.1l8.6-8.6a3.4 3.4 0 1 1 4.8 4.8l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.9-7.9"/></svg>';
+  const FACE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.6 14.6a4.2 4.2 0 0 0 6.8 0"/><path d="M9.2 9.6h.01M14.8 9.6h.01"/></svg>';
+
+  const fileRow = document.createElement("div");
+  fileRow.className = "chat-widget__files";
+  fileRow.hidden = true;
+  panel.insertBefore(fileRow, form);
+
+  const emojiPop = document.createElement("div");
+  emojiPop.className = "chat-widget__emoji";
+  emojiPop.hidden = true;
+  emojiPop.setAttribute("role", "dialog");
+  emojiPop.setAttribute("aria-label", T(L_PANEL));
+  for (const glyph of EMOJI) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chat-widget__emoji-pick";
+    b.textContent = glyph;
+    b.addEventListener("click", () => putEmoji(glyph));
+    emojiPop.appendChild(b);
+  }
+  panel.insertBefore(emojiPop, form);
+
+  const picker = document.createElement("input");
+  picker.type = "file";
+  picker.multiple = true;
+  picker.accept = ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.rtf,.csv,.odt,.ods,.odp,.zip,.png,.jpg,.jpeg,.webp,.gif,.heic,.svg,.ai,.psd,.eps";
+  picker.className = "chat-widget__picker";
+  picker.tabIndex = -1;
+  picker.setAttribute("aria-hidden", "true");
+  panel.appendChild(picker);
+
+  function compBtn(svg, label, fn) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chat-widget__comp";
+    b.innerHTML = svg;
+    b.dataset.label = label;
+    b.setAttribute("aria-label", T(label));
+    b.title = T(label);
+    b.addEventListener("click", fn);
+    form.insertBefore(b, micBtn);
+    return b;
+  }
+  const emojiBtn = compBtn(FACE_SVG, L_EMOJI, () => (emojiPop.hidden ? showEmoji() : hideEmoji()));
+  const fileBtn = compBtn(CLIP_SVG, L_FILES, () => { hideEmoji(); picker.click(); });
+  emojiBtn.setAttribute("aria-expanded", "false");
+
+  let picked = [];
+  let rowNote = "";
+
+  function megabytes(n) {
+    return n >= 1048576 ? (n / 1048576).toFixed(n >= 10485760 ? 0 : 1) + " MB"
+      : Math.max(1, Math.round(n / 1024)) + " KB";
+  }
+
+  function noteLine(msg) {
+    rowNote = msg;
+    paintFiles();
+  }
+
+  function paintFiles() {
+    fileRow.textContent = "";
+    for (let i = 0; i < picked.length; i++) {
+      const f = picked[i];
+      const tag = document.createElement("span");
+      tag.className = "chat-widget__file-tag";
+      const name = document.createElement("b");
+      // A filename is whatever someone typed, so it is only ever set as text.
+      name.textContent = f.name;
+      const size = document.createElement("em");
+      size.textContent = megabytes(f.size);
+      const x = document.createElement("button");
+      x.type = "button";
+      x.className = "chat-widget__file-x";
+      x.textContent = "×";
+      x.setAttribute("aria-label", T(L_REMOVE));
+      x.addEventListener("click", () => {
+        picked.splice(i, 1);
+        rowNote = "";
+        paintFiles();
+        syncFileBtn();
+      });
+      tag.append(name, size, x);
+      fileRow.appendChild(tag);
+    }
+    // The reason a file vanished has to outlive the repaint that draws the tags,
+    // or a rejected attachment disappears with no word about it.
+    if (rowNote) {
+      const s = document.createElement("span");
+      s.className = "chat-widget__file-note";
+      s.textContent = rowNote;
+      fileRow.appendChild(s);
+    }
+    fileRow.hidden = !picked.length && !rowNote;
+  }
+
+  function syncFileBtn() {
+    const full = picked.length >= FILE_CAP;
+    fileBtn.disabled = full;
+    const label = full ? L_REJECT : L_FILES;
+    fileBtn.dataset.label = label;
+    fileBtn.setAttribute("aria-label", T(label));
+    fileBtn.title = T(label);
+  }
+
+  picker.addEventListener("change", () => {
+    const got = Array.from(picker.files || []);
+    picker.value = "";
+    let rejected = 0;
+    for (const f of got) {
+      if (picked.length >= FILE_CAP || !FILE_KIND.test(f.name) || f.size > FILE_MAX) { rejected++; continue; }
+      picked.push(f);
+    }
+    rowNote = rejected ? T(L_REJECT) : "";
+    paintFiles();
+    syncFileBtn();
+    focusInput();
+  });
+
+  function showEmoji() {
+    emojiPop.hidden = false;
+    emojiPop.setAttribute("aria-label", T(L_PANEL));
+    emojiBtn.setAttribute("aria-expanded", "true");
+  }
+  function hideEmoji() {
+    if (emojiPop.hidden) return;
+    emojiPop.hidden = true;
+    emojiBtn.setAttribute("aria-expanded", "false");
+  }
+  function putEmoji(glyph) {
+    const from = input.selectionStart === null || input.selectionStart === undefined ? input.value.length : input.selectionStart;
+    const to = input.selectionEnd === null || input.selectionEnd === undefined ? from : input.selectionEnd;
+    input.value = input.value.slice(0, from) + glyph + input.value.slice(to);
+    // Caret offsets count UTF-16 units, and an emoji is one or two of them, so the
+    // pair length is what the cursor moves by — not glyph.length in any other unit.
+    const at = from + glyph.length;
+    try { input.setSelectionRange(at, at); } catch (e) {}
+    input.focus();
+  }
+
+  // Capture, so this sees Escape before the panel's own handler can close the
+  // whole chat out from under a picker that was simply open.
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || emojiPop.hidden) return;
+    e.stopPropagation();
+    hideEmoji();
+    emojiBtn.focus();
+  }, true);
+  document.addEventListener("pointerdown", (e) => {
+    if (emojiPop.hidden) return;
+    if (e.target.closest(".chat-widget__emoji") || e.target === emojiBtn) return;
+    hideEmoji();
+  }, true);
+
+  async function mailFiles(files, note) {
+    let allOk = true;
+    for (let i = 0; i < files.length; i++) {
+      const fd = new FormData();
+      fd.append("document", files[i]);
+      fd.append("message", note || "(no written note)");
+      fd.append("_subject", "Document from the BrownHub website" +
+        (files.length > 1 ? " — " + (i + 1) + " of " + files.length : ""));
+      fd.append("page", location.href);
+      fd.append("time", new Date().toISOString());
+      fd.append("_captcha", "false");
+      fd.append("_template", "table");
+      let ok = false;
+      for (let attempt = 0; attempt < 2 && !ok; attempt++) {
+        try {
+          ok = (await fetch(VOICE_EMAIL, { method: "POST", body: fd })).ok;
+        } catch (e) { /* retry once, the way the voice note does */ }
+        if (!ok && attempt === 0) await new Promise((r) => setTimeout(r, 1200));
+      }
+      if (!ok) allOk = false;
+    }
+    return allOk;
+  }
+
+  async function sendComposer() {
+    const text = input.value;
+    const note = text.trim();
+    if (!picked.length) {
+      send(text);
+      input.value = "";
+      return;
+    }
+    const files = picked.slice();
+    input.value = "";
+    hideEmoji();
+    picker.value = "";
+    sendNow(note, files);
+  }
+
+  async function sendNow(note, files) {
+    const said = (note ? note + "  " : "") + files.map((f) => "📎 " + f.name).join("  ");
+    addMsg(said, "user");
+    remember("user", (note ? note + " " : "") + files.map((f) => "[file] " + f.name).join(" "));
+    renderChips([]);
+    noteLine(T(L_SENDING));
+    const ok = await mailFiles(files, note);
+    picked = [];
+    rowNote = "";
+    // Clearing the "Sending…" line is the same fold: with nothing left staged the row closes.
+    paintFiles();
+    syncFileBtn();
+    addMsg(ok ? L_SENT : L_FAILED, "bot");
+    showHandoff();
+    // The note rides along as a caption to the documents, and the confirmation above
+    // is the reply. Running it back through the intents answered "here is my brief"
+    // with "I didn't quite catch that" — a non-sequitur straight after a promise kept.
+    // It is already in the thread, so the next turn still has it.
+    syncTools();
+  }
+
+  // The composer's own glyphs carry their words in attributes, which the
+  // MutationObserver never reads, so a language switch has to re-set them here.
+  document.addEventListener("i18n-applied", () => {
+    emojiBtn.setAttribute("aria-label", T(L_EMOJI));
+    emojiBtn.title = T(L_EMOJI);
+    emojiPop.setAttribute("aria-label", T(L_PANEL));
+    syncFileBtn();
+    if (picked.length) paintFiles();
+  });
 })();

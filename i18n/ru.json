@@ -1219,5 +1219,13 @@
  "If anyone claims to be us and asks, do not send it. Report it instead, at the address further down this page.": "Если кто-то представляется нами и просит — не отправляйте. Сообщите об этом по адресу ниже на этой странице.",
  "Tap to turn on the light": "Нажмите, чтобы включить свет",
  "Loading": "Загрузка",
- "Move the chat box": "Переместить окно чата"
+ "Move the chat box": "Переместить окно чата",
+ "Attach a document": "Прикрепить документ",
+ "Add an emoji": "Добавить эмодзи",
+ "Remove this document": "Удалить этот документ",
+ "Choose an emoji": "Выберите эмодзи",
+ "That file will not do — a PDF, a Word or Excel document, a picture or a zip, up to 10 MB, three at most.": "Такой файл не подойдёт — PDF, документ Word или Excel, изображение или архив zip, до 10 МБ, не более трёх.",
+ "Sending your document…": "Отправляем ваш документ…",
+ "Your document is on its way to our team. We will open it and reply — keep asking here in the meantime.": "Ваш документ отправлен нашей команде. Мы его откроем и ответим — а тем временем можете задавать вопросы прямо здесь.",
+ "We could not send that document over the site. Attach it to a <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp message</a> or an <a href=\"mailto:howelldaniel533@gmail.com\">email</a> and we will take it from there.": "Мы не смогли отправить этот документ через сайт. Прикрепите его к <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">сообщение в WhatsApp</a> или к <a href=\"mailto:howelldaniel533@gmail.com\">письмо</a> — и мы всё сделаем оттуда."
 }

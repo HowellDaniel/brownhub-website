@@ -1219,5 +1219,13 @@
  "If anyone claims to be us and asks, do not send it. Report it instead, at the address further down this page.": "Ikiwa mtu anadai kuwa sisi na akiomba, usitume. Badala yake, ripoti kwa anwani iliyo hapa chini kwenye ukurasa huu.",
  "Tap to turn on the light": "Gusa ili uwashe taa",
  "Loading": "Inapakia",
- "Move the chat box": "Sogeza kisanduku cha gumzo"
+ "Move the chat box": "Sogeza kisanduku cha gumzo",
+ "Attach a document": "Ambatia hati",
+ "Add an emoji": "Ongeza emoji",
+ "Remove this document": "Ondoa hati hii",
+ "Choose an emoji": "Chagua emoji",
+ "That file will not do — a PDF, a Word or Excel document, a picture or a zip, up to 10 MB, three at most.": "Hii faili haifai — PDF, hati ya Word au Excel, picha au faili ya zip, hadi 10 MB, tatu kwa kiwango cha juu.",
+ "Sending your document…": "Inatuma hati yako…",
+ "Your document is on its way to our team. We will open it and reply — keep asking here in the meantime.": "Hati yako inasafiri kwenda kwa timu yetu. Tutai fungua na kukujibu — endelea kuuliza hapa kwa wakati huo.",
+ "We could not send that document over the site. Attach it to a <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp message</a> or an <a href=\"mailto:howelldaniel533@gmail.com\">email</a> and we will take it from there.": "Hatuwezi kutuma hiyo faili kupitia tovuti. Iambatishe kwenye <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">ujumbe wa WhatsApp</a> au <a href=\"mailto:howelldaniel533@gmail.com\">barua pepe</a> na tutachukulia hapo."
 }

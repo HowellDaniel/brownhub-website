@@ -1219,5 +1219,13 @@
  "If anyone claims to be us and asks, do not send it. Report it instead, at the address further down this page.": "Sɛ obi ka sɛ ɔyɛ yɛn na ɔbisa a, na fa kyɛ no. Mmom ɔhaw no wɔ adrɛs a ɛwɔ page yi ase no so.",
  "Tap to turn on the light": "Klike ma kan no hyerɛn",
  "Loading": "Yɛrefi aba",
- "Move the chat box": "Fa kɔmmɔ afonu no kɔ afoɔ hɔ"
+ "Move the chat box": "Fa kɔmmɔ afonu no kɔ afoɔ hɔ",
+ "Attach a document": "Fa nkrataa ka ho",
+ "Add an emoji": "Fa emoji ka ho",
+ "Remove this document": "Fi nkrataa yi pfi",
+ "Choose an emoji": "Paw emoji",
+ "That file will not do — a PDF, a Word or Excel document, a picture or a zip, up to 10 MB, three at most.": "Saa nkrataa yi nto adwuma: fa PDF, Word anaa Excel nkrataa, mfonini anaa zip, 10 MB mu, mienasa.",
+ "Sending your document…": "Yɛreso wo nkrataa no…",
+ "Your document is on its way to our team. We will open it and reply — keep asking here in the meantime.": "Wo nkrataa no reyɛ kɔma yɛn ayɔhodɔ no. Yɛbɛbue na yɛabua wo — kɔ so bisabisa ha saa berɛ no.",
+ "We could not send that document over the site. Attach it to a <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp message</a> or an <a href=\"mailto:howelldaniel533@gmail.com\">email</a> and we will take it from there.": "Yɛantumi ɛnsɛɛ wo nkrataa no fa intanɛt so. Fa <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp nkrataa</a> anaa <a href=\"mailto:howelldaniel533@gmail.com\">imeil</a> so na yɛbɛdi so afi hɔ."
 }

@@ -1219,5 +1219,13 @@
  "If anyone claims to be us and asks, do not send it. Report it instead, at the address further down this page.": "Wenn jemand angibt, wir zu sein, und danach fragt, senden Sie es nicht. Melden Sie es stattdessen über die Adresse weiter unten auf dieser Seite.",
  "Tap to turn on the light": "Tippen, um das Licht einzuschalten",
  "Loading": "Wird geladen",
- "Move the chat box": "Chat-Fenster verschieben"
+ "Move the chat box": "Chat-Fenster verschieben",
+ "Attach a document": "Dokument anhängen",
+ "Add an emoji": "Emoji einfügen",
+ "Remove this document": "Dieses Dokument entfernen",
+ "Choose an emoji": "Emoji auswählen",
+ "That file will not do — a PDF, a Word or Excel document, a picture or a zip, up to 10 MB, three at most.": "Diese Datei geht nicht — ein PDF, ein Word- oder Excel-Dokument, ein Bild oder eine Zip, bis 10 MB, höchstens drei.",
+ "Sending your document…": "Dokument wird gesendet…",
+ "Your document is on its way to our team. We will open it and reply — keep asking here in the meantime.": "Dein Dokument ist unterwegs zu unserem Team. Wir öffnen es und antworten — frag solange hier weiter.",
+ "We could not send that document over the site. Attach it to a <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp message</a> or an <a href=\"mailto:howelldaniel533@gmail.com\">email</a> and we will take it from there.": "Über die Website konnten wir das Dokument nicht verschicken. Häng es an eine <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp-Nachricht</a> oder an eine <a href=\"mailto:howelldaniel533@gmail.com\">E-Mail</a>, dann übernehmen wir es."
 }

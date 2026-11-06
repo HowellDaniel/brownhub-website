@@ -1219,5 +1219,13 @@
  "If anyone claims to be us and asks, do not send it. Report it instead, at the address further down this page.": "अगर कोई हम बोलकर माँगे तो उसे न भेजिए। इसके बजाय इस पन्ने पर नीचे दिए पते पर रिपोर्ट कीजिए।",
  "Tap to turn on the light": "लाइट जलाने के लिए टैप करें",
  "Loading": "लोड हो रहा है",
- "Move the chat box": "चैट बॉक्स ले जाएँ"
+ "Move the chat box": "चैट बॉक्स ले जाएँ",
+ "Attach a document": "दस्तावेज़ संलग्न करें",
+ "Add an emoji": "इमोजी जोड़ें",
+ "Remove this document": "यह दस्तावेज़ हटाएँ",
+ "Choose an emoji": "इमोजी चुनें",
+ "That file will not do — a PDF, a Word or Excel document, a picture or a zip, up to 10 MB, three at most.": "यह फ़ाइल नहीं चलेगी — एक PDF, वर्ड या एक्सेल दस्तावेज़, एक चित्र या zip, 10 MB तक, अधिकतम तीन।",
+ "Sending your document…": "आपका दस्तावेज़ भेजा जा रहा है…",
+ "Your document is on its way to our team. We will open it and reply — keep asking here in the meantime.": "आपका दस्तावेज़ हमारी टीम की ओर रवाना हो गया है। हम उसे खोलकर जवाब देंगे — तब तक यहाँ पूछते रहें।",
+ "We could not send that document over the site. Attach it to a <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">WhatsApp message</a> or an <a href=\"mailto:howelldaniel533@gmail.com\">email</a> and we will take it from there.": "हम उस दस्तावेज़ को साइट से नहीं भेज पाए। उसे एक <a href=\"https://wa.me/233502954541\" target=\"_blank\" rel=\"noopener\">व्हाट्सएप संदेश</a> या एक <a href=\"mailto:howelldaniel533@gmail.com\">ईमेल</a> से जोड़कर भेज दें, हम वहीं से आगे बढ़ेंगे।"
 }
