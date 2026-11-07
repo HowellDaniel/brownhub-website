@@ -5623,31 +5623,51 @@ html[data-theme="light"][data-lights="on"] body::after{content:"";position:fixed
    the .85rem gap; 84px on a phone, where the panel is fixed to the viewport),
    plus `var(--nav-h)` — which js/scroll.js keeps at the header's real height,
    so a condensed nav shortens the clearance and a wrapping one lengthens it
-   without anyone editing this rule — plus 12px of air. The cookie notice, the
-   quote card and the pinned band's rail lane are each subtracted the same way
-   the bottom queue already subtracts them from `bottom`.
+   without anyone editing this rule — plus 12px of air. `--chat-queue` is the
+   bottom queue the panel must stand above: the cookie notice and the pinned
+   band's rail lane on a desk, where they stack, and the taller of the notice
+   and the quote card on a phone, where the card is full width and they share
+   one lane. The panel's own anchor reads the same token, so the height and the
+   position can never disagree about what is underneath them.
 
    Attachments ride the mail rail a voice note proved (js/chat.js:13): one POST
    per document, so a second page is never assumed into existence. The picker
    itself is `display:none` rather than removed, because a file input only has
    to be in the document for `.click()` to hand the visitor the OS dialog.
    ========================================================================== */
-:root{--chat-h:620px;--chat-min:420px;--chat-clear:calc(94px + var(--nav-h, 72px) + 12px)}
+:root{--chat-h:620px;--chat-min:420px;--chat-clear:calc(94px + var(--nav-h, 72px) + 12px);
+  --chat-queue:calc(var(--cookie-h,0px) + var(--rail-lane,0px))}
 
+/* ONE figure for the bottom queue, read by the panel's anchor AND its height.
+   The two used to disagree. The clamp subtracted the cookie notice, but a phone
+   panel is fixed to the viewport at 5.25rem and was never lifted — only the
+   launcher behind it was. So the box shrank and stayed buried: measured on the
+   live origin at 390x844, 172px of a 379px panel sat under a notice on z-index
+   9993 with the composer out of sight, and at 320x568 the whole 26px of it was
+   underneath. Lifting the anchor by the same figure the clamp subtracts is what
+   makes the arithmetic describe the box the visitor actually sees. */
 .chat-widget__panel{
-  min-height:min(var(--chat-min), calc(100vh - var(--chat-clear) - var(--cookie-h,0px) - var(--rail-lane,0px) - env(safe-area-inset-bottom)));
-  min-height:min(var(--chat-min), calc(100dvh - var(--chat-clear) - var(--cookie-h,0px) - var(--rail-lane,0px) - env(safe-area-inset-bottom)));
-  max-height:min(var(--chat-h), calc(100vh - var(--chat-clear) - var(--cookie-h,0px) - var(--rail-lane,0px) - env(safe-area-inset-bottom)));
-  max-height:min(var(--chat-h), calc(100dvh - var(--chat-clear) - var(--cookie-h,0px) - var(--rail-lane,0px) - env(safe-area-inset-bottom)))}
+  min-height:min(var(--chat-min), calc(100vh - var(--chat-clear) - var(--chat-queue) - env(safe-area-inset-bottom)));
+  min-height:min(var(--chat-min), calc(100dvh - var(--chat-clear) - var(--chat-queue) - env(safe-area-inset-bottom)));
+  max-height:min(var(--chat-h), calc(100vh - var(--chat-clear) - var(--chat-queue) - env(safe-area-inset-bottom)));
+  max-height:min(var(--chat-h), calc(100dvh - var(--chat-clear) - var(--chat-queue) - env(safe-area-inset-bottom)))}
 /* The messages list is the row that gives, and it gives before anything else.
    `flex:1` alone would not do it: that is a 0% basis, so the list has nothing to
    shrink from and the negative space lands on the chrome instead — measured, a
    long restored thread squeezed the emoji sheet to 14px of padding with every
    glyph still inside it. An auto basis and a 1000 shrink factor spend the whole
    shortfall on the conversation first; the two new rows only shrink once it has
-   reached zero, which is what keeps the composer on screen in a 342px panel. */
+   reached zero, which is what keeps the composer on screen in a 342px panel.
+
+   The suggestions cannot be `flex:none`. They wrap to 165px on a 320px phone and
+   the conversation stops at its 32px of padding, so a 359px panel was asked to
+   hold 418px and the composer fell off the bottom — measured after consent on
+   the smallest phone we test. Given the same shrink factor they scroll inside
+   what is left instead, and a long thread still gives first because its basis
+   is the larger of the two. */
 .chat-widget__messages{flex:1 1000 auto;min-height:0}
-.chat-widget__head,.chat-widget__chips,.chat-widget__form,
+.chat-widget__chips{flex:0 1000 auto;min-height:0;overflow-y:auto}
+.chat-widget__head,.chat-widget__form,
 .chat-widget__voice,.chat-widget__handoff{flex:none}
 .chat-widget__files,.chat-widget__emoji{flex:0 1 auto;min-height:0}
 /* With the sheet open the suggestions and the WhatsApp handoff are the things it
@@ -5698,7 +5718,14 @@ html[data-theme="light"][data-lights="on"] body::after{content:"";position:fixed
 .chat-widget__emoji-pick:hover,.chat-widget__emoji-pick:focus-visible{background-color:rgba(var(--accent-rgb),.18)}
 
 @media (max-width:640px){
-  :root{--chat-h:660px;--chat-min:400px;--chat-clear:calc(84px + var(--nav-h, 72px) + .5rem)}
+  /* The quote card is nearly full width here, so it and the notice share one lane
+     and the taller of the two is what has to be cleared — not their sum. That is
+     the figure for an engine without :has(); where :has() works the open-panel
+     rule at the end of this block narrows it to the notice alone, because the
+     card stands down for as long as the visitor is chatting. */
+  :root{--chat-h:660px;--chat-min:400px;--chat-clear:calc(84px + var(--nav-h, 72px) + .5rem);
+    --chat-queue:max(var(--cookie-h,0px), var(--lead-h,0px))}
+  .chat-widget__panel{bottom:calc(5.25rem + var(--chat-queue) + env(safe-area-inset-bottom))}
   /* The mic keeps its 46px tap target from the earlier pass; these two hold at
      40px so the field still has somewhere to be. */
   .chat-widget__form .chat-widget__comp{width:40px;height:40px}
@@ -5706,4 +5733,43 @@ html[data-theme="light"][data-lights="on"] body::after{content:"";position:fixed
   .chat-widget__emoji{grid-template-columns:repeat(7,minmax(0,1fr));max-height:min(190px,30dvh)}
   .chat-widget__emoji-pick{font-size:1.3rem;padding:.4rem .2rem}
   .chat-widget__file-tag b{max-width:9rem}
+}
+/* Lifting the panel cannot invent room that is not there. Measured on the live
+   origin with the notice up, a 320x568 phone leaves 26px above it and a 360x640
+   leaves 154px, against 171px of head and composer — a box that cannot hold its
+   own field. 740px is the break-even for the tallest notice we measured (333px)
+   plus the phone clearance (209px) plus a usable conversation: below it the
+   panel waits for the answer rather than rendering a clipped sliver. Consent is
+   temporary, `is-gone` zeroes --cookie-h, and the assistant opens itself into
+   the full height the moment the bar leaves. */
+@media (max-width:640px) and (max-height:740px){
+  html:has(.cookie-notice.is-in:not(.is-gone)) .chat-widget__panel{display:none}
+}
+
+/* Two asks in one corner is one ask too many, and the site already says so: the
+   teaser stands down for the quote card below 720px (style.css:2465). This is the
+   same courtesy in the other direction. The card is 370px from the left edge and
+   the panel 400px from the right, so they only sit side by side once the viewport
+   reaches 16 + 370 + 400 + 24 = 810px — measured at 700px they overlapped by 70px
+   and the panel sat on the card's own close button, and on a phone the card is
+   523px of a 844px screen, which left the lifted panel 112px and its composer off
+   the bottom. An open panel is something the visitor asked for; the card is
+   something we offered. The card gives up the lane and returns when chat closes. */
+@media (max-width:810px){
+  html:has(.chat-widget__panel:not([hidden])) .leadask{opacity:0;visibility:hidden;pointer-events:none}
+  /* --lead-h is written inline by js/leads.js and goes on measuring a card that
+     is no longer painted, so the two things that queue behind it have to be told
+     to stop counting it. The pill keeps its transform lift rather than a `bottom`
+     change, which is what kept its entrance out of the layout-shift score. */
+  html:has(.chat-widget__panel:not([hidden])) .install{--lift:var(--cookie-h,0px)}
+}
+/* That width gate only sees a left-to-right page. The card follows the inline
+   start while the panel is pinned to the physical right, so in Arabic the two
+   share one corner at EVERY width — measured at 1440x900 they overlapped by 360px
+   and the panel covered the card's own close button, and at 820px by 360x376.
+   Same stand-down, with no width to wait for. */
+html[dir="rtl"]:has(.chat-widget__panel:not([hidden])) .leadask{opacity:0;visibility:hidden;pointer-events:none}
+html[dir="rtl"]:has(.chat-widget__panel:not([hidden])) .install{--lift:var(--cookie-h,0px)}
+@media (max-width:640px){
+  html:has(.chat-widget__panel:not([hidden])){--chat-queue:var(--cookie-h,0px)}
 }
