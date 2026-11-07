@@ -1,0 +1,490 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "pull-up-design-backdrop-and-printing",
+      "name": "Pull Up Design, Backdrop and Printing",
+      "category": "banners",
+      "categoryLabel": "Banners & signage",
+      "description": "Custom pull-up banner with backdrop design and full-color printing — ideal for events, shops and presentations.",
+      "images": [
+        "images/catalog/pull-up-design-2.jpg",
+        "images/catalog/pull-up-design-3.jpg",
+        "images/catalog/pull-up-design-5.jpg",
+        "images/catalog/pull-up-design-6.jpg",
+        "images/catalog/pull-up-design-7.jpg",
+        "images/catalog/pull-up-design-8.jpg",
+        "images/catalog/pull-up-design-9.jpg",
+        "images/catalog/pull-up-design-10.jpg",
+        "images/catalog/pull-up-design-11.jpg",
+        "images/catalog/pull-up-design-12.jpg"
+      ],
+      "url": "catalog.html?q=Pull%20Up%20Design%2C%20Backdrop%20and%20Printing"
+    },
+    {
+      "id": "all-types-of-frames",
+      "name": "All Types of Frames",
+      "category": "frames",
+      "categoryLabel": "Frames & awards",
+      "description": "Award plaques, photo frames and certificate framing — any size, custom engraved or printed.",
+      "images": [
+        "images/catalog/frames.jpg",
+        "images/catalog/frames-2.jpg",
+        "images/catalog/frames-3.jpg",
+        "images/catalog/frames-4.jpg",
+        "images/catalog/frames-5.jpg",
+        "images/catalog/frames-6.jpg",
+        "images/catalog/frames-7.jpg"
+      ],
+      "url": "catalog.html?q=All%20Types%20of%20Frames"
+    },
+    {
+      "id": "flyer",
+      "name": "Flyer",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Event flyers designed and printed — weddings, funerals, launches, church programs and promotions.",
+      "images": [
+        "images/catalog/flyer.jpg",
+        "images/catalog/flyer-2.jpg",
+        "images/catalog/flyer-3.jpg",
+        "images/catalog/flyer-4.jpg",
+        "images/catalog/flyer-5.jpg",
+        "images/catalog/flyer-6.jpg",
+        "images/catalog/flyer-7.jpg",
+        "images/catalog/flyer-8.jpg",
+        "images/catalog/flyer-9.jpg",
+        "images/catalog/flyer-10.jpg"
+      ],
+      "url": "catalog.html?q=Flyer"
+    },
+    {
+      "id": "sample-of-designs-and-printing",
+      "name": "Sample of Designs and Printing",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "A sample of our print work: business cards, letterheads, receipts, posters and more.",
+      "images": [
+        "images/catalog/printing-samples-9.jpg",
+        "images/catalog/printing-samples-3.jpg",
+        "images/catalog/printing-samples-10.jpg",
+        "images/catalog/printing-samples-11.jpg",
+        "images/catalog/printing-samples-12.jpg",
+        "images/catalog/printing-samples-13.jpg",
+        "images/catalog/printing-samples-14.jpg",
+        "images/catalog/printing-samples-15.jpg",
+        "images/catalog/printing-samples-16.jpg",
+        "images/catalog/printing-samples-17.jpg"
+      ],
+      "url": "catalog.html?q=Sample%20of%20Designs%20and%20Printing"
+    },
+    {
+      "id": "banner-printing",
+      "name": "Banner Printing",
+      "category": "banners",
+      "categoryLabel": "Banners & signage",
+      "description": "Banners printed from your artwork or a design we build for you — launches, church programmes, shopfronts and memorials.",
+      "images": [
+        "images/catalog/funeral-banner-2.jpg",
+        "images/catalog/funeral-banner-3.jpg",
+        "images/catalog/funeral-banner-4.jpg",
+        "images/catalog/funeral-banner-6.jpg",
+        "images/catalog/funeral-banner-7.jpg",
+        "images/catalog/funeral-banner-8.jpg",
+        "images/catalog/funeral-banner-9.jpg"
+      ],
+      "url": "catalog.html?q=Banner%20Printing"
+    },
+    {
+      "id": "book-design-inside-and-cover",
+      "name": "Book Design (Inside and Cover)",
+      "category": "books",
+      "categoryLabel": "Books & covers",
+      "description": "Complete book design — cover art and interior typesetting, ready for print or e-book.",
+      "images": [
+        "images/catalog/book-design-5.jpg",
+        "images/catalog/book-design-9.jpg",
+        "images/catalog/book-design-6.jpg",
+        "images/catalog/book-design-7.jpg",
+        "images/catalog/book-design-10.jpg",
+        "images/catalog/book-design-8.jpg"
+      ],
+      "url": "catalog.html?q=Book%20Design%20(Inside%20and%20Cover)"
+    },
+    {
+      "id": "abs-board",
+      "name": "ABS Board",
+      "category": "banners",
+      "categoryLabel": "Banners & signage",
+      "description": "Durable ABS foam boards for shop signage, portraits and event displays.",
+      "images": [
+        "images/catalog/abs-board.jpg",
+        "images/catalog/abs-board-2.jpg",
+        "images/catalog/abs-board-3.jpg",
+        "images/catalog/abs-board-4.jpg"
+      ],
+      "url": "catalog.html?q=ABS%20Board"
+    },
+    {
+      "id": "other-food-flyers",
+      "name": "Other Food Flyers",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Food joint and restaurant flyers — menus, dish photos and contact details laid out for print and social shares.",
+      "images": [
+        "images/catalog/food-flyers.jpg",
+        "images/catalog/food-flyers-2.jpg",
+        "images/catalog/food-flyers-3.jpg"
+      ],
+      "url": "catalog.html?q=Other%20Food%20Flyers"
+    },
+    {
+      "id": "more-food-flyers",
+      "name": "More Food Flyers",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Food flyers for chop bars, kitchens and take-away menus, with the dishes and prices easy to read.",
+      "images": [
+        "images/catalog/other-food-flyers.jpg",
+        "images/catalog/other-food-flyers-2.jpg",
+        "images/catalog/other-food-flyers-3.jpg",
+        "images/catalog/other-food-flyers-4.jpg",
+        "images/catalog/other-food-flyers-5.jpg",
+        "images/catalog/other-food-flyers-6.jpg",
+        "images/catalog/other-food-flyers-7.jpg",
+        "images/catalog/other-food-flyers-8.jpg",
+        "images/catalog/other-food-flyers-9.jpg",
+        "images/catalog/other-food-flyers-10.jpg"
+      ],
+      "url": "catalog.html?q=More%20Food%20Flyers"
+    },
+    {
+      "id": "food-drinks-flyers",
+      "name": "Food & Drinks Flyers",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Flyers for bars, lounges and pastry kitchens that list what you serve and make people hungry.",
+      "images": [
+        "images/catalog/food-drinks-flyers.jpg",
+        "images/catalog/food-drinks-flyers-2.jpg",
+        "images/catalog/food-drinks-flyers-3.jpg",
+        "images/catalog/food-drinks-flyers-4.jpg",
+        "images/catalog/food-drinks-flyers-5.jpg",
+        "images/catalog/food-drinks-flyers-6.jpg",
+        "images/catalog/food-drinks-flyers-7.jpg",
+        "images/catalog/food-drinks-flyers-8.jpg",
+        "images/catalog/food-drinks-flyers-9.jpg",
+        "images/catalog/food-drinks-flyers-10.jpg"
+      ],
+      "url": "catalog.html?q=Food%20%26%20Drinks%20Flyers"
+    },
+    {
+      "id": "winners-chapel-international-flyer",
+      "name": "Winners' Chapel International Flyer",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Church programme flyers with the day, the venue and the minister set out clearly.",
+      "images": [
+        "images/catalog/winners-chapel-flyer.jpg",
+        "images/catalog/winners-chapel-flyer-2.jpg",
+        "images/catalog/winners-chapel-flyer-3.jpg",
+        "images/catalog/winners-chapel-flyer-4.jpg",
+        "images/catalog/winners-chapel-flyer-5.jpg",
+        "images/catalog/winners-chapel-flyer-6.jpg",
+        "images/catalog/winners-chapel-flyer-7.jpg",
+        "images/catalog/winners-chapel-flyer-8.jpg",
+        "images/catalog/winners-chapel-flyer-9.jpg",
+        "images/catalog/winners-chapel-flyer-10.jpg"
+      ],
+      "url": "catalog.html?q=Winners'%20Chapel%20International%20Flyer"
+    },
+    {
+      "id": "id-tags-lanyards",
+      "name": "ID Tags & Lanyards",
+      "category": "merch",
+      "categoryLabel": "Branded merchandise",
+      "description": "Event ID tags and badges on lanyards — usher, guest and staff passes in your colours.",
+      "images": [
+        "images/catalog/tag.jpg"
+      ],
+      "url": "catalog.html?q=ID%20Tags%20%26%20Lanyards"
+    },
+    {
+      "id": "flag-designing-printing",
+      "name": "Flag Designing & Printing",
+      "category": "banners",
+      "categoryLabel": "Banners & signage",
+      "description": "Flags designed with your logo or event artwork and printed for outdoor use.",
+      "images": [
+        "images/catalog/flags.jpg"
+      ],
+      "url": "catalog.html?q=Flag%20Designing%20%26%20Printing"
+    },
+    {
+      "id": "digital-embroidery",
+      "name": "Digital Embroidery",
+      "category": "merch",
+      "categoryLabel": "Branded merchandise",
+      "description": "Machine embroidery on caps, polos, towels and handkerchiefs — your logo, name or event artwork stitched in thread.",
+      "images": [
+        "images/catalog/handkerchief.jpg",
+        "images/catalog/handkerchief-2.jpg",
+        "images/catalog/handkerchief-3.jpg",
+        "images/catalog/handkerchief-4.jpg",
+        "images/catalog/handkerchief-5.jpg",
+        "images/catalog/handkerchief-6.jpg",
+        "images/catalog/handkerchief-7.jpg",
+        "images/catalog/handkerchief-8.jpg",
+        "images/catalog/handkerchief-9.jpg",
+        "images/catalog/handkerchief-10.jpg"
+      ],
+      "url": "catalog.html?q=Digital%20Embroidery"
+    },
+    {
+      "id": "other-flyers",
+      "name": "Other Flyers",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Price lists, service menus and promotion flyers for salons, shops and small businesses.",
+      "images": [
+        "images/catalog/other-flyers.jpg",
+        "images/catalog/other-flyers-2.jpg",
+        "images/catalog/other-flyers-3.jpg",
+        "images/catalog/other-flyers-4.jpg",
+        "images/catalog/other-flyers-5.jpg",
+        "images/catalog/other-flyers-6.jpg"
+      ],
+      "url": "catalog.html?q=Other%20Flyers"
+    },
+    {
+      "id": "t-shirts-caps",
+      "name": "T-Shirts & Caps",
+      "category": "merch",
+      "categoryLabel": "Branded merchandise",
+      "description": "T-shirts, polos and caps printed with your logo or event artwork, sized out for the team.",
+      "images": [
+        "images/catalog/tshirts-caps.jpg",
+        "images/catalog/tshirts-caps-2.jpg",
+        "images/catalog/tshirts-caps-9.jpg",
+        "images/catalog/tshirts-caps-4.jpg",
+        "images/catalog/tshirts-caps-5.jpg",
+        "images/catalog/tshirts-caps-6.jpg",
+        "images/catalog/tshirts-caps-7.jpg",
+        "images/catalog/tshirts-caps-10.jpg",
+        "images/catalog/tshirts-caps-8.jpg",
+        "images/catalog/tshirts-caps-11.jpg"
+      ],
+      "url": "catalog.html?q=T-Shirts%20%26%20Caps"
+    },
+    {
+      "id": "product-labels-printing",
+      "name": "Product Labels Printing",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Labels for bottles, tubs, jars and packs, sized to the container and printed to last.",
+      "images": [
+        "images/catalog/product-labels.jpg",
+        "images/catalog/product-labels-2.jpg",
+        "images/catalog/product-labels-3.jpg",
+        "images/catalog/product-labels-4.jpg",
+        "images/catalog/product-labels-5.jpg",
+        "images/catalog/product-labels-6.jpg",
+        "images/catalog/product-labels-7.jpg",
+        "images/catalog/product-labels-8.jpg",
+        "images/catalog/product-labels-9.jpg",
+        "images/catalog/product-labels-10.jpg"
+      ],
+      "url": "catalog.html?q=Product%20Labels%20Printing"
+    },
+    {
+      "id": "samples-of-label-printing",
+      "name": "Samples of Label Printing",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Labels printed and cut here — sheets of die-cut adhesive labels coming off the machine in the shape each pack, tub or bottle needs.",
+      "images": [
+        "images/catalog/samples-of-label-printing.jpg",
+        "images/catalog/samples-of-label-printing-2.jpg",
+        "images/catalog/samples-of-label-printing-3.jpg",
+        "images/catalog/samples-of-label-printing-4.jpg",
+        "images/catalog/samples-of-label-printing-5.jpg",
+        "images/catalog/samples-of-label-printing-6.jpg",
+        "images/catalog/samples-of-label-printing-7.jpg",
+        "images/catalog/samples-of-label-printing-8.jpg",
+        "images/catalog/samples-of-label-printing-9.jpg",
+        "images/catalog/printing-samples-8.jpg"
+      ],
+      "url": "catalog.html?q=Samples%20of%20Label%20Printing"
+    },
+    {
+      "id": "paper-bags-mugs-flasks",
+      "name": "Paper Bags, Mugs & Flasks",
+      "category": "merch",
+      "categoryLabel": "Branded merchandise",
+      "description": "Branded paper bags, mugs and flasks for gifts, retail and events.",
+      "images": [
+        "images/catalog/paper-bags-mugs-flasks.jpg",
+        "images/catalog/paper-bags-mugs-flasks-2.jpg",
+        "images/catalog/paper-bags-mugs-flasks-3.jpg",
+        "images/catalog/paper-bags-mugs-flasks-4.jpg",
+        "images/catalog/paper-bags-mugs-flasks-5.jpg",
+        "images/catalog/paper-bags-mugs-flasks-6.jpg",
+        "images/catalog/paper-bags-mugs-flasks-7.jpg",
+        "images/catalog/paper-bags-mugs-flasks-8.jpg",
+        "images/catalog/paper-bags-mugs-flasks-9.jpg",
+        "images/catalog/paper-bags-mugs-flasks-10.jpg"
+      ],
+      "url": "catalog.html?q=Paper%20Bags%2C%20Mugs%20%26%20Flasks"
+    },
+    {
+      "id": "funeral-rosettes-and-designs",
+      "name": "Funeral Rosettes and Designs",
+      "category": "banners",
+      "categoryLabel": "Banners & signage",
+      "description": "Funeral rosettes and commemorative designs that carry the portrait, name and verse with care.",
+      "images": [
+        "images/catalog/funeral-rosettes.jpg",
+        "images/catalog/funeral-rosettes-2.jpg",
+        "images/catalog/funeral-rosettes-3.jpg",
+        "images/catalog/funeral-rosettes-4.jpg"
+      ],
+      "url": "catalog.html?q=Funeral%20Rosettes%20and%20Designs"
+    },
+    {
+      "id": "funeral-poster-invitation-cards",
+      "name": "Funeral Poster & Invitation Cards",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Funeral posters and invitation cards matched to the programme and the family's details.",
+      "images": [
+        "images/catalog/funeral-posters-invitations.jpg",
+        "images/catalog/funeral-posters-invitations-2.jpg",
+        "images/catalog/funeral-posters-invitations-3.jpg",
+        "images/catalog/funeral-posters-invitations-4.jpg",
+        "images/catalog/funeral-posters-invitations-5.jpg",
+        "images/catalog/funeral-posters-invitations-6.jpg",
+        "images/catalog/funeral-posters-invitations-7.jpg",
+        "images/catalog/funeral-posters-invitations-8.jpg",
+        "images/catalog/funeral-posters-invitations-9.jpg",
+        "images/catalog/funeral-posters-invitations-10.jpg"
+      ],
+      "url": "catalog.html?q=Funeral%20Poster%20%26%20Invitation%20Cards"
+    },
+    {
+      "id": "key-holders",
+      "name": "Key Holders",
+      "category": "merch",
+      "categoryLabel": "Branded merchandise",
+      "description": "Metal key holders with a printed or engraved medallion — your logo, a portrait or an event date on a ring you hand out.",
+      "images": [
+        "images/catalog/key-holders.jpg",
+        "images/catalog/key-holders-2.jpg"
+      ],
+      "url": "catalog.html?q=Key%20Holders"
+    },
+    {
+      "id": "packaging-box-sleeves",
+      "name": "Packaging Box Sleeves",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Printed paper sleeves and bands that wrap a box, jar or pack and carry your brand all the way around it.",
+      "images": [
+        "images/catalog/label-packaging.jpg",
+        "images/catalog/label-packaging-2.jpg",
+        "images/catalog/label-packaging-3.jpg"
+      ],
+      "url": "catalog.html?q=Packaging%20Box%20Sleeves"
+    },
+    {
+      "id": "notepad-design",
+      "name": "Notepad Design",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Branded notepads and jotter covers for offices, churches and event gifts, designed to match the rest of your print.",
+      "images": [
+        "images/catalog/notepad-design.jpg"
+      ],
+      "url": "catalog.html?q=Notepad%20Design"
+    },
+    {
+      "id": "more-winners-chapel-flyers",
+      "name": "More Winners' Chapel Flyers",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "A further set of church programme flyers — the topic, minister, date and venue laid out for the screen and the print run.",
+      "images": [
+        "images/catalog/more-winners-chapel-flyers.jpg",
+        "images/catalog/more-winners-chapel-flyers-2.jpg",
+        "images/catalog/more-winners-chapel-flyers-3.jpg",
+        "images/catalog/other-flyers-2.jpg",
+        "images/catalog/more-winners-chapel-flyers-4.jpg",
+        "images/catalog/flyer-4.jpg"
+      ],
+      "url": "catalog.html?q=More%20Winners'%20Chapel%20Flyers"
+    },
+    {
+      "id": "gold-perspex",
+      "name": "Gold Perspex",
+      "category": "frames",
+      "categoryLabel": "Frames & awards",
+      "description": "Gold perspex invitations, plaques and keepsakes — cut, printed and finished to your artwork, priced by size.",
+      "images": [
+        "images/catalog/gold-perspex.jpg",
+        "images/catalog/gold-perspex-2.jpg",
+        "images/catalog/gold-perspex-3.jpg",
+        "images/catalog/gold-perspex-4.jpg",
+        "images/catalog/gold-perspex-5.jpg",
+        "images/catalog/gold-perspex-6.jpg",
+        "images/catalog/gold-perspex-7.jpg"
+      ],
+      "url": "catalog.html?q=Gold%20Perspex"
+    },
+    {
+      "id": "logo-design-mockup",
+      "name": "Logo Design Mockup",
+      "category": "banners",
+      "categoryLabel": "Banners & signage",
+      "description": "A logo drawn from scratch and shown mounted on a storefront mock-up, so you see the sign before it is made.",
+      "images": [
+        "images/catalog/logo-design-mockup.jpg",
+        "images/catalog/logo-design-mockup-2.jpg",
+        "images/catalog/logo-design-mockup-3.jpg"
+      ],
+      "url": "catalog.html?q=Logo%20Design%20Mockup"
+    },
+    {
+      "id": "embroidery-and-helmet-branding",
+      "name": "Embroidery and Helmet Branding",
+      "category": "merch",
+      "categoryLabel": "Branded merchandise",
+      "description": "Your mark put on the kit people actually wear — embroidery on caps and workwear, and branding applied to site helmets.",
+      "images": [
+        "images/catalog/embroidery-helmet-branding.jpg",
+        "images/catalog/embroidery-helmet-branding-2.jpg",
+        "images/catalog/embroidery-helmet-branding-3.jpg",
+        "images/catalog/embroidery-helmet-branding-4.jpg",
+        "images/catalog/embroidery-helmet-branding-5.jpg",
+        "images/catalog/embroidery-helmet-branding-6.jpg",
+        "images/catalog/embroidery-helmet-branding-7.jpg"
+      ],
+      "url": "catalog.html?q=Embroidery%20and%20Helmet%20Branding"
+    },
+    {
+      "id": "wedding-invitation-cards",
+      "name": "Wedding Invitation Cards",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Invitation cards for a wedding — your names, date and venue laid out properly and printed on card worth keeping.",
+      "images": [
+        "images/catalog/wedding-invitation-cards.jpg",
+        "images/catalog/wedding-invitation-cards-2.jpg",
+        "images/catalog/wedding-invitation-cards-3.jpg",
+        "images/catalog/wedding-invitation-cards-4.jpg",
+        "images/catalog/wedding-invitation-cards-5.jpg",
+        "images/catalog/wedding-invitation-cards-6.jpg",
+        "images/catalog/wedding-invitation-cards-7.jpg"
+      ],
+      "url": "catalog.html?q=Wedding%20Invitation%20Cards"
+    }
+  ]
+}
