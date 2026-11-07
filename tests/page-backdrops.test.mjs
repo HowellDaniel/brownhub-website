@@ -64,3 +64,15 @@ test('the swapped pages no longer use product photos or the old web plates as ba
     }
   }
 });
+
+test('the backdrops sit at a lifted tier so the artwork reads clearly', () => {
+  for (const page of pages) {
+    const tiers = [...read(page).matchAll(/<section[^>]*\bdata-hold\b[^>]*\bdata-plate="(vivid|mid|dim|deep)"[^>]*>/gi)]
+      .map(([, tier]) => tier);
+    assert.ok(tiers.length >= 1, `${page} should keep its held plates`);
+    for (const tier of tiers) {
+      assert.ok(tier === 'vivid' || tier === 'mid',
+        `${page} carries a "${tier}" plate; the owner asked for clearly visible artwork`);
+    }
+  }
+});
