@@ -1,4 +1,5 @@
 .DS_Store
+.worktrees/
 
 # Compiled from tools/qrlogo.swift by whoever last drew images/qr-app.png.
 tools/qrlogo
