@@ -280,9 +280,8 @@
       settle();
       logExchange(clean, said, source);
     };
-    // The written answers are instant, cost nothing and have been read over, so
-    // they always win when one fits. The assistant only ever sees what they miss.
-    const known = matchIntent(routeAs || clean);
+    // Only exact commands and explicit quick actions stay deterministic; substantive questions reach the model.
+    const known = BHAssistant.route(clean, routeAs, matchIntent);
     if (known) { setTimeout(() => replyWith(known, "intent"), 550 + Math.random() * 450); return; }
     askModel(clean).then((reply) => {
       addPlain(reply);
