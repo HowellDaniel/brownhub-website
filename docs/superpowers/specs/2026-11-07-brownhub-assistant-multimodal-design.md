@@ -1,7 +1,7 @@
 # BrownHub Studio Assistance: grounded multimodal model-first design
 
 Date: 2026-11-07
-Status: Awaiting owner specification review
+Status: Approved by the owner on 2026-11-07; implementation authorized
 
 ## Purpose
 
@@ -100,7 +100,7 @@ New interface strings use the existing `T()`/dictionary system and follow the re
 
 ## Request and response flow
 
-1. The visitor asks a question, optionally with up to three files of at most 10 MB each.
+1. The visitor asks a question, optionally with up to three files of at most 10 MB each and 30 MB in total.
 2. The browser sends the current language, trimmed conversation, question, and files to the Edge Function.
 3. The server validates the request and uploads or inlines supported media to Gemini without exposing the model key.
 4. An analysis pass asks for a structured description: document/media type, visible text, purpose, layout, colours, imagery, style, design category, redesign scope, retrieval keywords, missing details, and whether external creative research would help.
@@ -119,7 +119,7 @@ The Edge Function returns JSON with:
 - `answer`: plain text in the visitor's language.
 - `matches`: zero or more `{ id, name, reason, url }` entries restricted to retrieved BrownHub catalog candidates.
 - `sources`: zero or more `{ title, url }` entries taken from validated grounding metadata.
-- `estimate`: `null` or `{ category, currency, min, max, fromOnly, turnaround, designOnly, requiresConfirmation }`.
+- `estimate`: `null` or `{ category, currency, min, max, fromOnly, turnaround, designOnly, printingExcluded, requiresConfirmation }`.
 
 The server, not the model, supplies every numeric estimate field. `max` is null when `fromOnly` is true. Catalog URLs are generated from validated IDs. Source URLs must be valid HTTPS URLs returned by the grounding provider.
 
