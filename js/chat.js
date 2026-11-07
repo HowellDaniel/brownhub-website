@@ -161,6 +161,90 @@
     return el;
   }
 
+  // Rich envelope rendering: matches, sources, and estimates arrive as structured
+  // data from the server. Each is rendered as a separate card below the answer text.
+  // No model HTML is trusted — every element is built from safe, validated fields.
+  function addEnvelope(envelope) {
+    if (!envelope || typeof envelope !== "object") return;
+    
+    // Answer text (required)
+    if (envelope.answer) {
+      addPlain(envelope.answer);
+    }
+    
+    // Catalog matches (optional)
+    if (Array.isArray(envelope.matches) && envelope.matches.length > 0) {
+      for (const match of envelope.matches) {
+        if (!match || !match.name || !match.url) continue;
+        const card = document.createElement("div");
+        card.className = "chat-msg chat-msg--bot chat-match";
+        const link = document.createElement("a");
+        link.href = match.url;
+        link.textContent = match.name;
+        link.target = "_blank";
+        link.rel = "noopener";
+        card.appendChild(link);
+        if (match.reason) {
+          const reason = document.createElement("span");
+          reason.className = "chat-match__reason";
+          reason.textContent = " — " + match.reason;
+          card.appendChild(reason);
+        }
+        messages.appendChild(card);
+      }
+      scrollDown();
+    }
+    
+    // Research sources (optional)
+    if (Array.isArray(envelope.sources) && envelope.sources.length > 0) {
+      for (const source of envelope.sources) {
+        if (!source || !source.title || !source.url) continue;
+        const card = document.createElement("div");
+        card.className = "chat-msg chat-msg--bot chat-source";
+        const link = document.createElement("a");
+        link.href = source.url;
+        link.textContent = source.title;
+        link.target = "_blank";
+        link.rel = "noopener";
+        card.appendChild(link);
+        messages.appendChild(card);
+      }
+      scrollDown();
+    }
+    
+    // Price estimate (optional)
+    if (envelope.estimate && typeof envelope.estimate === "object") {
+      const est = envelope.estimate;
+      if (!est.category || !est.currency || !est.min) return;
+      const card = document.createElement("div");
+      card.className = "chat-msg chat-msg--bot chat-estimate";
+      const title = document.createElement("div");
+      title.className = "chat-estimate__title";
+      title.textContent = est.category;
+      card.appendChild(title);
+      const price = document.createElement("div");
+      price.className = "chat-estimate__price";
+      const max = est.max ? `–${est.currency}${est.max.toLocaleString()}` : "+";
+      price.textContent = `${est.currency}${est.min.toLocaleString()}${max}`;
+      if (est.fromOnly) {
+        price.textContent += " (from)";
+      }
+      card.appendChild(price);
+      if (est.turnaround) {
+        const turn = document.createElement("div");
+        turn.className = "chat-estimate__turnaround";
+        turn.textContent = est.turnaround;
+        card.appendChild(turn);
+      }
+      const note = document.createElement("div");
+      note.className = "chat-estimate__note";
+      note.textContent = "Design only. Printing excluded. Requires studio confirmation.";
+      card.appendChild(note);
+      messages.appendChild(card);
+      scrollDown();
+    }
+  }
+
   function typingBubble() {
     const el = document.createElement("div");
     el.className = "chat-msg chat-msg--bot chat-msg--typing";
@@ -283,11 +367,20 @@
     // Only exact commands and explicit quick actions stay deterministic; substantive questions reach the model.
     const known = BHAssistant.route(clean, routeAs, matchIntent);
     if (known) { setTimeout(() => replyWith(known, "intent"), 550 + Math.random() * 450); return; }
-    askModel(clean).then((reply) => {
-      addPlain(reply);
-      remember("model", reply);
-      settle();
-      logExchange(clean, reply, "model");
+    askModel(clean).then((result) => {
+      // The server may return a plain string (legacy) or an envelope object (new).
+      if (result && typeof result === "object" && result.answer) {
+        addEnvelope(result);
+        remember("model", result.answer);
+        settle();
+        logExchange(clean, result.answer, "model");
+      } else {
+        const reply = typeof result === "string" ? result : "";
+        addPlain(reply);
+        remember("model", reply);
+        settle();
+        logExchange(clean, reply, "model");
+      }
     }).catch(() => replyWith(fallback, "fallback"));
   }
 
@@ -1545,11 +1638,18 @@
       paintFiles();
       syncFileBtn();
       // The server returns an envelope with answer, matches, sources, estimate.
-      const reply = result && result.answer ? result.answer : "I could not analyse that just now.";
-      addPlain(reply);
-      remember("model", reply);
-      settle();
-      logExchange(analysisPrompt, reply, "model");
+      if (result && typeof result === "object" && result.answer) {
+        addEnvelope(result);
+        remember("model", result.answer);
+        settle();
+        logExchange(analysisPrompt, result.answer, "model");
+      } else {
+        const reply = result && result.answer ? result.answer : "I could not analyse that just now.";
+        addPlain(reply);
+        remember("model", reply);
+        settle();
+        logExchange(analysisPrompt, reply, "model");
+      }
       showHandoff();
       syncTools();
     } catch (e) {

@@ -63,6 +63,16 @@
 .chat-widget__chips button{background:transparent;border:1px solid var(--accent);color:var(--accent-ink);border-radius:999px;padding:.4rem .75rem;font-size:.78rem;font-weight:600;font-family:inherit;cursor:pointer;transition:.15s}
 .chat-widget__chips button:hover{background:var(--accent-fill);color:#fff}
 
+/* ===== Rich envelope cards: matches, sources, estimates ===== */
+.chat-match,.chat-source{font-size:.82rem;padding:.5rem .7rem}
+.chat-match a,.chat-source a{font-weight:600}
+.chat-match__reason{color:var(--text-muted);font-size:.78rem;font-style:italic}
+.chat-estimate{background:var(--bg-alt);border:1px solid var(--border);border-left:3px solid var(--accent);padding:.65rem .8rem;font-size:.85rem}
+.chat-estimate__title{font-weight:600;color:var(--text);margin-bottom:.3rem;font-size:.88rem}
+.chat-estimate__price{font-size:1.05rem;font-weight:700;color:var(--accent-ink);margin-bottom:.25rem}
+.chat-estimate__turnaround{font-size:.78rem;color:var(--text-muted);margin-bottom:.35rem;font-style:italic}
+.chat-estimate__note{font-size:.72rem;color:var(--text-muted);border-top:1px solid var(--border);padding-top:.35rem;margin-top:.35rem}
+
 /* ===== Notched phones: fixed elements respect safe areas (with viewport-fit=cover) ===== */
 body{-webkit-tap-highlight-color:rgba(var(--accent-rgb),.18)}
 .container{padding-left:max(1.25rem,env(safe-area-inset-left,0px));padding-right:max(1.25rem,env(safe-area-inset-right,0px))}
@@ -430,9 +440,9 @@ html[data-theme="light"]{--glass-fill:rgba(255,255,255,.66);--glass-fill-alt:rgb
 :is(.card,.feature,.step,.product-card,.hero__card,.panel,.contact-info__card,.map-card,.catalog-cta,.modal__card,.chat-widget__panel,.shot,.form-success,.btn--ghost,.filter__btn),.faq details,.chat-widget__chips button{
   background-color:var(--glass-fill);background-image:var(--glass-sheen-grad);border-color:var(--glass-fill-hair);
   box-shadow:var(--glass-inset);-webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6)}
-:is(.more-item,.chat-msg--bot,.acct-item,.acct-filter,.acct-tabs,.msg-voice,.chat-widget__mic),.footer-social a,.acct-field input,.acct-filter select,.form-field input,.form-field select,.form-field textarea{
+:is(.more-item,.chat-msg--bot,.chat-match,.chat-source,.chat-estimate,.acct-item,.acct-filter,.acct-tabs,.msg-voice,.chat-widget__mic),.footer-social a,.acct-field input,.acct-filter select,.form-field input,.form-field select,.form-field textarea{
   background-color:var(--glass-fill);border-color:var(--glass-fill-hair);box-shadow:var(--glass-inset)}
-:is(.more-item,.chat-msg--bot,.acct-item,.acct-filter,.acct-tabs,.msg-voice){background-color:var(--glass-fill-alt)}
+:is(.more-item,.chat-msg--bot,.chat-match,.chat-source,.chat-estimate,.acct-item,.acct-filter,.acct-tabs,.msg-voice){background-color:var(--glass-fill-alt)}
 :is(.hero__card,.chat-widget__panel,.modal__card){box-shadow:var(--glass-inset),var(--shadow)}
 :is(.btn--primary,.avatar,.step__num,.chat-widget__toggle,.msg-mic,.form-success__icon,.chat-msg--user,.modal__close,.shot__zoom),.chat-widget__form button{
   background-image:var(--glass-sheen-grad);box-shadow:inset 0 1px 0 var(--glass-hair),0 6px 16px -9px rgba(0,0,0,.5)}
