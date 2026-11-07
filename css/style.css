@@ -5783,16 +5783,13 @@ body[data-nav="home"]{
   --home-copper:#c98a4b;
   --home-glass:rgba(30,17,14,.58);
   --home-hair:rgba(255,255,255,.16);
-  --home-lift:0 26px 70px -42px rgba(0,0,0,.82);
-  --home-tilt:-4deg;
-  --home-tilt-x:1.5deg
+  --home-lift:0 26px 70px -42px rgba(0,0,0,.82)
 }
 html[data-theme="light"] body[data-nav="home"]{
   --home-glass:rgba(255,251,247,.74);
   --home-hair:rgba(38,16,15,.13);
   --home-lift:0 24px 60px -42px rgba(70,35,20,.38)
 }
-html[dir="rtl"] body[data-nav="home"]{--home-tilt:4deg}
 body[data-nav="home"]::before{background:
   radial-gradient(40rem 28rem at 84% 8%,rgba(89,214,255,.14),transparent 70%),
   radial-gradient(36rem 26rem at 10% 28%,rgba(201,138,75,.16),transparent 72%),
@@ -5818,26 +5815,13 @@ html[data-theme="light"] body[data-nav="home"] :is(.card,.feature){
   background-image:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,0) 58%);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.92),inset 0 -1px 0 rgba(38,16,15,.05),var(--home-lift)}
 body[data-nav="home"] :is(.card,.feature):hover{transform:translateY(-4px);border-color:rgba(89,214,255,.34)}
-body[data-nav="home"] .hero__visual{isolation:isolate}
-body[data-nav="home"] .hero__device{position:absolute;inset:3% 1% 5%;z-index:1;overflow:hidden;
-  border:1px solid var(--home-hair);border-radius:clamp(16px,2vw,26px);background:var(--bg-alt);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 30px 80px -46px rgba(0,0,0,.9),0 0 54px -26px rgba(89,214,255,.34);
-  transform:perspective(1100px) rotateY(var(--home-tilt)) rotateX(var(--home-tilt-x))}
-body[data-nav="home"] .hero__device img{width:100%;height:100%;object-fit:cover;display:block;scale:1.045;translate:0 var(--py,0px)}
-body[data-nav="home"] .hero__device::after{content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(118deg,rgba(255,255,255,.14),rgba(255,255,255,0) 34%,rgba(89,214,255,.08) 72%,rgba(201,138,75,.12))}
 body[data-nav="home"] .hero__card{z-index:3;border-color:var(--home-hair);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 16px 38px -22px rgba(0,0,0,.78)}
 body[data-nav="home"] .hero__orb{z-index:0;opacity:.5;filter:blur(18px);
   background:radial-gradient(circle at 34% 30%,rgba(89,214,255,.42),rgba(201,138,75,.2) 48%,transparent 72%)}
-@media (max-width:900px){
-  body[data-nav="home"] .hero__device{inset:2% 0 4%;transform:perspective(900px) rotateY(calc(var(--home-tilt) * .5)) rotateX(1deg)}
-}
 @media (prefers-reduced-motion:reduce){
   body[data-nav="home"]::before{animation:none}
   body[data-nav="home"] :is(.card,.feature){transition:none}
   body[data-nav="home"] :is(.card,.feature):hover{transform:none}
-  html[dir] body[data-nav="home"],body[data-nav="home"]{--home-tilt:0deg;--home-tilt-x:0deg}
-  body[data-nav="home"] .hero__device img{scale:1;translate:none}
   body[data-nav="home"] .hero__card{animation:none}
 }

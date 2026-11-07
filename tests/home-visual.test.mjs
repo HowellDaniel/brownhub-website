@@ -14,7 +14,6 @@ const artwork = [
   'computing-workspace.jpg',
   'design-studio.jpg',
   'design-composition.jpg',
-  'imac-design-desk.jpg',
   'graphics-interface.jpg',
 ];
 const assetPair = (name) => [`images/home/${name}`, `images/home/hi/${name}`];
@@ -47,7 +46,7 @@ function srcOf(tag) {
   return value ? value.replace(/[?#].*$/, '') : null;
 }
 
-test('the six supplied computing and design artworks exist at both sizes', () => {
+test('the five supplied computing and design artworks exist at both sizes', () => {
   for (const name of artwork) {
     for (const asset of assetPair(name)) {
       assert.equal(existsSync(path.join(root, asset)), true, `${asset} should exist`);
@@ -88,10 +87,10 @@ test('the welcome card keeps its original signage picture untouched', () => {
   assert.equal(srcOf(promo[0]), 'images/brand/brownhub-signage.jpg');
 });
 
-test('the hero shows the requested iMac workspace on the table', () => {
-  const device = html.match(/<div class="hero__device">\s*<img\b[^>]*>/i);
-  assert.ok(device, 'the hero device should exist');
-  assert.equal(srcOf(device[0]), 'images/home/imac-design-desk.jpg');
+test('the hero carries its three labels without a device picture', () => {
+  assert.doesNotMatch(html, /hero__device/);
+  assert.doesNotMatch(homeCss, /hero__device/);
+  assert.equal([...html.matchAll(/class="hero__card hero__card--\d"/g)].length, 3);
 });
 
 test('the scoped classic-glass system stops at generic cards', () => {
@@ -102,7 +101,7 @@ test('the scoped classic-glass system stops at generic cards', () => {
   assert.match(homeCss, /body\[data-nav="home"\]\s*:is\(\.card,\.feature\)\s*\{[^}]*box-shadow:[^}]*inset/s);
   assert.match(homeCss, /@media\s*\(prefers-reduced-motion:\s*reduce\)[^{]*\{[^}]*body\[data-nav="home"\]/s);
   assert.doesNotMatch(homeCss, /body\[data-nav="home"\][^{]*(?:#catalog-flow|\.product-card|\.promo__img|\.exp__card|\.exp__items|\.pstory__visual)/);
-  assert.match(html, /<link rel="stylesheet" href="css\/style\.css\?v=181">/);
+  assert.match(html, /<link rel="stylesheet" href="css\/style\.css\?v=182">/);
 });
 
 test('Home motion and interaction hooks remain intact', () => {
