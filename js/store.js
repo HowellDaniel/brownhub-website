@@ -73,7 +73,7 @@
   // id already inside the url. rel="sponsored nofollow" is set for you.
   var TOOLS = [];
 
-  // ===== 5. Display ads =======================================================
+  // ===== 5. Display ads ======================================================
   // Two numbers, both read off the AdSense dashboard. The account is still at
   // "Requires review", so Google answers these requests with nothing until it
   // approves the site — the requests themselves are how it sees the code is
@@ -222,6 +222,18 @@
 
   function paid(item, res) {
     var reference = (res && res.reference) || "";
+    var status = (res && res.status) ? String(res.status).toLowerCase() : "success";
+    // Mobile money and some bank flows can hit this callback while Paystack is still
+    // awaiting confirmation from the network. Treating a pending charge as final is
+    // how a buyer ends up looking paid before the money has actually settled.
+    if (status === "pending") {
+      say("Your payment is still being processed. We will confirm once Paystack completes it.", reference, item);
+      return;
+    }
+    if (status === "failed" || status === "cancelled" || status === "abandoned") {
+      say("Payment not completed. Try again, or send us the brief and we will quote it.");
+      return;
+    }
     record(item, reference);
     // The callback only means Paystack closed a session that ended in payment;
     // the money is confirmed in the dashboard, so nothing here claims more.
