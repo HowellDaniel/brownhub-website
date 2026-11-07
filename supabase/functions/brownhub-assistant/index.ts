@@ -3,7 +3,7 @@
 // Why this exists at all: the browser must never hold a model key. js/chat.js
 // answers the common questions itself from its keyword intents, and only when
 // none of them match does it POST here. This file is the only place the Gemini
-// key is ever seen, and it lives in Supabase's secret store, not in this repo.
+// key is ever seen, and it lives in Supabase's secret store, not in this file.
 //
 // LIVE since 2026-09-25 at /functions/v1/brownhub-assistant, verified end to end
 // through the site's own chat panel. Redeploying after an edit to this file:
@@ -29,6 +29,10 @@ const MINUTES_WINDOW = 60_000;
 const PER_MINUTE = 8;
 const DAY_WINDOW = 86_400_000;
 const PER_DAY = 120;
+// File upload limits: at most three files, 10 MB each, 30 MB total.
+const MAX_FILES = 3;
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_TOTAL_BYTES = 30 * 1024 * 1024;
 
 // Every cross-origin POST carries an Origin a browser cannot forge, and a script
 // that sends none is not a browser — so this is what keeps strangers off the paid
@@ -137,6 +141,14 @@ It is offered in forty languages chosen from a menu at the top of the page, and 
 privacy policy page. Voice notes recorded in the chat or on the Project details form are
 emailed to the studio.
 
+IMAGE AND DOCUMENT ANALYSIS
+When a visitor attaches an image or document, identify what it is proactively: describe the
+subject, style, colours, layout, visible text, and purpose. If it is a design piece (flyer,
+poster, logo, social media graphic, packaging, etc.), compare it with BrownHub's catalog
+when relevant and suggest whether it could be redesigned, improved, or matched by an
+existing service. Be direct and helpful — the visitor does not need to ask "what is this?"
+for you to analyse it; attaching it is enough.
+
 RULES YOU MUST KEEP
 - You are given the conversation so far, ending with the question to answer. Read
   it as one conversation: "it", "that", "and for 500 of them" and "how much
@@ -151,8 +163,8 @@ RULES YOU MUST KEEP
 - Never guess what a specific print job costs.
 - Reply in the language asked for, in plain sentences. No markdown, no asterisks, no
   headings, no emoji, no URLs - the chat window shows plain text and has its own buttons.
-- Keep it under 110 words. Be direct and friendly, like a studio that answers its own
-  phone.`;
+- Keep it under 220 words when analysing attached media; under 110 words for plain text
+  questions. Be direct and friendly, like a studio that answers its own phone.`;
 
 function priceLines(items: unknown): string {
   if (!Array.isArray(items) || !items.length) return "(no prices are listed right now)";
@@ -203,6 +215,63 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
+// Upload a file to Gemini Files API via resumable upload and return the file resource name.
+async function uploadFile(key: string, name: string, mime: string, bytes: Uint8Array): Promise<string> {
+  const startRes = await fetch("https://generativelanguage.googleapis.com/upload/v1beta/files", {
+    method: "POST",
+    headers: {
+      "X-Goog-Upload-Protocol": "resumable",
+      "X-Goog-Upload-Command": "start",
+      "X-Goog-Upload-Header-Content-Length": String(bytes.byteLength),
+      "X-Goog-Upload-Header-Content-Type": mime,
+      "Content-Type": "application/json",
+      "x-goog-api-key": key,
+    },
+    body: JSON.stringify({ file: { displayName: name } }),
+  });
+  if (!startRes.ok) throw new Error("upload-start-" + startRes.status);
+  const uploadUrl = startRes.headers.get("X-Goog-Upload-URL") || startRes.headers.get("x-goog-upload-url");
+  if (!uploadUrl) throw new Error("no-upload-url");
+  const uploadRes = await fetch(uploadUrl, {
+    method: "POST",
+    headers: {
+      "X-Goog-Upload-Offset": "0",
+      "X-Goog-Upload-Command": "upload, finalize",
+      "Content-Type": mime,
+    },
+    body: bytes,
+  });
+  if (!uploadRes.ok) throw new Error("upload-" + uploadRes.status);
+  const result = await uploadRes.json();
+  return result.file?.name || result.name;
+}
+
+// Poll a Gemini file resource until it is ACTIVE or the deadline passes.
+async function waitActive(key: string, fileName: string, timeoutMs = 30000): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/${fileName}`, {
+      headers: { "x-goog-api-key": key },
+    });
+    if (!res.ok) throw new Error("poll-" + res.status);
+    const data = await res.json();
+    if (data.state === "ACTIVE") return;
+    if (data.state === "FAILED") throw new Error("file-failed");
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+  throw new Error("upload-timeout");
+}
+
+// Delete a Gemini file resource (best-effort, called in finally).
+async function deleteFile(key: string, fileName: string): Promise<void> {
+  try {
+    await fetch(`https://generativelanguage.googleapis.com/v1beta/${fileName}`, {
+      method: "DELETE",
+      headers: { "x-goog-api-key": key },
+    });
+  } catch { /* best effort */ }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", {
@@ -220,24 +289,52 @@ Deno.serve(async (req) => {
   const key = Deno.env.get("GEMINI_API_KEY") || "";
   if (!key) return json({ error: "The studio has not switched the assistant on yet." }, 500);
 
-  let body: { q?: unknown; lang?: unknown; prices?: unknown; h?: unknown };
-  try {
-    body = await req.json();
-  } catch {
-    return json({ error: "Send JSON with a question." }, 400);
-  }
-  const q = String(body.q ?? "").replace(/\s+/g, " ").trim().slice(0, MAX_QUERY);
-  if (q.length < 2) return json({ error: "Ask a question first." }, 400);
-
   const ip = (req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "unknown")
     .split(",")[0]
     .trim();
   if (rateLimited(ip)) return json({ error: "slow" }, 429);
 
-  // The visitor's language comes from the site's own language menu, so the model
-  // answers in the same tongue the rest of the page is already showing. Named,
-  // because a bare "tw" is not something every model reads as Twi.
-  const code = /^[a-z]{2}$/.test(String(body.lang ?? "")) ? String(body.lang) : "en";
+  const contentType = req.headers.get("content-type") || "";
+  let q = "";
+  let lang = "en";
+  let history: unknown = [];
+  let prices: unknown = [];
+  const fileEntries: { name: string; type: string; bytes: Uint8Array }[] = [];
+
+  // Accept both multipart FormData (new, with files) and JSON (legacy, text-only).
+  if (contentType.includes("multipart/form-data")) {
+    const form = await req.formData();
+    q = String(form.get("q") || "").replace(/\s+/g, " ").trim().slice(0, MAX_QUERY);
+    lang = String(form.get("lang") || "en");
+    const hRaw = form.get("h");
+    if (hRaw) { try { history = JSON.parse(String(hRaw)); } catch { history = []; } }
+    const fileList = form.getAll("files");
+    let totalBytes = 0;
+    for (const f of fileList.slice(0, MAX_FILES)) {
+      if (f instanceof File) {
+        if (f.size > MAX_FILE_BYTES) continue;
+        if (totalBytes + f.size > MAX_TOTAL_BYTES) continue;
+        const buf = new Uint8Array(await f.arrayBuffer());
+        fileEntries.push({ name: f.name, type: f.type || "application/octet-stream", bytes: buf });
+        totalBytes += f.size;
+      }
+    }
+  } else {
+    let body: { q?: unknown; lang?: unknown; prices?: unknown; h?: unknown };
+    try {
+      body = await req.json();
+    } catch {
+      return json({ error: "Send a question." }, 400);
+    }
+    q = String(body.q ?? "").replace(/\s+/g, " ").trim().slice(0, MAX_QUERY);
+    lang = String(body.lang ?? "en");
+    prices = body.prices;
+    history = body.h;
+  }
+
+  if (q.length < 2 && fileEntries.length === 0) return json({ error: "Ask a question or attach a file." }, 400);
+
+  const code = /^[a-z]{2}$/.test(lang) ? lang : "en";
   const LANGUAGE: Record<string, string> = {
     en: "English", tw: "Twi", sw: "Swahili", ar: "Arabic", he: "Hebrew", fa: "Persian",
     af: "Afrikaans",
@@ -252,39 +349,61 @@ Deno.serve(async (req) => {
   };
   const model = Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash-lite";
 
-  let upstream: Response;
+  const uploadedNames: { name: string; mime: string }[] = [];
   try {
-    upstream = await fetch(
+    // Upload each file to Gemini and wait for it to become ACTIVE.
+    for (const file of fileEntries) {
+      const fileName = await uploadFile(key, file.name, file.type, file.bytes);
+      await waitActive(key, fileName);
+      uploadedNames.push({ name: fileName, mime: file.type });
+    }
+
+    // Build the contents array: the question (or a default analysis prompt) plus file references.
+    const userText = q || "Please identify and analyse the attached file.";
+    const prompt = `Answer in ${LANGUAGE[code] || "English"}. ${userText}`;
+    const parts: unknown[] = [{ text: prompt }];
+    for (const up of uploadedNames) {
+      parts.push({ fileData: { mimeType: up.mime, fileUri: `gs://${up.name}` } });
+    }
+
+    // Build conversation: history turns plus the final user turn with files.
+    const histTurns = conversation(history, "");
+    const contents = histTurns.slice(0, -1);
+    contents.push({ role: "user", parts });
+
+    const upstream = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
         method: "POST",
         headers: { "content-type": "application/json", "x-goog-api-key": key },
         body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: BRIEF.replace("__PRICES__", priceLines(body.prices)) }],
-          },
-          contents: conversation(body.h, `Answer in ${LANGUAGE[code] || "English"}. ${q}`),
-          generationConfig: { temperature: 0.3, maxOutputTokens: 400 },
+          systemInstruction: { parts: [{ text: BRIEF.replace("__PRICES__", priceLines(prices)) }] },
+          contents,
+          generationConfig: { temperature: 0.3, maxOutputTokens: 600 },
         }),
-        signal: AbortSignal.timeout(20_000),
+        signal: AbortSignal.timeout(25_000),
       },
     );
-  } catch {
-    return json({ error: "The assistant could not reach its model." }, 502);
-  }
 
-  if (!upstream.ok) {
-    // The provider's own wording is kept out of the visitor's hands; it goes to the
-    // function log where the owner can read it.
-    console.error("gemini", upstream.status, (await upstream.text()).slice(0, 500));
-    return json({ error: "The assistant is not answering right now." }, 502);
-  }
+    if (!upstream.ok) {
+      console.error("gemini", upstream.status, (await upstream.text()).slice(0, 500));
+      return json({ error: "The assistant is not answering right now." }, 502);
+    }
 
-  const data = await upstream.json();
-  const text = (data?.candidates?.[0]?.content?.parts ?? [])
-    .map((p: { text?: string }) => p.text || "")
-    .join(" ")
-    .trim();
-  if (!text) return json({ error: "empty" }, 502);
-  return json({ answer: text.slice(0, 1600) });
+    const data = await upstream.json();
+    const text = (data?.candidates?.[0]?.content?.parts ?? [])
+      .map((p: { text?: string }) => p.text || "")
+      .join(" ")
+      .trim();
+    if (!text) return json({ error: "empty" }, 502);
+    return json({ answer: text.slice(0, 2000) });
+  } catch (e) {
+    console.error("assistant error", String(e));
+    return json({ error: "The assistant could not process that." }, 500);
+  } finally {
+    // Always delete uploaded files to avoid storage costs and data retention.
+    for (const up of uploadedNames) {
+      await deleteFile(key, up.name);
+    }
+  }
 });

@@ -116,13 +116,13 @@
   // the store. It answers in the visitor's language, so it bypasses the
   // dictionary entirely rather than being looked up in it. The thread goes with
   // the question, so the model hears a follow-up as a follow-up.
-  function askModel(question) {
+  // `files` is an optional array of File objects for automatic image/document analysis.
+  function askModel(question, files) {
     const ask = window.BHAccounts && window.BHAccounts.ask;
     if (typeof ask !== "function") return Promise.reject(new Error("No assistant is wired up."));
-    const prices = (window.BHStore && window.BHStore.offers) ? window.BHStore.offers() : [];
     const lang = (window.I18N && window.I18N.lang) || "en";
     return Promise.race([
-      ask(question, lang, prices, thread),
+      ask(question, lang, thread, files || []),
       new Promise((_, reject) => setTimeout(() => reject(new Error("The assistant took too long.")), 25000))
     ]);
   }
@@ -1535,19 +1535,33 @@
     remember("user", (note ? note + " " : "") + files.map((f) => "[file] " + f.name).join(" "));
     renderChips([]);
     noteLine(T(L_SENDING));
-    const ok = await mailFiles(files, note);
-    picked = [];
-    rowNote = "";
-    // Clearing the "Sending…" line is the same fold: with nothing left staged the row closes.
-    paintFiles();
-    syncFileBtn();
-    addMsg(ok ? L_SENT : L_FAILED, "bot");
-    showHandoff();
-    // The note rides along as a caption to the documents, and the confirmation above
-    // is the reply. Running it back through the intents answered "here is my brief"
-    // with "I didn't quite catch that" — a non-sequitur straight after a promise kept.
-    // It is already in the thread, so the next turn still has it.
-    syncTools();
+    // Route files through the assistant for automatic analysis instead of emailing them.
+    // The client does not need to ask — attaching an image is enough to trigger identification.
+    const analysisPrompt = note || "Please identify and analyse the attached file, and compare it with BrownHub's catalog when relevant.";
+    try {
+      const result = await askModel(analysisPrompt, files);
+      picked = [];
+      rowNote = "";
+      paintFiles();
+      syncFileBtn();
+      // The server returns an envelope with answer, matches, sources, estimate.
+      const reply = result && result.answer ? result.answer : "I could not analyse that just now.";
+      addPlain(reply);
+      remember("model", reply);
+      settle();
+      logExchange(analysisPrompt, reply, "model");
+      showHandoff();
+      syncTools();
+    } catch (e) {
+      picked = [];
+      rowNote = "";
+      paintFiles();
+      syncFileBtn();
+      addMsg("I could not analyse that just now. Your files are still attached so you can retry.", "bot");
+      settle();
+      showHandoff();
+      syncTools();
+    }
   }
 
   // The composer's own glyphs carry their words in attributes, which the

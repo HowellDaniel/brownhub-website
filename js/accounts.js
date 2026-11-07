@@ -153,7 +153,10 @@
   // `history` is the chat so far, so a follow-up reaches the model with its
   // context. It is trimmed here rather than trusted later: eight turns, four
   // hundred characters each, and only the two roles the model understands.
-  function ask(question, lang, prices, history) {
+  // `files` is an optional array of File objects (at most three) for image/document
+  // analysis. The request is sent as multipart FormData so the server can read both
+  // the question and the attachments in one pass. Prices never leave the browser.
+  function ask(question, lang, history, files) {
     if (!configured) return Promise.reject(new Error("Accounts are not configured on this site."));
     var turns = [];
     if (Object.prototype.toString.call(history) === "[object Array]") {
@@ -165,18 +168,25 @@
         turns.push({ role: t.role, text: text });
       }
     }
+    var body = new FormData();
+    body.append("q", String(question || ""));
+    body.append("lang", String(lang || "en"));
+    body.append("h", JSON.stringify(turns));
+    var attachments = (files || []).slice(0, 3);
+    for (var j = 0; j < attachments.length; j++) {
+      body.append("files", attachments[j], attachments[j].name);
+    }
     return fetch(SB_API_URL + "/functions/v1/brownhub-assistant", {
       method: "POST",
       headers: {
-        "content-type": "application/json",
         apikey: SB_API_KEY,
         Authorization: "Bearer " + SB_API_KEY
       },
-      body: JSON.stringify({ q: question, lang: lang, prices: prices || [], h: turns })
+      body: body
     }).then(function (res) {
       return res.json().catch(function () { throw new Error("The assistant sent back nothing readable."); }).then(function (data) {
         if (!res.ok || !data || !data.answer) throw new Error((data && data.error) || "The assistant did not answer.");
-        return data.answer;
+        return data;
       });
     });
   }
