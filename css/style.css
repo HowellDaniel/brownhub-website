@@ -1986,7 +1986,7 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
 .chat-widget__head-sub{flex:1 1 100%;order:3;margin:0;padding-inline-start:calc(22px + .5rem);color:var(--text-muted);font-size:.8rem;line-height:1.35}
 /* The head now carries three glyphs, so the desktop panel takes the same 360px the
    phone already gives it; the media query is the one the base rule never fights. */
-@media (min-width:641px){.chat-widget__panel{width:360px}}
+@media (min-width:641px){.chat-widget__panel{width:440px}}
 
 /* Shown under the budget picker only once a service has taken ranges away, so the
    client never wonders why the small numbers vanished. */
@@ -5645,7 +5645,7 @@ html[data-theme="light"][data-lights="on"] body::after{content:"";position:fixed
    itself is `display:none` rather than removed, because a file input only has
    to be in the document for `.click()` to hand the visitor the OS dialog.
    ========================================================================== */
-:root{--chat-h:620px;--chat-min:420px;--chat-clear:calc(94px + var(--nav-h, 72px) + 12px);
+:root{--chat-h:720px;--chat-min:500px;--chat-clear:calc(94px + var(--nav-h, 72px) + 12px);
   --chat-queue:calc(var(--cookie-h,0px) + var(--rail-lane,0px))}
 
 /* ONE figure for the bottom queue, read by the panel's anchor AND its height.
