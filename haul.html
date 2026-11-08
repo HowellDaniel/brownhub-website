@@ -178,19 +178,64 @@ html.lights-off,html.lights-off body{overflow:hidden}
 @media (max-width:400px){.light-overlay__btn{font-size:.98rem;padding:.9rem 1.6rem}}
 @media (prefers-reduced-motion:reduce){.light-overlay{transition:none}.light-overlay__btn{transition:none}}
 @media print{.light-overlay{display:none}html.lights-off,html.lights-off body{overflow:visible}}
+
+/* Language picker — same tokens the studio pages use, copied so this page
+   still stands alone. The pane is built by js/translate.js. */
+:root{
+  --t-1:8px;--t-2:12px;--t-bw:1px;--t-bw2:2px;--t-r:4px;--t-small:14px}
+.locale{position:relative}
+.locale__btn{display:inline-flex;align-items:center;gap:.5em;padding:6px var(--t-1);border:0;border-radius:var(--t-r);
+  background:transparent;color:var(--text-muted);font:inherit;font-size:var(--t-small);cursor:pointer;
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.locale__btn:hover,.locale__btn[aria-expanded="true"]{color:var(--text);background:rgba(var(--accent-rgb),.07)}
+.locale__caret{transition:rotate .3s ease}
+.locale.is-open .locale__caret{rotate:180deg}
+.locale__panel{position:absolute;top:calc(100% + 6px);inset-inline-start:0;z-index:130;display:none;
+  padding:var(--t-1);border:1px solid var(--glass-border);border-radius:var(--t-r);
+  background:var(--glass-strong);-webkit-backdrop-filter:blur(22px) saturate(145%);backdrop-filter:blur(22px) saturate(145%);
+  box-shadow:var(--shadow)}
+.locale.is-open .locale__panel{display:block;--locale-col-w:154px;columns:var(--locale-cols,4);column-gap:var(--t-2);
+  width:calc(var(--locale-cols,4) * var(--locale-col-w) + (var(--locale-cols,4) - 1) * var(--t-2) + var(--t-1) * 2 + var(--t-bw) * 2);
+  max-width:94vw;max-height:calc(100vh - 104px);overflow:auto}
+.locale__col{break-inside:auto;max-height:none;overflow:visible;padding:0}
+.locale__col+.locale__col{padding-left:0;border-inline-start:0}
+.locale__group{position:sticky;top:0;z-index:1;margin:var(--t-2) 0 2px;padding:5px 10px;overflow:hidden;
+  font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);
+  background:var(--glass-strong);border-radius:var(--t-r)}
+.locale__group:first-child{margin-top:0}
+.locale__opt{display:flex;align-items:center;justify-content:space-between;gap:var(--t-2);width:100%;
+  padding:6px 10px;border:0;border-radius:var(--t-r);background:transparent;color:var(--text-muted);
+  font:inherit;font-size:var(--t-small);text-align:start;cursor:pointer}
+.locale__opt:hover{background:var(--bg-alt);color:var(--text)}
+.locale__opt:focus-visible{outline:var(--t-bw2) solid var(--accent);outline-offset:-2px}
+.locale__opt.is-current{color:var(--accent);font-weight:700}
+.locale__opt.is-current::after{content:"\2713";font-weight:700}
+.locale__name{white-space:nowrap}
+.locale__panel{min-width:236px}
+.locale__group{break-after:avoid}
+.locale__opt{break-inside:avoid}
+.locale__col--suggest .locale__group{color:var(--accent)}
+@media (max-width:860px){
+  .locale.is-open .locale__panel{position:fixed;inset:56px 8px auto 8px;display:flex;flex-wrap:wrap;
+    width:auto;max-width:none;max-height:calc(100vh - 64px);overflow-y:auto}
+  .locale__col{flex:1 1 calc(50% - var(--t-2));min-width:0;max-height:none;overflow:visible}
+  .locale__col+.locale__col{padding-left:0;border-inline-start:0}
+  .locale__group{white-space:normal;text-overflow:clip}
+}
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap nav">
-    <a href="index.html" aria-label="BrownHub home"><img src="images/logo.png" alt="BrownHub" width="160" height="40"></a>
+    <a href="index.html" class="nav__logo" aria-label="BrownHub home"><img src="images/logo.png" alt="BrownHub" width="160" height="40"></a>
     <nav aria-label="Site">
       <a href="services.html">Services</a>
       <a href="engineering.html">Website &amp; Software</a>
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
     </nav>
+    <div class="locale" id="locale" data-i18n="off"></div>
     <a class="back" href="index.html">← Back to the studio</a>
   </div>
 </header>
@@ -200,11 +245,7 @@ html.lights-off,html.lights-off body{overflow:hidden}
     <div class="hero__content">
       <p class="eyebrow">BrownHub Studio · Luggage service</p>
       <h1 id="haul-title">Your luggage travels <em>ahead of you.</em></h1>
-      <p class="lead">
-        BrownHub Haul collects your bags from your home or office in Accra, moves them on a live
-        manifest, and hands them over at the airport, a hotel or the next city — against a four-digit PIN.
-        It is the studio's own app: the same people who design the brand also run the bags.
-      </p>
+      <p class="lead">BrownHub Haul collects your bags from your home or office in Accra, moves them on a live manifest, and hands them over at the airport, a hotel or the next city — against a four-digit PIN. It is the studio's own app: the same people who design the brand also run the bags.</p>
       <div class="cta">
         <a class="btn primary" id="open-app" href="#" hidden>Open BrownHub Haul</a>
         <a class="btn ghost" id="wa-link" href="https://wa.me/233535583460" target="_blank" rel="noopener">Message the depot on WhatsApp</a>
@@ -261,10 +302,7 @@ html.lights-off,html.lights-off body{overflow:hidden}
     <div>
       <p class="by" id="attribution">An app by BrownHub Studio</p>
       <h2 id="haul-name">BrownHub Haul</h2>
-      <p id="haul-blurb">
-        The booking, tracking and depot board are one app, built by the studio's software side.
-        Travellers book and track in the browser; the depot runs the manifest from the same code.
-      </p>
+      <p id="haul-blurb">The booking, tracking and depot board are one app, built by the studio's software side. Travellers book and track in the browser; the depot runs the manifest from the same code.</p>
     </div>
     <a class="btn primary" id="open-app-3" href="#" hidden>Open the app</a>
   </section>
@@ -339,5 +377,6 @@ html.lights-off,html.lights-off body{overflow:hidden}
     .catch(function () { /* the static page is the fallback */ });
 })();
 </script>
+<script src="js/translate.js?v=126" defer></script>
 </body>
 </html>
