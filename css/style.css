@@ -5716,6 +5716,20 @@ html[data-theme="light"][data-lights="on"] body::after{content:"";position:fixed
   font-size:1.05rem;line-height:1;padding:0 .12rem;cursor:pointer}
 .chat-widget__file-x:hover,.chat-widget__file-x:focus-visible{color:var(--accent)}
 .chat-widget__file-note{color:var(--accent);font-weight:600;flex:1 1 100%}
+.chat-widget__file-thumb{width:2.25rem;height:2.25rem;border-radius:.3rem;object-fit:cover;flex:none}
+.chat-widget__file-play{position:absolute;top:50%;left:calc(.3rem + 1.125rem);transform:translate(-50%,-50%);
+  color:#fff;font-size:.65rem;text-shadow:0 1px 3px rgba(0,0,0,.7);pointer-events:none}
+.chat-widget__file-tag{position:relative}
+
+.chat-msg__inner{display:flex;flex-direction:column;gap:.35rem}
+.chat-msg__files{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.2rem}
+.chat-msg__media{position:relative;display:inline-block;border-radius:.45rem;overflow:hidden;line-height:0}
+.chat-msg__media img{max-width:min(14rem,60vw);max-height:12rem;display:block;border-radius:.45rem}
+.chat-msg__play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;pointer-events:none}
+.chat-msg__doc{display:inline-flex;align-items:center;gap:.25rem;padding:.25rem .55rem;
+  border-radius:.4rem;background:var(--bg-alt);color:var(--text);font-size:.85rem}
 
 /* The emoji sheet sits between the chips and the field, in the panel's own
    column, so it never floats over the conversation it is writing into. */

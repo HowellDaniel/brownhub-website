@@ -1489,14 +1489,36 @@
     paintFiles();
   }
 
+  const IMAGE_RE = /\.(png|jpe?g|webp|gif|heic)$/i;
+  const VIDEO_RE = /\.(mp4|mov|avi|webm|mkv|m4v|mpg|mpeg|3gp|ogv)$/i;
+  const objectUrls = new WeakMap();
+  function thumbUrl(file) {
+    if (objectUrls.has(file)) return objectUrls.get(file);
+    const url = URL.createObjectURL(file);
+    objectUrls.set(file, url);
+    return url;
+  }
+
   function paintFiles() {
     fileRow.textContent = "";
     for (let i = 0; i < picked.length; i++) {
       const f = picked[i];
       const tag = document.createElement("span");
       tag.className = "chat-widget__file-tag";
+      if (IMAGE_RE.test(f.name) || VIDEO_RE.test(f.name)) {
+        const thumb = document.createElement("img");
+        thumb.className = "chat-widget__file-thumb";
+        thumb.src = thumbUrl(f);
+        thumb.alt = "";
+        tag.appendChild(thumb);
+        if (VIDEO_RE.test(f.name)) {
+          const play = document.createElement("span");
+          play.className = "chat-widget__file-play";
+          play.innerHTML = "▶";
+          tag.appendChild(play);
+        }
+      }
       const name = document.createElement("b");
-      // A filename is whatever someone typed, so it is only ever set as text.
       name.textContent = f.name;
       const size = document.createElement("em");
       size.textContent = megabytes(f.size);
@@ -1623,8 +1645,43 @@
   }
 
   async function sendNow(note, files) {
-    const said = (note ? note + "  " : "") + files.map((f) => "📎 " + f.name).join("  ");
-    addMsg(said, "user");
+    const el = document.createElement("div");
+    el.className = "chat-msg__inner";
+    if (note) {
+      const txt = document.createElement("span");
+      txt.textContent = note;
+      el.appendChild(txt);
+    }
+    const strip = document.createElement("div");
+    strip.className = "chat-msg__files";
+    for (const f of files) {
+      if (IMAGE_RE.test(f.name) || VIDEO_RE.test(f.name)) {
+        const wrap = document.createElement("span");
+        wrap.className = "chat-msg__media";
+        const img = document.createElement("img");
+        img.src = thumbUrl(f);
+        img.alt = f.name;
+        wrap.appendChild(img);
+        if (VIDEO_RE.test(f.name)) {
+          const play = document.createElement("span");
+          play.className = "chat-msg__play";
+          play.innerHTML = "▶";
+          wrap.appendChild(play);
+        }
+        strip.appendChild(wrap);
+      } else {
+        const chip = document.createElement("span");
+        chip.className = "chat-msg__doc";
+        chip.textContent = "📎 " + f.name;
+        strip.appendChild(chip);
+      }
+    }
+    if (strip.childNodes.length) el.appendChild(strip);
+    const msgEl = document.createElement("div");
+    msgEl.className = "chat-msg chat-msg--user";
+    msgEl.appendChild(el);
+    messages.appendChild(msgEl);
+    messages.scrollTop = messages.scrollHeight;
     remember("user", (note ? note + " " : "") + files.map((f) => "[file] " + f.name).join(" "));
     renderChips([]);
     noteLine(T(L_SENDING));
