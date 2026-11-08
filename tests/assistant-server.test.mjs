@@ -63,7 +63,7 @@ test("JSON text request returns an answer", async () => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "origin": "https://www.brownhub283.com",
+      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.1",
     },
     body: JSON.stringify({ q: "What does BrownHub do?", lang: "en", h: [] }),
   });
@@ -99,7 +99,7 @@ test("Browser prices cannot change the paid-package facts", async () => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "origin": "https://www.brownhub283.com",
+      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.2",
     },
     body: JSON.stringify({
       q: "How much for a flyer?",
@@ -135,12 +135,12 @@ test("Multipart request returns complete envelope", async () => {
             headers: { "X-Goog-Upload-URL": "https://upload.example.com/upload" },
           });
         }
-        if (options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
-          uploadedFiles.push("files/test-file-1");
-          return new Response(JSON.stringify({ file: { name: "files/test-file-1", state: "ACTIVE" } }), { status: 200 });
-        }
       }
-      if (url.includes("files/test-file-1") && options.method === "GET") {
+      if (url.includes("upload.example.com/upload") && options.method === "POST" && options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
+        uploadedFiles.push("files/test-file-1");
+        return new Response(JSON.stringify({ file: { name: "files/test-file-1", state: "ACTIVE" } }), { status: 200 });
+      }
+      if (url.includes("files/test-file-1") && (!options.method || options.method === "GET")) {
         return new Response(JSON.stringify({ state: "ACTIVE" }), { status: 200 });
       }
       if (url.includes("files/test-file-1") && options.method === "DELETE") {
@@ -175,7 +175,7 @@ test("Multipart request returns complete envelope", async () => {
   
   const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
     method: "POST",
-    headers: { "origin": "https://www.brownhub283.com" },
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.3" },
     body: form,
   });
   
@@ -219,7 +219,7 @@ test("File count limit enforced before provider calls", async () => {
   
   const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
     method: "POST",
-    headers: { "origin": "https://www.brownhub283.com" },
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.4" },
     body: form,
   });
   
@@ -251,7 +251,7 @@ test("File size limit enforced before provider calls", async () => {
   
   const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
     method: "POST",
-    headers: { "origin": "https://www.brownhub283.com" },
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.5" },
     body: form,
   });
   
@@ -283,7 +283,7 @@ test("MIME signature mismatch rejected before provider calls", async () => {
   
   const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
     method: "POST",
-    headers: { "origin": "https://www.brownhub283.com" },
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.6" },
     body: form,
   });
   
@@ -308,12 +308,12 @@ test("Video file (MP4) accepted and uploaded to provider", async () => {
             headers: { "X-Goog-Upload-URL": "https://upload.example.com/upload-video" },
           });
         }
-        if (options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
-          uploadedFiles.push("files/video-1");
-          return new Response(JSON.stringify({ file: { name: "files/video-1", state: "ACTIVE" } }), { status: 200 });
-        }
       }
-      if (url.includes("files/video-1") && options.method === "GET") {
+      if (url.includes("upload.example.com/upload-video") && options.method === "POST" && options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
+        uploadedFiles.push("files/video-1");
+        return new Response(JSON.stringify({ file: { name: "files/video-1", state: "ACTIVE" } }), { status: 200 });
+      }
+      if (url.includes("files/video-1") && (!options.method || options.method === "GET")) {
         return new Response(JSON.stringify({ state: "ACTIVE" }), { status: 200 });
       }
       if (url.includes("generateContent")) {
@@ -338,7 +338,7 @@ test("Video file (MP4) accepted and uploaded to provider", async () => {
   
   const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
     method: "POST",
-    headers: { "origin": "https://www.brownhub283.com" },
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.7" },
     body: form,
   });
   
@@ -364,11 +364,11 @@ test("Video file (WebM) accepted via magic-byte fallback", async () => {
             headers: { "X-Goog-Upload-URL": "https://upload.example.com/upload-webm" },
           });
         }
-        if (options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
-          return new Response(JSON.stringify({ file: { name: "files/webm-1", state: "ACTIVE" } }), { status: 200 });
-        }
       }
-      if (url.includes("files/webm-1") && options.method === "GET") {
+      if (url.includes("upload.example.com/upload-webm") && options.method === "POST" && options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
+        return new Response(JSON.stringify({ file: { name: "files/webm-1", state: "ACTIVE" } }), { status: 200 });
+      }
+      if (url.includes("files/webm-1") && (!options.method || options.method === "GET")) {
         return new Response(JSON.stringify({ state: "ACTIVE" }), { status: 200 });
       }
       if (url.includes("generateContent")) {
@@ -392,7 +392,7 @@ test("Video file (WebM) accepted via magic-byte fallback", async () => {
   
   const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
     method: "POST",
-    headers: { "origin": "https://www.brownhub283.com" },
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.8" },
     body: form,
   });
   
@@ -418,11 +418,11 @@ test("PROCESSING state polls with bounded deadline", async () => {
             headers: { "X-Goog-Upload-URL": "https://upload.example.com/upload" },
           });
         }
-        if (options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
-          return new Response(JSON.stringify({ file: { name: "files/test-1", state: "PROCESSING" } }), { status: 200 });
-        }
       }
-      if (url.includes("files/test-1") && options.method === "GET") {
+      if (url.includes("upload.example.com/upload") && options.method === "POST" && options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
+        return new Response(JSON.stringify({ file: { name: "files/test-1", state: "PROCESSING" } }), { status: 200 });
+      }
+      if (url.includes("files/test-1") && (!options.method || options.method === "GET")) {
         pollCount++;
         if (pollCount < 3) {
           return new Response(JSON.stringify({ state: "PROCESSING" }), { status: 200 });
@@ -451,7 +451,7 @@ test("PROCESSING state polls with bounded deadline", async () => {
   
   const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
     method: "POST",
-    headers: { "origin": "https://www.brownhub283.com" },
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.9" },
     body: form,
   });
   
@@ -477,11 +477,11 @@ test("FAILED state stops cleanly and deletes file", async () => {
             headers: { "X-Goog-Upload-URL": "https://upload.example.com/upload" },
           });
         }
-        if (options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
-          return new Response(JSON.stringify({ file: { name: "files/test-1", state: "PROCESSING" } }), { status: 200 });
-        }
       }
-      if (url.includes("files/test-1") && options.method === "GET") {
+      if (url.includes("upload.example.com/upload") && options.method === "POST" && options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
+        return new Response(JSON.stringify({ file: { name: "files/test-1", state: "PROCESSING" } }), { status: 200 });
+      }
+      if (url.includes("files/test-1") && (!options.method || options.method === "GET")) {
         return new Response(JSON.stringify({ state: "FAILED" }), { status: 200 });
       }
       if (url.includes("files/test-1") && options.method === "DELETE") {
@@ -501,7 +501,7 @@ test("FAILED state stops cleanly and deletes file", async () => {
   
   const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
     method: "POST",
-    headers: { "origin": "https://www.brownhub283.com" },
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.10" },
     body: form,
   });
   
@@ -526,11 +526,11 @@ test("Provider error deletes uploaded files", async () => {
             headers: { "X-Goog-Upload-URL": "https://upload.example.com/upload" },
           });
         }
-        if (options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
-          return new Response(JSON.stringify({ file: { name: "files/test-1", state: "ACTIVE" } }), { status: 200 });
-        }
       }
-      if (url.includes("files/test-1") && options.method === "GET") {
+      if (url.includes("upload.example.com/upload") && options.method === "POST" && options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
+        return new Response(JSON.stringify({ file: { name: "files/test-1", state: "ACTIVE" } }), { status: 200 });
+      }
+      if (url.includes("files/test-1") && (!options.method || options.method === "GET")) {
         return new Response(JSON.stringify({ state: "ACTIVE" }), { status: 200 });
       }
       if (url.includes("files/test-1") && options.method === "DELETE") {
@@ -553,7 +553,7 @@ test("Provider error deletes uploaded files", async () => {
   
   const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
     method: "POST",
-    headers: { "origin": "https://www.brownhub283.com" },
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.11" },
     body: form,
   });
   
@@ -606,7 +606,7 @@ test("Catalog metadata fetched only from brownhub283.com", async () => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "origin": "https://www.brownhub283.com",
+      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.12",
     },
     body: JSON.stringify({ q: "Show me flyer examples", lang: "en", h: [] }),
   });
@@ -665,7 +665,7 @@ test("Research runs only when requested and uses grounding metadata", async () =
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "origin": "https://www.brownhub283.com",
+      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.13",
     },
     body: JSON.stringify({ q: "What are current flyer design trends?", lang: "en", h: [] }),
   });
@@ -715,7 +715,7 @@ test("Failed research returns no invented sources", async () => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "origin": "https://www.brownhub283.com",
+      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.14",
     },
     body: JSON.stringify({ q: "What are design trends?", lang: "en", h: [] }),
   });
@@ -767,7 +767,7 @@ test("Model cannot alter server-built numeric estimate fields", async () => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "origin": "https://www.brownhub283.com",
+      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.15",
     },
     body: JSON.stringify({ q: "How much to redesign this flyer?", lang: "en", h: [] }),
   });
