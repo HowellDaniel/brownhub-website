@@ -677,8 +677,8 @@ function createHandler(runtime: Runtime): (request: Request) => Promise<Response
     try {
       for (const file of validated) {
         const fileName = await uploadFile(runtime, key, file.name, file.mime, file.bytes);
-        await waitActive(runtime, key, fileName);
         uploadedNames.push(fileName);
+        await waitActive(runtime, key, fileName);
       }
 
       const userText = q || "Please identify and analyse the attached file.";
