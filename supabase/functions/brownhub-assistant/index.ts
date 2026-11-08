@@ -25,7 +25,15 @@ const MAGIC: Record<string, { offset: number; bytes: number[]; kind: string }> =
   "image/png": { offset: 0, bytes: [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A], kind: "image" },
   "image/jpeg": { offset: 0, bytes: [0xFF, 0xD8, 0xFF], kind: "image" },
   "image/webp": { offset: 0, bytes: [0x52, 0x49, 0x46, 0x46], kind: "image" },
+  "image/gif": { offset: 0, bytes: [0x47, 0x49, 0x46, 0x38], kind: "image" },
   "application/pdf": { offset: 0, bytes: [0x25, 0x50, 0x44, 0x46, 0x2D], kind: "document" },
+  "video/mp4": { offset: 4, bytes: [0x66, 0x74, 0x79, 0x70], kind: "video" },
+  "video/quicktime": { offset: 4, bytes: [0x66, 0x74, 0x79, 0x70], kind: "video" },
+  "video/webm": { offset: 0, bytes: [0x1A, 0x45, 0xDF, 0xA3], kind: "video" },
+  "video/x-matroska": { offset: 0, bytes: [0x1A, 0x45, 0xDF, 0xA3], kind: "video" },
+  "video/avi": { offset: 0, bytes: [0x52, 0x49, 0x46, 0x46], kind: "video" },
+  "video/3gpp": { offset: 4, bytes: [0x66, 0x74, 0x79, 0x70], kind: "video" },
+  "video/mpeg": { offset: 0, bytes: [0x00, 0x00, 0x01, 0xBA], kind: "video" },
 };
 
 function matchesMagic(declaredMime: string, bytes: Uint8Array): boolean {
@@ -51,12 +59,15 @@ function validateFile(name: string, declaredMime: string, bytes: Uint8Array): { 
     if (lower.endsWith(ext)) throw new Error(`File type ${ext} is unsupported`);
   }
   
-  if (!matchesMagic(declaredMime, bytes)) {
+  if (MAGIC[declaredMime] && !matchesMagic(declaredMime, bytes)) {
     throw new Error("File signature does not match declared type");
   }
   
   const spec = MAGIC[declaredMime];
-  return { kind: spec?.kind || "document", mime: declaredMime };
+  if (spec) return { kind: spec.kind, mime: declaredMime };
+  if (declaredMime.startsWith("video/")) return { kind: "video", mime: declaredMime };
+  if (declaredMime.startsWith("image/")) return { kind: "image", mime: declaredMime };
+  return { kind: "document", mime: declaredMime };
 }
 
 function validateFiles(files: { name: string; type: string; bytes: Uint8Array }[]): { kind: string; mime: string; name: string; bytes: Uint8Array }[] {
@@ -527,13 +538,14 @@ It is offered in forty languages chosen from a menu at the top of the page, and 
 privacy policy page. Voice notes recorded in the chat or on the Project details form are
 emailed to the studio.
 
-IMAGE AND DOCUMENT ANALYSIS
-When a visitor attaches an image or document, identify what it is proactively: describe the
-subject, style, colours, layout, visible text, and purpose. If it is a design piece (flyer,
-poster, logo, social media graphic, packaging, etc.), compare it with BrownHub's catalog
-when relevant and suggest whether it could be redesigned, improved, or matched by an
-existing service. Be direct and helpful — the visitor does not need to ask "what is this?"
-for you to analyse it; attaching it is enough.
+IMAGE, VIDEO AND DOCUMENT ANALYSIS
+When a visitor attaches an image, video or document, identify what it is proactively: describe
+the subject, style, colours, layout, visible text, motion (for video), and purpose. If it is
+a design piece (flyer, poster, logo, social media graphic, packaging, etc.), compare it with
+BrownHub's catalog when relevant and suggest whether it could be redesigned, improved, or
+matched by an existing service. For videos, describe what is shown, any text or branding
+visible, the pacing and production quality. Be direct and helpful — the visitor does not
+need to ask "what is this?" for you to analyse it; attaching it is enough.
 
 REDESIGN ESTIMATES
 If a visitor asks about redesigning an attached piece, classify the category (flyer, social,

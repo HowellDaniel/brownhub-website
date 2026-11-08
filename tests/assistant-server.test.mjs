@@ -33,6 +33,14 @@ function createJpegBytes() {
   return new Uint8Array([0xFF, 0xD8, 0xFF, 0xE0, 0, 0, 0, 0, 0, 0, 0, 0]);
 }
 
+function createMp4Bytes() {
+  return new Uint8Array([0, 0, 0, 0x20, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6F, 0x6D, 0, 0, 0, 0]);
+}
+
+function createWebmBytes() {
+  return new Uint8Array([0x1A, 0x45, 0xDF, 0xA3, 0x93, 0x42, 0x86, 0x81, 0x01, 0x42, 0xF7, 0x81]);
+}
+
 // ─── TEXT-ONLY REQUESTS ──────────────────────────────────────────────────────
 
 test("JSON text request returns an answer", async () => {
@@ -283,6 +291,113 @@ test("MIME signature mismatch rejected before provider calls", async () => {
   
   assert.equal(res.status, 400);
   assert.equal(providerCalled, false);
+});
+
+test("Video file (MP4) accepted and uploaded to provider", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  
+  const uploadedFiles = [];
+  const deletedFiles = [];
+  const runtime = createFakeRuntime({
+    env: { GEMINI_API_KEY: "test-key", GEMINI_MODEL: "test-model" },
+    onFetch: async (url, options) => {
+      if (url.includes("upload/v1beta/files") && options.method === "POST") {
+        if (options.headers["X-Goog-Upload-Command"] === "start") {
+          return new Response(JSON.stringify({ file: { name: "files/video-1" } }), {
+            status: 200,
+            headers: { "X-Goog-Upload-URL": "https://upload.example.com/upload-video" },
+          });
+        }
+        if (options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
+          uploadedFiles.push("files/video-1");
+          return new Response(JSON.stringify({ file: { name: "files/video-1", state: "ACTIVE" } }), { status: 200 });
+        }
+      }
+      if (url.includes("files/video-1") && options.method === "GET") {
+        return new Response(JSON.stringify({ state: "ACTIVE" }), { status: 200 });
+      }
+      if (url.includes("generateContent")) {
+        return new Response(JSON.stringify({
+          candidates: [{ content: { parts: [{ text: "A promotional video showing product packaging." }] } }],
+        }), { status: 200 });
+      }
+      if (url.includes("files/video-1") && options.method === "DELETE") {
+        deletedFiles.push("files/video-1");
+        return new Response(null, { status: 200 });
+      }
+      return new Response(JSON.stringify({ error: "not found" }), { status: 404 });
+    },
+  });
+  
+  const handler = createHandler(runtime);
+  const form = new FormData();
+  form.append("q", "What do you see in this video?");
+  form.append("lang", "en");
+  form.append("h", "[]");
+  form.append("files", new Blob([createMp4Bytes()], { type: "video/mp4" }), "promo.mp4");
+  
+  const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
+    method: "POST",
+    headers: { "origin": "https://www.brownhub283.com" },
+    body: form,
+  });
+  
+  const res = await handler(req);
+  const data = await res.json();
+  
+  assert.equal(res.status, 200);
+  assert.ok(data.answer);
+  assert.equal(uploadedFiles.length, 1);
+  assert.equal(deletedFiles.length, 1, "Uploaded video must be deleted");
+});
+
+test("Video file (WebM) accepted via magic-byte fallback", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  
+  const runtime = createFakeRuntime({
+    env: { GEMINI_API_KEY: "test-key", GEMINI_MODEL: "test-model" },
+    onFetch: async (url, options) => {
+      if (url.includes("upload/v1beta/files") && options.method === "POST") {
+        if (options.headers["X-Goog-Upload-Command"] === "start") {
+          return new Response(JSON.stringify({ file: { name: "files/webm-1" } }), {
+            status: 200,
+            headers: { "X-Goog-Upload-URL": "https://upload.example.com/upload-webm" },
+          });
+        }
+        if (options.headers["X-Goog-Upload-Command"] === "upload, finalize") {
+          return new Response(JSON.stringify({ file: { name: "files/webm-1", state: "ACTIVE" } }), { status: 200 });
+        }
+      }
+      if (url.includes("files/webm-1") && options.method === "GET") {
+        return new Response(JSON.stringify({ state: "ACTIVE" }), { status: 200 });
+      }
+      if (url.includes("generateContent")) {
+        return new Response(JSON.stringify({
+          candidates: [{ content: { parts: [{ text: "A screen recording." }] } }],
+        }), { status: 200 });
+      }
+      if (url.includes("files/webm-1") && options.method === "DELETE") {
+        return new Response(null, { status: 200 });
+      }
+      return new Response(JSON.stringify({ error: "not found" }), { status: 404 });
+    },
+  });
+  
+  const handler = createHandler(runtime);
+  const form = new FormData();
+  form.append("q", "Analyse this");
+  form.append("lang", "en");
+  form.append("h", "[]");
+  form.append("files", new Blob([createWebmBytes()], { type: "video/webm" }), "recording.webm");
+  
+  const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
+    method: "POST",
+    headers: { "origin": "https://www.brownhub283.com" },
+    body: form,
+  });
+  
+  const res = await handler(req);
+  assert.equal(res.status, 200);
 });
 
 // ─── FILE LIFECYCLE ──────────────────────────────────────────────────────────

@@ -1412,21 +1412,21 @@
   // else's mail form, and a silently dropped page is a promise broken to a client.
   const FILE_MAX = 10 * 1024 * 1024;
   const FILE_CAP = 3;
-  const FILE_KIND = /\.(pdf|docx?|xlsx?|pptx?|txt|rtf|csv|odt|ods|odp|zip|png|jpe?g|webp|gif|heic|svg|ai|psd|eps)$/i;
+  const FILE_KIND = /\.(pdf|docx?|xlsx?|pptx?|txt|rtf|csv|odt|ods|odp|zip|png|jpe?g|webp|gif|heic|svg|ai|psd|eps|mp4|mov|avi|webm|mkv|m4v|mpg|mpeg|3gp|ogv)$/i;
   const EMOJI = ["😀", "😄", "😊", "😍", "🤔", "😅", "🙂", "😉", "😎", "🥳", "😢", "😭",
     "😮", "👍", "👎", "🙏", "👏", "💪", "🤝", "✍️", "👀", "❤️", "🧡", "💛",
     "💚", "💙", "💜", "⭐", "🔥", "✨", "✅", "❌", "❓", "❗", "💯", "🎉",
     "🎨", "🖌️", "🖼️", "📐", "✂️", "📄", "📎", "📁", "📌", "💼", "📞", "📱",
     "💻", "🌍", "🚀", "⏰", "📅", "💰", "🇬🇭", "🙌"];
 
-  const L_FILES = "Attach a document";
+  const L_FILES = "Attach a file";
   const L_EMOJI = "Add an emoji";
-  const L_REMOVE = "Remove this document";
+  const L_REMOVE = "Remove this file";
   const L_PANEL = "Choose an emoji";
-  const L_REJECT = "That file will not do — a PDF, a Word or Excel document, a picture or a zip, up to 10 MB, three at most.";
-  const L_SENDING = "Sending your document…";
-  const L_SENT = "Your document is on its way to our team. We will open it and reply — keep asking here in the meantime.";
-  const L_FAILED = "We could not send that document over the site. Attach it to a <a href=\"" + WA + "\" target=\"_blank\" rel=\"noopener\">WhatsApp message</a> or an <a href=\"mailto:howelldaniel533@gmail.com\">email</a> and we will take it from there.";
+  const L_REJECT = "That file will not do — a picture, video, PDF, Word or Excel document, or a zip, up to 10 MB, three at most.";
+  const L_SENDING = "Sending your file…";
+  const L_SENT = "Your file is on its way to our team. We will open it and reply — keep asking here in the meantime.";
+  const L_FAILED = "We could not send that file over the site. Attach it to a <a href=\"" + WA + "\" target=\"_blank\" rel=\"noopener\">WhatsApp message</a> or an <a href=\"mailto:howelldaniel533@gmail.com\">email</a> and we will take it from there.";
 
   const CLIP_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 11.6 11.5 20.5a5 5 0 0 1-7.1-7.1l8.6-8.6a3.4 3.4 0 1 1 4.8 4.8l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.9-7.9"/></svg>';
   const FACE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.6 14.6a4.2 4.2 0 0 0 6.8 0"/><path d="M9.2 9.6h.01M14.8 9.6h.01"/></svg>';
@@ -1454,7 +1454,7 @@
   const picker = document.createElement("input");
   picker.type = "file";
   picker.multiple = true;
-  picker.accept = ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.rtf,.csv,.odt,.ods,.odp,.zip,.png,.jpg,.jpeg,.webp,.gif,.heic,.svg,.ai,.psd,.eps";
+  picker.accept = ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.rtf,.csv,.odt,.ods,.odp,.zip,.png,.jpg,.jpeg,.webp,.gif,.heic,.svg,.ai,.psd,.eps,.mp4,.mov,.avi,.webm,.mkv,.m4v,.mpg,.mpeg,.3gp,.ogv,video/*,image/*";
   picker.className = "chat-widget__picker";
   picker.tabIndex = -1;
   picker.setAttribute("aria-hidden", "true");
