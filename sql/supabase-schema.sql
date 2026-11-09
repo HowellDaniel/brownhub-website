@@ -173,10 +173,12 @@ select to_regclass('public.requests') AS requests,
 --
 -- The site's own checkout only knows a payment happened if the buyer's browser is
 -- still open when Paystack closes its frame. This table is the other half: Paystack
--- posts every charge straight to the paystack-webhook Edge Function, which verifies
--- the HMAC-SHA512 signature and files one row here. Nothing on the site reads it,
--- which is why there are no policies: the only writer is the function, holding the
--- service role key that bypasses row level security anyway.
+-- posts every charge straight to the paystack-webhook Edge Function, which files one
+-- row here and records in signature_status whether the HMAC-SHA512 proof held. A
+-- delivery it cannot verify is still filed — discarding it is what left two real
+-- charges with no trace at all. Nothing on the site reads it, which is why there are
+-- no policies: the only writer is the function, holding the service role key that
+-- bypasses row level security anyway.
 --
 -- Run through the dashboard query API (SQL editor) or:
 --   curl -X POST -H "Authorization: Bearer $(cat /tmp/bh_tok)" \
@@ -195,8 +197,18 @@ create table if not exists public.payments (
   customer_email text,
   item text,
   paid_at timestamptz,
-  received_at timestamptz not null default now()
+  received_at timestamptz not null default now(),
+  -- 'ok' when the HMAC matched our live secret, 'stale' when Paystack signed a real
+  -- delivery against a key we no longer hold. The default is the untrusted value, so
+  -- a row can only read as verified if the function went and proved it.
+  signature_status text not null default 'stale'
 );
+
+-- Added 2026-11-09. Kept as a separate statement so an existing table picks it up
+-- too: the webhook began filing unverifiable deliveries instead of discarding them,
+-- which is the difference between a dead signing key and a dead month of payments.
+alter table public.payments
+  add column if not exists signature_status text not null default 'stale';
 
 -- Paystack redelivers an event it did not like the answer to; this key is what the
 -- function's on_conflict=reference,event upsert leans on, so a retry files once.

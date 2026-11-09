@@ -252,6 +252,9 @@
       return;
     }
     say("");
+    // Generated here rather than at setup() because the close handler has to name
+    // the same reference the charge was opened with.
+    var reference = ref(item);
     loadPk().then(function () {
       // setup() only builds the checkout frame in hiding; openIframe() is what the
       // buyer actually sees, so a missing call leaves the button doing nothing.
@@ -261,10 +264,14 @@
         email: mail,
         amount: Math.round(item.price * 100),
         currency: CURRENCY,
-        ref: ref(item),
+        ref: reference,
         metadata: { custom_fields: [{ display_name: "Item", variable_name: "bh_item", value: item.name }] },
         callback: function (res) { paid(item, res); },
-        onClose: function () { say("Payment not completed. Try again, or send us the brief and we will quote it."); }
+        // A mobile money buyer approves the charge on their phone and shuts this frame
+        // before Paystack calls back, so the closing is not proof of not paying. The
+        // reference is the only thread between that money and this order, so leave it
+        // on screen with the one action that hands it to us.
+        onClose: function () { say("Payment not completed. Try again, or send us the brief and we will quote it.", reference, item); }
       }).openIframe();
     }).catch(function () { quote(item); });
   }
