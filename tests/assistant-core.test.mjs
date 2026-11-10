@@ -20,7 +20,7 @@ try {
   throw e;
 }
 
-const { validateFile, validateFiles, selectCandidates, groundingSources, buildEstimate, buildEnvelope, parseAnalysis } = core;
+const { validateFile, validateFiles, selectCandidates, groundingSources, buildEstimate, buildEnvelope, parseAnalysis, sanitizeProviderError } = core;
 
 // ─── FILE VALIDATION ─────────────────────────────────────────────────────────
 
@@ -346,4 +346,42 @@ test("parseAnalysis keeps a JSON reply that has no answer field readable", () =>
   const out = parseAnalysis('{"keywords":["banner"]}');
   assert.deepEqual(out.keywords, ["banner"]);
   assert.equal(typeof out.answer, "string");
+});
+
+// ─── PROVIDER ERROR SANITISING (the live generate-400 blindness) ─────────────
+
+test("sanitizeProviderError keeps the reason and drops the file reference", () => {
+  const raw =
+    '{"error":{"code":400,"message":"Unable to submit request because File [gs://files/abcdef123456] could not be read. Learn more: INVALID_ARGUMENT","status":"INVALID_ARGUMENT"}}';
+  const out = sanitizeProviderError(raw);
+  assert.ok(out.includes("INVALID_ARGUMENT"), out);
+  assert.ok(out.includes("could not be read"), out);
+  assert.ok(!out.includes("gs://"), out);
+  assert.ok(!out.includes("files/abcdef123456"), out);
+});
+
+test("sanitizeProviderError drops the Files API https uri", () => {
+  const out = sanitizeProviderError(
+    '{"error":{"message":"File https://generativelanguage.googleapis.com/v1beta/files/xyz789 is not ACTIVE","status":"INVALID_ARGUMENT"}}'
+  );
+  assert.ok(!out.includes("generativelanguage"), out);
+  assert.ok(!out.includes("xyz789"), out);
+  assert.ok(out.includes("not ACTIVE"), out);
+});
+
+test("sanitizeProviderError never leaks the API key from an echoed body", () => {
+  const out = sanitizeProviderError(
+    '{"error":{"message":"API key AIzaSyTestKey1234567890abcdefghijk is invalid","status":"UNAUTHENTICATED"}}'
+  );
+  assert.ok(!out.includes("AIzaSy"), out);
+  assert.ok(out.includes("UNAUTHENTICATED"), out);
+});
+
+test("sanitizeProviderError caps a non-JSON body", () => {
+  const out = sanitizeProviderError("<html>gateway rejected the request</html> " + "z".repeat(9000));
+  assert.ok(out.length <= 300, String(out.length));
+});
+
+test("sanitizeProviderError on an empty body says nothing was returned", () => {
+  assert.ok(sanitizeProviderError("").length > 0);
 });

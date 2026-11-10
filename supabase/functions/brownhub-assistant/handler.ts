@@ -9,6 +9,7 @@ import {
   groundingSources,
   buildEstimate,
   buildEnvelope,
+  sanitizeProviderError,
 } from "./core.ts";
 
 export interface Runtime {
@@ -65,7 +66,7 @@ async function uploadFile(
   name: string,
   mime: string,
   bytes: Uint8Array
-): Promise<string> {
+): Promise<{ name: string; uri: string }> {
   const startRes = await runtime.fetch("https://generativelanguage.googleapis.com/upload/v1beta/files", {
     method: "POST",
     headers: {
@@ -92,7 +93,11 @@ async function uploadFile(
   });
   if (!uploadRes.ok) throw new Error("upload-" + uploadRes.status);
   const result = await uploadRes.json();
-  return result.file?.name || result.name;
+  const file = result.file || result;
+  if (!file?.name) throw new Error("no-file-name");
+  // generateContent takes the Files API uri; gs:// is reserved for model output.
+  const uri = file.uri || "https://generativelanguage.googleapis.com/v1beta/" + file.name;
+  return { name: file.name, uri };
 }
 
 async function waitActive(
@@ -145,7 +150,11 @@ async function generate(
       }),
     }
   );
-  if (!res.ok) throw new Error("generate-" + res.status);
+  if (!res.ok) {
+    let raw = "";
+    try { raw = await res.text(); } catch { /* no body to read */ }
+    throw new Error("generate-" + res.status + " " + sanitizeProviderError(raw));
+  }
   const data = await res.json();
   const text = (data?.candidates?.[0]?.content?.parts ?? [])
     .map((p: { text?: string }) => p.text || "")
@@ -382,20 +391,20 @@ export function createHandler(runtime: Runtime): (request: Request) => Promise<R
     };
     const model = runtime.env("GEMINI_MODEL") || "gemini-3.5-flash-lite";
 
-    const uploadedNames: string[] = [];
+    const uploaded: { name: string; uri: string }[] = [];
     try {
       for (const file of validated) {
-        const fileName = await uploadFile(runtime, key, file.name, file.mime, file.bytes);
-        uploadedNames.push(fileName);
-        await waitActive(runtime, key, fileName);
+        const ref = await uploadFile(runtime, key, file.name, file.mime, file.bytes);
+        uploaded.push(ref);
+        await waitActive(runtime, key, ref.name);
       }
 
       const userText = q || "Please identify and analyse the attached file.";
       const prompt = `Answer in ${LANGUAGE[code] || "English"}. ${userText}`;
       const parts: unknown[] = [{ text: prompt }];
-      for (const name of uploadedNames) {
-        parts.push({ fileData: { mimeType: validated[uploadedNames.indexOf(name)].mime, fileUri: `gs://${name}` } });
-      }
+      uploaded.forEach((ref, i) => {
+        parts.push({ fileData: { mimeType: validated[i].mime, fileUri: ref.uri } });
+      });
 
       const histTurns = conversation(history, "");
       const contents = histTurns.slice(0, -1);
@@ -438,8 +447,8 @@ export function createHandler(runtime: Runtime): (request: Request) => Promise<R
       if (String(e).includes("generate-5")) return json({ error: "The assistant is not answering right now." }, 502);
       return json({ error: "The assistant could not process that." }, 500);
     } finally {
-      for (const name of uploadedNames) {
-        await deleteFile(runtime, key, name);
+      for (const ref of uploaded) {
+        await deleteFile(runtime, key, ref.name);
       }
     }
   };

@@ -237,6 +237,34 @@ export function buildEstimate(scope: EstimateScope): Estimate | null {
   };
 }
 
+// ─── PROVIDER ERROR SANITISING ───────────────────────────────────────────────
+// Only the log may carry the provider's wording, and never its file references.
+
+const MAX_PROVIDER_REASON = 240;
+
+export function sanitizeProviderError(raw: string): string {
+  let reason = "";
+  try {
+    const err = JSON.parse(raw)?.error;
+    if (err && typeof err === "object") {
+      reason = [err.status, err.message]
+        .filter((part: unknown) => typeof part === "string" && part.length > 0)
+        .join(" — ");
+    }
+  } catch {
+    /* the gateway answered HTML, not JSON */
+  }
+  const clean = (reason || String(raw))
+    .replace(/https:\/\/generativelanguage\.googleapis\.com\/\S+/g, "[file]")
+    .replace(/gs:\/\/\S+/g, "[file]")
+    .replace(/files\/[A-Za-z0-9_-]+/g, "[file]")
+    .replace(/AIza[A-Za-z0-9_-]{15,}/g, "[key]")
+    .replace(/sk_(?:live|test)_[A-Za-z0-9]+/g, "[key]")
+    .replace(/\s+/g, " ")
+    .trim();
+  return (clean || "no reason returned").slice(0, MAX_PROVIDER_REASON);
+}
+
 // ─── MODEL REPLY PARSING ─────────────────────────────────────────────────────
 // The brief asks for JSON and the model usually fences it. A fence is not a
 // failure: the fields still have to reach the visitor.

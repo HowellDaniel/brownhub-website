@@ -244,6 +244,34 @@ function buildEstimate(scope: EstimateScope): Estimate | null {
   };
 }
 
+// ─── PROVIDER ERROR SANITISING ───────────────────────────────────────────────
+// Only the log may carry the provider's wording, and never its file references.
+
+const MAX_PROVIDER_REASON = 240;
+
+function sanitizeProviderError(raw: string): string {
+  let reason = "";
+  try {
+    const err = JSON.parse(raw)?.error;
+    if (err && typeof err === "object") {
+      reason = [err.status, err.message]
+        .filter((part: unknown) => typeof part === "string" && part.length > 0)
+        .join(" — ");
+    }
+  } catch {
+    /* the gateway answered HTML, not JSON */
+  }
+  const clean = (reason || String(raw))
+    .replace(/https:\/\/generativelanguage\.googleapis\.com\/\S+/g, "[file]")
+    .replace(/gs:\/\/\S+/g, "[file]")
+    .replace(/files\/[A-Za-z0-9_-]+/g, "[file]")
+    .replace(/AIza[A-Za-z0-9_-]{15,}/g, "[key]")
+    .replace(/sk_(?:live|test)_[A-Za-z0-9]+/g, "[key]")
+    .replace(/\s+/g, " ")
+    .trim();
+  return (clean || "no reason returned").slice(0, MAX_PROVIDER_REASON);
+}
+
 // ─── MODEL REPLY PARSING ─────────────────────────────────────────────────────
 // The brief asks for JSON and the model usually fences it. A fence is not a
 // failure: the fields still have to reach the visitor.
@@ -430,7 +458,7 @@ async function uploadFile(
   name: string,
   mime: string,
   bytes: Uint8Array
-): Promise<string> {
+): Promise<{ name: string; uri: string }> {
   const startRes = await runtime.fetch("https://generativelanguage.googleapis.com/upload/v1beta/files", {
     method: "POST",
     headers: {
@@ -457,7 +485,11 @@ async function uploadFile(
   });
   if (!uploadRes.ok) throw new Error("upload-" + uploadRes.status);
   const result = await uploadRes.json();
-  return result.file?.name || result.name;
+  const file = result.file || result;
+  if (!file?.name) throw new Error("no-file-name");
+  // generateContent takes the Files API uri; gs:// is reserved for model output.
+  const uri = file.uri || "https://generativelanguage.googleapis.com/v1beta/" + file.name;
+  return { name: file.name, uri };
 }
 
 async function waitActive(
@@ -510,7 +542,11 @@ async function generate(
       }),
     }
   );
-  if (!res.ok) throw new Error("generate-" + res.status);
+  if (!res.ok) {
+    let raw = "";
+    try { raw = await res.text(); } catch { /* no body to read */ }
+    throw new Error("generate-" + res.status + " " + sanitizeProviderError(raw));
+  }
   const data = await res.json();
   const text = (data?.candidates?.[0]?.content?.parts ?? [])
     .map((p: { text?: string }) => p.text || "")
@@ -744,20 +780,20 @@ function createHandler(runtime: Runtime): (request: Request) => Promise<Response
     };
     const model = runtime.env("GEMINI_MODEL") || "gemini-3.5-flash-lite";
 
-    const uploadedNames: string[] = [];
+    const uploaded: { name: string; uri: string }[] = [];
     try {
       for (const file of validated) {
-        const fileName = await uploadFile(runtime, key, file.name, file.mime, file.bytes);
-        uploadedNames.push(fileName);
-        await waitActive(runtime, key, fileName);
+        const ref = await uploadFile(runtime, key, file.name, file.mime, file.bytes);
+        uploaded.push(ref);
+        await waitActive(runtime, key, ref.name);
       }
 
       const userText = q || "Please identify and analyse the attached file.";
       const prompt = `Answer in ${LANGUAGE[code] || "English"}. ${userText}`;
       const parts: unknown[] = [{ text: prompt }];
-      for (const name of uploadedNames) {
-        parts.push({ fileData: { mimeType: validated[uploadedNames.indexOf(name)].mime, fileUri: `gs://${name}` } });
-      }
+      uploaded.forEach((ref, i) => {
+        parts.push({ fileData: { mimeType: validated[i].mime, fileUri: ref.uri } });
+      });
 
       const histTurns = conversation(history, "");
       const contents = histTurns.slice(0, -1);
@@ -800,8 +836,8 @@ function createHandler(runtime: Runtime): (request: Request) => Promise<Response
       if (String(e).includes("generate-5")) return json({ error: "The assistant is not answering right now." }, 502);
       return json({ error: "The assistant could not process that." }, 500);
     } finally {
-      for (const name of uploadedNames) {
-        await deleteFile(runtime, key, name);
+      for (const ref of uploaded) {
+        await deleteFile(runtime, key, ref.name);
       }
     }
   };

@@ -842,3 +842,112 @@ test("A fenced JSON reply still yields a prose answer, matches and an estimate",
   assert.equal(data.estimate.max, 300);
   assert.equal(data.estimate.turnaround, "Likely 1–2 days");
 });
+
+// ─── PROVIDER FILE URI (the live generate-400 defect) ────────────────────────
+
+function mockFilesApi(uploaded, finalizeBody, generateContent) {
+  return async (url, options) => {
+    if (url.includes("upload/v1beta/files") && options.method === "POST") {
+      return new Response(JSON.stringify({ file: { name: "files/real-9" } }), {
+        status: 200,
+        headers: { "X-Goog-Upload-URL": "https://upload.example.com/u9" },
+      });
+    }
+    if (url === "https://upload.example.com/u9") {
+      return new Response(JSON.stringify(finalizeBody), { status: 200 });
+    }
+    if (url.includes("v1beta/files/real-9") && (!options.method || options.method === "GET")) {
+      return new Response(JSON.stringify({ state: "ACTIVE" }), { status: 200 });
+    }
+    if (url.includes("v1beta/files/real-9") && options.method === "DELETE") {
+      uploaded.deleted = true;
+      return new Response(null, { status: 200 });
+    }
+    if (url.includes("generateContent")) {
+      uploaded.body = JSON.parse(options.body);
+      return generateContent;
+    }
+    return new Response(JSON.stringify({ error: "not found" }), { status: 404 });
+  };
+}
+
+function attachedFileRequest() {
+  const form = new FormData();
+  form.append("q", "What is this flyer?");
+  form.append("lang", "en");
+  form.append("h", "[]");
+  form.append("files", new Blob([createPngBytes()], { type: "image/png" }), "flyer.png");
+  return new Request("https://example.com/functions/v1/brownhub-assistant", {
+    method: "POST",
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.9" },
+    body: form,
+  });
+}
+
+const okAnswer = () =>
+  new Response(
+    JSON.stringify({
+      candidates: [{ content: { parts: [{ text: JSON.stringify({ answer: "It is a flyer." }) }] } }],
+    }),
+    { status: 200 }
+  );
+
+test("the attached file reaches the model by the URI the Files API returned", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const captured = {};
+  const runtime = createFakeRuntime({
+    env: { GEMINI_API_KEY: "test-key", GEMINI_MODEL: "test-model" },
+    onFetch: mockFilesApi(
+      captured,
+      { file: { name: "files/real-9", uri: "https://generativelanguage.googleapis.com/v1beta/files/real-9", state: "PROCESSING" } },
+      okAnswer()
+    ),
+  });
+  const res = await createHandler(runtime)(attachedFileRequest());
+  assert.equal(res.status, 200);
+  const part = captured.body.contents[captured.body.contents.length - 1].parts.find((p) => p.fileData);
+  assert.ok(part, "the generateContent request must carry a fileData part");
+  assert.equal(part.fileData.fileUri, "https://generativelanguage.googleapis.com/v1beta/files/real-9");
+  assert.ok(!JSON.stringify(captured.body).includes("gs://"), "gs:// URIs are for model output, not uploads");
+  assert.equal(captured.deleted, true, "the uploaded file must still be deleted by its name");
+});
+
+test("a provider rejection reaches the log as its reason, with no file reference", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const captured = {};
+  const rejected = new Response(
+    JSON.stringify({
+      error: {
+        code: 400,
+        message:
+          "Unable to submit request because File [gs://files/real-9] could not be read. Learn more: INVALID_ARGUMENT",
+        status: "INVALID_ARGUMENT",
+      },
+    }),
+    { status: 400 }
+  );
+  const runtime = createFakeRuntime({
+    env: { GEMINI_API_KEY: "test-key", GEMINI_MODEL: "test-model" },
+    onFetch: mockFilesApi(
+      captured,
+      { file: { name: "files/real-9", uri: "https://generativelanguage.googleapis.com/v1beta/files/real-9", state: "PROCESSING" } },
+      rejected
+    ),
+  });
+  const logs = [];
+  const realError = console.error;
+  console.error = (...args) => { logs.push(args.join(" ")); };
+  let res, data;
+  try {
+    res = await createHandler(runtime)(attachedFileRequest());
+    data = await res.json();
+  } finally {
+    console.error = realError;
+  }
+  const text = logs.join(" ");
+  assert.ok(text.includes("INVALID_ARGUMENT"), "the provider reason must be logged: " + text);
+  assert.ok(!text.includes("gs://"), "no provider file URI in the log: " + text);
+  assert.ok(!text.includes("files/real-9"), "no provider file reference in the log: " + text);
+  assert.equal(res.status, 500);
+  assert.equal(data.error, "The assistant could not process that.");
+});
