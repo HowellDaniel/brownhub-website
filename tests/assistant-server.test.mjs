@@ -781,3 +781,64 @@ test("Model cannot alter server-built numeric estimate fields", async () => {
   assert.equal(data.estimate.max, 300);
   assert.equal(data.estimate.currency, "GHS");
 });
+
+// ─── FENCED MODEL REPLY (the live defect) ────────────────────────────────────
+// Version 48 handed visitors the model's raw ```json fence as the answer and
+// lost matches, sources and the server-built estimate with it.
+
+test("A fenced JSON reply still yields a prose answer, matches and an estimate", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+
+  const fenced = [
+    "```json",
+    JSON.stringify({
+      answer: "Our Flyer Design Package costs GH₵300.",
+      keywords: ["flyer"],
+      researchNeeded: false,
+      estimate: { category: "flyer", singleItem: true, usableContent: true, dimensionsKnown: true },
+      matches: [],
+    }),
+    "```",
+  ].join("\n");
+
+  const runtime = createFakeRuntime({
+    env: { GEMINI_API_KEY: "test-key", GEMINI_MODEL: "test-model" },
+    onFetch: async (url) => {
+      if (url.includes("assistant-catalog.json")) {
+        return new Response(JSON.stringify({
+          version: 1,
+          items: [{ id: "flyer", name: "Flyer", category: "print", description: "Event flyers" }],
+        }), { status: 200 });
+      }
+      if (url.includes("generateContent")) {
+        return new Response(JSON.stringify({
+          candidates: [{ content: { parts: [{ text: fenced }] } }],
+        }), { status: 200 });
+      }
+      return new Response(JSON.stringify({ error: "not found" }), { status: 404 });
+    },
+  });
+
+  const handler = createHandler(runtime);
+  const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.16",
+    },
+    body: JSON.stringify({ q: "How much to redesign this flyer?", lang: "en", h: [] }),
+  });
+
+  const res = await handler(req);
+  const data = await res.json();
+
+  assert.equal(res.status, 200);
+  assert.equal(data.answer, "Our Flyer Design Package costs GH₵300.");
+  assert.ok(!data.answer.includes("```"), "Fence markers must never reach the visitor");
+  assert.ok(!data.answer.includes('"answer"'), "Raw JSON must never reach the visitor");
+  assert.equal(data.matches.length, 1, "Keywords must still retrieve catalog matches");
+  assert.ok(data.estimate, "Estimate must still be built from the rate card");
+  assert.equal(data.estimate.min, 200);
+  assert.equal(data.estimate.max, 300);
+  assert.equal(data.estimate.turnaround, "Likely 1–2 days");
+});

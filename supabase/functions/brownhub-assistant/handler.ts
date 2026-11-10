@@ -4,6 +4,7 @@
 
 import {
   validateFiles,
+  parseAnalysis,
   selectCandidates,
   groundingSources,
   buildEstimate,
@@ -401,12 +402,7 @@ export function createHandler(runtime: Runtime): (request: Request) => Promise<R
       contents.push({ role: "user", parts });
 
       const analysisResult = await generate(runtime, key, model, contents, BRIEF);
-      let analysis: any;
-      try {
-        analysis = JSON.parse(analysisResult.text);
-      } catch {
-        analysis = { answer: analysisResult.text, keywords: [], researchNeeded: false, estimate: null, matches: [] };
-      }
+      const analysis = parseAnalysis(analysisResult.text);
 
       let candidates: any[] = [];
       if (analysis.keywords && analysis.keywords.length > 0) {

@@ -20,7 +20,7 @@ try {
   throw e;
 }
 
-const { validateFile, validateFiles, selectCandidates, groundingSources, buildEstimate, buildEnvelope } = core;
+const { validateFile, validateFiles, selectCandidates, groundingSources, buildEstimate, buildEnvelope, parseAnalysis } = core;
 
 // ─── FILE VALIDATION ─────────────────────────────────────────────────────────
 
@@ -298,4 +298,52 @@ test("buildEnvelope caps sources at 3", () => {
   }));
   const envelope = buildEnvelope("Answer", {}, [], sources);
   assert.ok(envelope.sources.length <= 3);
+});
+
+// ─── MODEL REPLY PARSING ─────────────────────────────────────────────────────
+// The brief asks for JSON. The model wraps that JSON in a ``` fence often enough
+// to be normal, and a visitor must never be handed the fence back as the answer.
+
+test("parseAnalysis reads a fenced JSON reply into fields", () => {
+  const out = parseAnalysis('```json\n{"answer":"Nice flyer.","keywords":["flyer"]}\n```');
+  assert.equal(out.answer, "Nice flyer.");
+  assert.deepEqual(out.keywords, ["flyer"]);
+});
+
+test("parseAnalysis reads an unfenced JSON reply into fields", () => {
+  const out = parseAnalysis('{"answer":"Plain sentence.","estimate":{"category":"flyer"}}');
+  assert.equal(out.answer, "Plain sentence.");
+  assert.deepEqual(out.estimate, { category: "flyer" });
+});
+
+test("parseAnalysis finds JSON the model wrapped in prose", () => {
+  const out = parseAnalysis('Here you go:\n{"answer":"From the catalog.","keywords":["poster"]}\nHope that helps!');
+  assert.equal(out.answer, "From the catalog.");
+  assert.deepEqual(out.keywords, ["poster"]);
+});
+
+test("parseAnalysis keeps a plain prose reply as the answer", () => {
+  const out = parseAnalysis("BrownHub is a creative studio in Accra.");
+  assert.equal(out.answer, "BrownHub is a creative studio in Accra.");
+  assert.equal(out.keywords.length, 0);
+  assert.equal(out.estimate, null);
+  assert.equal(out.researchNeeded, false);
+});
+
+test("parseAnalysis never returns fence markers as the answer", () => {
+  const out = parseAnalysis("```\nBrownHub prints its own work.\n```");
+  assert.equal(out.answer, "BrownHub prints its own work.");
+});
+
+test("parseAnalysis survives a truncated JSON reply", () => {
+  const out = parseAnalysis('{"answer":"This was cut of');
+  assert.equal(typeof out.answer, "string");
+  assert.ok(out.answer.length > 0);
+  assert.equal(out.researchNeeded, false);
+});
+
+test("parseAnalysis keeps a JSON reply that has no answer field readable", () => {
+  const out = parseAnalysis('{"keywords":["banner"]}');
+  assert.deepEqual(out.keywords, ["banner"]);
+  assert.equal(typeof out.answer, "string");
 });

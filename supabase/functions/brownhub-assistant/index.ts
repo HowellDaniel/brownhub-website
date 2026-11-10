@@ -244,6 +244,77 @@ function buildEstimate(scope: EstimateScope): Estimate | null {
   };
 }
 
+// ─── MODEL REPLY PARSING ─────────────────────────────────────────────────────
+// The brief asks for JSON and the model usually fences it. A fence is not a
+// failure: the fields still have to reach the visitor.
+
+interface ParsedAnalysis {
+  answer: string;
+  keywords: string[];
+  inventedIds?: string[];
+  researchNeeded: boolean;
+  researchQuery?: string;
+  estimate?: EstimateScope | null;
+  matches?: unknown[];
+}
+
+const FENCED = /^\s*```[a-zA-Z0-9_-]*\s*\n?([\s\S]*?)\n?\s*```\s*$/;
+
+function unfence(text: string): string {
+  const m = text.match(FENCED);
+  return (m ? m[1] : text).trim();
+}
+
+function firstBalancedObject(text: string): string | null {
+  const start = text.indexOf("{");
+  if (start === -1) return null;
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (escaped) { escaped = false; continue; }
+    if (ch === "\\") { escaped = inString; continue; }
+    if (ch === '"') { inString = !inString; continue; }
+    if (inString) continue;
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) return text.slice(start, i + 1);
+    }
+  }
+  return null;
+}
+
+function asObject(value: unknown): Record<string, unknown> | null {
+  return value && !Array.isArray(value) && typeof value === "object"
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function parseAnalysis(text: string): ParsedAnalysis {
+  const body = unfence((text || "").trim());
+  for (const candidate of [body, firstBalancedObject(body)]) {
+    if (!candidate) continue;
+    let parsed: Record<string, unknown> | null = null;
+    try {
+      parsed = asObject(JSON.parse(candidate));
+    } catch {
+      parsed = null;
+    }
+    if (parsed) {
+      const prose = typeof parsed.answer === "string" ? parsed.answer.trim() : "";
+      return {
+        ...parsed,
+        answer: prose || body,
+        keywords: Array.isArray(parsed.keywords) ? parsed.keywords : [],
+        researchNeeded: parsed.researchNeeded === true,
+      } as ParsedAnalysis;
+    }
+  }
+  return { answer: body, keywords: [], researchNeeded: false, estimate: null };
+}
+
 const MAX_ANSWER = 4000;
 const MAX_MATCHES = 3;
 const MAX_SOURCES = 3;
@@ -693,12 +764,7 @@ function createHandler(runtime: Runtime): (request: Request) => Promise<Response
       contents.push({ role: "user", parts });
 
       const analysisResult = await generate(runtime, key, model, contents, BRIEF);
-      let analysis: any;
-      try {
-        analysis = JSON.parse(analysisResult.text);
-      } catch {
-        analysis = { answer: analysisResult.text, keywords: [], researchNeeded: false, estimate: null, matches: [] };
-      }
+      const analysis = parseAnalysis(analysisResult.text);
 
       let candidates: any[] = [];
       if (analysis.keywords && analysis.keywords.length > 0) {
