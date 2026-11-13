@@ -118,8 +118,20 @@
      by a finger, and that does reach the observer. It is watched the ordinary way. A row
      that neither moves nor scrolls shows all of itself or none of it, and the set is small
      enough by definition that handing every frame back is cheaper than keeping a plate on
-     the screen for a visitor who has no way to reach the rest. */
+     the screen for a visitor who has no way to reach the rest.
+     A short set is handed everything the same way even when it does move. The clock is
+     worth paying for on a shelf of twenty-six pictures a visitor may never reach the end
+     of; it is not worth arriving at the client wall to find six of nine names standing
+     there with a blank plate, and waiting forty seconds for the loop to carry them in. */
+  const ALL_AT_ONCE = 12;
+
   function watch(g) {
+    if (Number(g.items.dataset.srcCount) <= ALL_AT_ONCE) {
+      if (g.at !== undefined) { clearTimeout(g.at); g.at = undefined; }
+      if (g.inner) { g.inner.disconnect(); g.inner = null; g.seen.clear(); }
+      parkedNodes(g.items).forEach(fill);
+      return;
+    }
     if (g.live) {
       if (g.inner) { g.inner.disconnect(); g.inner = null; g.seen.clear(); }
       if (g.at === undefined) sweep(g);

@@ -23,6 +23,40 @@
     return function (a) { return "rgba(" + rgb + "," + a + ")"; };
   }
 
+  /* ---- when the document moves ----
+     Both held layers below need one number per band: how far it sits from the top
+     of the document. A live `getBoundingClientRect` is the only way to get that
+     number, and taken every scroll frame it forces a full-document layout every
+     frame — measured, that single loop was four fifths of all the forced layout on
+     the desktop home page. So the distance is measured once and remembered, and
+     the scroll path derives the position from `scrollY`, which costs no layout.
+
+     A remembered distance stops being true the moment the document moves under it,
+     so this wires the events that can actually move it and nothing else: a picture
+     arriving, the last font landing, a translation reflowing a block, a resize.
+     Three of the held bands (#stats, #companies, #milestones) are hidden until
+     their data arrives and the review wall grows as it fills, so a ResizeObserver
+     on each band and on the document itself is what catches content that fires no
+     event. The walk is rAF-debounced: a boot that lands twelve pictures at once
+     measures once. */
+  function onLayoutMove(els, run) {
+    var queued = false;
+    function once() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; run(); });
+    }
+    addEventListener("resize", once, { passive: true });
+    addEventListener("load", once);
+    document.addEventListener("i18n-applied", once);
+    if (typeof ResizeObserver === "function") {
+      var ro = new ResizeObserver(once);
+      ro.observe(root);
+      for (var i = 0; i < els.length; i++) ro.observe(els[i]);
+    }
+    return once;
+  }
+
   /* ---- linked dots ---- */
   [].slice.call(document.querySelectorAll("canvas[data-particles]")).forEach(function (cv) {
     var host = cv.parentNode;
@@ -269,27 +303,40 @@
     if (still) return;
     var hero = film.closest(".hero") || film.parentNode;
     if (!hero) return;
-    var queued = false;
+    var abs = 0, h = 0, last = -1, queued = false;
 
+    // The hero's place from the top of the document, remembered so that scrolling
+    // needs no layout; the hero is the first thing on the page, so it moves for
+    // nothing but a resize or a picture landing above it, which `onLayoutMove`
+    // already covers.
     function measure() {
-      queued = false;
       var r = hero.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > window.innerHeight) return;
+      abs = r.top + window.pageYOffset;
+      h = r.height;
+      paint();
+    }
+
+    function paint() {
+      queued = false;
+      var top = abs - window.pageYOffset;
+      if (top > window.innerHeight || top + h < 0) return;
       // While the band still shows its own top edge, the page carries the
       // picture; from the moment it passes under the viewport it stops.
-      var y = Math.max(0, -r.top);
+      var y = top < 0 ? -top : 0;
+      if (Math.abs(y - last) < 0.4) return;
+      last = y;
       hero.style.setProperty("--film-shift", y.toFixed(1) + "px");
     }
 
     function onScroll() {
       if (queued) return;
       queued = true;
-      requestAnimationFrame(measure);
+      requestAnimationFrame(paint);
     }
 
     measure();
+    onLayoutMove([hero], measure);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
   });
 
   /* ---- band hold ----
@@ -309,18 +356,18 @@
      just the same; no travel to win, no clamp to write, so every band on the
      page takes the effect, not only the four tall enough to afford one.
 
-     Three things make this safe to run on fourteen bands instead of one:
+     Three things make this cheap to run on fourteen bands instead of one:
 
-     - Every box is READ before any property is WRITTEN. A `getBoundingClientRect`
-       after a style write forces a fresh layout, so interleaving the two would
-       cost a layout per band per frame; batched, the whole pass costs one.
-     - The band's own height is never needed to drive it, so nothing has to be
-       remembered from boot. Three of these bands (#stats, #companies, #milestones)
-       are hidden until their data arrives and the review wall grows as it fills:
-       the shade of a band that appears mid-visit is set by the next frame it is
-       on screen, and a band whose box changes size under a reader never needs a
-       re-measure, because the travel never depended on the box. That is why there
-       is no ResizeObserver here — the pass reads the live rect every time.
+     - Each band's distance from the top of the document is measured once and
+       remembered, so a scroll frame costs one `scrollY` read and fourteen
+       subtractions — no layout at all. A live rect per band per frame was the
+       largest scroll cost on the site; the measurement is thrown away and taken
+       again only when something can actually move it (see `onLayoutMove`), which
+       is what keeps the three data-driven bands — #stats, #companies and
+       #milestones, hidden until their data arrives, and the review wall that
+       grows as it fills — holding the right shade.
+     - Every box is READ before any property is WRITTEN, so the re-measure walk
+       costs one layout rather than one per band.
      - A band still `hidden` measures zero high, so it is passed over: nothing is
        written to a slab that is not on the page.
 
@@ -331,26 +378,32 @@
     if (still) return;
     var marked = [].slice.call(document.querySelectorAll("[data-hold]"));
     if (!marked.length) return;
-    var bands = marked.map(function (el) { return { el: el, top: 0, bot: 0, h: 0, shift: -1 }; });
+    var bands = marked.map(function (el) { return { el: el, abs: 0, h: 0, shift: -1 }; });
 
     var queued = false;
+    function measure() {
+      var y = window.pageYOffset;
+      for (var i = 0; i < bands.length; i++) {
+        var r = bands[i].el.getBoundingClientRect();
+        bands[i].abs = r.top + y;
+        bands[i].h = r.height;
+      }
+      paint();
+    }
+
     function paint() {
       queued = false;
       var vh = window.innerHeight;
-      var i;
-      for (i = 0; i < bands.length; i++) {
-        var r = bands[i].el.getBoundingClientRect();
-        bands[i].top = r.top;
-        bands[i].bot = r.bottom;
-        bands[i].h = r.height;
-      }
-      for (i = 0; i < bands.length; i++) {
+      var y = window.pageYOffset;
+      for (var i = 0; i < bands.length; i++) {
         var b = bands[i];
-        if (!b.h || b.top > vh || b.bot < 0) continue;
-        var y = b.top < 0 ? -b.top : 0;
-        if (Math.abs(y - b.shift) < 0.4) continue;
-        b.shift = y;
-        b.el.style.setProperty("--hold-shift", y.toFixed(1) + "px");
+        if (!b.h) continue;
+        var top = b.abs - y;
+        if (top > vh || top + b.h < 0) continue;
+        var shift = top < 0 ? -top : 0;
+        if (Math.abs(shift - b.shift) < 0.4) continue;
+        b.shift = shift;
+        b.el.style.setProperty("--hold-shift", shift.toFixed(1) + "px");
       }
     }
 
@@ -360,9 +413,9 @@
       requestAnimationFrame(paint);
     }
 
-    paint();
+    measure();
+    onLayoutMove(marked, measure);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
   })();
 
   /* ---- pointer depth ----

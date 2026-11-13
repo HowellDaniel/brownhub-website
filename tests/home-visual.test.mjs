@@ -46,13 +46,19 @@ function srcOf(tag) {
   return value ? value.replace(/[?#].*$/, '') : null;
 }
 
-test('the five supplied computing and design artworks exist at both sizes', () => {
+test('the five artworks exist at both sizes and Home asks only for the one its veils show', () => {
+  /* Every Home band wears a `dim` plate: measured, its 1600w copy moves at most
+     0.49 of 255 behind that wash, so Home ships the base copy and nothing more.
+     The hi copies stay on disk because catalog, services and about wear lifted
+     bands that do show them — tests/page-backdrops.test.mjs holds that half. */
   for (const name of artwork) {
     for (const asset of assetPair(name)) {
       assert.equal(existsSync(path.join(root, asset)), true, `${asset} should exist`);
-      assert.match(html, new RegExp(asset.replaceAll('.', '\\.')), `${asset} should be referenced by Home`);
     }
+    assert.match(html, new RegExp(`images/home/${name.replaceAll('.', '\\.')}`),
+      `images/home/${name} should be referenced by Home`);
   }
+  assert.doesNotMatch(html, /images\/home\/hi\//, 'Home should not ship a plate copy its own veils erase');
 });
 
 test('Home background plates use only the requested artwork or genuine IT pictures', () => {

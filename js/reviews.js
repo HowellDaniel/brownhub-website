@@ -163,7 +163,13 @@
      about two. Only a relative path under images/ is taken — a data file is the
      owner's own, but a wall that would fetch any string in it is a wider door than
      this site needs. Anything else, including a broken path, leaves the chip as it
-     always read: the name on its own. */
+     always read: the name on its own.
+     The mark travels in data-src, not src, even though loading="lazy" is already on
+     it: measured, all nine logos — a wall 15 phone screens down the document — were
+     asked for 660ms into the page load, before DOMContentLoaded, because Blink opens
+     its lazy margin wide and prefetches below the fold once the page settles. js/flow.js
+     owns the door those frames come through, and opens it only while the rail is being
+     looked at. */
   const wall = doc.getElementById("companies");
   const wallItems = doc.getElementById("companies-items");
   if (wall && wallItems) {
@@ -177,7 +183,7 @@
         wallItems.innerHTML = list.map((c) => {
           const src = mark(c.logo);
           return '<div class="company' + (src ? " company--mark" : "") + '">' +
-            (src ? '<span class="company__plate"><img src="' + esc(src) +
+            (src ? '<span class="company__plate"><img data-src="' + esc(src) +
               '" alt="" loading="lazy" decoding="async"></span>' : "") +
             '<span class="company__words"><strong>' + esc(c.name) + "</strong>" +
             (c.sector ? "<span>" + esc(c.sector) + "</span>" : "") + "</span></div>";
