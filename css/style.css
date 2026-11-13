@@ -4789,6 +4789,10 @@ html:not([data-theme="light"]) [data-hold][data-plate="dim"]{--plate-bright:.45;
 html:not([data-theme="light"]) [data-hold][data-plate="deep"]{--plate-bright:.36;--plate-a:.74}
 
 .hold-plate{position:absolute;inset:0 0 auto 0;height:100lvh;z-index:-1;
+  /* `loading="lazy"` is not a deferral on a slow connection: Blink widens its lazy root
+     until a plate one screen down is fetched during boot. Leaving it unrendered until
+     the reader nears it held the pipe for the picture the page is actually painted of. */
+  content-visibility:auto;contain-intrinsic-size:100vw 100lvh;
   overflow:hidden;pointer-events:none;translate:0 var(--hold-shift,0px);
   -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 88%,transparent 100%);
   mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 88%,transparent 100%)}
@@ -4813,7 +4817,10 @@ html:not([data-theme="light"]) [data-hold][data-plate="deep"]{--plate-bright:.36
    so its box takes the artwork's own ratio and the whole banner runs the width
    of the band. The plate's mask still fades both its edges, and the hold still
    pins it to the fold. */
-[data-plate-fit="wide"] .hold-plate{height:auto;aspect-ratio:3/1}
+[data-plate-fit="wide"] .hold-plate{height:auto;aspect-ratio:3/1;contain-intrinsic-size:100vw 33.4vw}
+/* A printed sheet has no distance the reader has not travelled: the book paginates the whole
+   document at once, so the deferral above would skip every plate in it. */
+@media print{.hold-plate{content-visibility:visible}}
 @media (prefers-reduced-motion:reduce){
   .hold-plate{translate:none}
   .hold-plate img{animation:none;scale:1.08;translate:none}

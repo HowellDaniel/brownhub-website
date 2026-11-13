@@ -95,19 +95,57 @@ test('every band plate asks for its picture at low priority', () => {
    100vw demand and therefore still takes the hi copy. */
 const PHONE_BRANCH = /^\(max-width:(\d+)px\)\s*(\d+(?:\.\d+)?)vw\b/;
 
-test('a hero plate does not make a phone buy its hi copy', () => {
-  let heroes = 0;
+/* Every band plate, not just the hero's: a plate below the fold still arrives over the
+   same pipe, and catalog's six section plates plus services' closing one all read
+   `sizes="100vw"` against a `1600w` candidate — so a 390px dpr-3 phone demanded 1,170
+   device px and bought 182-280 KB per plate for art it paints 431 CSS px wide under a
+   wash. `hi/graphics-interface.jpg` was the last picture to land over 4G (6.5 s) and
+   the band's LCP element; the 960w copy is 88-104 KB of the same scene. */
+test('no band plate makes a phone buy its hi copy', () => {
+  let lifted = 0;
   for (const page of pages()) {
     for (const plate of plates(readFileSync(path.join(root, page), 'utf8'))) {
-      if (!/\bpage-hero\b/.test(plate.cls)) continue;
       const srcset = (plate.tag.match(/\ssrcset="([^"]*)"/i) || [])[1] || '';
       if (!srcset.includes('/hi/')) continue;
-      heroes++;
+      lifted++;
       const sizes = (plate.tag.match(/\ssizes="([^"]*)"/i) || [])[1] || '';
       const branch = PHONE_BRANCH.exec(sizes);
       assert.ok(branch && Number(branch[2]) < 100 && Number(branch[1]) <= 719,
-        `${page}: the hero a phone sees first asks for ${srcset} at sizes="${sizes}"`);
+        `${page}: the "${plate.tier}" plate asks a phone for ${srcset} at sizes="${sizes}"`);
     }
   }
-  assert.ok(heroes >= 3, `expected the lifted hero plates, found ${heroes}`);
+  assert.ok(lifted >= 10, `expected the site's lifted plates with a hi copy, found ${lifted}`);
+});
+
+/* `loading="lazy"` is not a deferral on a slow connection: Blink widens its lazy root to
+   the point where a plate one screen down arrives in the boot window anyway. Measured on
+   the HTTP/2 + gzip mirror at 390px dpr-3, catalog pulled 679 KB of pictures before it
+   was finished loading, and the hero plate — the page's own LCP element — landed at
+   4.70 s behind art the reader had not scrolled to. Leaving an off-screen plate
+   unrendered takes it out of the pipe and off the compositor (its Ken-Burns loop stops
+   running for nothing): the same boot came down to 579 KB and 4.21 s. The intrinsic size
+   is what makes the skip safe — the plate box is declared (100lvh, or 3:1 on the banner
+   band), so skipping its contents can neither collapse the band nor shift the page. */
+test('a plate the reader has not reached is not rendered', () => {
+  for (const sheet of ['css/style.css', 'css/style.min.css']) {
+    const css = readFileSync(path.join(root, sheet), 'utf8');
+    const rule = /\.hold-plate\s*\{([^}]*)\}/.exec(css);
+    assert.ok(rule, `${sheet}: the plate layer lost its own rule`);
+    assert.match(rule[1], /content-visibility:\s*auto/,
+      `${sheet}: an off-screen plate still renders, so the phone still pays for its picture at boot`);
+    assert.match(rule[1], /contain-intrinsic-size:/,
+      `${sheet}: skipped contents with no declared box leave the plate free to collapse`);
+  }
+});
+
+/* A printed sheet has no viewport to be off-screen in: the book renders the whole document
+   at once, so anything the screen defers by distance is exactly what the book loses. The
+   38 band pictures had to be put back into the print once already, and the deferral above
+   would take them out again on an engine that honours it while paginating. */
+test('the print pass still renders every plate', () => {
+  for (const sheet of ['css/style.css', 'css/style.min.css']) {
+    const css = readFileSync(path.join(root, sheet), 'utf8');
+    assert.match(css, /@media print\s*\{[^{}]*\.hold-plate\s*\{[^{}]*content-visibility:\s*visible/,
+      `${sheet}: the plate deferral leaks into print, where nothing is ever off-screen`);
+  }
 });
