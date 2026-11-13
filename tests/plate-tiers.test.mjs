@@ -30,7 +30,8 @@ function plates(html) {
     const img = head.match(/<div class="hold-plate"[^>]*>\s*<img\b[^>]*>/i);
     if (!img) continue;
     const tier = (m[0].match(/\bdata-plate="([a-z]+)"/i) || [])[1] || 'vivid';
-    out.push({ tier, tag: img[0] });
+    const cls = (m[0].match(/\bclass="([^"]*)"/i) || [])[1] || '';
+    out.push({ tier, cls, tag: img[0] });
   }
   return out;
 }
@@ -80,4 +81,33 @@ test('every band plate asks for its picture at low priority', () => {
     }
   }
   assert.ok(platesSeen >= 38, `expected the site's band plates, found ${platesSeen}`);
+});
+
+/* A plate below the fold can be slow and the page still opens; a plate the phone is
+   staring at when it paints is the page's largest contentful paint. Measured on the
+   phone over 4G, catalog's LCP landed at 8.0 s and the LCP element was the hero
+   plate's own `hi/design-composition.jpg` — 273 KB of a picture the band then dims
+   to .82 brightness under a 28% brown wash, so the phone paid for pixels its veil
+   erases. Priority was not the lever: the same markup with `eager` plates moved DCL
+   from 6.0 s to 10.8 s for almost no LCP gain. Bytes were — the base copy alone took
+   catalog's local LCP from 11.1 s to 7.6 s. `sizes` is the honest way to ask for it:
+   the pocket branch names the half-resolution copy, the desk branch keeps the full
+   100vw demand and therefore still takes the hi copy. */
+const PHONE_BRANCH = /^\(max-width:(\d+)px\)\s*(\d+(?:\.\d+)?)vw\b/;
+
+test('a hero plate does not make a phone buy its hi copy', () => {
+  let heroes = 0;
+  for (const page of pages()) {
+    for (const plate of plates(readFileSync(path.join(root, page), 'utf8'))) {
+      if (!/\bpage-hero\b/.test(plate.cls)) continue;
+      const srcset = (plate.tag.match(/\ssrcset="([^"]*)"/i) || [])[1] || '';
+      if (!srcset.includes('/hi/')) continue;
+      heroes++;
+      const sizes = (plate.tag.match(/\ssizes="([^"]*)"/i) || [])[1] || '';
+      const branch = PHONE_BRANCH.exec(sizes);
+      assert.ok(branch && Number(branch[2]) < 100 && Number(branch[1]) <= 719,
+        `${page}: the hero a phone sees first asks for ${srcset} at sizes="${sizes}"`);
+    }
+  }
+  assert.ok(heroes >= 3, `expected the lifted hero plates, found ${heroes}`);
 });
