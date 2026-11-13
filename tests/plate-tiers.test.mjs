@@ -75,12 +75,13 @@ test('every band plate asks for its picture at low priority', () => {
   let platesSeen = 0;
   for (const page of pages()) {
     for (const plate of plates(readFileSync(path.join(root, page), 'utf8'))) {
+      if (/\bpage-hero\b/.test(plate.cls)) continue; // the first screen asks high, see below
       platesSeen++;
       assert.ok(/\sfetchpriority="low"/i.test(plate.tag),
         `${page}: "${plate.tier}" band's plate competes with the page's own copy for the pipe`);
     }
   }
-  assert.ok(platesSeen >= 38, `expected the site's band plates, found ${platesSeen}`);
+  assert.ok(platesSeen >= 32, `expected the site's band plates, found ${platesSeen}`);
 });
 
 /* A plate below the fold can be slow and the page still opens; a plate the phone is
@@ -136,6 +137,50 @@ test('a plate the reader has not reached is not rendered', () => {
     assert.match(rule[1], /contain-intrinsic-size:/,
       `${sheet}: skipped contents with no declared box leave the plate free to collapse`);
   }
+});
+
+/* The rule that put every plate at low priority named the cost it was paying for: a plate
+   below the fold can arrive late and the page still opens. The plate a visitor is already
+   staring at is the opposite case — it is the page's largest contentful paint, and asking
+   for it last makes the phone wait for its own first picture. Measured on the live site at
+   390px over 4G, catalog's FCP landed at 1.30 s while its hero plate — 90 KB, the base copy,
+   already chosen correctly by the pocket branch — was dispatched at 1.12 s and took 2.96 s
+   more on the pipe, because `low` puts it behind the deferred scripts it had already beaten
+   to the preload scanner. So the first screen asks first and high; everything under it stays
+   lazy and low. The preload link is what makes the ask land before the render-blocking
+   stylesheet, and it has to name the exact same candidates as the `<img>` or the phone pays
+   twice for one picture. */
+test('the plate in the first screen is the page\'s first ask', () => {
+  let heroes = 0;
+  for (const page of pages()) {
+    const html = readFileSync(path.join(root, page), 'utf8');
+    for (const plate of plates(html)) {
+      if (!/\bpage-hero\b/.test(plate.cls)) continue;
+      heroes++;
+      assert.match(plate.tag, /\sfetchpriority="high"/i,
+        `${page}: the plate in the first screen still asks for its LCP picture at low priority`);
+      assert.doesNotMatch(plate.tag, /loading="lazy"/i,
+        `${page}: the plate the reader is staring at is left to the lazy root`);
+
+      const src = /\ssrc="([^"]*)"/i.exec(plate.tag)[1];
+      const srcset = (/\ssrcset="([^"]*)"/i.exec(plate.tag) || [])[1] || '';
+      const sizes = (/\ssizes="([^"]*)"/i.exec(plate.tag) || [])[1] || '';
+      const head = html.slice(0, html.indexOf('</head>'));
+      const sheet = /<link[^>]*rel="stylesheet"/i.exec(head);
+      const asked = [...head.matchAll(/<link\b[^>]*>/gi)]
+        .filter((m) => /rel="preload"/i.test(m[0]) && /as="image"/i.test(m[0]))
+        .filter((m) => {
+          const href = (/\shref="([^"]*)"/i.exec(m[0]) || [])[1] || '';
+          const set = (/\simagesrcset="([^"]*)"/i.exec(m[0]) || [])[1] || '';
+          const siz = (/\simagesizes="([^"]*)"/i.exec(m[0]) || [])[1] || '';
+          return srcset ? set === srcset && siz === sizes : href === src;
+        })[0];
+      assert.ok(asked, `${page}: nothing asks for ${srcset || src} before the parser reaches it`);
+      assert.ok(sheet && asked.index < sheet.index,
+        `${page}: its preload sits after the stylesheet, so the pipe is already busy`);
+    }
+  }
+  assert.equal(heroes, 6, 'expected the five top-level pages and the journal to lead with a plate');
 });
 
 /* A printed sheet has no viewport to be off-screen in: the book renders the whole document

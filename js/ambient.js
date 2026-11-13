@@ -257,14 +257,43 @@
     }
     v.addEventListener("error", drop);
 
-    var loaded = false;
+    // The film is decoration behind the words and, on the home page, the single
+    // biggest file on the page. It asks for the network only once the document
+    // has landed every picture a visitor came to see.
+    function choice() {
+      var lo = v.dataset.srcLo;
+      if (!lo) return v.dataset.src;
+      // The light copy carries the same 960 pixels as the heavy one, so up to
+      // that width it loses nothing but bitrate. Past it the film is painted
+      // larger than either copy, and only the better-encoded one holds up.
+      return v.getBoundingClientRect().width < 960 ? lo : v.dataset.src;
+    }
+
+    var armed = false;
+    var seen = false;
+    var waiting = false;
+
+    function whenPipeFree(run) {
+      if (document.readyState === "complete") { run(); return; }
+      if (waiting) return;
+      waiting = true;
+      window.addEventListener("load", run, { once: true });
+    }
+
     function onScreen(inView) {
       if (!inView) { v.pause(); return; }
-      if (!loaded) {
-        loaded = true;
-        v.src = v.dataset.src;
+      seen = true;
+      if (armed) { play(); return; }
+      whenPipeFree(function () {
+        if (!seen || armed) return;
+        armed = true;
+        v.src = choice();
         v.load();
-      }
+        play();
+      });
+    }
+
+    function play() {
       var p = v.play();
       if (p && p.catch) p.catch(function () {});
     }
@@ -282,7 +311,7 @@
       // Records are not delivered to a hidden tab, so a page opened in the
       // background can still have an unloaded clip when it comes forward.
       var r = v.getBoundingClientRect();
-      if (loaded || (r.bottom > 0 && r.top < window.innerHeight)) onScreen(true);
+      if (armed || (r.bottom > 0 && r.top < window.innerHeight)) onScreen(true);
     });
   });
 
