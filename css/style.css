@@ -5856,3 +5856,51 @@ body[data-nav="home"] .hero__orb{z-index:0;opacity:.5;filter:blur(18px);
   body[data-nav="home"] :is(.card,.feature):hover{transform:none}
   body[data-nav="home"] .hero__card{animation:none}
 }
+
+/* ==========================================================================
+   THE BUBBLE CLEARS THE QUEUE WITHOUT MOVING THE PAGE
+   Scrolling the whole gallery wall on a phone (390x844, dpr 3) leaves exactly one
+   layout shift: a 56x56 box jumping from y 576 to y 325 — 0.00567, logged 15.5
+   seconds into the pass, the moment js/leads.js publishes --lead-h. That box is
+   the assistant: its `bottom` reads max(--cookie-h, --lead-h), and re-anchoring a
+   fixed element is a layout move, however honest the reason. The quote card is
+   full width on a phone, so the bubble really does have to get out of its way —
+   the clearance is not up for debate, only how it is paid for.
+   The install pill already proved the other way: the same 251px as a transform
+   looks pixel-identical and is not counted at all. So the widget now sits at one
+   fixed `bottom` and the queue figure rides its parts, --lift priced per width
+   exactly the way `bottom` used to be.
+   Two details make this more than a rename:
+     - the lift goes on the launcher's `transform`, not its `translate`: @keyframes
+       robot-bob animates `translate` and would swallow the clearance whole, parking
+       the bubble back under the card.
+     - the phone panel is fixed to the viewport and lifts itself by --chat-queue, so
+       only the desk panel (absolutely anchored to this box from 641px up) takes the
+       transform — paying for the queue twice would push it off the top of the screen.
+   js/app.js charges the pinned stage from the rect of the launcher and the teaser,
+   and a rect includes its transform, so --queue-h — and every stage that stops
+   below it — keeps the same number it always read.
+   One thing the rewrite does change: the wrapper's own box no longer travels with
+   the bubble, so at rest it sits in the bottom corner over the wall's pictures.
+   It paints nothing, so it answers for nothing either — the click goes through to
+   whatever is under it, and the three parts that do paint take hit-testing back.
+   Measured: nine 20px cells over the gallery tiles were dead while the wrapper
+   owned them (z-index 200 against the wall), and are pictures again.
+   ========================================================================== */
+.chat-widget{bottom:calc(1.5rem + env(safe-area-inset-bottom,0px));
+  --lift:var(--cookie-h,0px);pointer-events:none}
+.chat-widget__toggle,.chat-widget__panel,.chat-widget__teaser{pointer-events:auto}
+.chat-widget__toggle{transform:translateY(calc(-1 * var(--lift)))}
+.chat-widget__toggle:hover,.chat-widget__toggle:focus-visible{
+  transform:translateY(calc(-1 * var(--lift))) scale(1.08)}
+.chat-widget__teaser{translate:0 calc(-1 * var(--lift))}
+@media (min-width:641px){
+  .chat-widget__panel{translate:0 calc(-1 * var(--lift))}
+}
+@media (max-width:600px){
+  .chat-widget{bottom:calc(.75rem + env(safe-area-inset-bottom,0px));
+    --lift:max(var(--cookie-h,0px), var(--lead-h,0px))}
+}
+@media (min-width:720px){
+  .chat-widget{--lift:calc(var(--cookie-h,0px) + var(--rail-lane,0px))}
+}
