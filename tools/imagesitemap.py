@@ -15,7 +15,9 @@ Rules the generator holds to:
     exactly that — declaring them would put atmosphere where the work should be.
   * The largest copy a page offers is the one declared. A srcset candidate of
     1080w beats the 608w fallback, and Google's size filter rewards the bigger
-    file; the smaller copy is still what a phone downloads.
+    file; the smaller copy is still what a phone downloads. Where a page names
+    no srcset at all — a wall of thumbnails that must never charge a phone for
+    the master — the `hi/` copy of the same file is declared when it is on disk.
   * The image belongs to the page that shows it. Each <url> block keeps its own
     pictures, so a picture on three pages is declared on three pages.
   * Nothing is invented here. Title and caption come from the alt text a human
@@ -122,6 +124,21 @@ def on_disk(loc):
     return (ROOT / rel).is_file()
 
 
+def master(loc):
+    """The biggest copy this repository holds of the picture at `loc`.
+
+    A page can deliberately embed only the small copy — a wall of 192 thumbnails
+    has no business charging a phone for the 1080w of each — while the sitemap
+    still wants to send Google Images to the master. `hi/` beside the file is
+    that master's address, and only when it is really here.
+    """
+    if "/hi/" in loc:
+        return loc
+    head, _, name = loc.rpartition("/")
+    hi = head + "/hi/" + name
+    return hi if on_disk(hi) else loc
+
+
 def best_url(img):
     """The largest candidate the page offers that actually exists."""
     cands = []
@@ -137,7 +154,7 @@ def best_url(img):
     for _, path in cands:
         loc = absolute(path)
         if on_disk(loc):
-            return loc
+            return master(loc)
     return None
 
 
