@@ -53,6 +53,11 @@
     if (!(parseFloat(r.getPropertyValue("--rail-h")) || 0)) return 0;
     return parseFloat(r.getPropertyValue("--queue-h")) || 0;
   };
+  /* The same marker js/pinband reads: a phone is the screen that asks its stage to pay for
+     the bottom queue, and on that screen the queue is still being built while the page
+     loads. A wide screen charges nothing, so its first answer is already settled and has no
+     reason to wait. */
+  const paysQueue = () => !!(parseFloat(getComputedStyle(root).getPropertyValue("--rail-h")) || 0);
 
   /* Whether the standing stage holds a whole step in the room the queue left it. The
      container query already gives the step's picture up when the box runs out, so a
@@ -69,6 +74,22 @@
      swap moves every section below the story — including the one being read. */
   function belowReader() {
     return band.getBoundingClientRect().top >= innerHeight;
+  }
+
+  /* This site scrolls smoothly, so a link into a band is a walk that re-reads its target
+     every frame. The story sits above whatever a visitor aims at, so an arrangement swap
+     moves that target out from under a reader who is still travelling to it — measured at
+     390x844 on a throttled pipe for index.html#portfolio, 0.78 of the visible screen went
+     under the walk while the story changed its mind about its own height. Only an
+     already-placed arrangement is barred: a first answer has nothing to overturn. */
+  function awaitingArrival() {
+    if (!decided) return false;
+    let id = "";
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { return false; }
+    if (!id) return false;
+    const target = doc.getElementById(id);
+    if (!target) return false;
+    return target.getBoundingClientRect().top > innerHeight;
   }
 
   function set(i) {
@@ -173,11 +194,21 @@
     }
     /* A stage collapsed into a stack, or a stack raised into a stage, moves every section
        below it by a screen or more — including the one the reader has reached. So the story
-       only ever changes its arrangement while it still lies below the viewport, and the debt
-       is paid from the scroll path when the reader comes back above it. The class is put
-       back to whatever the reader was last shown, because the measuring pass above wrote it
-       either way. */
-    if (decided && want !== pinned && !belowReader()) {
+       only ever changes its arrangement while it still lies below the viewport and nobody is
+       on their way to the section it would move, and the debt is paid from the scroll path
+       when the reader comes back above it. The class is put back to whatever the reader was
+       last shown, because the measuring pass above wrote it either way. */
+    if (decided && want !== pinned && (!belowReader() || awaitingArrival())) {
+      pending = want;
+      root.classList.toggle("js-pstory", pinned);
+      return;
+    }
+    /* On a phone the first answer is held until the notices at the bottom of the screen have
+       all arrived: measured on this same page, the boot pass read 68px of queue and raised
+       the story, and the next pass read 268px and took it back down. Waiting costs the story
+       a first arrangement it cannot show yet — it is off screen on a page that has just
+       opened — and buys one settled answer instead of a swap anybody can see. */
+    if (!decided && paysQueue() && document.readyState !== "complete") {
       pending = want;
       root.classList.toggle("js-pstory", pinned);
       return;
@@ -223,4 +254,7 @@
 
   evaluate();
   if (pinned) addEventListener("load", follow, { once: true });
+  /* …and a first answer held for the arriving queue is made here, once every notice at the
+     bottom of the screen has been counted. */
+  addEventListener("load", () => { if (!decided) evaluate(); }, { once: true });
 })();

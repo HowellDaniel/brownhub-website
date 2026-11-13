@@ -142,7 +142,7 @@ test('Home motion and interaction hooks remain intact', () => {
   assert.match(html, /class="pstory__pin"/);
   assert.match(html, /id="portfolio" data-pin="\.shots"/);
   assert.match(html, /id="customer-experience" data-pin="\.exp"/);
-  assert.match(html, /js\/pstory\.js\?v=7/);
-  assert.match(html, /js\/pinband\.js\?v=19/);
+  assert.match(html, /js\/pstory\.js\?v=8/);
+  assert.match(html, /js\/pinband\.js\?v=20/);
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.hold-plate\{translate:none\}/);
 });

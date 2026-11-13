@@ -69,6 +69,12 @@
     if (!(parseFloat(r.getPropertyValue("--rail-h")) || 0)) return 0;
     return parseFloat(r.getPropertyValue("--queue-h")) || 0;
   };
+  /* Is this a screen that makes the stage pay for the bottom queue at all. A desk lifts the
+     notices over a lane of their own and the stage is never asked for room, so its first
+     answer is already the settled one and waiting for a second would cost a page that has
+     not been laid out yet. A phone is the screen that pays — and pays while the notices are
+     still arriving. */
+  const paysQueue = () => !!(parseFloat(getComputedStyle(root).getPropertyValue("--rail-h")) || 0);
   const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
   const el = (t, c) => { const n = doc.createElement(t); n.className = c; return n; };
   /* The stone wears the first card's own name, and every card name is already a
@@ -428,6 +434,41 @@
     return this.band.getBoundingClientRect().top >= innerHeight;
   };
 
+  /* …and a band the reader is on their way to is not a band they cannot see. This site
+     scrolls smoothly, so a link into a band is a walk: the browser animates the target down
+     the screen and re-reads its position every frame. Until it arrives the reader is at the
+     top, so `belowReader` calls a band they have aimed at invisible and the swap goes ahead
+     anyway — measured at 390x844 on a throttled pipe for catalog.html#featured, the boot pass
+     stood the shelf up (document 23,160px), the load pass then found the cookie and chat bars
+     that had appeared in the meantime, judged the stage impossible and took it back down
+     (11,509px). The walk re-read that difference: 0.69 of the visible screen went under a
+     reader who had aimed at a section and was still travelling to it.
+
+     An already-placed arrangement is what this bars, not a first answer: a band that has not
+     decided yet has nothing to overturn, and holding its first placement back costs a desk
+     the stage it was asked for — measured at 1440x900, catalog.html#featured and
+     index.html#portfolio both ended the walk on the plain grid. The debt books itself as
+     usual, and pays when the band next lies out of sight. */
+  Band.prototype.awaitingArrival = function () {
+    if (!this.decided) return false;
+    let id = "";
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { return false; }
+    if (!id) return false;
+    const target = doc.getElementById(id);
+    if (!target || !this.band.contains(target)) return false;
+    return target.getBoundingClientRect().top > innerHeight;
+  };
+
+  /* On a phone the room a stage has is a moving number until the page finishes loading,
+     because the bottom queue is still being built — the boot pass measured 68px of notices
+     and the load pass measured 268. A first answer given at boot is therefore a guess, and
+     on the band the reader aimed at it is a guess they watch being corrected. So the phone
+     waits for the settled queue and gives one answer, made by the load pass below; a desk,
+     which charges its stage nothing, is not asked to wait. */
+  Band.prototype.awaitingQueue = function () {
+    return !this.decided && paysQueue() && document.readyState !== "complete";
+  };
+
   Band.prototype.layout = function () {
     this.release();
     const wasRun = this.run.offsetHeight, wasIndex = this.index;
@@ -443,8 +484,17 @@
       "/" + charge();
     if (ctx !== this.ctx) { this.ctx = ctx; this.aside = false; }
     if (this.aside) return;
-    const below = !this.decided || this.belowReader();
-    if (this.decided && this.paged !== (n >= 2) && !below) {
+    /* Only a band the reader cannot see may change its shape, and a band is out of sight two
+       ways: it lies below the viewport and nobody is heading for it, or the page opened at
+       the top and every band is still ahead of the reader, where the first answer costs
+       nothing. Two things take that permission back: a walk that has not landed yet
+       (`awaitingArrival`), and, on a phone whose queue is still arriving, a first answer that
+       has not been settled yet (`awaitingQueue`). Either one's debt is paid by `follow`, the
+       next time the band lies out of sight for real — and a held first answer is paid by the
+       load pass, which asks again once the notices have all been counted. */
+    const below = !this.awaitingArrival() && !this.awaitingQueue() &&
+      (this.belowReader() || (!this.decided && scrollY === 0));
+    if (this.paged !== (n >= 2) && !below) {
       this.pending = n >= 2;
       return;
     }
