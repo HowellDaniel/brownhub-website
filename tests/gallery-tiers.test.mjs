@@ -25,11 +25,20 @@ const wallPages = () => {
 
 const cells = (html) => [...html.matchAll(/<li class="gal-cell"[^>]*>.*?<\/li>/gs)].map((m) => m[0]);
 
-test('no gallery wall cell offers a second copy of its picture', () => {
+/* The guard is about *size*, not about the srcset attribute existing: a
+   <source type="image/avif" srcset="one.avif"> offers one picture at the same
+   width and height in a cheaper codec, which is the opposite of what this test
+   was written to catch. So each srcset in a cell must name exactly one candidate,
+   no cell may name a sizes clause, and no path in a cell may reach the hi/ tier. */
+test('no gallery wall cell offers a bigger copy of its picture', () => {
   for (const page of wallPages()) {
     const html = readFileSync(path.join(root, page), 'utf8');
     for (const cell of cells(html)) {
-      assert.ok(!/\ssrcset=/.test(cell), `${page}: a tile still names a srcset — ${cell.slice(0, 120)}`);
+      for (const srcset of cell.match(/\ssrcset="([^"]*)"/g) || []) {
+        const candidates = srcset.replace(/^\ssrcset="/, '').replace(/"$/, '').split(',').filter((s) => s.trim());
+        assert.equal(candidates.length, 1,
+          `${page}: a tile offers ${candidates.length} copies in one srcset — ${candidates.join(' | ')}`);
+      }
       assert.ok(!/\ssizes=/.test(cell), `${page}: a tile still names a sizes clause — ${cell.slice(0, 120)}`);
       assert.ok(!cell.includes('/hi/'), `${page}: a tile still points at the master copy`);
     }
