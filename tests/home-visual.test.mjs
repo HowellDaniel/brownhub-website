@@ -107,7 +107,7 @@ test('the scoped classic-glass system stops at generic cards', () => {
   assert.match(homeCss, /body\[data-nav="home"\]\s*:is\(\.card,\.feature\)\s*\{[^}]*box-shadow:[^}]*inset/s);
   assert.match(homeCss, /@media\s*\(prefers-reduced-motion:\s*reduce\)[^{]*\{[^}]*body\[data-nav="home"\]/s);
   assert.doesNotMatch(homeCss, /body\[data-nav="home"\][^{]*(?:#catalog-flow|\.product-card|\.promo__img|\.exp__card|\.exp__items|\.pstory__visual)/);
-  const ledger = Number((html.match(/<link rel="stylesheet" href="css\/style\.css\?v=(\d+)">/) || [])[1] || 0);
+  const ledger = Number((html.match(/<link rel="stylesheet" href="css\/style\.min\.css\?v=(\d+)">/) || [])[1] || 0);
   assert.ok(ledger >= 182, "The glass layer must still sit at or past the cache version it shipped in");
 });
 
