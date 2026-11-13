@@ -111,6 +111,30 @@ test('the scoped classic-glass system stops at generic cards', () => {
   assert.ok(ledger >= 182, "The glass layer must still sit at or past the cache version it shipped in");
 });
 
+/* Live over 4G at 390x844, Home's largest paint is VIDEO.hero__film showing
+   images/web/reel-poster.jpg: FCP 1,780 ms, the poster's own bytes landing at 3,251 ms,
+   LCP 3,368 ms. The picture is 71 KB — the whole wait is the queue in front of it,
+   because Blink asks for a poster only once the <video> is laid out and at the video
+   priority, below the page's own art. Measured in the rig, a preload scanned with the
+   stylesheet starts that same request at 48 ms instead of 92 ms and still lands as ONE
+   resource entry (initiatorType moves from `video` to `link`), so the hero pays for
+   the picture once and pays for it first. */
+test('the hero paints its poster without waiting for the video to be laid out', () => {
+  const film = html.match(/<video class="hero__film"[^>]*>/i);
+  assert.ok(film, 'the home hero should still carry its film');
+  const poster = tagAttribute(film[0], 'poster');
+  assert.ok(poster, 'the hero film should still name a poster');
+
+  const head = html.slice(0, html.indexOf('<body'));
+  const links = [...head.matchAll(/<link rel="preload"[^>]*>/gi)]
+    .map(([tag]) => tag)
+    .filter((tag) => tagAttribute(tag, 'as') === 'image');
+  const match = links.find((tag) => (tagAttribute(tag, 'href') || '').replace(/[?#].*$/, '') === poster);
+  assert.ok(match, `the hero's first picture (${poster}) is only asked for after layout`);
+  assert.equal(tagAttribute(match, 'fetchpriority'), 'high',
+    `${poster} is the largest thing a phone paints on Home — nothing should queue ahead of it`);
+});
+
 test('Home motion and interaction hooks remain intact', () => {
   assert.match(html, /<body data-nav="home">/);
   assert.match(html, /data-hold data-plate="dim"/);
