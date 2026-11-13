@@ -181,12 +181,33 @@
   const rail = doc.createElement("nav");
   rail.className = "story-rail";
   rail.setAttribute("aria-label", "Page sections");
+  /* A band still waiting for its JSON is hidden, and a stone that scrolls to
+     nothing is worse than no stone at all: only a section on screen gets one.
+     A band with no id of its own is given one to keep — numbered by a counter,
+     never by its place in the list, or a rebuild hands a second band the number
+     a first one already answers to and the page carries two of the same id. */
+  let uid = 0;
+  function railHeads() {
+    return [...doc.querySelectorAll("main > section")]
+      .map((s) => ({ s, h: s.querySelector("h2") }))
+      .filter((o) => o.h && !o.s.hidden)
+      .map((o) => { if (!o.s.id) o.s.id = "section-" + (++uid); return o; });
+  }
+  const spy = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      const btn = rail.querySelector('[data-for="' + e.target.id + '"]');
+      if (btn && e.isIntersecting) {
+        rail.querySelectorAll(".story-rail__btn").forEach((x) => x.removeAttribute("data-active"));
+        btn.setAttribute("data-active", "true");
+      }
+    }
+  }, { rootMargin: "-45% 0px -45% 0px" });
   function buildRail() {
-    const heads = [...doc.querySelectorAll("main > section")]
-      .map((s) => ({ s, h: s.querySelector("h2") })).filter((o) => o.h);
+    const heads = railHeads();
     if (heads.length < 3) return;
-    heads.forEach((o, i) => {
-      if (!o.s.id) o.s.id = "section-" + (i + 1);
+    const lit = (rail.querySelector("[data-active]") || { dataset: {} }).dataset.for;
+    rail.replaceChildren();
+    heads.forEach((o) => {
       const b = doc.createElement("button");
       b.type = "button";
       b.className = "story-rail__btn";
@@ -209,16 +230,11 @@
       b.addEventListener("click", () => o.s.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" }));
       rail.appendChild(b);
     });
-    doc.body.appendChild(rail);
-    const spy = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        const btn = rail.querySelector('[data-for="' + e.target.id + '"]');
-        if (btn && e.isIntersecting) {
-          rail.querySelectorAll(".story-rail__btn").forEach((x) => x.removeAttribute("data-active"));
-          btn.setAttribute("data-active", "true");
-        }
-      }
-    }, { rootMargin: "-45% 0px -45% 0px" });
+    if (!rail.isConnected) doc.body.appendChild(rail);
+    if (lit) {
+      const b = rail.querySelector('[data-for="' + lit + '"]');
+      if (b) b.setAttribute("data-active", "true");
+    }
     heads.forEach((o) => spy.observe(o.s));
   }
   /* Translation rewrites the h2 text after this runs, so labels are refreshed with it. */
@@ -228,6 +244,16 @@
       const head = h && h.querySelector("h2");
       if (head) b.querySelector(".story-rail__label").textContent = head.textContent;
     });
+  }
+  /* Late data unhides a band, and its stone arrives with it. */
+  function syncRail() {
+    const heads = railHeads();
+    const have = [...rail.children].map((b) => b.dataset.for);
+    if (heads.length === have.length && heads.every((o, i) => o.s.id === have[i])) {
+      syncRailLabels();
+      return;
+    }
+    buildRail();
   }
 
   /* ---------- footer columns fold into +/- accordions on small screens ---------- */
@@ -350,10 +376,17 @@
       pending = false;
       scan(added);
       collectDrift();
-      syncRailLabels();
+      syncRail();
       applyDrift();
     });
   }).observe(doc.body, { childList: true, subtree: true });
+
+  /* Whether a band owns a stone turns on one thing: its `hidden` attribute, which the
+     late JSON flips. That cannot ride the frame above — a tab in the background never
+     gets one, and would be left with a rail short of every band that arrived. */
+  new MutationObserver((muts) => {
+    if (muts.some((m) => m.target.matches("main > section"))) syncRail();
+  }).observe(doc.body, { attributes: true, subtree: true, attributeFilter: ["hidden"] });
 
   if (still) doc.querySelectorAll("[data-rv]").forEach((el) => el.classList.add("is-in"));
   addEventListener("load", () => { measureNav(); scan(); collectDrift(); onScroll(); }, { once: true });

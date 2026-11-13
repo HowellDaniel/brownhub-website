@@ -499,11 +499,11 @@
   function renderTools() {
     var host = mount("tools");
     if (!host) return;
-    if (!TOOLS.length) {
-      var wrap = host.closest(".store-tools");
-      if (wrap) wrap.hidden = true;
-      return;
-    }
+    /* The band ships hidden, so an empty list has nothing to undo — and a visitor
+       with script off is never left reading the heading over a bare shelf. */
+    if (!TOOLS.length) return;
+    var wrap = host.closest(".store-tools");
+    if (wrap) wrap.hidden = false;
     TOOLS.forEach(function (t) {
       var a = el("a", "tool", t.name);
       a.href = t.url;
