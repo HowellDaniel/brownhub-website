@@ -77,6 +77,10 @@ def donor():
     if url not in src:
         raise ValueError("%s has no canonical URL to write over" % GALLERY)
     head = src[: src.index("</head>") + len("</head>")]
+    # The donor's hero paints a held plate and preloads its picture; a collection page
+    # and the hub carry no plate, so the same line would have every phone buy a picture
+    # it never shows. HEAD is sliced before lift(), so this matches the donor's own path.
+    head = re.sub(r'[ \t]*<link rel="preload" as="image"[^>]*>\n', "", head)
     header = src[src.index("<body"): src.index("</header>") + len("</header>")]
     footer = src[src.index('<footer class="site-footer">'):]
     title = re.search(r"<title>(.*?)</title>", src).group(1)
