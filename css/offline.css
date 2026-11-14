@@ -11,7 +11,10 @@ body {
   text-align: center;
 }
 .off { max-width: 30rem; display: grid; gap: 1.1rem; justify-items: center; }
-.off img { width: 132px; height: 33px; }
+/* The mark is a square canvas — artwork crushed into a wide strip reads as a
+   printing error, and the offline shell is the one page a visitor judges while
+   they wait for signal. */
+.off img { width: 72px; height: 72px; }
 .off h1 { margin: 0; font-size: 1.5rem; letter-spacing: -.01em; }
 .off p { margin: 0; color: rgba(255, 251, 247, .72); font-size: .95rem; }
 .off a {

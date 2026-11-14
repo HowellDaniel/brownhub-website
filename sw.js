@@ -1,6 +1,6 @@
-const CACHE = "brownhub-v149";
+const CACHE = "brownhub-v150";
 const OFFLINE = "/offline.html";
-const SHELL = [OFFLINE, "/css/offline.css?v=1", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png",
+const SHELL = [OFFLINE, "/css/offline.css?v=2", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png",
   "/icons/maskable-512.png", "/icons/apple-touch-icon.png", "/images/logo.png", "/images/favicon.png"];
 
 // Anything served from another origin — Supabase auth, the chat proxy, Paystack —
