@@ -1,7 +1,9 @@
 /* Phone rig for issue #580: stand inside a paged phone band, let the studio's own quote
    card grow the bottom queue, and read what Chrome bills for the correction.
 
-   node tools/freeze580.mjs --arm=live|patch [--hold=30000] [--out=/tmp/bh580/live.json]
+   node tools/freeze580.mjs --arm=live|patch [--page=/catalog.html] [--band=#featured]
+     [--hold=30000] [--out=/tmp/bh580/live.json] [--shot=/tmp/bh580] [--desktop] [--promo]
+     [--deep] [--origin=https://...] [--lock=band|root] [--cpu=4]
 
    A fresh profile every run, so no service worker controls the page and every request is
    the page's own — which is what lets the `patch` arm answer for js/pinband.js.
@@ -21,6 +23,10 @@ const HOLD = Number(ARG.hold || 30000);
 const ROOT = "/Users/brownhub/Documents/Qoder/2026-09-16/5bb3bd1c";
 const ORIGIN = ARG.origin || "https://www.brownhub283.com";
 const BAND = ARG.band || "#customer-experience";
+/* Every band this rig has been pointed at lives on the home page except catalog's shelf, so
+   `/` is the default — but the frozen stage is the same driver on every page, and the
+   self-turning shelf is the one regime the home page does not exercise. */
+const PAGE = ARG.page || "/";
 const VW = Number(ARG.vw || 390);
 const VH = Number(ARG.vh || 844);
 const MOBILE = ARG.desktop ? false : true;
@@ -159,8 +165,14 @@ ${TOKENS}
   }, 100);
 })()` : "";
 
+/* `--deep` keeps every source of a shift with both its boxes. The five-node summary above
+   answers "did the freeze hold"; it cannot answer "what moved, and how far" — and on the
+   catalog shelf the nodes that did not move are the ones that get printed first, which is
+   how a 0.49 bill looked like it came from cards sitting still. */
+const DEEP = ARG.deep ? "true" : "false";
 const INSTRUMENT = `
 window.__bh = { shifts: [], queue: [], morphs: [], seen: [], watchers: [], ignore: false, err: [] };
+var BH_DEEP = ${DEEP};
 addEventListener("error", function (e) {
   window.__bh.err.push(String(e.message) + " @" + (e.filename || "").split("/").pop() + ":" + (e.lineno || 0));
 }, true);
@@ -168,9 +180,34 @@ window.__bh.ro = new ResizeObserver(function () {});
 new PerformanceObserver(function (l) {
   for (var e of l.getEntries()) {
     if (e.hadRecentInput) continue;
+    var all = e.sources || [];
+    var keep = BH_DEEP ? all : all.slice(0, 5);
     window.__bh.shifts.push({
       v: Number(e.value.toFixed(4)), t: Math.round(performance.now()),
-      src: (e.sources || []).slice(0, 5).map(function (s) {
+      y: Math.round(scrollY),
+      n: all.length,
+      /* Widest travel and biggest box, so the mover is the first thing a reader sees. */
+      far: BH_DEEP ? all.map(function (s) {
+        var nd = s.node, chain = [];
+        while (nd && chain.length < 7) {
+          if (nd.id) { chain.push("#" + nd.id); break; }
+          else if (nd.tagName === "BODY") { chain.push("body"); break; }
+          else if (nd.className && typeof nd.className === "string") chain.push("." + nd.className.trim().split(/\s+/)[0]);
+          else chain.push(nd.tagName.toLowerCase());
+          nd = nd.parentElement;
+        }
+        var box = s.node && s.node.getBoundingClientRect ? s.node.getBoundingClientRect() : null;
+        return {
+          up: Math.round(s.currentRect.top - s.previousRect.top),
+          over: Math.round(s.currentRect.left - s.previousRect.left),
+          from: [Math.round(s.previousRect.left), Math.round(s.previousRect.top), Math.round(s.previousRect.width), Math.round(s.previousRect.height)],
+          to: [Math.round(s.currentRect.left), Math.round(s.currentRect.top), Math.round(s.currentRect.width), Math.round(s.currentRect.height)],
+          where: chain.reverse().join(">"),
+          now: box ? [Math.round(box.left), Math.round(box.top), Math.round(box.width), Math.round(box.height)] : null,
+          node: String((s.node && (s.node.id || s.node.className || s.node.tagName)) || "?")
+        };
+      }).sort(function (a, b) { return Math.abs(b.up) + Math.abs(b.over) - Math.abs(a.up) - Math.abs(a.over); }).slice(0, 8) : null,
+      src: keep.map(function (s) {
         return {
           move: Math.round(Math.abs(s.previousRect.top - s.currentRect.top) + Math.abs(s.previousRect.left - s.currentRect.left)),
           w: Math.round(s.previousRect.width), h: Math.round(s.previousRect.height),
@@ -381,7 +418,7 @@ const READ = `
   }
 
   const nav = once("Page.loadEventFired", 120000);
-  await send("Page.navigate", { url: ORIGIN + "/" });
+  await send("Page.navigate", { url: ORIGIN + PAGE });
   await nav;
   await sleep(3500);
   const boot = await ev(`(function(){var c=0;(window.__bh.shifts||[]).forEach(function(s){c+=s.v||0});return {cls:Number(c.toFixed(4)),q:getComputedStyle(document.documentElement).getPropertyValue('--queue-h'),n:(window.__bh.shifts||[]).length}})()`);
@@ -476,11 +513,16 @@ const READ = `
     repay: { past: brief(past), above: brief(above), repaid: brief(repaid) },
     queueLog, out: OUT
   }, null, 1));
-  ws.close(); chrome.kill("SIGKILL"); rmSync(profile, { recursive: true, force: true });
+  ws.close(); chrome.kill("SIGKILL");
+  rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
   process.exit(0);
 })().catch(async (e) => {
   console.error("FAILED " + e.message);
   try { ws && ws.close(); } catch (_) { /* already gone */ }
-  chrome.kill("SIGKILL"); rmSync(profile, { recursive: true, force: true });
+  chrome.kill("SIGKILL");
+  /* Chrome is still writing to the profile when the kill lands; without a retry this teardown
+     raced, threw out of the catch handler and exited 1 on a run whose JSON was already good. */
+  try { rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); }
+  catch (_) { console.error("left behind: " + profile); }
   process.exit(1);
 });
