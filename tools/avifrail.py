@@ -30,7 +30,17 @@ outside the markup walk — a bare URL cannot carry a `<picture>` — but the ho
 IS railed by hand, because it was the last picture on the page still paying JPEG rates:
     sips -s format avif -s formatOptions 58 images/web/reel-poster.jpg --out images/web/reel-poster.avif
 What is cut by hand goes stale in silence, so tests/hero-poster-codec.test.mjs refuses a twin
-younger than its AVIF; re-run the command above whenever the JPEG changes.
+younger than its AVIF; re-run the command above whenever the JPEG changes. The same rule now
+covers the whole rail — tests/avif-tiers.test.mjs refuses any encode older than its twin, which
+is what a re-cut artwork would otherwise leave behind: two different pictures from one URL, one
+per engine, and nothing failing to say so.
+
+The directories walked are catalog, home, brand and collection. The last of those is the flat
+concept art the shelf tiles are labelled with, and a flat picture is what AVIF crushes hardest:
+catalog.html's five tiles went from 96 KB of JPEG to 7 KB total — 8% of the bytes at a mean
+per-channel error under 1 of 255, because there is no sensor noise for the codec to spend bits
+on. Add a directory here and to that test at the same time: both name the set on purpose, so a
+tile this walk forgot cannot pass the guard.
 """
 import pathlib
 import re
@@ -46,7 +56,7 @@ CELL = re.compile(r'<li class="gal-cell">.*?</li>', re.S)
 
 # The same picture at two resolutions, in a directory the rail encodes.
 TIER_IMG = re.compile(
-    r'<img\b[^>]*\bsrc="(images/(?:catalog|home|brand)/[^"]+\.jpg)"'
+    r'<img\b[^>]*\bsrc="(images/(?:catalog|home|brand|collection)/[^"]+\.jpg)"'
     r'[^>]*\bsrcset="([^"]*/hi/[^"]+)"[^>]*>'
 )
 TIER_SIZES = re.compile(r'\ssizes="([^"]*)"')
@@ -54,7 +64,7 @@ ALREADY = re.compile(r'<source type="image/avif"[^>]*>\s*$')
 
 # A still with one copy: the same file a tiered card on the same page already asks for.
 SINGLE_IMG = re.compile(
-    r'<img\b(?![^>]*\bsrcset=)[^>]*\bsrc="(images/(?:catalog|home|brand)/[^"]+\.jpg)"[^>]*>'
+    r'<img\b(?![^>]*\bsrcset=)[^>]*\bsrc="(images/(?:catalog|home|brand|collection)/[^"]+\.jpg)"[^>]*>'
 )
 # js/catalog.js rotates a product's photos by writing `img.src` at runtime. A pinned
 # <source> would win over that write and keep showing the first picture, so a markup
