@@ -75,6 +75,19 @@
      not been laid out yet. A phone is the screen that pays — and pays while the notices are
      still arriving. */
   const paysQueue = () => !!(parseFloat(getComputedStyle(root).getPropertyValue("--rail-h")) || 0);
+  /* …and what a settled queue is. The document finishing was the proxy this driver
+     trusted, and on the live origin it lies: `load` fires while the only thing standing at
+     the bottom of a phone is the chat bubble (71px of queue), the cookie bar lands 200ms
+     later (268px) and the install pill after that (304px). An answer made at load is made
+     for a screen that no longer exists two passes later, and the correction — the stage
+     coming back down — passes a 390x656 body through an empty frame and bills 0.7773 of the
+     layout-shift score for a band sitting 7,856px above a reader who never saw it. So the
+     phone waits for the edge itself: a bottom queue that has not moved for SETTLE is the
+     settled page, whenever that turns out to be. */
+  const SETTLE = 700;
+  let queueMoved = 0;
+  addEventListener("queue-change", () => { queueMoved = performance.now(); }, { passive: true });
+  const queueSettled = (moved, now, complete) => complete && (!moved || now - moved >= SETTLE);
   const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
   const el = (t, c) => { const n = doc.createElement(t); n.className = c; return n; };
   /* The stone wears the first card's own name, and every card name is already a
@@ -96,6 +109,7 @@
     this.paged = false;
     this.decided = false;
     this.pending = undefined;
+    this.reasker = 0;
     this.index = -1;
     this.axis = band.dataset.pinDir === "x" ? "x" : "y";
     this.page = Math.max(1, parseInt(band.dataset.pinPage, 10) || PAGE);
@@ -459,14 +473,29 @@
     return target.getBoundingClientRect().top > innerHeight;
   };
 
-  /* On a phone the room a stage has is a moving number until the page finishes loading,
-     because the bottom queue is still being built — the boot pass measured 68px of notices
-     and the load pass measured 268. A first answer given at boot is therefore a guess, and
-     on the band the reader aimed at it is a guess they watch being corrected. So the phone
-     waits for the settled queue and gives one answer, made by the load pass below; a desk,
-     which charges its stage nothing, is not asked to wait. */
+  /* A phone's first answer is held until the bottom queue has settled (see SETTLE above),
+     because the room a stage has is a moving number while the notices are arriving —
+     measured at 390x844: 71px of queue at load, 304px once the cookie bar and the install
+     pill had both landed. A guess given early is a guess a visitor either watches being
+     corrected or, if they never scroll that far, pays for in the score anyway. A desk, which
+     charges its stage nothing, is not asked to wait. */
   Band.prototype.awaitingQueue = function () {
-    return !this.decided && paysQueue() && document.readyState !== "complete";
+    if (this.decided || !paysQueue()) return false;
+    if (!queueSettled(queueMoved, performance.now(), document.readyState === "complete")) {
+      this.reask();
+      return true;
+    }
+    return false;
+  };
+
+  /* A hold that nothing ends is a hang: the band would stay undecided until the reader did
+     something, and the debt would only be paid on a scroll path they may never take. Every
+     notice that arrives re-arms the window through `queue-change`, so the window itself is
+     what sets the alarm — an unanswered event must still end with one settled answer. */
+  Band.prototype.reask = function () {
+    if (this.reasker || document.readyState !== "complete") return;
+    const left = SETTLE - (performance.now() - queueMoved);
+    this.reasker = setTimeout(() => { this.reasker = 0; this.ask(); }, left > 0 ? left : SETTLE);
   };
 
   Band.prototype.layout = function () {
@@ -490,8 +519,9 @@
        nothing. Two things take that permission back: a walk that has not landed yet
        (`awaitingArrival`), and, on a phone whose queue is still arriving, a first answer that
        has not been settled yet (`awaitingQueue`). Either one's debt is paid by `follow`, the
-       next time the band lies out of sight for real — and a held first answer is paid by the
-       load pass, which asks again once the notices have all been counted. */
+       next time the band lies out of sight for real — and a held first answer is paid by
+       `reask`, which asks again once the queue has been quiet long enough to be the page's
+       last word. */
     const below = !this.awaitingArrival() && !this.awaitingQueue() &&
       (this.belowReader() || (!this.decided && scrollY === 0));
     if (this.paged !== (n >= 2) && !below) {

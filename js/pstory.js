@@ -58,6 +58,25 @@
      loads. A wide screen charges nothing, so its first answer is already settled and has no
      reason to wait. */
   const paysQueue = () => !!(parseFloat(getComputedStyle(root).getPropertyValue("--rail-h")) || 0);
+  /* …and what a settled queue is, read the same way js/pinband reads it. The document
+     finishing was the proxy, and on the live origin it lies: `load` fires with 71px of
+     notices standing, the cookie bar lands 200ms later (268px) and the install pill after
+     that (304px). An answer made at load was overturned two passes later, and the
+     correction passed a 390x656 stage body through an empty frame — 0.7773 of the
+     layout-shift score for a story 7,856px above a reader who never saw it. */
+  const SETTLE = 700;
+  let queueMoved = 0, reasker = 0;
+  addEventListener("queue-change", () => { queueMoved = performance.now(); }, { passive: true });
+  const queueSettled = (moved, now, complete) => complete && (!moved || now - moved >= SETTLE);
+
+  /* A hold that nothing ends is a hang: the story would stay undecided until the reader
+     scrolled, and a page that is only ever read down to the hero would never answer. Each
+     arriving notice re-arms the window, so the window is what sets the alarm. */
+  function reask() {
+    if (reasker || document.readyState !== "complete") return;
+    const left = SETTLE - (performance.now() - queueMoved);
+    reasker = setTimeout(() => { reasker = 0; evaluate(); }, left > 0 ? left : SETTLE);
+  }
 
   /* Whether the standing stage holds a whole step in the room the queue left it. The
      container query already gives the step's picture up when the box runs out, so a
@@ -203,12 +222,15 @@
       root.classList.toggle("js-pstory", pinned);
       return;
     }
-    /* On a phone the first answer is held until the notices at the bottom of the screen have
-       all arrived: measured on this same page, the boot pass read 68px of queue and raised
-       the story, and the next pass read 268px and took it back down. Waiting costs the story
-       a first arrangement it cannot show yet — it is off screen on a page that has just
-       opened — and buys one settled answer instead of a swap anybody can see. */
-    if (!decided && paysQueue() && document.readyState !== "complete") {
+    /* On a phone the first answer is held until the bottom queue has settled: measured on
+       the live origin, the load pass read 71px of notices and raised the story while the
+       cookie bar and the install pill were still on their way to 304px, and taking it back
+       down two passes later was the shift. Waiting costs the story a first arrangement it
+       cannot show yet — it is off screen on a page that has just opened — and buys one
+       settled answer instead of a swap anybody can see, or can score. */
+    if (!decided && paysQueue() && !queueSettled(queueMoved, performance.now(),
+      document.readyState === "complete")) {
+      reask();
       pending = want;
       root.classList.toggle("js-pstory", pinned);
       return;

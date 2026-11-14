@@ -145,7 +145,10 @@ test('Home motion and interaction hooks remain intact', () => {
   assert.match(html, /class="pstory__pin"/);
   assert.match(html, /id="portfolio" data-pin="\.shots"/);
   assert.match(html, /id="customer-experience" data-pin="\.exp"/);
-  assert.match(html, /js\/pstory\.js\?v=8/);
-  assert.match(html, /js\/pinband\.js\?v=20/);
+  // Same floor form as the stylesheet ledger above: the tag must stay, and it must
+  // never fall back to a version whose cached copy predates the queue settle.
+  const asked = (file) => Number((html.match(new RegExp(`js\\/${file}\\.js\\?v=(\\d+)`)) || [])[1] || 0);
+  assert.ok(asked("pstory") >= 9, "the story driver must be at or past the queue-settle build");
+  assert.ok(asked("pinband") >= 21, "the band driver must be at or past the queue-settle build");
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.hold-plate\{translate:none\}/);
 });
