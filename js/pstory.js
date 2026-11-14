@@ -53,6 +53,15 @@
     if (!(parseFloat(r.getPropertyValue("--rail-h")) || 0)) return 0;
     return parseFloat(r.getPropertyValue("--queue-h")) || 0;
   };
+  /* What this story owes the queue. Once --queue-lock is named on the band the stage keeps
+     that geometry for the visit (#580 — the same rule js/pinband.js keeps, in the same
+     words), so the room a step is measured against is the room the band was given, not the
+     one the notices have since asked for. Until the band has a number of its own it is the
+     page's, and the page's is the live one. */
+  const owed = () => {
+    const held = parseFloat(band.style.getPropertyValue("--queue-lock"));
+    return held >= 0 ? held : charge();
+  };
   /* The same marker js/pinband reads: a phone is the screen that asks its stage to pay for
      the bottom queue, and on that screen the queue is still being built while the page
      loads. A wide screen charges nothing, so its first answer is already settled and has no
@@ -85,8 +94,34 @@
   function fits() {
     const vis = slides[0].querySelector(".pstory__visual");
     if (vis && getComputedStyle(vis).display === "none") return false;
-    return pin.offsetHeight <= innerHeight - navH() - charge() + 1;
+    return pin.offsetHeight <= innerHeight - navH() - owed() + 1;
   }
+
+  /* The number this story is built against becomes its own the first time the band comes
+     within a viewport of the reader, and nothing but a different room takes it back — the
+     same rule js/pinband.js keeps for the collection stages, in the same words, because the
+     two are the same stage. Asking *ahead* of sight is the point: the frame a band becomes
+     visible in is the last frame CSS will still spend the live queue on, and the event that
+     moves it is not synced to the eye. A story that keeps a stale number lets the notices
+     overlap it, which is the trade the stage already makes at its own floor; a story that
+     keeps a live one re-fits four steps of picture under a visitor who is reading one. */
+  let ahead = null, wide = innerWidth;
+  const arm = () => {
+    if (ahead || typeof IntersectionObserver !== "function") return;
+    ahead = new IntersectionObserver((rows) => {
+      if (!rows.some((r) => r.isIntersecting)) return;
+      ahead.disconnect();
+      ahead = null;
+      band.style.setProperty("--queue-lock", Math.round(charge()) + "px");
+    }, { rootMargin: "0px 0px 100% 0px" });
+    ahead.observe(band);
+  };
+  const unkeep = () => {
+    if (ahead) return;
+    band.style.removeProperty("--queue-lock");
+    arm();
+  };
+  arm();
 
   /* The one place an arrangement swap cannot be felt, and the reason js/pinband.js asks
      the same question: the stage and the stack are nowhere near the same height, so the
@@ -261,8 +296,13 @@
   reduce.addEventListener("change", evaluate);
   /* Re-asked on every pass, pinned or not: a story that stood aside because the bottom
      queue left it no room comes back the moment the queue shrinks, and nothing else on
-     the page would notice. */
-  addEventListener("resize", evaluate, { passive: true });
+     the page would notice. A band gives up its locked number only for a different *room*:
+     a phone's toolbar tucking away moves the height, and the svh the stage is built from
+     already ignores it, while a rotation is the question the reader is actually asking. */
+  addEventListener("resize", () => {
+    if (innerWidth !== wide) { wide = innerWidth; unkeep(); }
+    evaluate();
+  }, { passive: true });
   /* The stage now stands on a screenful shorter than the window, because the install
      pill and the chat bubble live at the bottom of a phone and the row of stones has
      to be above them. When that queue changes shape the run is a different length, so

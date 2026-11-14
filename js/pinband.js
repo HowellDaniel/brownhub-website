@@ -88,6 +88,14 @@
   let queueMoved = 0;
   addEventListener("queue-change", () => { queueMoved = performance.now(); }, { passive: true });
   const queueSettled = (moved, now, complete) => complete && (!moved || now - moved >= SETTLE);
+  /* …and when a stage that is already standing may not be re-measured in front of the
+     reader. A queue that grows takes room out of a band the visitor is inside, and the
+     honest answer to that is to trim the picture and shorten the page — which is exactly
+     the correction the owner asked to stop seeing. So a pass may only re-fit a standing
+     stage once the band is out of sight, and it gets that permission back by itself, the
+     same way an arrangement flip does: nothing else moved, only the notices did. */
+  const stageFrozen = (decided, standing, inSight, roomSame, moved) =>
+    decided && standing && inSight && roomSame && moved;
   const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
   const el = (t, c) => { const n = doc.createElement(t); n.className = c; return n; };
   /* The stone wears the first card's own name, and every card name is already a
@@ -110,6 +118,9 @@
     this.decided = false;
     this.pending = undefined;
     this.reasker = 0;
+    /* The room and the queue the last applied pass actually wrote geometry for. */
+    this.shape = undefined;
+    this.qc = undefined;
     this.index = -1;
     this.axis = band.dataset.pinDir === "x" ? "x" : "y";
     this.page = Math.max(1, parseInt(band.dataset.pinPage, 10) || PAGE);
@@ -166,7 +177,34 @@
     const relayout = () => this.ask();
     if (typeof ResizeObserver === "function") new ResizeObserver(relayout).observe(this.strip);
     new MutationObserver(relayout).observe(this.strip, { attributes: true, subtree: true, attributeFilter: ["hidden"] });
-    let seen = this.pin.offsetHeight, owed = charge(), box = innerWidth + "x" + innerHeight;
+    /* The number this band is built against becomes the band's own the first time it comes
+       within a viewport of the reader, and is never taken back except by a room that
+       actually changed size (#580). Until then the band follows the page's queue like any
+       other part of it, so asking early costs nothing; after, css/style.css spends the
+       band's number instead of the live one and a notice landing cannot re-fit a picture
+       somebody is standing in. Asking *ahead* of sight is the whole point: the frame a band
+       becomes visible in is the last frame CSS will still spend the live queue on, and the
+       event that moves it is not synced to the eye. A band that keeps a stale number lets
+       the notices overlap it, which is the trade the stage already makes at the floor; a
+       band that keeps a live one moves the picture. */
+    let ahead = null;
+    const arm = () => {
+      if (ahead || typeof IntersectionObserver !== "function") return;
+      ahead = new IntersectionObserver((rows) => {
+        if (!rows.some((r) => r.isIntersecting)) return;
+        ahead.disconnect();
+        ahead = null;
+        this.band.style.setProperty("--queue-lock", Math.round(charge()) + "px");
+      }, { rootMargin: "0px 0px 100% 0px" });
+      ahead.observe(this.band);
+    };
+    const unkeep = () => {
+      if (ahead) return;
+      this.band.style.removeProperty("--queue-lock");
+      arm();
+    };
+    arm();
+    let seen = this.pin.offsetHeight, owed = charge(), box = innerWidth + "x" + innerHeight, wide = innerWidth;
     const refill = (grown) => {
       /* Only a window that actually changed size is allowed to ask for its picture back: a
          pass that both took the height and gave it back would never settle. A queue that
@@ -183,7 +221,13 @@
     addEventListener("resize", () => {
       const now = innerWidth + "x" + innerHeight;
       const grown = now !== box;
+      /* A band gives up its number only for a different *room*. A phone's toolbar tucking
+         away moves the height, and the svh the stage is built from already ignores it, while
+         a rotation or a window dragged sideways is the question the reader is asking. */
+      const rewider = innerWidth !== wide;
+      wide = innerWidth;
       box = now;
+      if (rewider) unkeep();
       refill(grown);
     }, { passive: true });
     /* The bottom of the screen belongs to a queue the page did not build — the install
@@ -508,9 +552,12 @@
     /* The one number that says whether this band is still being asked the same question:
        the room a stage has is a product of the window, the card set, the page size and,
        on a phone, the notices at the bottom of the screen — and nothing else may overturn
-       a measured decision until one of those moves. */
-    const ctx = innerWidth + "x" + innerHeight + "/" + this.cards.length + "/" + this.page +
-      "/" + charge();
+       a measured decision until one of those moves. The notices are kept apart from the
+       rest, because they are the one term that can move while a reader is standing in the
+       answer, and a stage they moved has to wait rather than be corrected on screen. */
+    const shape = innerWidth + "x" + innerHeight + "/" + this.cards.length + "/" + this.page;
+    const owed = charge();
+    const ctx = shape + "/" + owed;
     if (ctx !== this.ctx) { this.ctx = ctx; this.aside = false; }
     if (this.aside) return;
     /* Only a band the reader cannot see may change its shape, and a band is out of sight two
@@ -526,6 +573,17 @@
       (this.belowReader() || (!this.decided && scrollY === 0));
     if (this.paged !== (n >= 2) && !below) {
       this.pending = n >= 2;
+      return;
+    }
+    /* A notice arriving or leaving is the one change the reader is not owed an answer to
+       while they are standing in the stage. Measured at 390x844 inside the Customer
+       experience band, the quote card landing moved the queue 228px -> 509px: the room fell
+       653px -> 439px, this pass trimmed the picture and shortened the page under a visitor
+       who was reading it, and Chrome billed 0.6645 of the layout-shift score for the
+       correction. The band keeps the numbers it was built on until it lies out of sight,
+       and pays the debt from the scroll path like every other held answer. */
+    if (stageFrozen(this.decided, this.paged, !below, shape === this.shape, owed !== this.qc)) {
+      this.pending = false;
       return;
     }
     this.setPaged(n > 1);
@@ -595,6 +653,11 @@
        here, because --nav-h shrinks while the header condenses and the stage grows
        with it — a run measured at the top would be short by the end of the scroll. */
     this.run.style.setProperty("--pin-pages", String(n - 1));
+    /* From here the stage is standing on these measurements, so they are the ones the next
+       pass has to be able to say it did not move. Recorded only where geometry was really
+       written: a deferred pass measured nothing and may not claim it did. */
+    this.shape = shape;
+    this.qc = owed;
     /* Everything above wrote the page's own geometry, so the hold is dropped and the
        next read pays for the stage as it now stands. */
     this.release();

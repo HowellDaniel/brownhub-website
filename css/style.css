@@ -3399,15 +3399,33 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
    stage spends it twice: off the screenful the sticky element stands on, and off
    the page-length the run is built from, so the two keep agreeing however the
    queue changes. Because the driver reads the stage's own box for every number
-   (the spare room, the span, the jump), nothing in js/pinband.js or js/pstory.js
-   has to know the token exists — it only has to be asked again when it moves,
-   which is what the queue-change event is for.
+   (the spare room, the span, the jump), it does not have to recompute any of them
+   when the edge moves — it only has to say which queue a band was built against,
+   and that is one number on the band.
 
    svh rather than dvh: a phone's toolbar comes and goes as the page scrolls, and
    a stage whose screenful breathes with it slides the picture out from under the
    eye that was looking at it. The small viewport is the one height that is true
    whether the bars are up or down, and the queue's own bottom offset already
    carries the safe area.
+
+   The chain is written on the BAND, not on :root, and it spends --queue-lock before
+   it spends the page's own queue. #580 is the reason: measured on the live origin at
+   390x844 with the reader standing inside Customer experience, the quote card landing
+   took the queue 228px -> 509px and every stage on the page re-fit from that one root
+   number at once — portfolio 3467px -> 3186px, this band 3035px -> 2745px (and its
+   document top 12297px -> 12016px), the process story 2492px -> 2254px — and Chrome
+   billed 0.4208 of the layout-shift score for correcting a picture the reader was
+   looking at. Holding the root number instead of the band's fixes the band you are in
+   and bills twice for taking it back (0.7524 as the reader left, 0.6113 as a notice
+   re-locked him): the neighbours above him are what shove him, and they are every bit
+   as read as he is. So a band is asked ONCE — js/pinband.js and js/pstory.js name the
+   number the first time the band comes within a viewport of the reader, while he still
+   cannot see it — and is never asked again. A band nobody has reached yet carries no
+   lock and follows the queue like the rest of the page; a band that has been read keeps
+   the geometry it was read with, and a notice that lands after that overlaps it, which
+   is the trade the block above already makes. What a stale lock costs is a picture under
+   a notice; what a live one costs is the picture moving under the eye.
    ========================================================================== */
 @media (max-width:719px){
   /* One number for the height of a phone screenful, and a floor under it. The queue at
@@ -3417,9 +3435,12 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
      600px of an 844px screen, which leaves a stage too short to hold a picture at all.
      The stage therefore pays for the queue up to a limit and lets the notices overlap
      it beyond that: they are dismissible and the picture is not. */
-  :root{--stage-h:max(52vh, calc(100vh - var(--nav-h) - var(--queue-h, 0px)))}
+  .pinband, .pstory{
+    --stage-queue:var(--queue-lock, var(--queue-h, 0px));
+    --stage-h:max(52vh, calc(100vh - var(--nav-h) - var(--stage-queue)))}
   @supports (height:100svh){
-    :root{--stage-h:max(52svh, calc(100svh - var(--nav-h) - var(--queue-h, 0px)))}
+    .pinband, .pstory{
+      --stage-h:max(52svh, calc(100svh - var(--nav-h) - var(--stage-queue)))}
   }
   .pinband--paged .pinband__pin,
   html.js-pstory .pstory__pin{height:var(--stage-h)}
@@ -3488,12 +3509,17 @@ html.js-pstory .pstory__run{height:calc(3 * (100vh - var(--nav-h)));height:calc(
 @media (max-width:719px){
   /* The rail's own height, named once, because the two rules that must agree on it —
      the body's padding and the stone row's box — are written six lines apart. */
-  :root{--rail-h:58px;--skip-h:30px;
-    --stage-seen:max(0px, calc(100vh - var(--nav-h) - var(--queue-h, 0px)));
+  :root{--rail-h:58px;--skip-h:30px}
+  /* On the band, for the same reason --stage-h is: the dug and the payment are the same
+     queue spent a second time, and a band that has been read pays for the notices it was
+     read against — not for the ones that landed after it. */
+  .pinband, .pstory{
+    --stage-seen:max(0px, calc(100vh - var(--nav-h) - var(--stage-queue)));
     --stage-dug:calc(var(--stage-h) - var(--stage-seen));
     --stage-pay:min(var(--stage-dug), max(0px, calc(var(--stage-h) - 268px)))}
   @supports (height:100svh){
-    :root{--stage-seen:max(0px, calc(100svh - var(--nav-h) - var(--queue-h, 0px)))}
+    .pinband, .pstory{
+      --stage-seen:max(0px, calc(100svh - var(--nav-h) - var(--stage-queue)))}
   }
 
   .pinband--paged .pinband__body{padding-bottom:calc(var(--rail-h) + var(--stage-pay))}
