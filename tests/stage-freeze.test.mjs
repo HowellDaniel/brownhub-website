@@ -46,6 +46,13 @@ function at(re, what) {
   return found;
 }
 
+/* The same reading, asked of a file the helper above is not bound to. */
+function at2(text, re, what) {
+  const found = text.search(re);
+  assert.ok(found >= 0, `${what} is not in the story driver`);
+  return found;
+}
+
 /* The rule is a sentence of five booleans, so the characters in it are enumerable and the
    test can run the production text instead of paraphrasing it. */
 const FORBIDDEN = /\b(require|import|export|globalThis|process|Function|eval|window|document|fetch|this|new|await|async)\b/;
@@ -122,10 +129,12 @@ test("the hold is asked before the stage is measured or rearranged", () => {
 
 test("the room and the queue are named apart, and an applied pass records both", () => {
   // charge() is the term that moves under a standing reader, so it cannot be folded into
-  // one opaque key with the things that say the band was asked the same question.
+  // one opaque key with the things that say the band was asked the same question. Since #582
+  // the queue term is the band's own number where it has one, and the page's live charge is
+  // only the fallback it was before any band was read.
   at(/\bconst shape = innerWidth \+ "x" \+ innerHeight \+ "\/" \+ this\.cards\.length \+ "\/" \+ this\.page;/,
     "the room key");
-  at(/\bconst owed = charge\(\);/, "the queue reading");
+  at(/\bconst owed = own >= 0 \? own : charge\(\);/, "the queue reading");
   at(/\bconst ctx = shape \+ "\/" \+ owed;/, "the question key built from both");
   at(/if \(ctx !== this\.ctx\) \{ this\.ctx = ctx; this\.aside = false; \}/, "the question gate");
   // Written only where geometry is actually applied, so a deferred pass cannot claim a
@@ -199,6 +208,93 @@ test("both stage drivers name the lock once, ahead of sight", () => {
   }
 });
 
+test("a phone band sizes its stage only against a queue number it owns", () => {
+  /* #582, measured at 390x844 on catalog.html (throttled phone rig, 2026-11-14): the shelf
+     answered "stage" at 830ms against a 68px bottom queue, the cookie bar and the install
+     pill both landed by 1,115ms and charged 304px, the row stopped fitting, and that pass
+     tore the stage down — 15,583px of band becoming a 4,675px grid — and Chrome billed
+     0.6801 of the layout-shift score for the destruction of a picture 859px above a reader
+     who never saw it. The owner's law: sized once, before it is ever visible, never
+     re-sized. So the number a first answer is measured against has to be the number the
+     sheet spends for that band from then on — its lock — and the lock is taken a viewport
+     ahead of sight, so waiting for it costs nobody a look. */
+  const own = at(/\bconst locked = \(/, "the band's own queue number");
+  const helper = block(pin, own);
+  assert.match(helper, /getPropertyValue\("--queue-lock"\)/,
+    "js/pinband.js: the band's own number is not read from its lock");
+  assert.match(helper, /-1/, "js/pinband.js: a band with no lock reads as if it had one");
+
+  // The decision spends it, with the page's live queue only as the fallback it always was.
+  const reading = at(/\bconst owed = own >= 0 \? own : charge\(\);/, "the queue reading");
+  assert.ok(own < reading, "js/pinband.js: the queue reading does not use the band's number");
+  at(/\bconst own = locked\(this\.band\);/, "the band's number taken into the pass");
+
+  /* And the first answer waits for it. A band nobody has approached has no lock, so at boot
+     it would size a stage against whichever notice happened to have arrived — the exact
+     gamble the teardown is made of. The hold is void where no lock can ever arrive (an engine
+     with no observer), so it cannot hang, and a desk, which pays the queue nothing, is never
+     asked to wait at all. */
+  const hold = at(/Band\.prototype\.awaitingLock = function/, "the first-answer lock hold");
+  const held = block(pin, hold);
+  assert.match(held, /this\.decided/, "js/pinband.js: a decided band is still held for its number");
+  assert.match(held, /paysQueue\(\)/, "js/pinband.js: a desk is asked to wait for a queue it does not pay");
+  assert.match(held, /IntersectionObserver/, "js/pinband.js: the hold does not give up where no lock can arrive");
+  assert.match(held, /locked\(this\.band\) < 0/, "js/pinband.js: the hold is not asked of the band's number");
+  assert.ok(hold < reading, "js/pinband.js: the hold is named after the pass that must consult it");
+
+  const permission = at(/const below = !this\.awaitingArrival\(\) && !this\.awaitingQueue\(\) && !this\.awaitingLock\(\)/,
+    "the off-screen permission");
+  // Asked before anything is built: the whole point is that the stage is never raised twice.
+  const measured = at(/const room = this\.spare\(\);/, "the room measurement");
+  assert.ok(permission < measured, "js/pinband.js: the stage is measured before the hold can stop it");
+
+  /* The observer that gives the number has to hand the band back its question: a lock
+     written a viewport early, with nothing re-asking, is a number nobody ever sizes to. */
+  const arm = pin.slice(pin.search(/\bconst arm = \(\) => \{/));
+  const write = arm.indexOf('"--queue-lock"');
+  assert.ok(write >= 0, "js/pinband.js: the arming never writes the lock");
+  assert.ok(arm.indexOf("this.ask()") > write, "js/pinband.js: taking the lock never re-asks the band");
+});
+
+test("the story holds its first arrangement for a queue number it owns", () => {
+  /* Measured at 390x844 on index.html with the same rig, 2026-11-14: the collection bands
+     stopped paying for a phantom stage, and the home page still billed 0.7808 of the layout
+     shift score at 850ms for `div.container.pstory__body` going from 390x659 to nothing.
+     The process story is the other half of the same layer — it raises a pinned stage, and it
+     was the one stage left sizing its first answer against whichever queue number happened to
+     be on the page. The hold js/pinband.js takes is taken here too, in the same words. */
+  const hold = at2(story, /function awaitingLock\(\) \{/, "the story's first-answer lock hold");
+  const held = block(story, hold);
+  assert.match(held, /if \(decided \|\| !paysQueue\(\)\) return false;/,
+    "js/pstory.js: a decided story is still held for its number");
+  assert.match(held, /typeof IntersectionObserver !== "function"/,
+    "js/pstory.js: the hold does not give up where no lock can arrive");
+  /* The trap this hold first shipped with: the band has no number until its observer writes
+     one, so the property is absent, and `parseFloat("")` is NaN — and `NaN < 0` is false. Read
+     that way the hold let a band with no number answer as if it owned one, which is the defect
+     it was written to stop. js/pinband.js names -1 for the case; the story has to ask the same
+     question its own owed() asks, where a missing property is a missing number. */
+  assert.match(held, /--queue-lock"\)\) >= 0/,
+    "js/pstory.js: the hold reads the band's number with the comparison owed() uses");
+  assert.doesNotMatch(held, /--queue-lock"\)\) < 0/,
+    "js/pstory.js: `< 0` is never true of a band with no number, so the hold would not hold");
+
+  // Asked before the settle window, so a band with no number is never answered by a timer.
+  const asked = at2(story, /if \(awaitingLock\(\)\) \{/, "the hold being taken in the pass");
+  const settle = at2(story, /if \(!decided && paysQueue\(\) && !queueSettled\(/, "the settle hold");
+  assert.ok(asked < settle, "js/pstory.js: the settle window answers before the lock can hold");
+  const booking = block(story, asked);
+  assert.match(booking, /pending = want;/, "js/pstory.js: a held story books no debt to pay later");
+  assert.match(booking, /classList\.toggle\("js-pstory", pinned\)/,
+    "js/pstory.js: a held pass leaves the measuring class standing");
+
+  // And the observer that gives the number re-asks, or the hold is a hang.
+  const arm = story.slice(story.search(/\bconst arm = \(\) => \{/));
+  const write = arm.indexOf('"--queue-lock"');
+  assert.ok(write >= 0, "js/pstory.js: the arming never writes the lock");
+  assert.ok(arm.indexOf("evaluate()") > write, "js/pstory.js: taking the lock never re-asks the story");
+});
+
 test("only a room that changed width takes the number back", () => {
   /* A phone's toolbar tucks away while the reader scrolls and moves innerHeight alone; the
      svh the stage is built from already ignores it, so releasing on that would thaw the
@@ -239,11 +335,11 @@ test("every page that runs a stage driver asks the sheet that spends its lock", 
     const page = readFileSync(path.join(root, file), "utf8");
     const drivers = asked(page, /js\/pinband\.js\?v=(\d+)/), sheets = asked(page, /css\/style\.min\.css\?v=(\d+)/);
     const storyDriver = asked(page, /js\/pstory\.js\?v=(\d+)/);
-    assert.ok(drivers >= 22 && sheets >= 188,
-      `${file}: stage driver ${drivers} against sheet ${sheets} — a cached pre-#580 sheet ignores --queue-lock`);
+    assert.ok(drivers >= 23 && sheets >= 189,
+      `${file}: stage driver ${drivers} against sheet ${sheets} — a cached pre-#582 sheet ignores the band's number`);
     if (/class="[^"]*\bpstory\b/.test(page)) {
-      assert.ok(storyDriver >= 10,
-        `${file}: carries a process story but asks pstory.js v${storyDriver}, which holds no lock`);
+      assert.ok(storyDriver >= 11,
+        `${file}: carries a process story but asks pstory.js v${storyDriver}, which answers before it owns a number`);
     }
   }
 });

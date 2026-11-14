@@ -75,6 +75,15 @@
      not been laid out yet. A phone is the screen that pays — and pays while the notices are
      still arriving. */
   const paysQueue = () => !!(parseFloat(getComputedStyle(root).getPropertyValue("--rail-h")) || 0);
+  /* The queue number this band owns: written the first time the band comes within a viewport
+     of the reader and kept for the visit, and css/style.css spends it on the stage instead of
+     the live one from then on. It is therefore the only number a stage can be sized against
+     once and never again, which is what the owner asked for — and a band nobody has
+     approached has no number yet, which -1 says. Same reading js/pstory.js has made since #580. */
+  const locked = (band) => {
+    const held = parseFloat(band.style.getPropertyValue("--queue-lock"));
+    return held >= 0 ? held : -1;
+  };
   /* …and what a settled queue is. The document finishing was the proxy this driver
      trusted, and on the live origin it lies: `load` fires while the only thing standing at
      the bottom of a phone is the chat bubble (71px of queue), the cookie bar lands 200ms
@@ -195,6 +204,9 @@
         ahead.disconnect();
         ahead = null;
         this.band.style.setProperty("--queue-lock", Math.round(charge()) + "px");
+        /* The number is only worth taking if the band is sized to it: this fires a viewport
+           ahead of sight, which is where a first answer that waited for one belongs (#582). */
+        this.ask();
       }, { rootMargin: "0px 0px 100% 0px" });
       ahead.observe(this.band);
     };
@@ -532,6 +544,21 @@
     return false;
   };
 
+  /* The settle window is a guess about how long the notices take to arrive, and on the live
+     origin at 390x844 it lost that guess: the queue sat quiet at 68px for the whole window,
+     the band answered, and the cookie bar and the install pill landed together afterwards and
+     charged 304px (#582). This hold is not a guess. A stage is sized against the number the
+     sheet will spend for that band from then on, so a band that has no number yet is not asked
+     for an answer — and the number arrives a viewport before the band does, which is exactly
+     where the owner's law puts it: sized once, before it is ever visible, never re-sized.
+     Nothing re-asks here: it is the scroll that reaches the band which fires the observer, and
+     where an engine has no observer no number can ever arrive, so the band answers as before. */
+  Band.prototype.awaitingLock = function () {
+    if (this.decided || !paysQueue()) return false;
+    if (typeof IntersectionObserver !== "function") return false;
+    return locked(this.band) < 0;
+  };
+
   /* A hold that nothing ends is a hang: the band would stay undecided until the reader did
      something, and the debt would only be paid on a scroll path they may never take. Every
      notice that arrives re-arms the window through `queue-change`, so the window itself is
@@ -556,7 +583,8 @@
        rest, because they are the one term that can move while a reader is standing in the
        answer, and a stage they moved has to wait rather than be corrected on screen. */
     const shape = innerWidth + "x" + innerHeight + "/" + this.cards.length + "/" + this.page;
-    const owed = charge();
+    const own = locked(this.band);
+    const owed = own >= 0 ? own : charge();
     const ctx = shape + "/" + owed;
     if (ctx !== this.ctx) { this.ctx = ctx; this.aside = false; }
     if (this.aside) return;
@@ -565,11 +593,12 @@
        the top and every band is still ahead of the reader, where the first answer costs
        nothing. Two things take that permission back: a walk that has not landed yet
        (`awaitingArrival`), and, on a phone whose queue is still arriving, a first answer that
-       has not been settled yet (`awaitingQueue`). Either one's debt is paid by `follow`, the
-       next time the band lies out of sight for real — and a held first answer is paid by
-       `reask`, which asks again once the queue has been quiet long enough to be the page's
-       last word. */
-    const below = !this.awaitingArrival() && !this.awaitingQueue() &&
+       has not been settled yet (`awaitingQueue`) or has no queue number of its own to size
+       against yet (`awaitingLock`). Either one's debt is paid by `follow`, the next time the
+       band lies out of sight for real — and a held first answer is paid by `reask`, which asks
+       again once the queue has been quiet long enough to be the page's last word, and by the
+       observer that hands the band its number. */
+    const below = !this.awaitingArrival() && !this.awaitingQueue() && !this.awaitingLock() &&
       (this.belowReader() || (!this.decided && scrollY === 0));
     if (this.paged !== (n >= 2) && !below) {
       this.pending = n >= 2;

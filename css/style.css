@@ -4207,25 +4207,36 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
    screen already does this: a 481-900px window has shown two product cards a row for as
    long as this stylesheet had a responsive block, and only the pocket was left stacked.
    ========================================================================== */
-/* Scoped to the state the driver itself names, and that scoping was earned. Keying this
-   off `.cards--3:has(.product-card)` instead reached into the live stage too — the staged
-   shelf's own card bodies came back at 15px on the name and .7rem in the body, and its
-   runway went from 13,225px to 0. `.pinband--plain` is set only by js/pinband.js's
-   standAside(), after the band has decided it cannot pay for a stage, and cleared the
-   moment it stages again, so nothing here can touch a stage or the measurement that
-   decides. Reduced motion is covered on the same marker: the driver's off branch names
-   the grid plain too, and an arrangement is not an animation.
+/* The arrangement is declared by the markup the shelf ships with (`.cards--pocket2` sits on
+   the strip in catalog.html and engineering.html), not by a class the driver writes. This
+   used to be keyed off `.pinband--plain`, which js/pinband.js only adds inside standAside(),
+   after the band has decided it cannot pay for a stage — so the two-column pocket grid was
+   reachable only as a correction painted over the legacy single column, and a phone met the
+   shelf one way and kept it another. Measured on the live origin at 390x844 on 2026-11-14:
+   cols=1 at 508ms, staged at 886ms, cols=2 at 1030ms, CLS 0.8216. A class on the element is
+   the page's own answer before any script runs. Reduced motion is covered by the same rule:
+   the driver's off branch used to name the grid plain, and an arrangement is not an
+   animation. The marker is paired with `.cards--N` and so keeps the old rule's weight
+   against `.webcat .cards--3`, which lays the same strip out auto-fit on a desk.
    What this does NOT change, measured in the same handback state with the block lifted:
    the two 0.21 jumps a lead card arriving costs (the staged card set collapsing as the
    grid takes it back) are byte-identical either way — 0.4260 without, 0.4252 with. That
    jump belongs to the handback itself, not to the column count. */
 @media (max-width:480px){
-  .pinband--plain.cards--3,.pinband--plain.cards--2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cards--pocket2.cards--3,.cards--pocket2.cards--2{grid-template-columns:repeat(2,minmax(0,1fr))}
   /* The body of a 157px card cannot pay the desk's 1.2rem. The name drops one step on
      the ramp and the body takes the phone's own gutter, so a two-word title still
      reaches two lines and the price line stays on one. */
-  .pinband--plain .product-card__body{padding:.7rem .75rem}
-  .pinband--plain .product-card h3{font-size:var(--t-fs-25)}
+  .cards--pocket2 .product-card__body{padding:.7rem .75rem}
+  .cards--pocket2 .product-card h3{font-size:var(--t-fs-25)}
+  /* The marker rides on the strip while the band is staged too, and a stage is not a pocket
+     grid: it lays its cards at the numbers it was built and measured with (body 19.2px 20px,
+     name 18px, runway 13,225px). The stage owns `.pinband--paged` for as long as it has more
+     than one page, so the state is named rather than inferred from order — keying the rules
+     above off `.cards--3:has(.product-card)` instead reached into the live stage, took its
+     name to 15px and its body to .7rem, and collapsed its runway to 0. */
+  .pinband--paged .pinband__window .product-card__body{padding:1.2rem 1.25rem}
+  .pinband--paged .pinband__window .product-card h3{font-size:var(--t-h3)}
 }
 
 /* ==========================================================================

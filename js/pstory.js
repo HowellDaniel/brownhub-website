@@ -113,6 +113,9 @@
       ahead.disconnect();
       ahead = null;
       band.style.setProperty("--queue-lock", Math.round(charge()) + "px");
+      /* The number is only worth taking if the story is sized to it: this fires a viewport
+         ahead of sight, which is where a first answer that waited for one belongs (#582). */
+      evaluate();
     }, { rootMargin: "0px 0px 100% 0px" });
     ahead.observe(band);
   };
@@ -128,6 +131,22 @@
      swap moves every section below the story — including the one being read. */
   function belowReader() {
     return band.getBoundingClientRect().top >= innerHeight;
+  }
+
+  /* The settle window is a guess about how long the notices take to arrive, and on the live
+     origin at 390x844 it lost that guess for the story too: the home page still billed 0.7808
+     of the layout shift score at 850ms for the pinned body going from 390x659 to nothing.
+     A story is sized against the number the sheet spends for its own band from then on, so a
+     band that has no number yet is not asked for an answer — and the number is taken a
+     viewport before the band is, which is the owner's law in one line: sized once, before it
+     is ever visible, never re-sized. Where an engine has no observer no number can arrive, so
+     the story answers as it always did. A band nobody has approached has an absent property,
+     and `parseFloat` of that is NaN — so the hold asks the question owed() asks, whether there
+     is a number at all, rather than whether the one it read is negative. */
+  function awaitingLock() {
+    if (decided || !paysQueue()) return false;
+    if (typeof IntersectionObserver !== "function") return false;
+    return !(parseFloat(band.style.getPropertyValue("--queue-lock")) >= 0);
   }
 
   /* This site scrolls smoothly, so a link into a band is a walk that re-reads its target
@@ -253,6 +272,13 @@
        when the reader comes back above it. The class is put back to whatever the reader was
        last shown, because the measuring pass above wrote it either way. */
     if (decided && want !== pinned && (!belowReader() || awaitingArrival())) {
+      pending = want;
+      root.classList.toggle("js-pstory", pinned);
+      return;
+    }
+    /* Before the window is even consulted: a story with no queue number of its own has
+       nothing it could size to, and the scroll that takes one is what re-asks it. */
+    if (awaitingLock()) {
       pending = want;
       root.classList.toggle("js-pstory", pinned);
       return;
