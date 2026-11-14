@@ -15,15 +15,18 @@ const generated = [
 ];
 
 const read = (page) => readFileSync(path.join(root, page), 'utf8');
-const platesOf = (html) => [...html.matchAll(/<div class="hold-plate"[^>]*>\s*<img\b[^>]*>/gi)]
-  .map(([tag]) => {
-    const src = tag.match(/\ssrc="([^"]*)"/i);
-    const srcset = tag.match(/\ssrcset="([^"]*)"/i);
-    return {
-      src: src ? src[1] : null,
-      srcset: srcset ? srcset[1] : null,
-    };
-  });
+/* A plate may wear a codec <source> in front of its <img>. These guards judge the <img>,
+   because that is the copy an engine without AVIF paints and the one whose `sizes` the
+   phone reads; tests/avif-tiers.test.mjs holds the rules over the <source>. */
+const plateImg = /<div class="hold-plate"[^>]*>(?:\s*<picture>\s*)?(<source\b[^>]*>\s*)?(<img\b[^>]*>)/gi;
+const platesOf = (html) => [...html.matchAll(plateImg)].map(([, , tag]) => {
+  const src = tag.match(/\ssrc="([^"]*)"/i);
+  const srcset = tag.match(/\ssrcset="([^"]*)"/i);
+  return {
+    src: src ? src[1] : null,
+    srcset: srcset ? srcset[1] : null,
+  };
+});
 
 test('every generated backdrop exists at both sizes', () => {
   for (const asset of generated) {
@@ -47,7 +50,7 @@ test('catalog, services and about paint only generated artwork behind their band
 
 test('the catalog keeps every product picture untouched', () => {
   const html = read('catalog.html');
-  const cards = [...html.matchAll(/<article class="product-card[^"]*"[^>]*>[\s\S]*?<div class="media"[^>]*>\s*<img\b[^>]*>/gi)];
+  const cards = [...html.matchAll(/<article class="product-card[^"]*"[^>]*>[\s\S]*?<div class="media"[^>]*>(?:\s*<picture>\s*)?(?:<source\b[^>]*>\s*)?(<img\b[^>]*>)/gi)];
   assert.ok(cards.length >= 28, `expected the catalog cards, found ${cards.length}`);
   for (const [tag] of cards) {
     const media = tag.slice(tag.indexOf('<div class="media"'));

@@ -576,8 +576,9 @@ html.js-scroll [data-rv="rise"]{opacity:0;translate:0 26px;transition:opacity .7
 html.js-scroll [data-rv="rise"].is-in{opacity:1;translate:0 0}
 /* The curtain lives on the media, not the frame: an element clipped to inset(0 0 100%)
    reports zero intersection to IntersectionObserver and would never reveal itself. */
-html.js-scroll [data-rv="frame"] > img,html.js-scroll [data-rv="frame"] > iframe{clip-path:inset(0 0 100% 0);transition:clip-path .95s var(--ease-out) calc(var(--rv-i,0)*80ms),scale .55s var(--ease-out)}
-html.js-scroll [data-rv="frame"].is-in > img,html.js-scroll [data-rv="frame"].is-in > iframe{clip-path:inset(0 0 0 0)}
+html.js-scroll [data-rv="frame"] > img,html.js-scroll [data-rv="frame"] > picture > img,html.js-scroll [data-rv="frame"] > iframe{clip-path:inset(0 0 100% 0);transition:clip-path .95s var(--ease-out) calc(var(--rv-i,0)*80ms),scale .55s var(--ease-out)}
+html.js-scroll [data-rv="frame"].is-in > img,html.js-scroll [data-rv="frame"].is-in > picture > img,
+  html.js-scroll [data-rv="frame"].is-in > iframe{clip-path:inset(0 0 0 0)}
 .shot img,.product-card img{translate:0 var(--py,0px);scale:1.16;transition:scale .55s var(--ease-out)}
 .shot:hover img,.shot:focus-visible img,.product-card:hover img{scale:1.25}
 .hero__orb,.hero__card{translate:0 var(--py,0px)}
@@ -645,7 +646,7 @@ html.js-scroll [data-rv="frame"].is-in > img,html.js-scroll [data-rv="frame"].is
 /* --- motion is optional --- */
 @media (prefers-reduced-motion:reduce){
   html.js-scroll [data-rv]{opacity:1;translate:none;transition:none}
-  html.js-scroll [data-rv="frame"] > img,html.js-scroll [data-rv="frame"] > iframe{clip-path:none;transition:none}
+  html.js-scroll [data-rv="frame"] > img,html.js-scroll [data-rv="frame"] > picture > img,html.js-scroll [data-rv="frame"] > iframe{clip-path:none;transition:none}
   .shot img,.product-card img,.hero__orb,.hero__card{translate:none;scale:1}
   .hero::after{animation:none}
   html{scroll-behavior:auto}
@@ -975,11 +976,12 @@ html.js-scroll .footer__grid .cmp-accordion__summary,html.js-scroll .site-footer
    ========================================================================== */
 .media{position:relative;display:block;overflow:hidden;background:var(--bg-alt);
   aspect-ratio:var(--media-ar,16/9);border-bottom-left-radius:inherit;border-bottom-right-radius:inherit}
+picture{display:contents}
 .media img{width:100%;height:100%;max-width:none;object-fit:cover;display:block}
 .shot .media,.service-row__visual{--media-ar:4/3}
 .product-card .media{--media-ar:1/1}
-html.js-scroll [data-rv="frame"] .media>img{clip-path:inset(0 0 100% 0);transition:clip-path .95s var(--ease-out) calc(var(--rv-i,0)*80ms)}
-html.js-scroll [data-rv="frame"].is-in .media>img{clip-path:inset(0 0 0 0)}
+html.js-scroll [data-rv="frame"] .media img{clip-path:inset(0 0 100% 0);transition:clip-path .95s var(--ease-out) calc(var(--rv-i,0)*80ms)}
+html.js-scroll [data-rv="frame"].is-in .media img{clip-path:inset(0 0 0 0)}
 
 /* the ink overlay that makes the frame read as a paused video */
 .media::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .18s ease;
@@ -997,10 +999,10 @@ html.js-scroll [data-rv="frame"].is-in .media>img{clip-path:inset(0 0 0 0)}
   66%{transform:translate3d(1.9%,-1.4%,0)}100%{transform:translate3d(0,0,0)}}
 @keyframes bh-scrub{0%{opacity:.95;transform:scaleX(0)}92%{opacity:.95}100%{opacity:0;transform:scaleX(1)}}
 
-html.js-scroll .shot.is-in .media>img,html.js-scroll .product-card.is-in .media>img{
+html.js-scroll .shot.is-in .media img,html.js-scroll .product-card.is-in .media img{
   animation:bh-clip-intro 2.6s ease-out 1}
-html.js-scroll .shot:hover .media>img,html.js-scroll .shot:focus-visible .media>img,
-html.js-scroll .product-card:hover .media>img,html.js-scroll .product-card:focus-visible .media>img{
+html.js-scroll .shot:hover .media img,html.js-scroll .shot:focus-visible .media img,
+html.js-scroll .product-card:hover .media img,html.js-scroll .product-card:focus-visible .media img{
   animation:bh-clip-loop 13s ease-in-out infinite}
 html.js-scroll .shot:hover .media::after,html.js-scroll .shot:focus-visible .media::after,
 html.js-scroll .product-card:hover .media::after,html.js-scroll .product-card:focus-visible .media::after{
@@ -1014,7 +1016,7 @@ html.js-scroll .product-card:hover .media::after,html.js-scroll .product-card:fo
 
 @media (prefers-reduced-motion:reduce){
   .media::before,.media::after,.shot__zoom{transition:none}
-  html.js-scroll .shot .media>img,html.js-scroll .product-card .media>img,
+  html.js-scroll .shot .media img,html.js-scroll .product-card .media img,
   .media::after{animation:none}
   .media::after{opacity:0}
 }
@@ -1360,13 +1362,13 @@ p{line-height:var(--t-lh-body)}
 .exp__card .chip{position:relative;z-index:5;background:rgba(27,11,12,.7);border-color:rgba(255,255,255,.3);color:#fff}
 /* the rail's photos play like every other photo card on the site: one drift on
    arrival, a loop under the pointer, and the scrub rail on the bottom edge */
-.exp__card .media>img{translate:0 var(--py,0px);scale:1.16}
-html.js-scroll .exp__card.is-in .media>img{animation:bh-clip-intro 2.6s ease-out 1}
-html.js-scroll .exp__card:hover .media>img,html.js-scroll .exp__card:focus-within .media>img{
+.exp__card .media img{translate:0 var(--py,0px);scale:1.16}
+html.js-scroll .exp__card.is-in .media img{animation:bh-clip-intro 2.6s ease-out 1}
+html.js-scroll .exp__card:hover .media img,html.js-scroll .exp__card:focus-within .media img{
   animation:bh-clip-loop 13s ease-in-out infinite}
 html.js-scroll .exp__card:hover .media::after,html.js-scroll .exp__card:focus-within .media::after{
   animation:bh-scrub 13s linear infinite}
-@media (prefers-reduced-motion:reduce){.exp__card .media>img,.exp__card .media::after{animation:none}}
+@media (prefers-reduced-motion:reduce){.exp__card .media img,.exp__card .media::after{animation:none}}
 .review,.reviews-empty{z-index:1}
 
 /* ═══════════════ TWILIO FOOTER ARRANGEMENT + COOKIE PREFERENCES ═══════════════ */
@@ -2057,7 +2059,7 @@ html[dir="rtl"] .checklist li::before{left:auto;right:0}
    an observer in js/scroll.js; the loop is delayed by exactly the intro so the
    first-sight gesture still plays before the running clip takes over.
    ========================================================================== */
-html.js-scroll .product-card.is-view .media>img,html.js-scroll .shot.is-view .media>img{
+html.js-scroll .product-card.is-view .media img,html.js-scroll .shot.is-view .media img{
   animation:bh-clip-intro 2.6s ease-out 1,bh-clip-loop 13s ease-in-out 2.6s infinite}
 html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view .media::after{
   animation:bh-scrub 13s linear 2.6s infinite}
@@ -2065,7 +2067,7 @@ html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view 
 @media (prefers-reduced-motion:reduce){
   .product-card::before,.product-card.is-on::before{animation:none;opacity:0}
   .product-card.is-on,.product-card.is-on:hover{box-shadow:var(--shadow)}
-  html.js-scroll .product-card.is-view .media>img,html.js-scroll .shot.is-view .media>img,
+  html.js-scroll .product-card.is-view .media img,html.js-scroll .shot.is-view .media img,
   html.js-scroll .product-card.is-view .media::after,html.js-scroll .shot.is-view .media::after{
     animation:none}
 }
@@ -3963,7 +3965,7 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
   .shot__zoom{opacity:.9;scale:1}
   /* The customer-experience rail's photos played their loop under a pointer
      only; is-view is what js/scroll.js already gives every frame on screen. */
-  html.js-scroll .exp__card.is-view .media>img{
+  html.js-scroll .exp__card.is-view .media img{
     animation:bh-clip-intro 2.6s ease-out 1,bh-clip-loop 13s ease-in-out 2.6s infinite}
   html.js-scroll .exp__card.is-view .media::after{animation:bh-scrub 13s linear 2.6s infinite}
 }
@@ -3987,7 +3989,7 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
 }
 
 @media (prefers-reduced-motion:reduce){
-  html.js-scroll .exp__card.is-view .media>img,
+  html.js-scroll .exp__card.is-view .media img,
   html.js-scroll .exp__card.is-view .media::after{animation:none}
   .shot:active,.card:active,.feature:active,.product-card:active,.filter__btn:active,
   .btn:active,.theme-toggle:active{transform:none;scale:1}
@@ -4036,7 +4038,7 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
   background:var(--bg-alt);padding:10px;
   height:var(--mat-h);width:calc((var(--mat-h) - 20px) * var(--art-w,430) / var(--art-h,760) + 20px);
   aspect-ratio:auto;max-width:100%;margin-inline:auto;overflow:visible}
-.pinband--paged.pinband--one .media[data-art="tall"]>img{
+.pinband--paged.pinband--one .media[data-art="tall"] img{
   width:100%;height:100%;max-width:100%;max-height:100%;
   aspect-ratio:auto;object-fit:contain;scale:1;
   /* a filter:drop-shadow() here costs a pinned band 4.5x its frame time —
@@ -4098,7 +4100,7 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
   height:auto;max-height:var(--pin-media-h,none);
   aspect-ratio:var(--art-w,760) / var(--art-h,570);
   max-width:100%;margin-inline:auto;overflow:visible}
-.pinband--paged.pinband--one .media[data-art="wide"]>img{
+.pinband--paged.pinband--one .media[data-art="wide"] img{
   width:100%;height:100%;max-width:100%;max-height:100%;
   aspect-ratio:auto;object-fit:contain;scale:1;
   box-shadow:0 10px 22px rgba(27,11,12,.34)}

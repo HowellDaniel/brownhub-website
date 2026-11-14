@@ -62,7 +62,10 @@ test('the five artworks exist at both sizes and Home asks only for the one its v
 });
 
 test('Home background plates use only the requested artwork or genuine IT pictures', () => {
-  const plates = [...html.matchAll(/<div class="hold-plate"[^>]*>\s*<img\b[^>]*>/gi)].map(([tag]) => srcOf(tag));
+  /* A plate or a card may wear a codec <source> in front of its <img>; these guards
+     judge the <img>, whose own `src` is the fallback an engine without AVIF paints.
+     tests/avif-tiers.test.mjs holds the rules over the <source>. */
+  const plates = [...html.matchAll(/<div class="hold-plate"[^>]*>(?:\s*<picture>\s*)?(?:<source\b[^>]*>\s*)?(<img\b[^>]*>)/gi)].map(([, tag]) => srcOf(tag));
   assert.ok(plates.length >= 14, `expected the full set of held plates, found ${plates.length}`);
   for (const source of plates) {
     assert.ok(
@@ -77,7 +80,7 @@ test('Home background plates use only the requested artwork or genuine IT pictur
 
 test('catalog cards keep their original product photography', () => {
   const flow = html.slice(html.indexOf('id="catalog-flow"'), html.indexOf('id="why"'));
-  const cards = [...flow.matchAll(/<div class="media"[^>]*>\s*<img\b[^>]*>/gi)].map(([tag]) => tag);
+  const cards = [...flow.matchAll(/<div class="media"[^>]*>(?:\s*<picture>\s*)?(?:<source\b[^>]*>\s*)?(<img\b[^>]*>)/gi)].map(([, tag]) => tag);
   const cardCount = [...flow.matchAll(/<a class="product-card/gi)].length;
   const cardSources = cards.map((tag) => srcOf(tag) ?? tagAttribute(tag, 'data-src')).filter(Boolean);
   assert.equal(cardSources.length, cardCount, 'every catalog card should keep its picture');

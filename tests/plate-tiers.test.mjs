@@ -22,18 +22,33 @@ function pages() {
     .concat(readdirSync(path.join(root, 'blog')).filter((f) => f.endsWith('.html')).map((f) => `blog/${f}`));
 }
 
-/* Every band plate in a file, with the tier its own band declares. */
+/* Every band plate in a file, with the tier its own band declares. A plate may wear a
+   codec <source> in front of its <img>; `tag` is the <img>, because the width rules below
+   are about what the phone asks for and what the engine falls back to, while
+   tests/avif-tiers.test.mjs holds the rules over the <source>. */
+const PLATE = /<div class="hold-plate"[^>]*>(?:\s*<picture>\s*)?(<source\b[^>]*>\s*)?(<img\b[^>]*>)/i;
+
 function plates(html) {
   const out = [];
   for (const m of html.matchAll(/<(?:section|div)\b[^>]*\bdata-hold\b[^>]*>/gi)) {
     const head = html.slice(m.index, m.index + 1600);
-    const img = head.match(/<div class="hold-plate"[^>]*>\s*<img\b[^>]*>/i);
+    const img = head.match(PLATE);
     if (!img) continue;
     const tier = (m[0].match(/\bdata-plate="([a-z]+)"/i) || [])[1] || 'vivid';
     const cls = (m[0].match(/\bclass="([^"]*)"/i) || [])[1] || '';
-    out.push({ tier, cls, tag: img[0] });
+    out.push({ tier, cls, tag: img[2], source: img[1] || '' });
   }
   return out;
+}
+
+/* The copy a plate will actually paint: its AVIF <source> where the rail wrapped it, the
+   <img> everywhere else. */
+function painted(plate) {
+  const holder = plate.source || plate.tag;
+  return {
+    srcset: (/\ssrcset="([^"]*)"/i.exec(holder) || [])[1] || '',
+    sizes: (/\ssizes="([^"]*)"/i.exec(holder) || [])[1] || '',
+  };
 }
 
 test('no crush-veiled band offers its plate\'s hi copy', () => {
@@ -163,8 +178,10 @@ test('the plate in the first screen is the page\'s first ask', () => {
         `${page}: the plate the reader is staring at is left to the lazy root`);
 
       const src = /\ssrc="([^"]*)"/i.exec(plate.tag)[1];
-      const srcset = (/\ssrcset="([^"]*)"/i.exec(plate.tag) || [])[1] || '';
-      const sizes = (/\ssizes="([^"]*)"/i.exec(plate.tag) || [])[1] || '';
+      /* Once the plate is wrapped, the candidates it will paint are the <source>'s, not
+         the <img>'s — and a preload that names the JPEG set buys the phone a picture it
+         skips. tests/avif-tiers.test.mjs holds the same rule from the codec side. */
+      const { srcset, sizes } = painted(plate);
       const head = html.slice(0, html.indexOf('</head>'));
       const sheet = /<link[^>]*rel="stylesheet"/i.exec(head);
       const asked = [...head.matchAll(/<link\b[^>]*>/gi)]

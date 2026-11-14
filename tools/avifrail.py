@@ -19,6 +19,14 @@ Usage:
     python3 tools/avifrail.py --force     re-encode every tile
     python3 tools/avifrail.py --dry-run   report, write nothing
 Then, to publish the markup into the collection pages:  python3 tools/galcollections.py
+
+The second half is the tiered rail, and it is the bigger number: a card or a band plate
+offers a phone two resolutions, and the honest `sizes` clause makes a dpr-3 pocket demand
+more pixels than the base copy carries, so it buys the `hi/` JPEG. catalog.html paid 205 KB
+for `hi/pull-up-design-2.jpg` to paint a box 182 CSS px wide. Re-encoding that copy buys
+the same pixels for 44% of the bytes, and the `hi/` tier stays in the srcset — the AVIF is
+the same candidates at the same widths, never a fourth resolution. A `<video poster>` is
+deliberately outside this: an engine without AVIF paints nothing where a poster belongs.
 """
 import pathlib
 import re
@@ -31,6 +39,42 @@ QUALITY = "58"
 
 TILE_SRC = re.compile(r'<img src="(?:\.\./)?images/catalog/([\w.-]+)\.jpg"[^>]*>')
 CELL = re.compile(r'<li class="gal-cell">.*?</li>', re.S)
+
+# The same picture at two resolutions, in a directory the rail encodes.
+TIER_IMG = re.compile(
+    r'<img\b[^>]*\bsrc="(images/(?:catalog|home|brand)/[^"]+\.jpg)"'
+    r'[^>]*\bsrcset="([^"]*/hi/[^"]+)"[^>]*>'
+)
+TIER_SIZES = re.compile(r'\ssizes="([^"]*)"')
+ALREADY = re.compile(r'<source type="image/avif"[^>]*>\s*$')
+
+# A still with one copy: the same file a tiered card on the same page already asks for.
+SINGLE_IMG = re.compile(
+    r'<img\b(?![^>]*\bsrcset=)[^>]*\bsrc="(images/(?:catalog|home|brand)/[^"]+\.jpg)"[^>]*>'
+)
+# js/catalog.js rotates a product's photos by writing `img.src` at runtime. A pinned
+# <source> would win over that write and keep showing the first picture, so a markup
+# attribute the script owns stays out of the rail.
+JS_OWNED = re.compile(r'\bdata-src=')
+
+
+def html_pages():
+    for base in (ROOT, ROOT / "gallery", ROOT / "blog"):
+        if base.is_dir():
+            for page in sorted(base.glob("*.html")):
+                yield page
+
+
+def tiered_jpegs():
+    """Every JPEG path a tiered srcset offers, base copy and hi copy alike."""
+    out = set()
+    for page in html_pages():
+        for m in TIER_IMG.finditer(page.read_text(errors="replace")):
+            for cand in m.group(2).split(","):
+                url = cand.strip().split()[0]
+                if url.endswith(".jpg"):
+                    out.add(url)
+    return sorted(out)
 
 def tiles():
     """Every base JPEG the gallery wall references, from the donor and the pages."""
@@ -113,6 +157,208 @@ def wrap(dry):
           f"{stats['no avif']} without an AVIF, {stats['no tile']} with no tile")
 
 
+def encode_tiers(args):
+    """Give every JPEG a tiered srcset names its own AVIF copy, hi included."""
+    made = have = 0
+    before = after = 0
+    for rel in tiered_jpegs():
+        jpg = ROOT / rel
+        avif = jpg.with_suffix(".avif")
+        if not jpg.is_file():
+            print(f"  no source for {rel}")
+            continue
+        before += kb(jpg)
+        if avif.is_file():
+            have += 1
+            after += kb(avif)
+            continue
+        made += 1
+        if "--dry-run" not in args:
+            subprocess.run(
+                ["sips", "-s", "format", "avif", "-s", "formatOptions", QUALITY,
+                 str(jpg), "--out", str(avif)],
+                capture_output=True, text=True, check=True,
+            )
+            after += kb(avif)
+    verb = "would encode" if "--dry-run" in args else "encoded"
+    print(f"tiers: {verb} {made}, already present {have}")
+    if before and after:
+        print(f"tiers: {before} KB of JPEG now carries {after} KB of AVIF "
+              f"({100 * after / before:.0f}% of the bytes)")
+
+
+def avif_set(cands):
+    """The same candidates, same width descriptors, only the container changed."""
+    out = []
+    for cand in (c.strip() for c in cands.split(",") if c.strip()):
+        bits = cand.split()
+        out.append(" ".join([bits[0][:-4] + ".avif"] + bits[1:]))
+    return ", ".join(out)
+
+
+def wrap_tiers(dry):
+    """Put each tiered <img> inside a <picture> that prefers its AVIF copies."""
+    wrapped = skipped = missing = 0
+    for page in html_pages():
+        text = page.read_text()
+        out, last, changed = [], 0, False
+        for m in TIER_IMG.finditer(text):
+            tag = m.group(0)
+            head = text[max(0, m.start() - 300):m.start()]
+            if ALREADY.search(head):
+                skipped += 1
+                continue
+            need = [c.strip().split()[0][:-4] + ".avif" for c in m.group(2).split(",") if c.strip()]
+            if not all((ROOT / u).is_file() for u in need):
+                missing += 1
+                continue
+            sizes = TIER_SIZES.search(tag)
+            sattr = f' sizes="{sizes.group(1)}"' if sizes else ""
+            source = f'<source type="image/avif" srcset="{avif_set(m.group(2))}"{sattr}>'
+            out.extend([text[last:m.start()], "<picture>", source, tag, "</picture>"])
+            last = m.end()
+            changed = True
+            wrapped += 1
+        if changed and not dry:
+            page.write_text("".join(out) + text[last:])
+        elif changed:
+            print(f"  would wrap {page.relative_to(ROOT)}")
+    print(f"tiers: {wrapped} pictures {'would wrap' if dry else 'wrapped'}, "
+          f"{skipped} already wrapped, {missing} without a full AVIF set")
+
+
+def encode_singles(args):
+    """Give every single-copy still an AVIF, the same way the wall's tiles have one."""
+    made = have = 0
+    before = after = 0
+    for rel in singles():
+        jpg = ROOT / rel
+        avif = jpg.with_suffix(".avif")
+        if not jpg.is_file():
+            print(f"  no source for {rel}")
+            continue
+        before += kb(jpg)
+        if avif.is_file():
+            have += 1
+            after += kb(avif)
+            continue
+        made += 1
+        if "--dry-run" not in args:
+            subprocess.run(
+                ["sips", "-s", "format", "avif", "-s", "formatOptions", QUALITY,
+                 str(jpg), "--out", str(avif)],
+                capture_output=True, text=True, check=True,
+            )
+            after += kb(avif)
+    verb = "would encode" if "--dry-run" in args else "encoded"
+    print(f"singles: {verb} {made}, already present {have}")
+    if before and after:
+        print(f"singles: {before} KB of JPEG now carries {after} KB of AVIF "
+              f"({100 * after / before:.0f}% of the bytes)")
+
+
+def singles():
+    """Every single-copy JPEG the pages paint, in a directory the rail encodes."""
+    out = set()
+    for page in html_pages():
+        text = page.read_text(errors="replace")
+        for m in SINGLE_IMG.finditer(text):
+            if JS_OWNED.search(m.group(0)):
+                continue
+            out.add(m.group(1))
+    return sorted(out)
+
+
+def wrap_singles(dry):
+    """Wrap a single-copy still so the page stops paying for a JPEG its neighbour skips.
+
+    Home's pinned story painted `images/catalog/flyer.jpg` while a card on the same page
+    painted `hi/flyer.avif`: two requests for one scene where the site used to share one
+    cached file. `sizes` is deliberately absent — with one candidate there is nothing to
+    choose between, and a missing clause cannot over-ask.
+    """
+    wrapped = skipped = missing = 0
+    for page in html_pages():
+        text = page.read_text()
+        out, last, changed = [], 0, False
+        for m in SINGLE_IMG.finditer(text):
+            tag = m.group(0)
+            head = text[max(0, m.start() - 300):m.start()]
+            if ALREADY.search(head) or JS_OWNED.search(tag):
+                skipped += 1
+                continue
+            avif = m.group(1)[:-4] + ".avif"
+            if not (ROOT / avif).is_file():
+                missing += 1
+                continue
+            out.extend([text[last:m.start()], "<picture>",
+                        f'<source type="image/avif" srcset="{avif}">', tag, "</picture>"])
+            last = m.end()
+            changed = True
+            wrapped += 1
+        if changed and not dry:
+            page.write_text("".join(out) + text[last:])
+        elif changed:
+            print(f"  would wrap {page.relative_to(ROOT)}")
+    print(f"singles: {wrapped} pictures {'would wrap' if dry else 'wrapped'}, "
+          f"{skipped} already wrapped or JS-owned, {missing} without an AVIF")
+
+
+# A preload is the one place a wrong codec is invisible: the browser fetches what the link
+# names, whatever the picture decides to paint. Once a plate prefers its AVIF, a preload of
+# the JPEG copy asks for the bytes twice — the dead-bytes defect the wall lost.
+PRELOAD = re.compile(r'<link\b[^>]*\brel="preload"[^>]*\bas="image"[^>]*>')
+WRAP_PAIR = re.compile(
+    r'<source type="image/avif" srcset="([^"]*)"(?: sizes="([^"]*)")?>\s*<img\b[^>]*\bsrc="([^"]+\.jpg)"'
+)
+
+
+def sync_preloads(dry):
+    """Point each picture preload at the copy its own <picture> will paint."""
+    retargeted = 0
+    for page in html_pages():
+        text = page.read_text()
+        painted = {jpeg: (srcset, sizes or "")
+                   for srcset, sizes, jpeg in WRAP_PAIR.findall(text)}
+        if not painted:
+            continue
+
+        def retag(match):
+            nonlocal retargeted
+            tag = match.group(0)
+            href = re.search(r'\bhref="([^"]*)"', tag)
+            target = (href.group(1) if href else "").split("?")[0].split("#")[0]
+            entry = painted.get(target)
+            if not entry:
+                return tag
+            srcset, sizes = entry
+            if re.search(r'\bimagesrcset="([^"]*)"', tag):
+                current = re.search(r'\bimagesrcset="([^"]*)"', tag).group(1)
+                if current == srcset:
+                    return tag
+            rebuilt = re.sub(r'\s(href|imagesrcset|imagesizes)="[^"]*"', "", tag)
+            attrs = f' imagesrcset="{srcset}"'
+            if sizes:
+                attrs += f' imagesizes="{sizes}"'
+            retargeted += 1
+            return rebuilt.replace("<link", f"<link{attrs}", 1)
+
+        out = PRELOAD.sub(retag, text)
+        if out != text:
+            if not dry:
+                page.write_text(out)
+            else:
+                print(f"  would retarget a preload in {page.relative_to(ROOT)}")
+    verb = "would retarget" if dry else "retargeted"
+    print(f"preloads: {verb} {retargeted} picture preload(s) to the AVIF their picture paints")
+
+
 args = sys.argv[1:]
+dry = "--dry-run" in args
 encode(args)
-wrap("--dry-run" in args)
+wrap(dry)
+encode_tiers(args)
+wrap_tiers(dry)
+encode_singles(args)
+wrap_singles(dry)
+sync_preloads(dry)
