@@ -25,8 +25,12 @@ offers a phone two resolutions, and the honest `sizes` clause makes a dpr-3 pock
 more pixels than the base copy carries, so it buys the `hi/` JPEG. catalog.html paid 205 KB
 for `hi/pull-up-design-2.jpg` to paint a box 182 CSS px wide. Re-encoding that copy buys
 the same pixels for 44% of the bytes, and the `hi/` tier stays in the srcset — the AVIF is
-the same candidates at the same widths, never a fourth resolution. A `<video poster>` is
-deliberately outside this: an engine without AVIF paints nothing where a poster belongs.
+the same candidates at the same widths, never a fourth resolution. A `<video poster>` stays
+outside the markup walk — a bare URL cannot carry a `<picture>` — but the home hero's poster
+IS railed by hand, because it was the last picture on the page still paying JPEG rates:
+    sips -s format avif -s formatOptions 58 images/web/reel-poster.jpg --out images/web/reel-poster.avif
+What is cut by hand goes stale in silence, so tests/hero-poster-codec.test.mjs refuses a twin
+younger than its AVIF; re-run the command above whenever the JPEG changes.
 """
 import pathlib
 import re
