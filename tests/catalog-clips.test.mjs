@@ -122,6 +122,29 @@ test('the clip stage keeps the picture box so the modal cannot shift', () => {
     '.modal__img{display:block} outspecifies [hidden], so both stages would paint at once');
 });
 
+/* Blink paints a video's own control row across the bottom of the stage, and its buttons sit
+   at both ends of that strip. The shot counter has always stood bottom-inline-end — harmless
+   over a photograph, but on a clip it lands in the control row, and the probe measured the
+   Arabic corner reading `product-modal-count`: a visitor taps the chip and the print sample
+   never goes full screen. So the chip leaves the strip the moment the stage turns to video. */
+test('the clip stage lifts the shot counter out of the native control row', () => {
+  const rules = sheet.replace(/\/\*[\s\S]*?\*\//g, '');
+  const lifted = [...rules.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+    .filter((m) => /\.modal__gal\.is-clip[^{}]*\.modal__gal-count/.test(m[1]))
+    .map((m) => m[2].replace(/\s+/g, ' '));
+  assert.ok(lifted.length, 'nothing moves .modal__gal-count when the stage holds a clip, so the '
+    + 'chip keeps standing in the row Blink paints its play/fullscreen buttons across');
+  assert.ok(lifted.some((d) => /bottom\s*:\s*auto/.test(d) && /(^|;)\s*top\s*:/.test(d)),
+    'the counter keeps a bottom offset, so it still overlaps the control row');
+  // The top-inline-end corner is not free either: that is where the modal keeps its close
+  // button, and the probe hit-tested the chip on top of it. Nor is inline-start the far corner
+  // — the close sits at the physical right in Arabic as well as English, so only a physical
+  // left anchor puts the counter somewhere nothing else is clicked.
+  assert.ok(lifted.some((d) => /inset-inline-end\s*:\s*auto/.test(d) && /(^|;)\s*left\s*:/.test(d)),
+    'the counter keeps a logical start corner, which in RTL is the same side the close button '
+    + 'already holds');
+});
+
 // The worker holds an installed app's files in Cache Storage so a weak connection still
 // opens the studio. 35 clips are 122 MB, which is the whole reason the shelf pays a poster:
 // stored for good, they would eat a phone. The rule lives in one allowlist in sw.js, so this

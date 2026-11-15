@@ -5967,6 +5967,18 @@ body[data-nav="home"] .hero__orb{z-index:0;opacity:.5;filter:blur(18px);
 html[data-theme="light"] #product-modal .modal__clip{background:var(--bg-alt)}
 #product-modal .modal__img[hidden],#product-modal .modal__clip[hidden]{display:none}
 #product-modal .modal__gal.is-clip{cursor:default}
+/* Blink paints its own control row across the bottom of a video, with a button at each end of
+   it. The shot counter has always stood bottom-inline-end, so whichever physical corner the
+   writing direction puts it in, it is drawn on top of a native control — the probe hit-tested
+   the chip itself at the fullscreen button in English and at the play button in Arabic, so a
+   visitor tapping the control got nothing. The top-inline-end corner is not free either: the
+   probe found the chip sitting on the modal's close button there, and the close holds the
+   physical right in Arabic too, so no logical corner avoids it. The counter therefore takes a
+   physical left anchor, and it has to come after `inset-inline-end:auto` — in RTL that
+   shorthand *is* `left`, so written first it would be the one that wins. A portrait clip
+   letterboxes empty space on that side, so the chip costs the print sample nothing. */
+#product-modal .modal__gal.is-clip .modal__gal-count{top:.7rem;bottom:auto;
+  inset-inline-end:auto;left:.7rem}
 @media (max-width:600px){#product-modal .modal__clip{max-height:46vh}}
 /* a 64x52 rail face is just a picture of a picture unless it says it moves */
 .modal__gal-thumb--clip{position:relative}
