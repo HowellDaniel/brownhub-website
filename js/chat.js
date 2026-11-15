@@ -623,7 +623,7 @@
     buzz();
     // A chime with nothing on screen to point at is just noise, so a repeat puts the
     // question back beside the icon before it makes itself heard.
-    if (repeat) showTeaser(true);
+    if (repeat) window.bhAsk.request("teaser", function () { showTeaser(true); });
     scheduleCue();
   }
   function scheduleCue() {
@@ -957,9 +957,17 @@
   function hideTeaser() {
     if (teaseTimer) { clearTimeout(teaseTimer); teaseTimer = 0; }
     if (teaserEl) { teaserEl.remove(); teaserEl = null; }
+    // The question is off the screen, so the bottom edge it was holding is not the
+    // assistant's to keep: whoever was waiting on it can stand there now.
+    window.bhAsk.release("teaser");
   }
   function showTeaser(quiet) {
-    if (teaserEl || !panel.hidden || seenThisVisit()) return;
+    /* On the edge already: nothing to do, and the claim it holds is its own.
+       Not going to appear this turn — the panel is open, or the question has been
+       answered: the claim is handed back, because holding the bottom edge empty would
+       park the install pill and the quote card behind a bubble that never arrives. */
+    if (teaserEl) return;
+    if (!panel.hidden || seenThisVisit()) { window.bhAsk.release("teaser"); return; }
     const box = document.createElement("div");
     box.className = "chat-widget__teaser";
     const bubble = document.createElement("button");
@@ -1010,10 +1018,12 @@
 
   function start() {
     if (seenThisVisit()) return;
-    // The welcome card owns the screen first; the teaser waits its turn.
+    // The welcome card owns the screen first; the teaser waits its turn. The bottom edge
+    // is waited for the same way — it is the one number the whole page is measured
+    // against, and four notices have been known to stand on it at once.
     const later = () => {
       if (document.body.classList.contains("promo-open")) { setTimeout(later, 1200); return; }
-      showTeaser();
+      window.bhAsk.request("teaser", showTeaser);
     };
     setTimeout(later, 1500);
   }

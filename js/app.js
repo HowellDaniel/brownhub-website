@@ -4,6 +4,37 @@
 
   function tr(s) { return (window.I18N && I18N.t) ? I18N.t(s) : s; }
 
+  /* Who is allowed to stand at the bottom of the screen.
+     The queue in this file already measures how much of the bottom edge the page is
+     paying for; what it never had was a say in how much that number is allowed to
+     become. Five scripts each fix something to that edge and none of them can see the
+     others, so a first visit on a phone was handed the cookie notice, the install pill,
+     the quote card and the assistant's teaser at once — 623px of an 844px screen, with
+     the words the visitor came for squeezed between them. From here the edge is
+     claimed, not assumed: one ask holds it, the rest wait, and when it is given back
+     the waiting ask with the strongest claim takes it.
+     `askStanding` is the queue's sight of the DOM, which js/askqueue.js deliberately
+     does not have. It answers for the notice a visitor can actually still see, on the
+     same three tests the measurement below uses, plus the class the two folding
+     notices are given on the way out — the node stays in the document after it has
+     gone, and a claim counted against a card that is only still there would keep the
+     queue locked. */
+  function askStanding(key) {
+    var NODES = {
+      consent: ".cookie-notice",
+      build: ".install--build",
+      install: ".install:not(.install--build)",
+      quote: ".leadask",
+      teaser: ".chat-widget__teaser"
+    };
+    var n = doc.querySelector(NODES[key] || ":not(*)");
+    if (!n || n.hidden || n.getAttribute("aria-hidden") === "true") return false;
+    if (n.classList.contains("is-gone")) return false;
+    if (getComputedStyle(n).visibility === "hidden") return false;
+    return n.getBoundingClientRect().height > 1;
+  }
+  window.bhAsk = BHAskQueue.make(BHAskQueue.RANKS, askStanding);
+
   var standalone = window.matchMedia("(display-mode: standalone)").matches ||
     window.matchMedia("(display-mode: fullscreen)").matches || navigator.standalone === true;
   var KEY = "brownhub-install";
@@ -52,14 +83,24 @@
       if (buildCard) return;
       if (!standalone && !/[?&]upd=1(?:&|$)/.test(location.search)) return;
       try { if (sessionStorage.getItem(BKEY) === "off") return; } catch (e) {}
+      /* An update prompt is about the copy this visitor is already running, so it
+         outranks the install pill — which it used to cover up by hand. Now the pill
+         steps aside and hands its claim back, and the queue hands the edge over to the
+         build card rather than to whatever else was waiting behind it. The claim is
+         asked for before the pill lets go: release() hands over by rank, and build is
+         ranked ahead of the quote card and the teaser, so the two statements together
+         land the card on the edge with nothing shown in between. */
+      if (pill) pill.hidden = true;
+      window.bhAsk.request("build", raiseBuild);
+      window.bhAsk.release("install");
+    }
+    function raiseBuild() {
+      if (buildCard) return;
       var msg = tr("A new version of BrownHub Studio is ready.");
       buildCard = doc.createElement("div");
       buildCard.className = "install install--build install--in";
       buildCard.setAttribute("role", "region");
       buildCard.setAttribute("aria-label", msg);
-      /* One card owns the bottom edge: an install prompt left standing here would sit on
-         top of this one, and a visitor being asked to update has already installed. */
-      if (pill) pill.hidden = true;
 
       var line = doc.createElement("p");
       var go = doc.createElement("button");
@@ -96,6 +137,7 @@
       no.addEventListener("click", function () {
         try { sessionStorage.setItem(BKEY, "off"); } catch (e) {}
         buildCard.hidden = true;
+        window.bhAsk.release("build");
         reserve();
       });
       buildCard.appendChild(no);
@@ -140,6 +182,7 @@
   function dismiss() {
     remember();
     if (pill) pill.hidden = true;
+    window.bhAsk.release("install");
     reserve();
   }
 
@@ -155,6 +198,10 @@
      its row of stones. It is charged by its own edge, not the button's. */
   var QUEUE = ".install, .chat-widget__toggle, .chat-widget__teaser, .cookie-notice, .leadask";
   function reserve() {
+    /* A notice that folded away without saying so would keep its claim on the edge and
+       park every ask queued behind it, so the pass that measures the bottom also checks
+       that whoever holds the claim is still standing there. */
+    window.bhAsk.sweep();
     var owned = 0;
     /* Every member of the queue is fixed to the bottom edge, so the room it owns is the
        distance from its own top down to that edge — and that is asked of the screen, not
@@ -180,9 +227,16 @@
   }
 
   function show(how) {
-    /* A build card already standing here would be covered by this one — the worker can
-       answer before the 2.5 s timer that brings the install prompt in. */
-    if (pill || buildCard || standalone || (remembered() && !asked)) return;
+    /* Two of these reasons are the visitor's own: they have the app open, or they said
+       not now and never asked again through the printed code. The third is the queue's —
+       an update prompt that arrived first now holds the bottom edge, so the pill waits
+       for it instead of covering it up. */
+    if (pill || standalone || (remembered() && !asked)) return;
+    window.bhAsk.request("install", function () { raise(how); });
+  }
+
+  function raise(how) {
+    if (pill) return;
     pill = doc.createElement("div");
     pill.className = "install" + (how === "qr" ? " install--qr" : "");
     pill.setAttribute("role", "region");

@@ -79,8 +79,8 @@
       "url": "catalog.html?q=Sample%20of%20Designs%20and%20Printing"
     },
     {
-      "id": "samples-of-our-print-out-1",
-      "name": "SAMPLES OF OUR PRINT OUT 1",
+      "id": "video-samples-of-our-print-out-1",
+      "name": "VIDEO SAMPLES OF OUR PRINT OUT 1",
       "category": "print",
       "categoryLabel": "Flyers & printing",
       "description": "Short clips of the studio's own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print.",
@@ -96,11 +96,11 @@
         "images/catalog/print-out-samples-1-9.jpg",
         "images/catalog/print-out-samples-1-10.jpg"
       ],
-      "url": "catalog.html?q=SAMPLES%20OF%20OUR%20PRINT%20OUT%201"
+      "url": "catalog.html?q=VIDEO%20SAMPLES%20OF%20OUR%20PRINT%20OUT%201"
     },
     {
-      "id": "samples-of-our-print-out-2",
-      "name": "SAMPLES OF OUR PRINT OUT 2",
+      "id": "video-samples-of-our-print-out-2",
+      "name": "VIDEO SAMPLES OF OUR PRINT OUT 2",
       "category": "print",
       "categoryLabel": "Flyers & printing",
       "description": "Short clips of the studio's own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print.",
@@ -116,11 +116,11 @@
         "images/catalog/print-out-samples-2-9.jpg",
         "images/catalog/print-out-samples-2-10.jpg"
       ],
-      "url": "catalog.html?q=SAMPLES%20OF%20OUR%20PRINT%20OUT%202"
+      "url": "catalog.html?q=VIDEO%20SAMPLES%20OF%20OUR%20PRINT%20OUT%202"
     },
     {
-      "id": "samples-of-our-print-out-3",
-      "name": "SAMPLES OF OUR PRINT OUT 3",
+      "id": "video-samples-of-our-print-out-3",
+      "name": "VIDEO SAMPLES OF OUR PRINT OUT 3",
       "category": "print",
       "categoryLabel": "Flyers & printing",
       "description": "Short clips of the studio's own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print.",
@@ -136,11 +136,11 @@
         "images/catalog/print-out-samples-3-9.jpg",
         "images/catalog/print-out-samples-3-10.jpg"
       ],
-      "url": "catalog.html?q=SAMPLES%20OF%20OUR%20PRINT%20OUT%203"
+      "url": "catalog.html?q=VIDEO%20SAMPLES%20OF%20OUR%20PRINT%20OUT%203"
     },
     {
-      "id": "samples-of-our-print-out-4",
-      "name": "SAMPLES OF OUR PRINT OUT 4",
+      "id": "video-samples-of-our-print-out-4",
+      "name": "VIDEO SAMPLES OF OUR PRINT OUT 4",
       "category": "print",
       "categoryLabel": "Flyers & printing",
       "description": "Short clips of the studio's own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print.",
@@ -151,7 +151,7 @@
         "images/catalog/print-out-samples-4-4.jpg",
         "images/catalog/print-out-samples-4-5.jpg"
       ],
-      "url": "catalog.html?q=SAMPLES%20OF%20OUR%20PRINT%20OUT%204"
+      "url": "catalog.html?q=VIDEO%20SAMPLES%20OF%20OUR%20PRINT%20OUT%204"
     },
     {
       "id": "banner-printing",
@@ -491,9 +491,7 @@
         "images/catalog/more-winners-chapel-flyers.jpg",
         "images/catalog/more-winners-chapel-flyers-2.jpg",
         "images/catalog/more-winners-chapel-flyers-3.jpg",
-        "images/catalog/other-flyers-2.jpg",
-        "images/catalog/more-winners-chapel-flyers-4.jpg",
-        "images/catalog/flyer-4.jpg"
+        "images/catalog/more-winners-chapel-flyers-4.jpg"
       ],
       "url": "catalog.html?q=More%20Winners'%20Chapel%20Flyers"
     },

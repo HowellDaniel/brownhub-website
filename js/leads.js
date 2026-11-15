@@ -266,6 +266,9 @@
     if (!card) return;
     doc.documentElement.removeAttribute("data-leadask");
     card.classList.add("is-gone");
+    // The card is on its way out, so the edge goes back before the fold finishes —
+    // waiting 420ms for the node would hold the queue one screenful too long.
+    window.bhAsk.release("quote");
     publishHeight();
     setTimeout(function () { if (card) { card.remove(); card = null; } }, 420);
   }
@@ -295,6 +298,10 @@
   }
 
   function show() {
+    /* Eligibility is re-read when the edge actually arrives, because the visitor may
+       have answered the card on another page in the meantime. A grant nobody took is
+       handed straight back so the next ask is not parked behind an empty claim. */
+    if (!eligible()) { window.bhAsk.release("quote"); return; }
     if (!card) { build(); doc.body.appendChild(card); }
     // The assistant's teaser lives in the same corner on a phone and paints over
     // this card's own fields; the CSS stands it down while the name is marked.
@@ -317,7 +324,10 @@
       if (triggered || !eligible()) return;
       triggered = true;
       window.removeEventListener("scroll", onScroll);
-      show();
+      // Earning the card is not the same as being allowed to cover the screen with it:
+      // the cookie notice or the install pill may hold the bottom edge, and the card
+      // arrives the moment the edge is handed over.
+      window.bhAsk.request("quote", show);
     }
     /* The document's height is a layout read, and asking for it on every scroll
        event flushes the writes js/scroll.js has just queued for the parallax. Twice

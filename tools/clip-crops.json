@@ -1,0 +1,362 @@
+{
+ "note": "Every print sample was filmed on a phone in the shop, so each one showed a wall, a counter or a stranger standing next to the press. The owner asked for the print and the packaging, nothing else. This is the per-clip crop that answers that, chosen frame by frame from /tmp/bh-audio/sheet_*.jpg contact sheets. tools/clipfit.swift cut <src> <dst> <x> <y> <w> <h> bed <maxKb*1024> is the tool that made these files; tests/catalog-clips.test.mjs holds the shipped clips to this plan.",
+ "dur": "seconds of picture the visitor actually gets, read back out of the shipped file",
+ "t0/t1": "seconds of the SOURCE a clip was cut down to, when no crop of the whole take could drop the person standing in it",
+ "x": "pixels from the LEFT edge of the unbaked source frame",
+ "y": "pixels from the TOP edge of the unbaked source frame",
+ "maxKb": "never heavier than the clip it replaces",
+ "clips": [
+  {
+   "clip": "video/print-out-samples-1-1.mp4",
+   "x": 0,
+   "y": 216,
+   "w": 526,
+   "h": 720,
+   "sound": "bed",
+   "maxKb": 3838,
+   "dur": 26.1
+  },
+  {
+   "clip": "video/print-out-samples-1-10.mp4",
+   "x": 168,
+   "y": 94,
+   "w": 600,
+   "h": 352,
+   "sound": "bed",
+   "maxKb": 1175,
+   "dur": 7.7
+  },
+  {
+   "clip": "video/print-out-samples-1-2.mp4",
+   "x": 0,
+   "y": 0,
+   "w": 540,
+   "h": 960,
+   "sound": "bed",
+   "maxKb": 3212,
+   "dur": 21.2
+  },
+  {
+   "clip": "video/print-out-samples-1-3.mp4",
+   "x": 135,
+   "y": 240,
+   "w": 404,
+   "h": 480,
+   "sound": "bed",
+   "maxKb": 7184,
+   "dur": 47.3
+  },
+  {
+   "clip": "video/print-out-samples-1-4.mp4",
+   "x": 108,
+   "y": 90,
+   "w": 400,
+   "h": 520,
+   "sound": "bed",
+   "maxKb": 5904,
+   "dur": 38.9
+  },
+  {
+   "clip": "video/print-out-samples-1-5.mp4",
+   "x": 13,
+   "y": 0,
+   "w": 526,
+   "h": 768,
+   "sound": "bed",
+   "maxKb": 3271,
+   "dur": 21.6
+  },
+  {
+   "clip": "video/print-out-samples-1-6.mp4",
+   "x": 27,
+   "y": 144,
+   "w": 512,
+   "h": 768,
+   "sound": "bed",
+   "maxKb": 5152,
+   "dur": 33.8
+  },
+  {
+   "clip": "video/print-out-samples-1-7.mp4",
+   "x": 135,
+   "y": 24,
+   "w": 378,
+   "h": 744,
+   "sound": "bed",
+   "maxKb": 1710,
+   "dur": 11.9
+  },
+  {
+   "clip": "video/print-out-samples-1-8.mp4",
+   "x": 0,
+   "y": 192,
+   "w": 540,
+   "h": 336,
+   "sound": "bed",
+   "maxKb": 2278,
+   "dur": 16.1
+  },
+  {
+   "clip": "video/print-out-samples-1-9.mp4",
+   "x": 0,
+   "y": 0,
+   "w": 540,
+   "h": 936,
+   "sound": "bed",
+   "maxKb": 3434,
+   "dur": 22.5
+  },
+  {
+   "clip": "video/print-out-samples-2-1.mp4",
+   "x": 0,
+   "y": 120,
+   "w": 540,
+   "h": 400,
+   "sound": "bed",
+   "maxKb": 3837,
+   "dur": 27.9
+  },
+  {
+   "clip": "video/print-out-samples-2-10.mp4",
+   "x": 0,
+   "y": 320,
+   "w": 540,
+   "h": 400,
+   "t0": 19.5,
+   "t1": 25.5,
+   "sound": "bed",
+   "maxKb": 5568,
+   "dur": 6
+  },
+  {
+   "clip": "video/print-out-samples-2-2.mp4",
+   "x": 13,
+   "y": 144,
+   "w": 472,
+   "h": 768,
+   "sound": "bed",
+   "maxKb": 5218,
+   "dur": 29.3
+  },
+  {
+   "clip": "video/print-out-samples-2-3.mp4",
+   "x": 0,
+   "y": 120,
+   "w": 540,
+   "h": 816,
+   "sound": "bed",
+   "maxKb": 2008,
+   "dur": 14.1
+  },
+  {
+   "clip": "video/print-out-samples-2-4.mp4",
+   "x": 0,
+   "y": 0,
+   "w": 526,
+   "h": 960,
+   "sound": "bed",
+   "maxKb": 4008,
+   "dur": 26.9
+  },
+  {
+   "clip": "video/print-out-samples-2-5.mp4",
+   "x": 54,
+   "y": 288,
+   "w": 296,
+   "h": 552,
+   "sound": "bed",
+   "maxKb": 3917,
+   "dur": 25.6
+  },
+  {
+   "clip": "video/print-out-samples-2-6.mp4",
+   "x": 0,
+   "y": 24,
+   "w": 418,
+   "h": 816,
+   "sound": "bed",
+   "maxKb": 4743,
+   "dur": 30.2
+  },
+  {
+   "clip": "video/print-out-samples-2-7.mp4",
+   "x": 27,
+   "y": 336,
+   "w": 458,
+   "h": 600,
+   "sound": "bed",
+   "maxKb": 2997,
+   "dur": 18.9
+  },
+  {
+   "clip": "video/print-out-samples-2-8.mp4",
+   "x": 0,
+   "y": 0,
+   "w": 540,
+   "h": 696,
+   "sound": "bed",
+   "maxKb": 3910,
+   "dur": 26
+  },
+  {
+   "clip": "video/print-out-samples-2-9.mp4",
+   "x": 0,
+   "y": 216,
+   "w": 540,
+   "h": 456,
+   "sound": "bed",
+   "maxKb": 1832,
+   "dur": 11.9
+  },
+  {
+   "clip": "video/print-out-samples-3-1.mp4",
+   "x": 0,
+   "y": 144,
+   "w": 540,
+   "h": 720,
+   "sound": "bed",
+   "maxKb": 4288,
+   "dur": 30.1
+  },
+  {
+   "clip": "video/print-out-samples-3-10.mp4",
+   "x": 13,
+   "y": 336,
+   "w": 526,
+   "h": 624,
+   "sound": "bed",
+   "maxKb": 1744,
+   "dur": 12
+  },
+  {
+   "clip": "video/print-out-samples-3-2.mp4",
+   "x": 54,
+   "y": 96,
+   "w": 472,
+   "h": 720,
+   "sound": "bed",
+   "maxKb": 1743,
+   "dur": 12.2
+  },
+  {
+   "clip": "video/print-out-samples-3-3.mp4",
+   "x": 0,
+   "y": 0,
+   "w": 446,
+   "h": 888,
+   "sound": "bed",
+   "maxKb": 1843,
+   "dur": 12.8
+  },
+  {
+   "clip": "video/print-out-samples-3-4.mp4",
+   "x": 0,
+   "y": 48,
+   "w": 526,
+   "h": 600,
+   "sound": "bed",
+   "maxKb": 1708,
+   "dur": 10.9
+  },
+  {
+   "clip": "video/print-out-samples-3-5.mp4",
+   "x": 27,
+   "y": 24,
+   "w": 500,
+   "h": 792,
+   "sound": "bed",
+   "maxKb": 2116,
+   "dur": 13.7
+  },
+  {
+   "clip": "video/print-out-samples-3-6.mp4",
+   "x": 0,
+   "y": 0,
+   "w": 540,
+   "h": 936,
+   "sound": "bed",
+   "maxKb": 3953,
+   "dur": 24.6
+  },
+  {
+   "clip": "video/print-out-samples-3-7.mp4",
+   "x": 135,
+   "y": 144,
+   "w": 230,
+   "h": 336,
+   "sound": "bed",
+   "maxKb": 1924,
+   "dur": 12.7
+  },
+  {
+   "clip": "video/print-out-samples-3-8.mp4",
+   "x": 40,
+   "y": 120,
+   "w": 500,
+   "h": 840,
+   "sound": "bed",
+   "maxKb": 3132,
+   "dur": 19
+  },
+  {
+   "clip": "video/print-out-samples-3-9.mp4",
+   "x": 0,
+   "y": 0,
+   "w": 540,
+   "h": 960,
+   "sound": "bed",
+   "maxKb": 6711,
+   "dur": 40.3
+  },
+  {
+   "clip": "video/print-out-samples-4-1.mp4",
+   "x": 40,
+   "y": 0,
+   "w": 500,
+   "h": 936,
+   "sound": "bed",
+   "maxKb": 4201,
+   "dur": 28.8
+  },
+  {
+   "clip": "video/print-out-samples-4-2.mp4",
+   "x": 0,
+   "y": 336,
+   "w": 540,
+   "h": 624,
+   "sound": "bed",
+   "maxKb": 3005,
+   "dur": 21.1
+  },
+  {
+   "clip": "video/print-out-samples-4-3.mp4",
+   "x": 0,
+   "y": 120,
+   "w": 418,
+   "h": 792,
+   "sound": "bed",
+   "maxKb": 3708,
+   "dur": 26.1
+  },
+  {
+   "clip": "video/print-out-samples-4-4.mp4",
+   "x": 0,
+   "y": 120,
+   "w": 446,
+   "h": 528,
+   "sound": "bed",
+   "maxKb": 5254,
+   "dur": 36.8
+  },
+  {
+   "clip": "video/print-out-samples-4-5.mp4",
+   "x": 27,
+   "y": 168,
+   "w": 472,
+   "h": 360,
+   "sound": "bed",
+   "maxKb": 4446,
+   "dur": 31
+  }
+ ]
+}

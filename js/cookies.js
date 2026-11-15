@@ -94,7 +94,7 @@
     notice.appendChild(inner);
     doc.body.appendChild(notice);
   }
-  const hideNotice = () => { if (notice) { notice.classList.add("is-gone"); publishHeight(); } };
+  const hideNotice = () => { if (notice) { notice.classList.add("is-gone"); window.bhAsk.release("consent"); publishHeight(); } };
 
   /* The language sheet is pinned to the lower half of the screen, so it has to
      stop above this notice or its last rows can never be reached. */
@@ -212,6 +212,15 @@
 
   function init() {
     if (state.decided) return;
+    /* Consent is the ask the whole bottom edge waits behind: it outranks the update
+       prompt, the install pill, the quote card and the assistant's question, and it is
+       the only one of the five the visitor has to answer before anything else on this
+       site is allowed to send them anywhere. */
+    window.bhAsk.request("consent", raiseNotice);
+  }
+
+  function raiseNotice() {
+    if (notice) return;
     buildNotice();
     void notice.offsetWidth;            /* commit the hidden frame, or it cannot slide up */
     notice.classList.add("is-in");
