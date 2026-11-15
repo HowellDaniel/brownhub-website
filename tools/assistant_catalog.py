@@ -18,6 +18,18 @@ def slugify(name):
     return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 
 
+def as_image(path):
+    """Name the still cut from one of the studio's own clips.
+
+    The assistant answers with pictures it can attach, and a .mp4 is not one. Every clip
+    the catalog carries was cut together with a poster of the same slug, so a shot list
+    reaches the assistant as the frames a visitor would have seen pressed play for.
+    """
+    if path.lower().endswith(".mp4"):
+        return "images/catalog/%s.jpg" % path.rsplit("/", 1)[-1].rsplit(".", 1)[0]
+    return path
+
+
 def items():
     source = SOURCE.read_text(encoding="utf-8")
     result = []
@@ -27,7 +39,11 @@ def items():
         name = attrs.get("data-name", "").strip()
         description = attrs.get("data-desc", "").strip()
         raw_images = attrs.get("data-imgs", "").strip() or attrs.get("data-img", "")
-        images = [path.strip() for path in raw_images.split(",") if path.strip()]
+        images = []
+        for path in raw_images.split(","):
+            shot = as_image(path.strip())
+            if shot and shot not in images:
+                images.append(shot)
         missing = [label for label, value in (("name", name),
                                               ("description", description),
                                               ("images", images)) if not value]

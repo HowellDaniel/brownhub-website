@@ -81,8 +81,11 @@ def donor():
     # has a plate, so the line would have every phone buy a picture it never shows — and
     # since the AVIF rail wrapped each tile, even the mockup page (which does display that
     # picture) now paints its .avif, so preloading its 66KB .jpg buys bytes nobody paints.
-    # HEAD is sliced before lift(), so this matches the donor's own path.
-    head = re.sub(r'[ \t]*<link rel="preload" as="image"[^>]*>\n', "", head)
+    # HEAD is sliced before lift(), so this matches the donor's own path. The tag's attribute
+    # order is the wall's business, not ours: match on the two attributes, not on their place.
+    head = re.sub(r'[ \t]*<link\b[^>]*rel="preload"[^>]*as="image"[^>]*>\n', "", head)
+    if 'as="image"' in head:
+        raise SystemExit("%s still carries an image preload the strip did not match" % GALLERY)
     header = src[src.index("<body"): src.index("</header>") + len("</header>")]
     footer = src[src.index('<footer class="site-footer">'):]
     title = re.search(r"<title>(.*?)</title>", src).group(1)

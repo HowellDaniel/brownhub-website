@@ -3,6 +3,7 @@
   if (!modal) return;
 
   var img = modal.querySelector(".modal__img");
+  var clip = modal.querySelector(".modal__clip");
   var nameEl = document.getElementById("product-modal-name");
   var catEl = document.getElementById("product-modal-cat");
   var priceEl = document.getElementById("product-modal-price");
@@ -255,6 +256,18 @@
     moreWrap.hidden = false;
   }
 
+  /* A shot is either a still or one of the studio's own clips, and a clip is named
+     by its .mp4 path. Every clip was cut together with a poster of the same slug in
+     images/catalog/, so the shelf, the thumb strip and the waiting stage always have
+     a picture to show and only the play itself costs a visitor any video bytes. */
+  function isClip(path) {
+    return /\.mp4$/i.test(path);
+  }
+
+  function posterOf(path) {
+    return "images/catalog/" + path.split("/").pop().replace(/\.mp4$/i, ".jpg");
+  }
+
   // WhatsApp only ever publishes one photo per product to the anonymous web, so any
   // further shots are listed on the card and the gallery collapses to one frame
   // when there is nothing else to show.
@@ -271,8 +284,21 @@
     shot = (i + photos.length) % photos.length;
     unzoom();
     img.removeAttribute("data-fell");
-    img.src = stageSrc(photos[shot]);
+    var path = photos[shot];
     countEl.textContent = (shot + 1) + " / " + photos.length;
+    clip.pause();
+    gal.classList.toggle("is-clip", isClip(path));
+    if (isClip(path)) {
+      clip.poster = posterOf(path);
+      clip.setAttribute("aria-label", current);
+      if (clip.getAttribute("src") !== path) clip.src = path;
+      img.hidden = true;
+      clip.hidden = false;
+    } else {
+      clip.hidden = true;
+      img.hidden = false;
+      img.src = stageSrc(path);
+    }
     Array.prototype.forEach.call(thumbsWrap.children, function (thumb, n) {
       thumb.classList.toggle("is-active", n === shot);
       if (n === shot) thumb.setAttribute("aria-current", "true");
@@ -299,10 +325,10 @@
     photos.forEach(function (src, i) {
       var thumb = document.createElement("button");
       thumb.type = "button";
-      thumb.className = "modal__gal-thumb";
+      thumb.className = "modal__gal-thumb" + (isClip(src) ? " modal__gal-thumb--clip" : "");
       thumb.setAttribute("aria-label", card.dataset.name);
       var face = document.createElement("img");
-      face.src = src;
+      face.src = isClip(src) ? posterOf(src) : src;
       face.alt = "";
       // Eight frames per product would otherwise all download the moment the
       // modal opens; the strip is below the fold, so let the browser queue it.
@@ -345,6 +371,9 @@
   }
 
   function close() {
+    // A clip keeps playing out of the box otherwise: the modal is only hidden, and a
+    // print run nobody can see talking over the page is not a demo.
+    clip.pause();
     unzoom();
     modal.classList.remove("open");
     document.body.style.overflow = "";
@@ -374,8 +403,10 @@
   var swipeX = null;
   gal.addEventListener("touchstart", function (e) {
     // An enlarged picture pans under the finger instead; flipping the photo in the
-    // middle of a pan would be the worst possible surprise.
-    if (zoom.s > 1) { swipeX = null; return; }
+    // middle of a pan would be the worst possible surprise. A clip holds the stage on
+    // the same terms, and for a harsher reason: its scrubber IS a horizontal drag, so
+    // winding to the end of a print run would otherwise turn to the next poster.
+    if (zoom.s > 1 || isClip(photos[shot])) { swipeX = null; return; }
     swipeX = e.touches.length === 1 ? e.touches[0].clientX : null;
   }, { passive: true });
   gal.addEventListener("touchend", function (e) {
@@ -617,6 +648,10 @@
 
   gal.addEventListener("pointerdown", function (e) {
     if (e.target.closest(".modal__gal-nav")) return;
+    // A clip owns its own surface. Its controls need the pointer whole, and the zoom
+    // layer sets touch-action:none while it holds a gesture — which would eat the
+    // play button on a phone. So the picture's gestures simply do not start here.
+    if (isClip(photos[shot])) return;
     down.push([e.pointerId, e.clientX, e.clientY]);
     if (down.length === 2) {
       var p = pair();

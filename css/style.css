@@ -5949,3 +5949,30 @@ body[data-nav="home"] .hero__orb{z-index:0;opacity:.5;filter:blur(18px);
 @media (min-width:720px){
   .chat-widget{--lift:calc(var(--cookie-h,0px) + var(--rail-lane,0px))}
 }
+
+/* 2026-11-15 — SAMPLES OF OUR PRINT OUT: the catalog carries the studio's own clips beside
+   its stills, and both share the product modal's single stage box. The grid pays a poster
+   for every group, because a pinned shelf is sized once before it is ever visible and an
+   autoplaying clip would re-fit it; video is bought only inside the lightbox, where
+   preload="none" holds a clip back until its play is pressed.
+   Traps: the base sheet gives .modal__img{display:block} from a bare class, which
+   outspecifies the UA's [hidden]{display:none} — the gallery's own nav and thumb rail name
+   their hidden state for the same reason — so the two stage children do it here as well, or
+   a swapped-out picture would stay painted behind the video. The clip borrows the image's
+   measure so the stage cannot re-fit the moment it paints, and it takes no transform
+   transition because the zoom layer belongs to the picture alone: js/catalog.js refuses a
+   pinch while a clip owns the stage so the player keeps its pointer whole. */
+#product-modal .modal__clip{display:block;width:100%;max-height:min(58vh,470px);
+  object-fit:contain;background:rgba(0,0,0,.3)}
+html[data-theme="light"] #product-modal .modal__clip{background:var(--bg-alt)}
+#product-modal .modal__img[hidden],#product-modal .modal__clip[hidden]{display:none}
+#product-modal .modal__gal.is-clip{cursor:default}
+@media (max-width:600px){#product-modal .modal__clip{max-height:46vh}}
+/* a 64x52 rail face is just a picture of a picture unless it says it moves */
+.modal__gal-thumb--clip{position:relative}
+.modal__gal-thumb--clip::before{content:"";position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;
+  background:rgba(24,9,10,.72)}
+.modal__gal-thumb--clip::after{content:"";position:absolute;top:50%;left:50%;
+  transform:translate(-35%,-50%);width:0;height:0;border-style:solid;
+  border-width:5px 0 5px 8px;border-color:transparent transparent transparent #fff}
