@@ -5,6 +5,7 @@
  "x": "pixels from the LEFT edge of the unbaked source frame",
  "y": "pixels from the TOP edge of the unbaked source frame",
  "maxKb": "never heavier than the clip it replaces",
+ "sound": "every clip carries the synthesised press bed rather than the shop recording, and since the owner called that bed \"the roof sounds\" the bed is tone only: the generated noise wash was lifted and each clip re-laid with tools/clipfit swap <src> <dst>, which copies the compressed picture straight through so not one cropped frame moved",
  "clips": [
   {
    "clip": "video/print-out-samples-1-1.mp4",

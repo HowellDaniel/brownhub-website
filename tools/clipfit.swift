@@ -4,6 +4,7 @@
 //   /tmp/clipfit probe <file.mp4|file.wav>
 //   /tmp/clipfit bed <out.wav> <seconds>
 //   /tmp/clipfit cut <src.mp4> <dst.mp4> <x> <y> <w> <h> <bed|keep> [bytes] [from=<s>] [to=<s>]
+//   /tmp/clipfit swap <src.mp4> <dst.mp4>
 //
 // Two asks, one pass. The owner wants a print sample to show the print and not the wall
 // behind it, and he wants the clips that carry their own recording to stop carrying it and
@@ -31,52 +32,40 @@ func fail(_ message: String) -> Never {
 
 func dbfs(_ v: Double) -> Double { v <= 0 ? -120 : 20 * log10(v) }
 
+// A swap drains its two tracks on separate queues, so a failure can surface from either while
+// the other is still appending. Both names get collected and printed together, because one
+// track stalling is usually the other's fault and reporting only the first is misleading.
+final class Trap {
+  private let lock = NSLock()
+  private var messages: [String] = []
+  func add(_ message: String) {
+    lock.lock(); messages.append(message); lock.unlock()
+  }
+  var all: [String] {
+    lock.lock(); defer { lock.unlock() }
+    return messages
+  }
+}
+
 let RATE = 44100.0
 
-// The bed, in the shape the reference clip's own numbers describe: energy down at 60 Hz, a
-// wide spread of level rather than a flat hum, and both channels almost the same machine.
+// The bed, in the shape the reference clip's own numbers describe: energy down at 60 Hz and
+// both channels the same machine.
 enum PressBed {
-  // A press is not one tone. The frame slides, the rollers turn, and the paper goes: a thump
-  // at 1.9 Hz, a swell over twenty seconds, and a hiss that never settles.
+  // The owner's word for the first bed was "the roof sounds": under the drone there was a
+  // wash of generated noise — a three-pole bass rumble and an air band above 2600 Hz — and
+  // measured on the shipped files it reads exactly like rain on a tin roof: 1348 zero
+  // crossings a second with a floor that stays flat and roughly 38 dB down from 800 Hz all
+  // the way to 12 kHz. He asked for that gone and nothing else touched, so what is left is
+  // the tone: the eight partials, the swell, the breath and the press pulse, with no noise
+  // path in the signal at all.
   //
-  // The reference clip is not merely bassy — 400 Hz sits 45 dB under its own peak and 1500 Hz
-  // 51 under, with one narrow whine near 800 the only thing alive in between. One pole cannot
-  // carve that, so the bass noise goes through three poles at 105 Hz and the air starts above
-  // the valley at 2600. Between them nothing is generated at all; the whine is an oscillator.
-  //
-  // What the bed does NOT copy is the reference's 74 dB of level spread, which is the shop
-  // going quiet between jobs. A bed that drops to silence reads as a fault, not as a machine.
+  // What remains deliberately unfixed is the consequence: the tone lives below 300 Hz, so
+  // on a phone loudspeaker it is fainter than the hiss it replaced was.
   static func samples(_ seconds: Double) -> (left: [Float], right: [Float]) {
     let count = max(1, Int(seconds * RATE))
     var left = [Float](repeating: 0, count: count)
     var right = [Float](repeating: 0, count: count)
-    var seed: UInt64 = 0x9E37_79B9_7F4A_7C15
-    func noise() -> Double {
-      seed ^= seed << 13
-      seed ^= seed >> 7
-      seed ^= seed << 17
-      return Double(seed & 0xFFFFFF) / Double(0xFFFFFF) * 2 - 1
-    }
-    let lp = 1.0 - exp(-2.0 * Double.pi * 120.0 / RATE)
-    let hx = 1.0 - exp(-2.0 * Double.pi * 2600.0 / RATE)
-    let lxa = 1.0 - exp(-2.0 * Double.pi * 5200.0 / RATE)
-    // Each channel runs its own filters on its own noise, so the bed has a little width,
-    // while the same oscillators underneath keep it one machine rather than two.
-    var rumble = [[Double]](repeating: [0, 0, 0, 0], count: 2)
-    var air = [[Double]](repeating: [0, 0, 0, 0, 0, 0, 0], count: 2)
-    func shape(_ channel: Int, _ x: Double) -> (Double, Double) {
-      var r = rumble[channel], a = air[channel]
-      r[0] = x
-      r[1] += lp * (r[0] - r[1])
-      r[2] += lp * (r[1] - r[2])
-      r[3] += lp * (r[2] - r[3])
-      a[0] += hx * (x - a[0]); a[1] = x - a[0]
-      a[2] += hx * (a[1] - a[2]); a[3] = a[1] - a[2]
-      a[4] += hx * (a[3] - a[4]); a[5] = a[3] - a[4]
-      a[6] += lxa * (a[5] - a[6])
-      rumble[channel] = r; air[channel] = a
-      return (r[3], a[6])
-    }
     // No tone between 300 Hz and 2 kHz on purpose. The shop recordings are loud exactly there
     // because that is where a voice is, and the reference clip's one whine near 800 Hz is its
     // own motor, not a press in general; a synthesised copy of it would be a beep.
@@ -103,11 +92,8 @@ enum PressBed {
       // Between passes the level drops: a bed that never goes quiet is the one a visitor
       // talks over rather than hears.
       let quiet = 0.45 + 0.55 * thump
-      let low = body * 0.32 * quiet
-      let (rumbleL, hissL) = shape(0, noise())
-      let (rumbleR, hissR) = shape(1, noise())
-      left[i] = Float(low + rumbleL * 0.85 + hissL * 0.19)
-      right[i] = Float(low + rumbleR * 0.85 + hissR * 0.19)
+      left[i] = Float(body * 0.32 * quiet)
+      right[i] = left[i]
     }
     // Loud enough to hear under a room, quiet enough to leave the visitor's own volume alone.
     var total = 0.0
@@ -182,7 +168,7 @@ func pcmSettings() -> [String: Any] {
 }
 
 let args = CommandLine.arguments
-guard args.count >= 3 else { fail("usage: probe|bed|cut …") }
+guard args.count >= 3 else { fail("usage: probe|bed|cut|swap …") }
 let mode = args[1]
 
 if mode == "bed" {
@@ -245,6 +231,106 @@ if mode == "probe" {
     + "below250=\(String(format: "%.1f", dbfs((sumLow / Double(count)).squareRoot()))) "
     + "pocket=\(String(format: "%.1f", dbfs((sumHigh / Double(count)).squareRoot()))) "
     + "clipped=\(clipped)")
+  exit(0)
+}
+
+if mode == "swap" {
+  // Re-lay the bed over a clip without touching one pixel of its picture.
+  //
+  // The clips on the site are already the crops the plan chose, so running `cut` against one
+  // of them would crop the crop. Only the sound is being replaced here, and a writer given no
+  // output settings for its video input copies the compressed samples straight through — so
+  // the frame the site proved on screen goes out byte for byte while the audio is re-issued.
+  guard args.count >= 4 else { fail("swap needs <src.mp4> <dst.mp4>") }
+  let from = args[2], into = args[3]
+  guard FileManager.default.fileExists(atPath: from) else { fail("no such file: \(from)") }
+  let film = AVURLAsset(url: URL(fileURLWithPath: from))
+  guard let picture = film.tracks(withMediaType: .video).first else { fail("\(from) has no video track") }
+  let length = CMTimeGetSeconds(film.duration)
+  guard length > 0.2 else { fail("\(from) has no readable length") }
+
+  let bedPath = into + ".bed.wav"
+  writeWav(bedPath, PressBed.samples(length))
+  let bed = AVURLAsset(url: URL(fileURLWithPath: bedPath))
+  guard let sound = bed.tracks(withMediaType: .audio).first else { fail("the bed wrote no audio") }
+
+  guard let reader = try? AVAssetReader(asset: film) else { fail("cannot read \(from)") }
+  let pixels = AVAssetReaderTrackOutput(track: picture, outputSettings: nil)
+  guard reader.canAdd(pixels) else { fail("this machine cannot pass the picture of \(from) through") }
+  reader.add(pixels)
+  guard let bedReader = try? AVAssetReader(asset: bed) else { fail("cannot read the generated bed") }
+  let samples = AVAssetReaderTrackOutput(track: sound, outputSettings: pcmSettings())
+  guard bedReader.canAdd(samples) else { fail("this machine cannot read the generated bed") }
+  bedReader.add(samples)
+
+  try? FileManager.default.removeItem(atPath: into)
+  guard let writer = try? AVAssetWriter(outputURL: URL(fileURLWithPath: into), fileType: .mp4) else {
+    fail("this machine cannot write \(into)")
+  }
+  // The site streams these files from GitHub Pages, so the index has to arrive before the
+  // pixels — the same fast start every clip already on the origin was shipped with.
+  writer.shouldOptimizeForNetworkUse = true
+  // A nil outputSettings means passthrough, but for an MP4 rather than a QuickTime movie the
+  // writer needs the source's own description up front before it will accept a compressed
+  // buffer at all.
+  let hint = picture.formatDescriptions.first as! CMFormatDescription
+  let videoIn = AVAssetWriterInput(mediaType: .video, outputSettings: nil, sourceFormatHint: hint)
+  videoIn.expectsMediaDataInRealTime = false
+  let audioIn = AVAssetWriterInput(mediaType: .audio, outputSettings: [
+    AVFormatIDKey: kAudioFormatMPEG4AAC,
+    AVSampleRateKey: RATE,
+    AVNumberOfChannelsKey: 2,
+    AVEncoderBitRateKey: 128_000,
+  ])
+  audioIn.expectsMediaDataInRealTime = false
+  guard writer.canAdd(videoIn), writer.canAdd(audioIn) else { fail("this machine refuses the swap inputs") }
+  writer.add(videoIn); writer.add(audioIn)
+  do { try writer.startWriting() } catch { fail("startWriting: \(error.localizedDescription)") }
+  writer.startSession(atSourceTime: .zero)
+  guard reader.startReading(), bedReader.startReading() else {
+    fail("a reader refused to start: \(reader.error?.localizedDescription ?? bedReader.error?.localizedDescription ?? "?")")
+  }
+  // Passthrough is unforgiving about a timestamp it cannot place, and every failure in this
+  // mode has to name which track caused it rather than print "Cannot Save".
+  //
+  // Both tracks are fed at the same time, and that is not a performance choice. A writer told
+  // to lay its index out for streaming holds samples back until it can order them against the
+  // other track, so pushing the whole picture out in front of the sound leaves it waiting for
+  // audio that is only offered once the picture is finished — the two ends of one file deadlock
+  // and no byte ever reaches disk.
+  let trap = Trap()
+  let drained = DispatchGroup()
+  func drain(_ film_: AVAssetReader, _ out: AVAssetReaderTrackOutput,
+             _ input: AVAssetWriterInput, _ who: String) {
+    drained.enter()
+    input.requestMediaDataWhenReady(on: DispatchQueue(label: "clipfit.swap." + who)) {
+      while input.isReadyForMoreMediaData {
+        if film_.status == .failed {
+          trap.add("\(who) read: \(film_.error?.localizedDescription ?? "?")")
+          input.markAsFinished(); drained.leave(); return
+        }
+        guard let buffer = out.copyNextSampleBuffer() else {
+          if film_.status == .reading { trap.add("\(who) ran out of samples while still reading") }
+          input.markAsFinished(); drained.leave(); return
+        }
+        if !input.append(buffer) {
+          trap.add("\(who) write: \(writer.error?.localizedDescription ?? "?")")
+          input.markAsFinished(); drained.leave(); return
+        }
+      }
+    }
+  }
+  drain(reader, pixels, videoIn, "picture")
+  drain(bedReader, samples, audioIn, "bed")
+  let swapped = DispatchSemaphore(value: 0)
+  drained.notify(queue: DispatchQueue.global()) { writer.finishWriting { swapped.signal() } }
+  swapped.wait()
+  if trap.all.count > 0 { fail(trap.all.joined(separator: "; ")) }
+  if writer.status != .completed { fail("swap ended at status \(writer.status.rawValue): \(writer.error?.localizedDescription ?? "?")") }
+  try? FileManager.default.removeItem(atPath: bedPath)
+  let before = (try? FileManager.default.attributesOfItem(atPath: from)[.size] as? Int) ?? 0
+  let after = (try? FileManager.default.attributesOfItem(atPath: into)[.size] as? Int) ?? 0
+  print("swap \(from) → \(into) \(length)s \(after / 1024)KB was \(before / 1024)KB")
   exit(0)
 }
 
