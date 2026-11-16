@@ -133,6 +133,24 @@
 
   function scrollDown() { messages.scrollTop = messages.scrollHeight; }
 
+  // A picture shown at full width is taller than the thread window, so whatever is appended
+  // after the visitor sends one decides which edge of it they are left looking at. Pinning the
+  // bottom lands them on the tail of their own flyer, so the send and the waiting dots meet the
+  // attachment at its top edge instead. An answer is content the visitor is waiting for, so it
+  // still gets the view — this only holds while nothing but the dots follows the send.
+  function holdSentMedia() {
+    const sent = [...messages.querySelectorAll(".chat-msg--user")].pop();
+    const media = sent && sent.querySelector(".chat-msg__media");
+    if (!media) return false;
+    for (let node = sent.nextElementSibling; node; node = node.nextElementSibling) {
+      if (!node.classList.contains("chat-msg--typing")) return false;
+    }
+    const y = media.getBoundingClientRect().top - messages.getBoundingClientRect().top
+            + messages.scrollTop - 6;
+    messages.scrollTop = Math.max(0, Math.min(y, messages.scrollHeight - messages.clientHeight));
+    return true;
+  }
+
   const botHistory = [];
   function addMsg(html, who) {
     const el = document.createElement("div");
@@ -250,7 +268,7 @@
     el.className = "chat-msg chat-msg--bot chat-msg--typing";
     el.innerHTML = "<span></span><span></span><span></span>";
     messages.appendChild(el);
-    scrollDown();
+    if (!holdSentMedia()) scrollDown();
     return el;
   }
 
@@ -1502,11 +1520,18 @@
   const IMAGE_RE = /\.(png|jpe?g|webp|gif|heic)$/i;
   const VIDEO_RE = /\.(mp4|mov|avi|webm|mkv|m4v|mpg|mpeg|3gp|ogv)$/i;
   const objectUrls = new WeakMap();
-  function thumbUrl(file) {
+  function mediaUrl(file) {
     if (objectUrls.has(file)) return objectUrls.get(file);
     const url = URL.createObjectURL(file);
     objectUrls.set(file, url);
     return url;
+  }
+
+  function docEl(file) {
+    const chip = document.createElement("span");
+    chip.className = "chat-msg__doc";
+    chip.textContent = "📎 " + file.name;
+    return chip;
   }
 
   function paintFiles() {
@@ -1515,13 +1540,22 @@
       const f = picked[i];
       const tag = document.createElement("span");
       tag.className = "chat-widget__file-tag";
-      if (IMAGE_RE.test(f.name) || VIDEO_RE.test(f.name)) {
-        const thumb = document.createElement("img");
+      const isClip = VIDEO_RE.test(f.name);
+      if (isClip || IMAGE_RE.test(f.name)) {
+        const thumb = document.createElement(isClip ? "video" : "img");
         thumb.className = "chat-widget__file-thumb";
-        thumb.src = thumbUrl(f);
-        thumb.alt = "";
+        thumb.src = mediaUrl(f);
+        if (isClip) {
+          // The tray only has to prove the right file is in the row, so a clip reads its
+          // opening frame and stops there: no sound, no download of the whole file.
+          thumb.muted = true;
+          thumb.playsInline = true;
+          thumb.preload = "metadata";
+        } else {
+          thumb.alt = "";
+        }
         tag.appendChild(thumb);
-        if (VIDEO_RE.test(f.name)) {
+        if (isClip) {
           const play = document.createElement("span");
           play.className = "chat-widget__file-play";
           play.innerHTML = "▶";
@@ -1665,33 +1699,39 @@
     const strip = document.createElement("div");
     strip.className = "chat-msg__files";
     for (const f of files) {
-      if (IMAGE_RE.test(f.name) || VIDEO_RE.test(f.name)) {
-        const wrap = document.createElement("span");
-        wrap.className = "chat-msg__media";
-        const img = document.createElement("img");
-        img.src = thumbUrl(f);
-        img.alt = f.name;
-        wrap.appendChild(img);
-        if (VIDEO_RE.test(f.name)) {
-          const play = document.createElement("span");
-          play.className = "chat-msg__play";
-          play.innerHTML = "▶";
-          wrap.appendChild(play);
-        }
-        strip.appendChild(wrap);
-      } else {
-        const chip = document.createElement("span");
-        chip.className = "chat-msg__doc";
-        chip.textContent = "📎 " + f.name;
-        strip.appendChild(chip);
+      const isClip = VIDEO_RE.test(f.name);
+      if (!isClip && !IMAGE_RE.test(f.name)) {
+        strip.appendChild(docEl(f));
+        continue;
       }
+      const wrap = document.createElement("div");
+      wrap.className = "chat-msg__media";
+      const shot = document.createElement(isClip ? "video" : "img");
+      shot.src = mediaUrl(f);
+      if (isClip) {
+        // They sent a clip expecting it to be watchable here, so it gets the engine's own
+        // transport instead of a ▶ painted over a box that could never hold a picture.
+        shot.controls = true;
+        shot.playsInline = true;
+        shot.preload = "metadata";
+        shot.setAttribute("aria-label", f.name);
+      } else {
+        shot.alt = f.name;
+      }
+      // A phone hands over HEIC and AVI faster than either engine paints them, and a broken
+      // picture icon tells the reader less than the file's own name does.
+      shot.addEventListener("error", () => {
+        wrap.replaceWith(docEl(f));
+      });
+      wrap.appendChild(shot);
+      strip.appendChild(wrap);
     }
     if (strip.childNodes.length) el.appendChild(strip);
     const msgEl = document.createElement("div");
     msgEl.className = "chat-msg chat-msg--user";
     msgEl.appendChild(el);
     messages.appendChild(msgEl);
-    messages.scrollTop = messages.scrollHeight;
+    if (!holdSentMedia()) messages.scrollTop = messages.scrollHeight;
     remember("user", (note ? note + " " : "") + files.map((f) => "[file] " + f.name).join(" "));
     renderChips([]);
     noteLine(T(L_SENDING));

@@ -5777,9 +5777,6 @@ html[data-theme="light"][data-lights="on"] body::after{content:"";position:fixed
 .chat-msg__files{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.2rem}
 .chat-msg__media{position:relative;display:inline-block;border-radius:.45rem;overflow:hidden;line-height:0}
 .chat-msg__media img{max-width:min(14rem,60vw);max-height:12rem;display:block;border-radius:.45rem}
-.chat-msg__play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:2.2rem;height:2.2rem;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;
-  display:flex;align-items:center;justify-content:center;font-size:.9rem;pointer-events:none}
 .chat-msg__doc{display:inline-flex;align-items:center;gap:.25rem;padding:.25rem .55rem;
   border-radius:.4rem;background:var(--bg-alt);color:var(--text);font-size:.85rem}
 
@@ -5988,3 +5985,17 @@ html[data-theme="light"] #product-modal .modal__clip{background:var(--bg-alt)}
 .modal__gal-thumb--clip::after{content:"";position:absolute;top:50%;left:50%;
   transform:translate(-35%,-50%);width:0;height:0;border-style:solid;
   border-width:5px 0 5px 8px;border-color:transparent transparent transparent #fff}
+
+/* 602 · an attachment is meant to be seen. A visitor sends a flyer photograph or a clip of the
+   press to show the studio what they mean, and the layer above answered that with a 14rem stamp
+   a clip could never fill: a video blob has no still frame, so the <img> it was put in painted
+   nothing, and the ▶ badge sat over the blank box pretending. A picture now takes the bubble's
+   own width and keeps its ratio, capped by height rather than by a thumbnail square because a
+   flyer is tall and a portrait photo is taller. A clip gets the engine's own transport with
+   `preload="metadata"`, so a 6 MB file costs its header until somebody presses play. Both are
+   `contain`, never `cover` — cropping the artwork is the one thing an attachment is not for. */
+.chat-msg__files{flex-direction:column;align-items:flex-start;gap:.5rem}
+.chat-msg__media{display:block;max-width:100%;border-radius:.6rem;overflow:hidden;
+  background:rgba(9,4,3,.55)}
+.chat-msg__media img,.chat-msg__media video{display:block;width:auto;height:auto;
+  max-width:100%;max-height:min(52vh,26rem);object-fit:contain}
