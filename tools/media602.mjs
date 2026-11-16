@@ -6,8 +6,10 @@
    The run is offline on purpose: it serves the repo over http, attaches two real files from
    the site's own media through the composer's picker, and intercepts the assistant endpoint.
    Holding that request rather than answering it keeps a probe from spending the owner's Gemini
-   quota or writing a test row into his live chat log, and leaves the thread in the waiting state
-   the visitor actually sits in. The attachment markup is built and painted before the call.
+   quota and leaves the thread in the waiting state the visitor actually sits in. The attachment
+   markup is built and painted before the call. What keeps his live chat log clean is none of
+   that: `logChat` posts to the project's REST endpoint from any origin carrying the committed
+   publishable key, so measure() stubs it. Serving over http alone protects nothing there.
    It also measures how much thread is left for a picture once the first-visit cookie notice —
    which reserves 200px of a phone — is taken down, because that is the screen a visitor lives in.
 
@@ -148,6 +150,14 @@ async function measure(label, w, h, dpr) {
     if (events.slice(seen).some((e) => e.method === 'Page.loadEventFired')) break;
   }
   await sleep(2500);
+  /* `logChat` posts to the project's REST endpoint from any origin, and the REST URL plus the
+     publishable key are committed in the page, so a send here writes to the owner's live
+     `chat_logs` just as the real site does — proven by the CORS preflight that a failing model
+     call makes it emit. Stub the writer. */
+  const stub = await evaluate(`
+    if (window.BHAccounts) window.BHAccounts.logChat = function () {};
+    return window.BHAccounts ? 'logChat stubbed' : 'BHAccounts absent';
+  `);
   await evaluate(`
     const t = document.getElementById('chatToggle');
     const p = document.getElementById('chatPanel');
@@ -376,7 +386,7 @@ async function measure(label, w, h, dpr) {
     afterControl: csp.length - cspSeen,
     refusalRead: csp[csp.length - 1] || '',
   };
-  return { label, viewport: w + 'x' + h, consent, tray, trayState, trayShot, atSend, sentShot, sent,
+  return { label, viewport: w + 'x' + h, stub, consent, tray, trayState, trayShot, atSend, sentShot, sent,
            play, paused, controlsShot, fits, shot, clipShot, broken, fallback, control };
 }
 
@@ -388,11 +398,12 @@ try {
   await send('Page.enable');
   await send('Runtime.enable');
   await send('Log.enable');
-  /* Nothing leaves the machine: a paused request is held by the browser until it is continued,
-     so neither refusing nor continuing it spends the owner's Gemini quota or writes his chat log.
-     It is deliberately left hanging rather than refused, because refusing it lands the apology
-     inside the same tick as the send and the proof then measures the wrong moment — the state a
-     visitor actually sits in is the waiting one, with only the three dots below their picture. */
+  /* The assistant endpoint is the only thing here that would spend the owner's Gemini quota, so it
+     is intercepted and held. It is deliberately left hanging rather than refused, because refusing
+     it lands the apology inside the same tick as the send and the proof then measures the wrong
+     moment — the state a visitor actually sits in is the waiting one, with only the three dots
+     below their picture. Holding it does not protect his chat log, because the 25 s model timeout
+     still falls back; measure() stubs that writer instead. */
   await send('Fetch.enable', {
     patterns: [{ urlPattern: '*/functions/v1/brownhub-assistant*', requestStage: 'Request' }],
   });
