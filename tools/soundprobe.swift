@@ -120,21 +120,49 @@ var crossings = 0
 for i in 1..<count where mono[i - 1] * mono[i] < 0 { crossings += 1 }
 let zcr = Double(crossings) / max(1, seconds) / 2.0
 
-// Goertzel over log-spaced bins: exact at the frequencies asked for and cheap enough to
-// run over the whole clip rather than a lucky second.
+// Spectral shape, measured honestly. A Goertzel resonator is unusable here: at these
+// frequencies its poles sit within 1e-4 of z=+1, so its state is ~1e8 and the recursion
+// s0 = x + coeff*s1 - s2 cancels six significant digits away into rounding noise. The proof is
+// a pure 58 Hz sine, which the resonator version reported as peaking at 150 Hz. This is a
+// windowed heterodyne instead — multiply by e^-i2πft over a 2 s Hann window and average the
+// block powers — so every sum stays bounded and 0.5 Hz of resolution keeps a 58 Hz tone out of
+// the 40 Hz bin by about 90 dB.
 let analysed = min(count, Int(20 * rate))
+let win = Int(2 * rate)
+var tables: [Int: (cosine: [Double], sine: [Double])] = [:]
 func energy(at hz: Double) -> Double {
-  guard analysed > 1 else { return 0 }
-  let coeff = 2.0 * cos(2.0 * Double.pi * hz / rate)
-  var s1 = 0.0, s2 = 0.0
-  for i in 0..<analysed {
-    let s0 = Double(mono[i]) + coeff * s1 - s2
-    s2 = s1
-    s1 = s0
+  guard analysed >= win, win > 1 else { return 0 }
+  if tables[Int(hz * 1000)] == nil {
+    var c = [Double](repeating: 0, count: win)
+    var s = [Double](repeating: 0, count: win)
+    for j in 0..<win {
+      let w = 0.5 - 0.5 * cos(2.0 * Double.pi * Double(j) / Double(win - 1))
+      let ang = 2.0 * Double.pi * hz * Double(j) / rate
+      c[j] = w * cos(ang)
+      s[j] = w * sin(ang)
+    }
+    tables[Int(hz * 1000)] = (c, s)
   }
-  return (s1 * s1 + s2 * s2 - coeff * s1 * s2) / Double(analysed * analysed)
+  let (c, s) = tables[Int(hz * 1000)]!
+  var windowPower = 0.0
+  for j in 0..<win { windowPower += c[j] * c[j] + s[j] * s[j] }
+  var total = 0.0
+  var blocks = 0
+  var start = 0
+  while start + win <= analysed {
+    var re = 0.0, im = 0.0
+    for j in 0..<win {
+      let x = Double(mono[start + j])
+      re += x * c[j]
+      im += x * s[j]
+    }
+    total += (re * re + im * im) / (windowPower * windowPower / 2.0)
+    blocks += 1
+    start += win
+  }
+  return blocks > 0 ? total / Double(blocks) : 0
 }
-let bands: [Double] = [40, 60, 100, 150, 250, 400, 800, 1500, 3000, 6000, 12000]
+let bands: [Double] = [40, 58, 100, 150, 250, 400, 800, 1500, 3000, 6000, 12000]
 let raw = bands.map { energy(at: $0) }
 let bandTotal = raw.reduce(0.0) { $0 + $1 }
 let centroid = bandTotal > 0 ? zip(bands, raw).reduce(0.0) { $0 + $1.0 * $1.1 } / bandTotal : 0
@@ -147,6 +175,41 @@ let relative = raw.map { $0 > 0 && bandTotal > 0 ? 10 * log10($0 / bandTotal) : 
 // must not copy.
 let humEnergy = [50.0, 60.0, 100.0, 120.0, 150.0, 180.0].reduce(0.0) { $0 + energy(at: $1) }
 let humShare = bandTotal > 0 ? humEnergy / bandTotal : 0
+
+// Rain is not a spectrum problem, it is a motion problem: a drone whose level pulses a couple
+// of times a second, or whose nearby partials beat against each other, reads as water on a tin
+// roof long before any band looks hissy. The 10 Hz frame rate above is far too slow to see a
+// 3.5 Hz beat at all — that blind spot is exactly how a bed measured clean and still got called
+// a roof. So the level is re-traced every 2 ms and interrogated at the rates the bed's own
+// modulators and partial spacings imply; each answer is how many dB the level swings there.
+let fhop = max(1, Int(rate / 500))
+var fenv: [Double] = []
+var fat = 0
+while fat + fhop <= count {
+  var sum = 0.0
+  for i in fat..<(fat + fhop) { sum += Double(mono[i] * mono[i]) }
+  fenv.append(dbfs((sum / Double(fhop)).squareRoot()))
+  fat += fhop
+}
+let fRate = rate / Double(fhop)
+let lfos: [Double] = [0.021, 0.085, 0.31, 1.9, 3.5, 17.0]
+func swing(at hz: Double) -> Double {
+  guard fenv.count > 32, hz < fRate / 2.5 else { return -120 }
+  // A projection over a fraction of a cycle reads the fades as modulation, so the first and
+  // last 0.4 s — where the bed is ramped in and out — are not asked about.
+  let skip = min(fenv.count / 4, max(2, Int(0.4 * fRate)))
+  let lo = skip, hi = fenv.count - skip
+  var sum = 0.0
+  for i in lo..<hi { sum += fenv[i] }
+  let mean = sum / Double(hi - lo)
+  var sc = 0.0, ss = 0.0
+  for i in lo..<hi {
+    let x = 2.0 * Double.pi * hz * Double(i - lo) / fRate
+    sc += (fenv[i] - mean) * cos(x)
+    ss += (fenv[i] - mean) * sin(x)
+  }
+  return 2.0 * (sc * sc + ss * ss).squareRoot() / Double(hi - lo)
+}
 
 var meanL = 0.0, meanR = 0.0
 for i in 0..<count { meanL += Double(lefts[i]); meanR += Double(rights[i]) }
@@ -232,3 +295,6 @@ print("\(src.split(separator: "/").last ?? "?") "
   + "centroid=\(String(format: "%.0f", centroid)) top=\(Int(bands[topIndex]))(\(String(format: "%.0f", topDb))dB) "
   + "hum=\(String(format: "%.1f", humShare * 100))% corr=\(String(format: "%.2f", corr))")
 print("  bands \(shape)")
+let amText = lfos.map { "\(String(format: "%g", $0)):\(String(format: "%+.1f", swing(at: $0)))dB" }
+  .joined(separator: " ")
+print("  am \(amText)")

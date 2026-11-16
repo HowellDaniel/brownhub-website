@@ -5,7 +5,7 @@
  "x": "pixels from the LEFT edge of the unbaked source frame",
  "y": "pixels from the TOP edge of the unbaked source frame",
  "maxKb": "never heavier than the clip it replaces",
- "sound": "every clip carries the synthesised press bed rather than the shop recording, and since the owner called that bed \"the roof sounds\" the bed is tone only: the generated noise wash was lifted and each clip re-laid with tools/clipfit swap <src> <dst>, which copies the compressed picture straight through so not one cropped frame moved",
+ "sound": "every clip carries the synthesised press bed rather than the shop recording. Two passes were needed to stop it sounding like rain: first the generated noise wash went, then the motion went — two partial pairs 3.5 Hz and 17 Hz apart, a 41 Hz sub, a 0.8 Hz phase wobble and a 10 dB drip-shaped press pulse, because a low drone that wobbles reads as water on a tin roof even when its spectrum measures clean. The bed is now one exact 58 Hz harmonic stack pulsing 3 dB on the 1.9 Hz press cycle. Each clip was re-laid with tools/clipfit swap <src> <dst>, which copies the compressed picture straight through so not one cropped frame moved (proved per file by an identical video stsz table)",
  "clips": [
   {
    "clip": "video/print-out-samples-1-1.mp4",

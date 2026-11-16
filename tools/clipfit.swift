@@ -56,12 +56,28 @@ enum PressBed {
   // wash of generated noise — a three-pole bass rumble and an air band above 2600 Hz — and
   // measured on the shipped files it reads exactly like rain on a tin roof: 1348 zero
   // crossings a second with a floor that stays flat and roughly 38 dB down from 800 Hz all
-  // the way to 12 kHz. He asked for that gone and nothing else touched, so what is left is
-  // the tone: the eight partials, the swell, the breath and the press pulse, with no noise
-  // path in the signal at all.
+  // the way to 12 kHz. That wash is gone. He then said the bed still sounded like rain, and
+  // named "the low rumble left in the tone", and this time the numbers agreed with him in a
+  // way the spectrum never did: rain is motion, not treble. Traced on a 2 ms envelope, the
+  // tone that measured clean at zcr 65 was swinging +3.4 dB 3.5 times a second and +2.3 dB
+  // seventeen times a second, because two of its partials sat 3.5 Hz apart (58 and 61.5) and
+  // two sat 17 apart (41 and 58). Two nearby frequencies do not make one pitch, they make a
+  // wobble, and a wobble on a low drone is water. So:
   //
-  // What remains deliberately unfixed is the consequence: the tone lives below 300 Hz, so
-  // on a phone loudspeaker it is fainter than the hiss it replaced was.
+  //   • every partial is now a whole multiple of 58 Hz, which is one machine at one pitch and
+  //     cannot beat against itself. The 41 Hz sub — the literal "low rumble" he named, and
+  //     below what a laptop or a phone reproduces at all — is out, and the 87 Hz fifth that
+  //     made the series inharmonic is out with it.
+  //   • the 0.8 Hz wobble that was added to each partial's phase is out. A press does not
+  //     vibrato.
+  //   • the press pulse stays at the real 1.9 Hz cycle but is no longer a spike that decays.
+  //     The old shape was 1.42× against a floor of 0.45×, a 10 dB hit twice a second, which
+  //     is the rhythm of drops landing; it is now a 3 dB rise and fall, which is the rhythm
+  //     of a machine working.
+  //
+  // The slow swells are kept but flattened to well under a dB each, and the consequence of
+  // taking out the sub is the good kind: what is left sits where a phone loudspeaker can
+  // actually put sound, so the tone is more audible on the pocket than the rumble was.
   static func samples(_ seconds: Double) -> (left: [Float], right: [Float]) {
     let count = max(1, Int(seconds * RATE))
     var left = [Float](repeating: 0, count: count)
@@ -69,30 +85,25 @@ enum PressBed {
     // No tone between 300 Hz and 2 kHz on purpose. The shop recordings are loud exactly there
     // because that is where a voice is, and the reference clip's one whine near 800 Hz is its
     // own motor, not a press in general; a synthesised copy of it would be a beep.
-    let hums: [(hz: Double, amp: Double, drift: Double)] = [
-      (41.0, 0.30, 0.05), (58.0, 0.52, 0.11), (61.5, 0.38, 0.07), (87.0, 0.26, 0.13),
-      (116.0, 0.26, 0.05), (174.0, 0.16, 0.09), (232.0, 0.11, 0.03), (290.0, 0.06, 0.02),
+    let hums: [(hz: Double, amp: Double)] = [
+      (58.0, 0.62), (116.0, 0.34), (174.0, 0.22), (232.0, 0.14), (290.0, 0.08), (348.0, 0.05),
     ]
     var phase = hums.map { _ in 0.0 }
     var thumpPhase = 0.0
     for i in 0..<count {
       let t = Double(i) / RATE
-      let swell = 1.0 + 0.22 * sin(2.0 * Double.pi * 0.085 * t) + 0.09 * sin(2.0 * Double.pi * 0.021 * t + 2.1)
-      let breathe = 1.0 + 0.09 * sin(2.0 * Double.pi * 0.31 * t + 1.2)
+      let swell = 1.0 + 0.05 * sin(2.0 * Double.pi * 0.085 * t) + 0.03 * sin(2.0 * Double.pi * 0.021 * t + 2.1)
+      let breathe = 1.0 + 0.03 * sin(2.0 * Double.pi * 0.31 * t + 1.2)
       thumpPhase += 1.9 / RATE
       if thumpPhase >= 1.0 { thumpPhase -= 1.0 }
-      // The press cycle hits and then decays, which is what gives a drone a pulse to follow.
-      let thump = exp(-thumpPhase * 6.5)
+      let thump = 0.5 + 0.5 * cos(2.0 * Double.pi * thumpPhase)
       var body = 0.0
       for (index, hum) in hums.enumerated() {
         phase[index] += 2.0 * Double.pi * hum.hz / RATE
-        body += hum.amp * sin(phase[index] + hum.drift * sin(2.0 * Double.pi * 0.8 * t))
+        body += hum.amp * sin(phase[index])
       }
-      body *= swell * breathe * (1.0 + 0.42 * thump)
-      // Between passes the level drops: a bed that never goes quiet is the one a visitor
-      // talks over rather than hears.
-      let quiet = 0.45 + 0.55 * thump
-      left[i] = Float(body * 0.32 * quiet)
+      body *= swell * breathe * (1.0 + 0.20 * thump)
+      left[i] = Float(body * 0.32 * (0.86 + 0.14 * thump))
       right[i] = left[i]
     }
     // Loud enough to hear under a room, quiet enough to leave the visitor's own volume alone.
