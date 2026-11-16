@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert";
+import { readFileSync } from "node:fs";
 
 // Fake runtime for handler tests
 function createFakeRuntime(overrides = {}) {
@@ -950,4 +951,94 @@ test("a provider rejection reaches the log as its reason, with no file reference
   assert.ok(!text.includes("files/real-9"), "no provider file reference in the log: " + text);
   assert.equal(res.status, 500);
   assert.equal(data.error, "The assistant could not process that.");
+});
+
+// ─── TALKING LIKE A PERSON ───────────────────────────────────────────────────
+
+function briefFrom(source) {
+  const text = readFileSync(new URL(source, import.meta.url), "utf8");
+  const match = text.match(/const BRIEF = `([\s\S]*?)`;/);
+  assert.ok(match, "BRIEF literal found in " + source);
+  return match[1];
+}
+
+function textRequest(q, extra = {}) {
+  return new Request("https://example.com/functions/v1/brownhub-assistant", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.9.9",
+    },
+    body: JSON.stringify({ q, lang: "en", h: [], ...extra }),
+  });
+}
+
+function speakingRuntime(capture) {
+  return createFakeRuntime({
+    env: { GEMINI_API_KEY: "test-key", GEMINI_MODEL: "test-model" },
+    onFetch: async (url, options) => {
+      if (url.includes("generateContent")) {
+        const body = JSON.parse(options.body);
+        capture.brief = body.systemInstruction.parts[0].text;
+        capture.asked = true;
+        return new Response(JSON.stringify({
+          candidates: [{ content: { parts: [{ text: JSON.stringify({
+            answer: "I'm doing well, thank you for asking. What can I help you with today?",
+            keywords: [], matches: [], estimate: null,
+          }) }] } }]
+        }), { status: 200 });
+      }
+      return new Response(JSON.stringify({ error: "not found" }), { status: 404 });
+    },
+  });
+}
+
+test("the deployed brief and the tested brief cannot drift apart", () => {
+  const live = briefFrom("../supabase/functions/brownhub-assistant/index.ts");
+  const tested = briefFrom("../supabase/functions/brownhub-assistant/handler.ts");
+  assert.equal(tested, live, "handler.ts and index.ts must carry the same brief byte for byte");
+});
+
+test("the brief makes small talk answerable instead of off-limits", async () => {
+  const capture = {};
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  await createHandler(speakingRuntime(capture))(textRequest("how are you doing"));
+
+  assert.ok(capture.asked, "a phatic turn must reach the model, not a canned deflect");
+  assert.ok(/TALK LIKE A PERSON FIRST/.test(capture.brief), "the brief must teach a conversational voice");
+  assert.ok(/how are you/i.test(capture.brief), "the brief must name the how-are-you case");
+  assert.ok(!/Answer only about BrownHub/.test(capture.brief), "scope must govern facts, not feelings");
+});
+
+test("the brief reads emoji and keeps them out of the catalog", async () => {
+  const capture = {};
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  await createHandler(speakingRuntime(capture))(textRequest("😀"));
+
+  const brief = capture.brief;
+  assert.ok(/😞/.test(brief) && /🙏/.test(brief), "the brief must show emoji it expects to be sent");
+  assert.ok(/emoji/i.test(brief), "the brief must tell the model to read emoji");
+  assert.match(brief, /keywords as an empty array/, "a social turn must not pull in a catalog card");
+  assert.match(brief, /at most one emoji/, "the model may mirror one emoji, never more");
+});
+
+test("a message that is only an emoji still gets an answer", async () => {
+  const capture = {};
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const res = await createHandler(speakingRuntime(capture))(textRequest("☺"));
+  const data = await res.json();
+
+  assert.equal(res.status, 200);
+  assert.ok(capture.asked, "one code point is a message, not a typo");
+  assert.deepEqual(data.matches, [], "thanks must not attach catalog cards");
+  assert.equal(data.estimate, null);
+});
+
+test("blank text with no file is still refused", async () => {
+  const capture = {};
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const res = await createHandler(speakingRuntime(capture))(textRequest("   "));
+
+  assert.equal(res.status, 400);
+  assert.ok(!capture.asked, "nothing to answer must not cost a model call");
 });
