@@ -144,8 +144,11 @@ test('a shipped clip runs as long as the plan cut it', () => {
 
 /* Cropping a clip into a composition means rebuilding its sound track in the same breath, and
    an insert that fails takes the audio with it while the picture lands perfectly. A silent
-   press is the exact defect the bed was cut to replace, so the track has to be proved on the
-   file rather than assumed from the tool that reported success. */
+   press is the exact defect this gate exists for, so the track has to be proved on the file
+   rather than assumed from the tool that reported success. What it cannot say is WHICH sound
+   is on there — presence of an `soun` track is true of the synthesised bed and of the owner's
+   own recording alike. tools/soundprobe.swift is what hears the difference, and the figures it
+   read off the shipped files are recorded in tools/clip-crops.json. */
 test('every shipped clip still carries a sound track', () => {
   // The two ambient films are silent on purpose, and they are read by the same code: if the
   // reader called them tracks, a clip that lost its sound would pass for nothing.
@@ -328,21 +331,23 @@ test('the service worker keeps every clip out of the app cache', async () => {
 /* The owner's print samples were filmed on a phone in the shop, so every one of the 35
    clips carried a stranger's workshop on its own soundtrack — the probe read 25 stereo and
    10 mono tracks off the files. The owner's answer was not silence: mute the recording and
-   give the clip a sound of its own, modelled on the low press drone that opens the first
-   sample. Each clip now ships with that bed in place of its recording, so the stage has to
-   let sound through — `muted` here would throw the whole swap away and leave a silent press.
+   give the clip a sound of its own. It was a synthesised press bed for a while, and then he
+   sent his own 26-second recording of the press and asked for that instead — which is what
+   every clip carries now, looped with a crossfade where a clip runs longer than the take
+   (tools/clip-crops.json holds the measured figures). Either way the stage has to let sound
+   through — `muted` here would throw the whole swap away and leave a silent press.
    Three pages host that one stage, and index.html and engineering.html host it for the same
    cards, so the rule has to hold on all three or the fix only works on the page it was made
    on. The two ambient coding films are a different case: they sit behind copy on an
    autoplaying page and must stay silent. */
-test('the clip stage lets the press bed through and the ambient films stay silent', () => {
+test('the clip stage lets the press sound through and the ambient films stay silent', () => {
   let hosted = 0;
   for (const file of ['catalog.html', 'index.html', 'engineering.html']) {
     const videos = [...read(file).matchAll(/<video class="modal__clip"[^>]*>/g)];
     videos.forEach((v) => {
       hosted++;
       assert.ok(!/\smuted(\s|>)/.test(v[0]),
-        `${file} mutes the stage, so the bed cut into every clip is never heard: ${v[0]}`);
+        `${file} mutes the stage, so the sound laid into every clip is never heard: ${v[0]}`);
     });
   }
   assert.equal(hosted, 3, `expected the stage on three pages, found ${hosted} — the shelf moved `

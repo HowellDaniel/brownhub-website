@@ -4,7 +4,8 @@
 //   /tmp/clipfit probe <file.mp4|file.wav>
 //   /tmp/clipfit bed <out.wav> <seconds>
 //   /tmp/clipfit cut <src.mp4> <dst.mp4> <x> <y> <w> <h> <bed|keep> [bytes] [from=<s>] [to=<s>]
-//   /tmp/clipfit swap <src.mp4> <dst.mp4>
+//   /tmp/clipfit swap <src.mp4> <dst.mp4> [sound-src.mp4|mov|wav]
+//   /tmp/clipfit sound <sound-src> <out.wav> <seconds>
 //
 // Two asks, one pass. The owner wants a print sample to show the print and not the wall
 // behind it, and he wants the clips that carry their own recording to stop carrying it and
@@ -18,10 +19,17 @@
 // so nothing gets soft, and the byte budget is spent on fewer pixels rather than smeared
 // over more of them.
 //
-// The bed is synthesised rather than lifted from another clip. Taking clip 1-1's own audio
-// and pasting it onto the others would keep the shop in the file — and 1-1 is the reference
-// the owner pointed at, so its own sound stays. A synth fits any length, so a 7-second clip
-// and a 47-second one both end with the same fade instead of cutting a loop mid-breath.
+// The sound is no longer synthesised. The owner named one file — his own take of the bench,
+// 26 seconds of it — and asked every sample to carry that, so the bed is decoded from his
+// recording instead of built from numbers. `swap` without a source still synthesises the press
+// bed, because that is what the clips shipped with until he pointed at a file.
+//
+// His take is 26 s and the samples run from 6 s to 47 s, so fourteen clips outlive it, and a
+// sound that stops while the picture is still moving is dead air. A naive repeat is worse than
+// dead air: his recording ends 16 dB quieter than it starts, so butt-jointing the loud opening
+// onto the quiet tail is a splice you hear. The loop is therefore cut between two quiet troughs
+// of the same machine cycle and joined with an equal-power crossfade — the one place a splice
+// hides is where there is almost nothing on either side of it.
 import AVFoundation
 import Foundation
 
@@ -132,6 +140,151 @@ enum PressBed {
   }
 }
 
+// The owner's own recording, laid to whatever length a clip needs.
+enum SourceBed {
+  static func decode(_ path: String) -> (left: [Float], right: [Float]) {
+    guard FileManager.default.fileExists(atPath: path) else { fail("no such sound file: \(path)") }
+    let asset = AVURLAsset(url: URL(fileURLWithPath: path))
+    guard let track = asset.tracks(withMediaType: .audio).first else {
+      fail("\(path) carries no audio track, so it cannot be anyone's sound")
+    }
+    guard let reader = try? AVAssetReader(asset: asset) else { fail("cannot read \(path)") }
+    let output = AVAssetReaderTrackOutput(track: track, outputSettings: pcmSettings())
+    guard reader.canAdd(output) else { fail("this machine cannot decode the sound of \(path)") }
+    reader.add(output)
+    guard reader.startReading() else { fail("sound reader refused to start on \(path)") }
+    var left: [Float] = [], right: [Float] = []
+    while reader.status == .reading {
+      guard let buffer = output.copyNextSampleBuffer(),
+            let block = CMSampleBufferGetDataBuffer(buffer) else { break }
+      let length = CMBlockBufferGetDataLength(block)
+      guard length > 0 else { continue }
+      var bytes = [UInt8](repeating: 0, count: length)
+      guard CMBlockBufferCopyDataBytes(block, atOffset: 0, dataLength: length,
+                                       destination: &bytes) == noErr else { continue }
+      bytes.withUnsafeBytes { raw in
+        let pcm = raw.bindMemory(to: Int16.self)
+        let frames = length / 4
+        for f in 0..<frames {
+          left.append(Float(pcm[f * 2]) / 32768.0)
+          right.append(Float(pcm[f * 2 + 1]) / 32768.0)
+        }
+      }
+    }
+    if reader.status == .failed {
+      fail("decoding the sound of \(path): \(reader.error?.localizedDescription ?? "?")")
+    }
+    guard left.count > Int(RATE) else { fail("\(path) has under a second of sound to lift") }
+    return (left, right)
+  }
+
+  // Where the machine breathes out. A 23 ms rms envelope, and the runs of frames that sit well
+  // under the middle of the take: a splice is only invisible where there is nothing loud on
+  // either side of it, so the loop starts at the front edge of the first such run and ends at
+  // the back edge of the last. Spanning the whole recording matters as much as the quiet — a
+  // seam cut between two runs one press cycle apart repeats a five-second phrase seven times
+  // and a visitor hears a loop instead of a machine.
+  static func troughs(_ samples: [Float]) -> (start: Int, end: Int, fade: Int)? {
+    let step = 1024
+    let windows = samples.count / step
+    guard windows > 16 else { return nil }
+    var env = [Double](repeating: 0, count: windows)
+    for w in 0..<windows {
+      var s = 0.0
+      for k in 0..<step { let v = Double(samples[w * step + k]); s += v * v }
+      env[w] = (s / Double(step)).squareRoot()
+    }
+    let middle = env.sorted()[windows / 2]
+    guard middle > 0.0005 else { return nil }
+    let half = max(1, Int(0.35 * RATE) / step)
+    let head = Int(0.5 * RATE), tail = samples.count - Int(0.5 * RATE)
+    for ceiling in [middle * 0.5, middle * 0.7] {
+      var runs: [(lo: Int, hi: Int)] = []
+      var lo = -1
+      for w in 0..<windows {
+        if env[w] <= ceiling {
+          if lo < 0 { lo = w }
+        } else if lo >= 0 {
+          runs.append((lo, w)); lo = -1
+        }
+      }
+      if lo >= 0 { runs.append((lo, windows)) }
+      // A run is only a seam if it is long enough to hold a whole crossfade inside it, and the
+      // half second at either end of the take is off the table — that is where a phone recorder
+      // opens on a breath and closes on a stop.
+      let usable = runs.compactMap { run -> (Int, Int)? in
+        let from = max(run.lo * step, head), until = min(run.hi * step, tail)
+        return until - from >= half * step ? (from, until) : nil
+      }
+      guard let first = usable.first, let last = usable.last,
+            last.1 - first.0 >= Int(RATE) else { continue }
+      let a = first.0, b = last.1
+      let fade = min(Int(0.35 * RATE), (b - a) / 6)
+      guard fade >= Int(0.05 * RATE) else { continue }
+      return (a, b, fade)
+    }
+    return nil
+  }
+
+  static func samples(_ source: (left: [Float], right: [Float]),
+                      _ seconds: Double) -> (left: [Float], right: [Float]) {
+    let taken = source.left.count
+    let need = max(1, Int(seconds * RATE))
+    var outL = [Float](repeating: 0, count: need)
+    var outR = [Float](repeating: 0, count: need)
+    if need <= taken {
+      for k in 0..<need { outL[k] = source.left[k]; outR[k] = source.right[k] }
+    } else {
+      guard let (a, b, fade) = troughs(source.left) else {
+        fail("the sound has no quiet stretch to loop, so a \(String(format: "%.0f", seconds))s "
+          + "clip cannot be filled from a \(String(format: "%.1f", Double(taken) / RATE))s take")
+      }
+      let span = b - a
+      for k in 0..<a { outL[k] = source.left[k]; outR[k] = source.right[k] }
+      var base = a, copy = 0
+      while base < need {
+        for i in 0..<span {
+          let at = base + i
+          if at >= need { break }
+          var g = 1.0
+          if copy > 0 && i < fade {
+            g = sin(.pi / 2 * Double(i) / Double(fade))
+          } else if i >= span - fade {
+            g = cos(.pi / 2 * Double(i - (span - fade)) / Double(fade))
+          }
+          outL[at] += source.left[a + i] * Float(g)
+          outR[at] += source.right[a + i] * Float(g)
+        }
+        copy += 1
+        base += span - fade
+      }
+    }
+    // The level the shipped clips already sit at, and no limiter: his press hits are the sound
+    // he asked for, and squaring them off is how a recording stops sounding like one room.
+    var total = 0.0, peak = 0.0
+    for k in 0..<need {
+      total += (Double(outL[k] * outL[k]) + Double(outR[k] * outR[k])) / 2.0
+      peak = max(peak, abs(Double(outL[k])), abs(Double(outR[k])))
+    }
+    let found = (total / Double(need)).squareRoot()
+    var gain = found > 0 ? pow(10.0, -22.9 / 20.0) / found : 1.0
+    if peak * gain > 0.999 { gain = 0.999 / peak }
+    for k in 0..<need { outL[k] *= Float(gain); outR[k] *= Float(gain) }
+    let inLen = min(need, Int(0.05 * RATE)), outLen = min(need / 2, Int(0.30 * RATE))
+    for k in 0..<need {
+      var f = 1.0
+      if k < inLen { let x = Double(k) / Double(inLen); f = x * x * (3 - 2 * x) }
+      if k > need - outLen {
+        let x = Double(need - k) / Double(outLen)
+        f = min(f, x * x * (3 - 2 * x))
+      }
+      outL[k] *= Float(f)
+      outR[k] *= Float(f)
+    }
+    return (outL, outR)
+  }
+}
+
 func writeWav(_ path: String, _ channels: (left: [Float], right: [Float])) {
   let frames = channels.left.count
   var data = Data()
@@ -179,7 +332,7 @@ func pcmSettings() -> [String: Any] {
 }
 
 let args = CommandLine.arguments
-guard args.count >= 3 else { fail("usage: probe|bed|cut|swap …") }
+guard args.count >= 3 else { fail("usage: probe|bed|sound|cut|swap …") }
 let mode = args[1]
 
 if mode == "bed" {
@@ -245,6 +398,28 @@ if mode == "probe" {
   exit(0)
 }
 
+if mode == "sound" {
+  // Write the lifted bed on its own, at the length a clip will need it, so the loop seam can be
+  // measured before thirty-five files are re-encoded against it.
+  guard args.count >= 5, let seconds = Double(args[4]) else {
+    fail("sound needs <sound-src> <out.wav> <seconds>")
+  }
+  let source = SourceBed.decode(args[2])
+  let built = SourceBed.samples(source, seconds)
+  writeWav(args[3], built)
+  let taken = Double(source.left.count) / RATE
+  print("sound \(args[2]) → \(args[3]) \(String(format: "%.1f", seconds))s of \(String(format: "%.1f", taken))s take")
+  // Only a clip longer than the recording gets a seam, so only then is the seam worth reporting.
+  if seconds > taken {
+    guard let (a, b, fade) = SourceBed.troughs(source.left) else {
+      fail("the sound has no quiet stretch to loop")
+    }
+    print("loop \(String(format: "%.2f", Double(a) / RATE))–\(String(format: "%.2f", Double(b) / RATE))s "
+      + "crossfade \(String(format: "%.2f", Double(fade) / RATE))s")
+  }
+  exit(0)
+}
+
 if mode == "swap" {
   // Re-lay the bed over a clip without touching one pixel of its picture.
   //
@@ -252,8 +427,9 @@ if mode == "swap" {
   // of them would crop the crop. Only the sound is being replaced here, and a writer given no
   // output settings for its video input copies the compressed samples straight through — so
   // the frame the site proved on screen goes out byte for byte while the audio is re-issued.
-  guard args.count >= 4 else { fail("swap needs <src.mp4> <dst.mp4>") }
+  guard args.count >= 4 else { fail("swap needs <src.mp4> <dst.mp4> [sound-src]") }
   let from = args[2], into = args[3]
+  let soundFrom = args.count > 4 ? args[4] : nil
   guard FileManager.default.fileExists(atPath: from) else { fail("no such file: \(from)") }
   let film = AVURLAsset(url: URL(fileURLWithPath: from))
   guard let picture = film.tracks(withMediaType: .video).first else { fail("\(from) has no video track") }
@@ -261,7 +437,11 @@ if mode == "swap" {
   guard length > 0.2 else { fail("\(from) has no readable length") }
 
   let bedPath = into + ".bed.wav"
-  writeWav(bedPath, PressBed.samples(length))
+  if let source = soundFrom {
+    writeWav(bedPath, SourceBed.samples(SourceBed.decode(source), length))
+  } else {
+    writeWav(bedPath, PressBed.samples(length))
+  }
   let bed = AVURLAsset(url: URL(fileURLWithPath: bedPath))
   guard let sound = bed.tracks(withMediaType: .audio).first else { fail("the bed wrote no audio") }
 
