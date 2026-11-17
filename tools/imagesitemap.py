@@ -73,6 +73,23 @@ BRAND = {
          "BrownHub Studio, and beneath them Catalog, Accra, design, print and merchandise "
          "over the studio's own red and gold."),
     ],
+    # The two download copies live here as well, and they are not the nav mark grown
+    # bigger: both are rasterised from the studio's own vector master, so every curve
+    # is a real pixel at the size the file claims. The 240 px header file stays out of
+    # the crawler's way (SKIP_SRC) because it is the one copy that is an approximation.
+    "about.html": [
+        ("images/brand/brownhub-logo-512.png",
+         "BrownHub logo PNG (512 × 512)",
+         "The BrownHub logo as a 512 pixel PNG on a transparent background, rasterised "
+         "from the studio's vector master: the red lowercase b and gold capital H locked "
+         "together above the wordmark BROWNHUB, gold except for its final red B, with the "
+         "tagline ...intellectual designs beneath it."),
+        ("images/brand/brownhub-logo-1024.png",
+         "BrownHub logo PNG (1024 × 1024)",
+         "The largest PNG the studio publishes of its own logo, 1024 pixels on a "
+         "transparent background and cut from the same vector master as the header mark, "
+         "for anyone who needs the logo at print or billboard scale."),
+    ],
 }
 
 
