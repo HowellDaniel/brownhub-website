@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The thirty-five print clips, declared for a crawler that never runs a script. Written by
+     tools/videoseo.py from catalog.html and tools/clip-crops.json; do not hand-edit it,
+     re-run the generator. No <lastmod> here on purpose: the date that belongs to a clip is
+     publication_date, and the page's own lastmod already lives in sitemap.xml, where one
+     number has to answer for it. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <url>
+    <loc>https://www.brownhub283.com/catalog.html</loc>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-1-1.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-1-1.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 1 · clip 1 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 1 of 10 in that set, 26.1 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>26</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-1-2.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-1-2.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 1 · clip 2 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 2 of 10 in that set, 21.2 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>21</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-1-3.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-1-3.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 1 · clip 3 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 3 of 10 in that set, 47.3 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>47</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-1-4.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-1-4.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 1 · clip 4 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 4 of 10 in that set, 38.9 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>39</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-1-5.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-1-5.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 1 · clip 5 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 5 of 10 in that set, 21.6 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>22</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-1-6.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-1-6.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 1 · clip 6 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 6 of 10 in that set, 33.8 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>34</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-1-7.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-1-7.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 1 · clip 7 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 7 of 10 in that set, 11.9 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>12</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-1-8.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-1-8.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 1 · clip 8 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 8 of 10 in that set, 16.1 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>16</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-1-9.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-1-9.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 1 · clip 9 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 9 of 10 in that set, 22.5 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>23</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-1-10.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-1-10.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 1 · clip 10 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 10 of 10 in that set, 7.7 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>8</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-2-1.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-2-1.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 2 · clip 1 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 1 of 10 in that set, 27.9 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>28</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-2-2.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-2-2.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 2 · clip 2 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 2 of 10 in that set, 29.3 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>29</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-2-3.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-2-3.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 2 · clip 3 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 3 of 10 in that set, 14.1 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>14</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-2-4.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-2-4.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 2 · clip 4 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 4 of 10 in that set, 26.9 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>27</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-2-5.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-2-5.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 2 · clip 5 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 5 of 10 in that set, 25.6 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>26</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-2-6.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-2-6.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 2 · clip 6 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 6 of 10 in that set, 30.2 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>30</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-2-7.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-2-7.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 2 · clip 7 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 7 of 10 in that set, 18.9 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>19</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-2-8.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-2-8.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 2 · clip 8 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 8 of 10 in that set, 26 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>26</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-2-9.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-2-9.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 2 · clip 9 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 9 of 10 in that set, 11.9 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>12</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-2-10.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-2-10.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 2 · clip 10 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 10 of 10 in that set, 6 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>6</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-3-1.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-3-1.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 3 · clip 1 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 1 of 10 in that set, 30.1 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>30</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-3-2.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-3-2.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 3 · clip 2 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 2 of 10 in that set, 12.2 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>12</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-3-3.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-3-3.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 3 · clip 3 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 3 of 10 in that set, 12.8 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>13</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-3-4.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-3-4.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 3 · clip 4 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 4 of 10 in that set, 10.9 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>11</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-3-5.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-3-5.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 3 · clip 5 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 5 of 10 in that set, 13.7 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>14</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-3-6.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-3-6.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 3 · clip 6 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 6 of 10 in that set, 24.6 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>25</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-3-7.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-3-7.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 3 · clip 7 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 7 of 10 in that set, 12.7 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>13</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-3-8.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-3-8.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 3 · clip 8 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 8 of 10 in that set, 19 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>19</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-3-9.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-3-9.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 3 · clip 9 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 9 of 10 in that set, 40.3 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>40</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-3-10.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-3-10.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 3 · clip 10 of 10</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 10 of 10 in that set, 12 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>12</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-4-1.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-4-1.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 4 · clip 1 of 5</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 1 of 5 in that set, 28.8 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>29</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-4-2.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-4-2.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 4 · clip 2 of 5</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 2 of 5 in that set, 21.1 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>21</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-4-3.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-4-3.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 4 · clip 3 of 5</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 3 of 5 in that set, 26.1 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>26</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-4-4.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-4-4.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 4 · clip 4 of 5</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 4 of 5 in that set, 36.8 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>37</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+    <video:video>
+      <video:content_loc>https://www.brownhub283.com/video/print-out-samples-4-5.mp4</video:content_loc>
+      <video:thumbnail_loc>https://www.brownhub283.com/images/catalog/hi/print-out-samples-4-5.jpg</video:thumbnail_loc>
+      <video:title>VIDEO SAMPLES OF OUR PRINT OUT 4 · clip 5 of 5</video:title>
+      <video:description>Short clips of the studio&apos;s own print work, shot as it came off the press — flyers, banners, cards, booklets and everything else we print. This is clip 5 of 5 in that set, 31 seconds of the studio&apos;s own print work. It plays in the viewer that opens when a visitor taps the card.</video:description>
+      <video:category>Flyers &amp; printing</video:category>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:duration>31</video:duration>
+      <video:publication_date>2026-11-15T01:47:57+00:00</video:publication_date>
+      <video:uploader info="https://www.brownhub283.com/about.html">BrownHub Studio</video:uploader>
+    </video:video>
+  </url>
+</urlset>

@@ -45,3 +45,4 @@ User-agent: *
 Disallow: /mobile/
 
 Sitemap: https://www.brownhub283.com/sitemap.xml
+Sitemap: https://www.brownhub283.com/sitemap-video.xml
