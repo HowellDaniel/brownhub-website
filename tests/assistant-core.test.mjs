@@ -20,7 +20,7 @@ try {
   throw e;
 }
 
-const { validateFile, validateFiles, selectCandidates, groundingSources, buildEstimate, buildEnvelope, parseAnalysis, sanitizeProviderError } = core;
+const { validateFile, validateFiles, selectCandidates, groundingSources, buildEstimate, buildEnvelope, parseAnalysis, sanitizeProviderError, clockBlock, isWeatherQuestion, weatherPlace, geocodeUrl, forecastUrl, wmoText, formatWeather, contextBlock } = core;
 
 // ─── FILE VALIDATION ─────────────────────────────────────────────────────────
 
@@ -384,4 +384,158 @@ test("sanitizeProviderError caps a non-JSON body", () => {
 
 test("sanitizeProviderError on an empty body says nothing was returned", () => {
   assert.ok(sanitizeProviderError("").length > 0);
+});
+
+// ─── A CLOCK AND LIVE WEATHER (the assistant answers the world, not just the studio) ───
+// Live baseline on 2026-11-17: the deployed assistant said "I do not keep track of the date
+// and time here" and "I only know BrownHub's design and print work, so I can't check the
+// weather". These functions are what replaces both deflects with measured facts.
+
+const TUE_1432 = Date.UTC(2026, 10, 17, 14, 32, 0); // Tuesday 17 November 2026, 14:32 UTC
+const SUN_2105 = Date.UTC(2026, 10, 22, 21, 5, 0);  // Sunday 22 November 2026, 21:05 UTC
+
+test("clockBlock names the date, the weekday and Ghana time from the server instant", () => {
+  const out = clockBlock(TUE_1432);
+  assert.match(out, /2026-11-17/, out);
+  assert.match(out, /Tuesday/, out);
+  assert.match(out, /14:32/, out);
+  // Ghana is GMT+0 all year, so the studio clock is the UTC clock and needs no conversion.
+  assert.match(out, /GMT/, out);
+  assert.match(out, /Accra/, out);
+});
+
+test("clockBlock is authoritative so the model cannot answer from memory", () => {
+  assert.match(clockBlock(TUE_1432), /authoritative/i, "the block must forbid a remembered date");
+});
+
+test("clockBlock rolls the weekday and the date over together", () => {
+  const out = clockBlock(SUN_2105);
+  assert.match(out, /Sunday/, out);
+  assert.match(out, /2026-11-22/, out);
+});
+
+test("a studio day in Accra is the same calendar day in UTC", () => {
+  // 23:30 UTC Sunday is still Sunday in Ghana: no date shift the model could get wrong.
+  assert.match(clockBlock(Date.UTC(2026, 10, 15, 23, 30, 0)), /Sunday/);
+});
+
+test("isWeatherQuestion catches the weather phrasings a visitor actually uses", () => {
+  for (const q of [
+    "what is the weather in Accra today?",
+    "how hot is it in Kumasi?",
+    "temperature in Takoradi",
+    "is it going to rain tomorrow?",
+    "what's the forecast for Cape Coast?",
+    "what is the weather like outside right now?",
+  ]) {
+    assert.ok(isWeatherQuestion(q), "should read as weather: " + q);
+  }
+});
+
+test("isWeatherQuestion stays off a design job that merely mentions rain", () => {
+  for (const q of [
+    "can you design a logo with rain in it?",
+    "I need a flyer for a cold drinks brand",
+    "how much is a banner?",
+    "what time is it in Ghana?",
+    "do you print sun posters?",
+  ]) {
+    assert.ok(!isWeatherQuestion(q), "should not read as weather: " + q);
+  }
+});
+
+test("weatherPlace returns the city the visitor named, without the time words", () => {
+  assert.equal(weatherPlace("what is the weather in Kumasi today?"), "Kumasi");
+  assert.equal(weatherPlace("how hot is it in New York right now?"), "New York");
+  assert.equal(weatherPlace("forecast for Cape Coast this weekend"), "Cape Coast");
+  assert.equal(weatherPlace("temperature in Accra tomorrow morning"), "Accra");
+});
+
+test("weatherPlace returns nothing when the visitor named no city", () => {
+  assert.equal(weatherPlace("what is the weather today?"), "");
+  assert.equal(weatherPlace("is it going to rain?"), "");
+});
+
+test("weatherPlace does not harvest a whole sentence as a place name", () => {
+  const out = weatherPlace("what is the weather in Accra and can you also print me 500 flyers please");
+  assert.ok(out.length <= 40, "place name must stay short, got " + out.length);
+  assert.ok(!/flyer/i.test(out), "must not swallow the rest of the message: " + out);
+});
+
+test("geocodeUrl points at the key-less Open-Meteo geocoder and encodes the place", () => {
+  const url = geocodeUrl("New York");
+  assert.ok(url.startsWith("https://geocoding-api.open-meteo.com/v1/search?"), url);
+  assert.match(url, /name=New%20York/, url);
+  assert.match(url, /count=1/, url);
+  assert.equal(geocodeUrl(""), "");
+});
+
+test("geocodeUrl cannot be steered onto another host by the place string", () => {
+  const url = geocodeUrl("Accra?host=evil.example/x");
+  assert.ok(url.startsWith("https://geocoding-api.open-meteo.com/"), url);
+  assert.ok(!url.includes("evil.example/"), "must not be able to leave the geocoder origin: " + url);
+});
+
+test("forecastUrl asks for current conditions and two days of range", () => {
+  const url = forecastUrl(6.6885, -1.6244);
+  assert.ok(url.startsWith("https://api.open-meteo.com/v1/forecast?"), url);
+  assert.match(url, /latitude=6\.6885/, url);
+  assert.match(url, /longitude=-1\.6244/, url);
+  assert.match(url, /current=/, url);
+  assert.match(url, /daily=/, url);
+});
+
+test("wmoText turns a weather code into plain words and invents nothing", () => {
+  assert.match(wmoText(0), /clear/i);
+  assert.match(wmoText(3), /overcast|cloud/i);
+  assert.match(wmoText(61), /rain/i);
+  assert.match(wmoText(95), /thunder/i);
+  assert.equal(wmoText(1234), "");
+});
+
+const GEO = { results: [{ name: "Kumasi", country: "Ghana", latitude: 6.6885, longitude: -1.6244 }] };
+const WX = {
+  current: {
+    time: "2026-11-17T14:15", temperature_2m: 31.4, apparent_temperature: 36.1,
+    relative_humidity_2m: 66, weather_code: 3, wind_speed_10m: 11.2,
+  },
+  daily: {
+    time: ["2026-11-17", "2026-11-18"],
+    temperature_2m_max: [32.1, 31.8],
+    temperature_2m_min: [24.2, 24.0],
+  },
+};
+
+test("formatWeather states the city, the measured figures and the range", () => {
+  const out = formatWeather(GEO, WX);
+  assert.match(out, /Kumasi, Ghana/, out);
+  assert.match(out, /31\.4/, out);
+  assert.match(out, /36\.1/, out);
+  assert.match(out, /overcast/i, out);
+  assert.match(out, /32\.1/, out);
+  assert.match(out, /24\.2/, out);
+  assert.match(out, /31\.8/, out);
+  // The city must be printed so the model can never answer for the wrong place.
+  assert.match(out, /measured/i, out);
+});
+
+test("formatWeather returns nothing when either response has no usable body", () => {
+  assert.equal(formatWeather({ results: [] }, WX), "");
+  assert.equal(formatWeather(GEO, {}), "");
+  assert.equal(formatWeather(null, WX), "");
+});
+
+test("formatWeather stays small enough to pay for on every request", () => {
+  const out = formatWeather(GEO, WX);
+  assert.ok(out.length < 700, "facts block is " + out.length + " chars");
+});
+
+test("contextBlock always carries the clock and only carries weather when measured", () => {
+  const withWx = contextBlock(TUE_1432, "Kumasi, Ghana: 31.4°C");
+  const without = contextBlock(TUE_1432, "");
+  assert.match(withWx, /TODAY FOR THIS CONVERSATION/, withWx);
+  assert.match(withWx, /2026-11-17/, withWx);
+  assert.match(withWx, /LIVE WEATHER/, withWx);
+  assert.match(without, /TODAY FOR THIS CONVERSATION/, without);
+  assert.ok(!/LIVE WEATHER/.test(without), "no invented weather header when nothing was measured");
 });

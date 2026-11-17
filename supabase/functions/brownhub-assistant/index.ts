@@ -244,6 +244,134 @@ function buildEstimate(scope: EstimateScope): Estimate | null {
   };
 }
 
+// The model does not know what day it is and cannot read the sky. The server
+// measures both and hands them over inside the single call it gets: a live
+// answer already costs about twelve of the browser's twenty-five seconds, so
+// there is no second call to spend on a lookup.
+
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+function clockBlock(nowMs: number): string {
+  const d = new Date(Number.isFinite(nowMs) ? nowMs : Date.now());
+  const hh = String(d.getUTCHours()).padStart(2, "0");
+  const mm = String(d.getUTCMinutes()).padStart(2, "0");
+  return [
+    "TODAY FOR THIS CONVERSATION (read off the studio server, not remembered)",
+    `Date: ${d.toISOString().slice(0, 10)} — ${WEEKDAYS[d.getUTCDay()]}. Time in Accra: ${hh}:${mm} GMT.`,
+    "Ghana keeps GMT+0 all year and changes no clocks, so Accra time is exactly this UTC instant.",
+    "This clock is authoritative. Use it for every date, weekday, date arithmetic and open-or-closed answer. Never state a date or time from memory, and never claim not to know it.",
+    "For a city outside Ghana, convert from its standard UTC offset, name the zone you used, and say a summer-time week can put it an hour off.",
+  ].join("\n");
+}
+
+const WEATHER_WORDS = /\b(weather|forecast|temperature|rain|rainy|raining|drizzle|thunder|thunderstorm|storm|humidity|humid|harmattan|sunburn|uv|snow|fog|frost|icy|heatwave|coldwave|cyclone)\b|[°º]\s?[cf]\b/i;
+const WEATHER_FEELS = /\b(hot|cold|cool|warm|degrees|sunny|cloud|cloudy|overcast|windy|wind|outside)\b/i;
+const WEATHER_FRAME = /\b(it|today|tomorrow|tonight|now|week|weekend|morning|evening|this week)\b/i;
+const JOB_WORDS = /\b(logo|flyer|poster|banner|brand|branding|design|printing|print|business card|packaging|brochure|catalog|sticker|t-?shirt|roll-?up|pull-?up|website|invitation|menu|card)\w*/i;
+
+function isWeatherQuestion(text: string): boolean {
+  const t = String(text || "");
+  if (!t.trim()) return false;
+  if (JOB_WORDS.test(t)) return false;
+  if (WEATHER_WORDS.test(t)) return true;
+  return WEATHER_FEELS.test(t) && WEATHER_FRAME.test(t);
+}
+
+const PLACE_HEAD = /\b(?:in|for|at|near)\s+([A-Za-z][\w'’.\-]*(?:\s+[A-Za-z][\w'’.\-]*){0,2})/;
+const PLACE_BREAK = /^(today|tomorrow|tonight|now|this|that|week|weekend|morning|evening|day|right|please|outside|like|going|to|be|is|are|am|it|in|of|for|and|or|but|can|could|you|your|me|my|i|we|us|the|a|an|do|does|did|will|would|should|how|what|when|where|there|here|any|very|too|much|also|print|design|make|want|need|thanks|thank)$/i;
+
+function weatherPlace(text: string): string {
+  const m = String(text || "").match(PLACE_HEAD);
+  if (!m) return "";
+  const words = [];
+  for (const w of m[1].split(/\s+/)) {
+    if (PLACE_BREAK.test(w.toLowerCase())) break;
+    words.push(w);
+  }
+  return words.join(" ").slice(0, 40).trim();
+}
+
+function geocodeUrl(place: string): string {
+  const clean = String(place || "").replace(/\s+/g, " ").trim().slice(0, 60);
+  if (!clean) return "";
+  return "https://geocoding-api.open-meteo.com/v1/search?name=" + encodeURIComponent(clean) + "&count=1&language=en&format=json";
+}
+
+function forecastUrl(lat: unknown, lon: unknown): string {
+  const la = Number(lat), lo = Number(lon);
+  if (!Number.isFinite(la) || !Number.isFinite(lo)) return "";
+  return "https://api.open-meteo.com/v1/forecast" +
+    `?latitude=${la.toFixed(4)}&longitude=${lo.toFixed(4)}` +
+    "&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m" +
+    "&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=2";
+}
+
+const WMO: Record<number, string> = {
+  0: "clear sky", 1: "mainly clear", 2: "partly cloudy", 3: "overcast",
+  45: "fog", 48: "rime fog",
+  51: "light drizzle", 53: "drizzle", 55: "dense drizzle",
+  56: "freezing drizzle", 57: "dense freezing drizzle",
+  61: "light rain", 63: "rain", 65: "heavy rain",
+  66: "freezing rain", 67: "heavy freezing rain",
+  71: "light snow", 73: "snow", 75: "heavy snow", 77: "snow grains",
+  80: "light rain showers", 81: "rain showers", 82: "violent rain showers",
+  85: "snow showers", 86: "heavy snow showers",
+  95: "thunderstorm", 96: "thunderstorm with hail", 99: "severe thunderstorm with hail",
+};
+
+function wmoText(code: unknown): string {
+  return WMO[Number(code)] || "";
+}
+
+function num(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function formatWeather(geo: unknown, wx: unknown): string {
+  const hit = (geo as { results?: { name?: string; country?: string }[] })?.results?.[0];
+  const cur = (wx as { current?: Record<string, unknown> })?.current;
+  const temp = num(cur?.temperature_2m);
+  const place = [hit?.name, hit?.country].filter(Boolean).join(", ");
+  if (!place || temp === null) return "";
+
+  const bits = [`${temp}°C`];
+  const feels = num(cur?.apparent_temperature);
+  if (feels !== null) bits.push(`feels like ${feels}°C`);
+  const cond = wmoText(cur?.weather_code);
+  if (cond) bits.push(cond);
+  const hum = num(cur?.relative_humidity_2m);
+  if (hum !== null) bits.push(`humidity ${hum}%`);
+  const wind = num(cur?.wind_speed_10m);
+  if (wind !== null) bits.push(`wind ${wind} km/h`);
+
+  let line = `Live weather measured for ${place} (station reading ${String(cur?.time || "recently")} local): ${bits.join(", ")}.`;
+  const daily = (wx as { daily?: Record<string, unknown[]> })?.daily;
+  const days: string[] = (daily?.time as string[]) || [];
+  const highs: unknown[] = (daily?.temperature_2m_max as unknown[]) || [];
+  const lows: unknown[] = (daily?.temperature_2m_min as unknown[]) || [];
+  const label = ["Today", "Tomorrow"];
+  for (let i = 0; i < Math.min(2, days.length); i++) {
+    const hi = num(highs[i]), lo = num(lows[i]);
+    if (hi !== null && lo !== null) line += ` ${label[i]} high ${hi}°C, low ${lo}°C.`;
+  }
+  return line;
+}
+
+function contextBlock(nowMs: number, weather: string): string {
+  const blocks = [clockBlock(nowMs)];
+  const facts = String(weather || "").trim();
+  if (facts) {
+    blocks.push([
+      "LIVE WEATHER READ BY THE SERVER (not from memory)",
+      facts,
+      "Give these figures when asked about this place, and read them as measured data, not your own knowledge. Say which city they belong to.",
+      "For another town you have nothing measured for: say so, offer the general climate of that season as exactly that, and point the visitor at a live source.",
+      "If a figure looks wrong or stale, say so plainly rather than inventing a better one.",
+    ].join("\n"));
+  }
+  return "\n\n" + blocks.join("\n\n") + "\n";
+}
+
 // ─── PROVIDER ERROR SANITISING ───────────────────────────────────────────────
 // Only the log may carry the provider's wording, and never its file references.
 
@@ -405,7 +533,6 @@ function buildEnvelope(
 }
 
 // ─── HANDLER ORCHESTRATION (handler.ts) ───────────────────────────────────────
-
 interface Runtime {
   fetch: typeof fetch;
   env: (key: string) => string | undefined;
@@ -563,6 +690,41 @@ async function fetchCatalog(runtime: Runtime): Promise<unknown[]> {
   return data.items || [];
 }
 
+// The weather rail runs only on a question that is actually about the sky, and it is
+// budgeted: the browser gives up at 25 s and one answer already costs about twelve, so a
+// slow station read must never be the reason a visitor got nothing. An unnamed question
+// reads the studio's own town - the visitor's timezone header is not sent anywhere.
+const DEFAULT_WEATHER_PLACE = "Accra, Ghana";
+const WEATHER_BUDGET_MS = 4000;
+
+async function timedFetch(runtime: Runtime, url: string): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), WEATHER_BUDGET_MS);
+  try {
+    return await runtime.fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function liveWeather(runtime: Runtime, question: string): Promise<string> {
+  if (!isWeatherQuestion(question)) return "";
+  const geoUrl = geocodeUrl(weatherPlace(question) || DEFAULT_WEATHER_PLACE);
+  if (!geoUrl) return "";
+  try {
+    const geoRes = await timedFetch(runtime, geoUrl);
+    if (!geoRes.ok) return "";
+    const geo = await geoRes.json();
+    const fxUrl = forecastUrl(geo?.results?.[0]?.latitude, geo?.results?.[0]?.longitude);
+    if (!fxUrl) return "";
+    const fxRes = await timedFetch(runtime, fxUrl);
+    if (!fxRes.ok) return "";
+    return formatWeather(geo, await fxRes.json());
+  } catch {
+    return "";
+  }
+}
+
 const BRIEF = `You are BrownHub Studio Assistance, answering visitors on brownhub's own website.
 You are also the first person a visitor meets, so talk like one.
 
@@ -691,11 +853,24 @@ RULES YOU MUST KEEP
   it as one conversation: "it", "that", "and for 500 of them" and "how much
   then" all refer to what was said above. Do not repeat an answer already given,
   and do not ask again for something the visitor already told you.
-- Every fact you state comes from BrownHub: its services, this website, ordering, prices,
-  delivery and contact. A greeting, a feeling or an emoji is not a fact request, so answer it as
-  TALK LIKE A PERSON FIRST says. Only a genuinely different subject (homework, sport, politics,
-  another company's product) earns one short friendly line that you only know BrownHub's design
-  work, plus an offer of WhatsApp or the contact form.
+- Answer the world, not only the studio. A date, the time, the weather, a fact, a
+  calculation, what a word means, advice about the visitor's own business - all of it is in
+  scope, and you should be as useful on it as a well-read person. What is fenced is not the
+  topic but the source: a BrownHub fact (a service, a price, a turnaround, an address, a
+  policy, a client, a number about the studio) comes only from this brief and the price list.
+  Never answer about BrownHub from general knowledge.
+- The date, the weekday, the time and the weather are measured by this server and given to you
+  below in TODAY FOR THIS CONVERSATION and, when asked for, LIVE WEATHER. Give them from there.
+  Never answer a date or a time from memory, never say you do not keep track of it, and never
+  say you cannot check the weather. Work out whether the studio is open right now from that
+  instant against the opening hours above - Monday to Saturday, 08:30 to 19:00 in Accra - and
+  say which of the two states it is in plus when it changes.
+- When you are not sure of a general fact, say so in one line and name what you are unsure of.
+  Do not dress a guess as knowledge. On health, law or money, or anything that could hurt
+  someone, answer what you can and send them to a professional who can take responsibility.
+- Never claim BrownHub made, sells or supports something it does not. If a visitor takes a
+  general answer for studio work, correct the assumption in one friendly line - that is not a
+  reason to withhold the answer.
 - Never invent a price, a discount, a timeline, a client, an award, a staff member, a
   policy or a statistic. If the fact is not above and not in the price list, say you are
   not sure and point to a human.
@@ -708,10 +883,10 @@ RULES YOU MUST KEEP
   questions; one or two sentences for small talk. Be direct and friendly, like a studio that
   answers its own phone.
 - Return your response as JSON with fields: answer (string), keywords (array of strings for
-  catalog retrieval), researchNeeded (boolean), researchQuery (string if researchNeeded),
-  estimate (object or null), matches (array of {id, reason}). For a greeting, a thank you, a
+  catalog retrieval), estimate (object or null), matches (array of {id, reason}). For a
+  greeting, a thank you, a
   feeling or any turn that is not about a piece of work, return keywords as an empty array,
-  estimate null, matches empty and researchNeeded false - the chat builds catalog cards out of
+  estimate null and matches empty - the chat builds catalog cards out of
   those fields, and small talk must never drag one in.`;
 
 function conversation(raw: unknown, q: string): { role: string; parts: { text: string }[] }[] {
@@ -833,30 +1008,27 @@ function createHandler(runtime: Runtime): (request: Request) => Promise<Response
       const contents = histTurns.slice(0, -1);
       contents.push({ role: "user", parts });
 
-      const analysisResult = await generate(runtime, key, model, contents, BRIEF);
+      // One call, and it carries everything the answer needs: the studio brief, the server's
+      // own clock, the weather if the question asked for it, and live search for the world
+      // outside the studio. A picture already costs the most time, so the media path goes
+      // without the search tool rather than adding a round to the slowest request there is.
+      const brief = BRIEF + contextBlock(runtime.now(), await liveWeather(runtime, userText));
+      const searchTool = uploaded.length ? undefined : [{ googleSearch: {} }];
+
+      let analysisResult: { text: string; grounding?: unknown };
+      try {
+        analysisResult = await generate(runtime, key, model, contents, brief, searchTool);
+      } catch (err) {
+        if (!searchTool) throw err;
+        analysisResult = await generate(runtime, key, model, contents, brief);
+      }
       const analysis = parseAnalysis(analysisResult.text);
+      const sources = groundingSources(analysisResult.grounding);
 
       let candidates: any[] = [];
       if (analysis.keywords && analysis.keywords.length > 0) {
         const catalog = await fetchCatalog(runtime);
         candidates = selectCandidates(catalog, { keywords: analysis.keywords, inventedIds: analysis.inventedIds });
-      }
-
-      let sources: { title: string; url: string }[] = [];
-      if (analysis.researchNeeded && analysis.researchQuery) {
-        try {
-          const researchResult = await generate(
-            runtime,
-            key,
-            model,
-            [{ role: "user", parts: [{ text: `${LANGUAGE[code] || "English"}: ${analysis.researchQuery}` }] }],
-            BRIEF,
-            [{ googleSearch: {} }]
-          );
-          sources = groundingSources(researchResult.grounding);
-        } catch {
-          sources = [];
-        }
       }
 
       const envelope = buildEnvelope(analysis.answer || "", analysis, candidates, sources);

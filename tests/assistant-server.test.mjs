@@ -619,116 +619,6 @@ test("Catalog metadata fetched only from brownhub283.com", async () => {
   assert.ok(catalogCalls.every(u => u.includes("brownhub283.com")), "Catalog must come from brownhub283.com only");
 });
 
-test("Research runs only when requested and uses grounding metadata", async () => {
-  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
-  
-  let researchCalled = false;
-  
-  const runtime = createFakeRuntime({
-    env: { GEMINI_API_KEY: "test-key", GEMINI_MODEL: "test-model" },
-    onFetch: async (url, options) => {
-      if (url.includes("generateContent")) {
-        const body = JSON.parse(options.body);
-        if (body.tools && body.tools[0].googleSearch) {
-          researchCalled = true;
-          return new Response(JSON.stringify({
-            candidates: [{
-              content: { parts: [{ text: "Research summary" }] },
-              groundingMetadata: {
-                groundingChunks: [
-                  { web: { uri: "https://example.com/design-trends", title: "Design Trends 2026" } },
-                ],
-              },
-            }],
-          }), { status: 200 });
-        }
-        return new Response(JSON.stringify({
-          candidates: [{
-            content: {
-              parts: [{
-                text: JSON.stringify({
-                  answer: "Here are some design ideas.",
-                  researchNeeded: true,
-                  researchQuery: "modern flyer design trends",
-                  matches: [],
-                }),
-              }],
-            },
-          }],
-        }), { status: 200 });
-      }
-      return new Response(JSON.stringify({ error: "not found" }), { status: 404 });
-    },
-  });
-  
-  const handler = createHandler(runtime);
-  const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.13",
-    },
-    body: JSON.stringify({ q: "What are current flyer design trends?", lang: "en", h: [] }),
-  });
-  
-  const res = await handler(req);
-  const data = await res.json();
-  
-  assert.equal(res.status, 200);
-  assert.ok(researchCalled, "Research pass must run when requested");
-  assert.ok(data.sources);
-  assert.equal(data.sources.length, 1);
-  assert.equal(data.sources[0].url, "https://example.com/design-trends");
-});
-
-test("Failed research returns no invented sources", async () => {
-  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
-  
-  const runtime = createFakeRuntime({
-    env: { GEMINI_API_KEY: "test-key", GEMINI_MODEL: "test-model" },
-    onFetch: async (url, options) => {
-      if (url.includes("generateContent")) {
-        const body = JSON.parse(options.body);
-        if (body.tools && body.tools[0].googleSearch) {
-          return new Response(JSON.stringify({ error: "Research unavailable" }), { status: 500 });
-        }
-        return new Response(JSON.stringify({
-          candidates: [{
-            content: {
-              parts: [{
-                text: JSON.stringify({
-                  answer: "I can answer from general knowledge.",
-                  researchNeeded: true,
-                  researchQuery: "design trends",
-                  matches: [],
-                }),
-              }],
-            },
-          }],
-        }), { status: 200 });
-      }
-      return new Response(JSON.stringify({ error: "not found" }), { status: 404 });
-    },
-  });
-  
-  const handler = createHandler(runtime);
-  const req = new Request("https://example.com/functions/v1/brownhub-assistant", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.0.14",
-    },
-    body: JSON.stringify({ q: "What are design trends?", lang: "en", h: [] }),
-  });
-  
-  const res = await handler(req);
-  const data = await res.json();
-  
-  assert.equal(res.status, 200);
-  assert.ok(data.sources);
-  assert.equal(data.sources.length, 0, "No sources when research fails");
-});
-
 // ─── ESTIMATE INTEGRITY ──────────────────────────────────────────────────────
 
 test("Model cannot alter server-built numeric estimate fields", async () => {
@@ -962,12 +852,12 @@ function briefFrom(source) {
   return match[1];
 }
 
-function textRequest(q, extra = {}) {
+function textRequest(q, extra = {}, ip = "10.0.9.9") {
   return new Request("https://example.com/functions/v1/brownhub-assistant", {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "origin": "https://www.brownhub283.com", "cf-connecting-ip": "10.0.9.9",
+      "origin": "https://www.brownhub283.com", "cf-connecting-ip": ip,
     },
     body: JSON.stringify({ q, lang: "en", h: [], ...extra }),
   });
@@ -1041,4 +931,243 @@ test("blank text with no file is still refused", async () => {
 
   assert.equal(res.status, 400);
   assert.ok(!capture.asked, "nothing to answer must not cost a model call");
+});
+
+// ─── A CLOCK AND LIVE WEATHER MEASURED BY THE SERVER ─────────────────────────
+// The assistant used to answer "I do not keep track of the date here" and "I cannot
+// check the weather for you". Both were true of the brief and false of the server:
+// the server holds the instant and can read a weather station. The fix is to hand
+// both over inside the one call it already makes — a live answer costs about twelve
+// of the browser's twenty-five seconds, so there is no second call to spend.
+
+const WX_NOW = Date.UTC(2026, 10, 17, 14, 32, 0); // Tuesday 17 November 2026, 14:32 GMT
+
+const GEO_KUMASI = { results: [{ name: "Kumasi", country: "Ghana", latitude: 6.6885, longitude: -1.6244 }] };
+const WX_KUMASI = {
+  current: {
+    time: "2026-11-17T14:15", temperature_2m: 31.4, apparent_temperature: 36.1,
+    relative_humidity_2m: 66, weather_code: 3, wind_speed_10m: 11.2,
+  },
+  daily: {
+    time: ["2026-11-17", "2026-11-18"],
+    temperature_2m_max: [32.1, 31.8],
+    temperature_2m_min: [24.2, 24.0],
+  },
+};
+
+function worldRuntime(capture, opts = {}) {
+  return createFakeRuntime({
+    env: { GEMINI_API_KEY: "test-key", GEMINI_MODEL: "test-model" },
+    now: WX_NOW,
+    onFetch: async (url, options) => {
+      if (url.includes("geocoding-api.open-meteo.com")) {
+        capture.geo = (capture.geo || []).concat(url);
+        if (opts.geoDown) return new Response("unavailable", { status: 503 });
+        return new Response(JSON.stringify(GEO_KUMASI), { status: 200 });
+      }
+      if (url.includes("api.open-meteo.com")) {
+        capture.wx = (capture.wx || []).concat(url);
+        if (opts.wxDown) return new Response("unavailable", { status: 503 });
+        return new Response(JSON.stringify(WX_KUMASI), { status: 200 });
+      }
+      if (url.includes("assistant-catalog.json")) {
+        return new Response(JSON.stringify({
+          version: 1,
+          items: [{ id: "flyer", name: "Flyer", category: "print", description: "Event flyers", url: "catalog.html?q=Flyer" }],
+        }), { status: 200 });
+      }
+      if (url.includes("upload/v1beta/files") && options.method === "POST") {
+        if (options.headers["X-Goog-Upload-Command"] === "start") {
+          return new Response(JSON.stringify({ file: { name: "files/media-1" } }), {
+            status: 200,
+            headers: { "X-Goog-Upload-URL": "https://upload.example.com/upload" },
+          });
+        }
+      }
+      if (url.includes("upload.example.com/upload")) {
+        return new Response(JSON.stringify({ file: { name: "files/media-1", state: "ACTIVE" } }), { status: 200 });
+      }
+      if (url.includes("files/media-1")) {
+        return options.method === "DELETE"
+          ? new Response(null, { status: 200 })
+          : new Response(JSON.stringify({ state: "ACTIVE" }), { status: 200 });
+      }
+      if (url.includes("generateContent")) {
+        const body = JSON.parse(options.body);
+        capture.model = (capture.model || []).concat(body);
+        if (body.tools && opts.searchDown) {
+          return new Response(JSON.stringify({ error: { code: 503, message: "grounding unavailable" } }), { status: 503 });
+        }
+        return new Response(JSON.stringify({
+          candidates: [{
+            content: {
+              parts: [{ text: JSON.stringify({ answer: opts.answer || "Noted.", keywords: opts.keywords || [] }) }],
+            },
+            ...(opts.sources
+              ? { groundingMetadata: { groundingChunks: [{ web: { uri: "https://example.com/design-trends", title: "Design Trends 2026" } }] } }
+              : {}),
+          }],
+        }), { status: 200 });
+      }
+      return new Response(JSON.stringify({ error: "not found" }), { status: 404 });
+    },
+  });
+}
+
+function wire(capture) {
+  return capture.model[0].systemInstruction.parts[0].text;
+}
+
+function attachedRequest(q, ip) {
+  const form = new FormData();
+  form.append("q", q);
+  form.append("lang", "en");
+  form.append("h", "[]");
+  form.append("files", new Blob([createPngBytes()], { type: "image/png" }), "sky.png");
+  return new Request("https://example.com/functions/v1/brownhub-assistant", {
+    method: "POST",
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": ip },
+    body: form,
+  });
+}
+
+test("an ordinary answer carries the server clock and never opens the weather rail", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(worldRuntime(capture))(textRequest("What does BrownHub do?", {}, "10.0.11.1"));
+  const data = await res.json();
+
+  assert.equal(res.status, 200, JSON.stringify(data));
+  assert.equal(capture.model.length, 1, "the clock must not cost a second model call");
+  const brief = wire(capture);
+  assert.match(brief, /TODAY FOR THIS CONVERSATION/, brief);
+  assert.match(brief, /2026-11-17/, brief);
+  assert.match(brief, /Tuesday/, brief);
+  assert.match(brief, /14:32 GMT/, brief);
+  assert.ok(!capture.geo, "a question that is not about weather must not hit the geocoder");
+  assert.ok(!capture.wx, "a question that is not about weather must not hit the forecaster");
+});
+
+test("a weather question is answered from a station reading, in the same one call", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(worldRuntime(capture, { answer: "It is 31.4°C in Kumasi and overcast." }))(
+    textRequest("what is the weather in Kumasi right now?", {}, "10.0.11.2")
+  );
+
+  assert.equal(res.status, 200);
+  assert.equal(capture.model.length, 1, "measured facts ride the one call, they are not a second one");
+  assert.match(capture.geo[0], /name=Kumasi/, capture.geo[0]);
+  assert.match(capture.wx[0], /latitude=6\.6885/, capture.wx[0]);
+  const brief = wire(capture);
+  assert.match(brief, /LIVE WEATHER READ BY THE SERVER/, brief);
+  assert.match(brief, /Kumasi, Ghana/, brief);
+  assert.match(brief, /31\.4/, brief);
+  assert.match(brief, /32\.1/, brief);
+});
+
+test("a weather question that names no city reads the studio's own town", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  await createHandler(worldRuntime(capture))(textRequest("is it going to rain today?", {}, "10.0.11.3"));
+
+  assert.match(capture.geo[0], /name=Accra/, capture.geo[0]);
+  assert.match(wire(capture), /LIVE WEATHER READ BY THE SERVER/, wire(capture));
+});
+
+test("a dead weather rail gives no figures at all rather than invented ones", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+
+  for (const [opts, ip] of [[{ geoDown: true }, "10.0.11.4"], [{ wxDown: true }, "10.0.11.5"]]) {
+    const capture = {};
+    const res = await createHandler(worldRuntime(capture, { ...opts, answer: "I cannot read the sky right now." }))(
+      textRequest("what is the temperature in Kumasi?", {}, ip)
+    );
+    const data = await res.json();
+
+    assert.equal(res.status, 200, JSON.stringify(data));
+    assert.equal(capture.model.length, 1, "a failed rail must not stall the answer");
+    assert.ok(!/LIVE WEATHER READ BY THE SERVER/.test(wire(capture)), "no weather header without measured numbers");
+    assert.match(wire(capture), /TODAY FOR THIS CONVERSATION/, "the clock still ships");
+    assert.match(data.answer, /cannot read the sky/);
+  }
+});
+
+test("the clock block is not the visitor's clock", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  await createHandler(worldRuntime(capture))(textRequest("what time is it in Accra?", {}, "10.0.11.6"));
+
+  // A visitor's own timezone header must not decide the answer: the studio's hours are Accra's.
+  assert.match(wire(capture), /Time in Accra: 14:32 GMT/);
+});
+
+test("the brief answers the world but still cannot invent a studio fact", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  await createHandler(worldRuntime(capture))(textRequest("What does BrownHub do?", {}, "10.0.11.7"));
+
+  const brief = wire(capture);
+  assert.match(brief, /Answer the world, not only the studio\./, "the brief must open general questions up");
+  assert.match(brief, /Never invent a price/, "the money fence stays");
+  assert.ok(!/Only a genuinely different subject/.test(brief), "the old deflect-the-world rule must be gone");
+  assert.ok(!/Answer only about BrownHub/.test(brief), "scope must govern facts, not feelings");
+});
+
+test("the answer and its sources now come from one call", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(worldRuntime(capture, {
+    answer: "Current flyer trends lean on big type and one strong image.",
+    keywords: ["flyer"],
+    sources: true,
+  }))(textRequest("What are current flyer design trends?", { researchNeeded: true, researchQuery: "flyer trends 2026" }, "10.0.11.8"));
+  const data = await res.json();
+
+  assert.equal(res.status, 200);
+  assert.equal(capture.model.length, 1, "the second research call is retired");
+  assert.ok(capture.model[0].tools && capture.model[0].tools[0].googleSearch, "the one call must carry live search");
+  assert.equal(data.sources.length, 1);
+  assert.equal(data.sources[0].url, "https://example.com/design-trends");
+  assert.match(data.answer, /big type/);
+});
+
+test("if the provider refuses live search, the assistant retries once without it", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(worldRuntime(capture, { answer: "The capital of Japan is Tokyo.", searchDown: true }))(
+    textRequest("What is the capital of Japan?", {}, "10.0.11.9")
+  );
+  const data = await res.json();
+
+  assert.equal(res.status, 200, JSON.stringify(data));
+  assert.equal(capture.model.length, 2, "one search attempt and one plain retry, no more");
+  assert.ok(capture.model[0].tools, "the first attempt asked for live search");
+  assert.ok(!capture.model[1].tools, "the retry must not ask again");
+  assert.match(data.answer, /Tokyo/);
+  assert.deepEqual(data.sources, []);
+});
+
+test("an attached picture keeps its search off", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(worldRuntime(capture, { answer: "This is a flyer design." }))(
+    attachedRequest("What is this?", "10.0.11.10")
+  );
+
+  assert.equal(res.status, 200);
+  assert.equal(capture.model.length, 1, "media already costs the most time; it must not add a search round");
+  assert.ok(!capture.model[0].tools, "the media call goes without live search");
+  assert.match(wire(capture), /TODAY FOR THIS CONVERSATION/, "it still carries the clock");
+});
+
+test("the clock is tied to the studio's own opening hours", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  await createHandler(worldRuntime(capture))(textRequest("are you open right now?", {}, "10.0.11.11"));
+
+  const brief = wire(capture);
+  assert.match(brief, /Opening hours Monday to Saturday/, "the hours stay the studio's own facts");
+  assert.match(brief, /Tuesday/, "the weekday the hours are judged against comes from the server");
+  assert.match(brief, /whether the studio is open/i, "the brief must tell it to decide open or closed from the clock block");
 });
