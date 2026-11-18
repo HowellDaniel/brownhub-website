@@ -4,9 +4,14 @@
 // business, and a visitor who right-clicks it downloads a blur.
 //
 // So the large copies come out of the vector master instead of out of the small file. This
-// holds the published facts: the PNGs exist at the sizes Google asks for, the page that
-// offers them names them, the Organization node points a crawler at the square one, and the
-// master plus the tool that cut it travel in the repo so the next person can re-cut it.
+// holds the published facts: the PNGs exist at the sizes Google asks for, the image sitemap
+// declares them, the Organization node points a crawler at the square one, and the master
+// plus the tool that cut it travel in the repo so the next person can re-cut it.
+//
+// They are deliberately NOT painted on a page any more: 6d6ec36 took the Brand assets band
+// off about.html, because the mark belongs in Google's results rather than on his own site.
+// So nothing here asks about.html to link or show them — that would be asserting a feature
+// the owner deleted on purpose, and the sitemap test below is what replaced it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
@@ -50,34 +55,6 @@ test('the large copies come from the vector master, not from an upscale of the n
   const config = read('_config.yml');
   assert.match(config, /^exclude:\n(?:\s+-\s+".*"\n)*\s+-\s+"tools"\n/m,
     'tools/ must stay out of the published build — it holds the vector master and the cutter');
-});
-
-test('a page offers the files for download and says what they are', () => {
-  const about = read('about.html');
-  assert.match(about, /<h2[^>]*>Brand assets<\/h2>/, 'nothing names the band a crawler can key on');
-  for (const file of [SMALL, LARGE]) {
-    const link = new RegExp(`<a [^>]*href="${file}"[^>]*>`);
-    assert.ok(link.test(about), `${file} is not linked from about.html`);
-    const tag = about.match(new RegExp(`<a [^>]*href="${file}"[^>]*>`))?.[0] || '';
-    assert.match(tag, /download/, `${file} is offered without the download attribute`);
-  }
-  // The picture itself has to be in the document, not only a link: an image a crawler can
-  // fetch from a rendered page is what puts the logo in image search results.
-  assert.match(about, new RegExp(`<img[^>]*src="${LARGE}"`), 'the logo is never shown on the page');
-});
-
-test('the box the download band reserves matches the file it paints', () => {
-  const about = read('about.html');
-  for (const file of [SMALL, LARGE]) {
-    const head = pngHead(join(ROOT, file));
-    for (const img of about.matchAll(new RegExp(`<img[^>]*src="${file}"[^>]*>`, 'g'))) {
-      const w = Number(img[0].match(/width="(\d+)"/)?.[1]);
-      const h = Number(img[0].match(/height="(\d+)"/)?.[1]);
-      assert.ok(Number.isFinite(w) && Number.isFinite(h), `${file} is shown with no reserved box`);
-      assert.ok(Math.abs(w / h - head.width / head.height) < 0.02,
-        `${file} is painted at ${w}x${h}, which is not its own ${head.width}x${head.height}`);
-    }
-  }
 });
 
 test('the Organization node hands Google the square mark, not the nav thumbnail', () => {
