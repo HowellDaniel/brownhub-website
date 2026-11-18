@@ -1171,3 +1171,294 @@ test("the clock is tied to the studio's own opening hours", async () => {
   assert.match(brief, /Tuesday/, "the weekday the hours are judged against comes from the server");
   assert.match(brief, /whether the studio is open/i, "the brief must tell it to decide open or closed from the clock block");
 });
+
+// ─── A SECOND PROVIDER WHEN THE FIRST REFUSES ─────────────────────────────────
+// The assistant had exactly one way to answer: Gemini. Task #26 still has the Gemini key
+// unrotated, and a rotated, disabled or quota-empty key takes the whole chat panel dark
+// even though the studio's own question is trivial. So OpenAI waits behind it as a second
+// opinion. Three rules keep the fallback honest:
+//   1. It only runs on a refusal that came back FAST. The browser gives up at 25 s and a
+//      Gemini attempt already costs about twelve, so a spent timeout cannot buy a try.
+//   2. It never takes a document or a clip. Those reach the model through Gemini's Files
+//      API, which OpenAI has no equivalent for; answering a PDF the fallback never saw
+//      would be worse than the plain error the visitor gets today.
+//   3. It is invisible unless OPENAI_API_KEY is installed, so nothing changes until the
+//      owner puts the key in.
+
+function jsonAnswer(text) {
+  return JSON.stringify({ answer: text, keywords: [], matches: [], estimate: null });
+}
+
+function secondOpinionRuntime(capture, opts = {}) {
+  const env = {};
+  if (!opts.noGeminiKey) env.GEMINI_API_KEY = "test-key";
+  if (!opts.noOpenAIKey) env.OPENAI_API_KEY = "test-openai-key";
+  if (opts.openaiModel) env.OPENAI_MODEL = opts.openaiModel;
+
+  return createFakeRuntime({
+    env,
+    onFetch: async (url, options) => {
+      if (url.includes("assistant-catalog.json")) {
+        return new Response(JSON.stringify({ version: 1, items: [] }), { status: 200 });
+      }
+      if (url.includes("upload/v1beta/files") && options && options.method === "POST") {
+        if (options.headers["X-Goog-Upload-Command"] === "start") {
+          return new Response(JSON.stringify({ file: { name: "files/media-1" } }), {
+            status: 200,
+            headers: { "X-Goog-Upload-URL": "https://upload.example.com/upload" },
+          });
+        }
+      }
+      if (url.includes("upload.example.com/upload")) {
+        return new Response(JSON.stringify({ file: { name: "files/media-1", state: "ACTIVE" } }), { status: 200 });
+      }
+      if (url.includes("generativelanguage.googleapis.com/v1beta/files/")) {
+        return options.method === "DELETE"
+          ? new Response(null, { status: 200 })
+          : new Response(JSON.stringify({ state: "ACTIVE" }), { status: 200 });
+      }
+      if (url.includes(":generateContent")) {
+        capture.model = (capture.model || []).concat(JSON.parse(options.body));
+        if (opts.geminiStatus === 0) throw new Error("socket hung up");
+        const message = opts.geminiMessage || "Model was stopped.";
+        return new Response(JSON.stringify({
+          error: { code: opts.geminiStatus || 401, message, status: "UNAVAILABLE" },
+        }), { status: opts.geminiStatus || 401 });
+      }
+      if (url.includes("chat/completions")) {
+        capture.chat = (capture.chat || []).concat({ url, body: JSON.parse(options.body), headers: options.headers });
+        if (opts.openaiStatus) {
+          return new Response(JSON.stringify({
+            error: { message: opts.openaiMessage || "The other provider is down.", type: "server_error" },
+          }), { status: opts.openaiStatus });
+        }
+        return new Response(JSON.stringify({
+          choices: [{ message: { content: jsonAnswer(opts.answer || "Answered by the second provider.") } }],
+        }), { status: 200 });
+      }
+      return new Response(JSON.stringify({ error: "not found" }), { status: 404 });
+    },
+  });
+}
+
+function requestWithFile(q, bytes, mime, filename, ip) {
+  const form = new FormData();
+  form.append("q", q);
+  form.append("lang", "en");
+  form.append("h", "[]");
+  form.append("files", new Blob([bytes], { type: mime }), filename);
+  return new Request("https://example.com/functions/v1/brownhub-assistant", {
+    method: "POST",
+    headers: { "origin": "https://www.brownhub283.com", "cf-connecting-ip": ip },
+    body: form,
+  });
+}
+
+const GEMINI_DOWN = { geminiStatus: 503, geminiMessage: "The model is overloaded." };
+
+test("a dead Gemini key is answered by the second provider, not by an error", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(secondOpinionRuntime(capture, GEMINI_DOWN))(
+    textRequest("How much is a flyer?", {}, "10.0.20.1")
+  );
+  const data = await res.json();
+
+  assert.equal(res.status, 200, JSON.stringify(data));
+  assert.equal(data.answer, "Answered by the second provider.");
+  assert.equal(capture.chat.length, 1, "the fallback is one call, not a retry loop");
+});
+
+test("the second provider carries the same brief as the first", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  await createHandler(secondOpinionRuntime(capture, GEMINI_DOWN))(textRequest("how are you?", {}, "10.0.20.2"));
+
+  const body = capture.chat[0].body;
+  const brief = JSON.stringify(body);
+  assert.match(brief, /Opening hours Monday to Saturday/, "the studio's facts must not change with the provider");
+  assert.match(brief, /TODAY FOR THIS CONVERSATION/, "the fallback still gets the server clock");
+  assert.equal(body.temperature, 0.3, "the same steadiness the Gemini path asks for");
+});
+
+test("the fallback puts the question last and in the visitor's language", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  await createHandler(secondOpinionRuntime(capture, GEMINI_DOWN))(textRequest("¿Cuánto cuesta?", { lang: "es" }, "10.0.20.3"));
+
+  const messages = capture.chat[0].body.messages;
+  assert.equal(messages[0].role, "system", "the brief goes in the system turn");
+  assert.equal(messages[messages.length - 1].role, "user", "the visitor's turn must be the last one");
+  assert.match(messages[messages.length - 1].content, /Answer in Spanish/, "language routing must survive the switch");
+});
+
+test("a missing Gemini key does not switch the assistant off when the other is present", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(secondOpinionRuntime(capture, { noGeminiKey: true }))(
+    textRequest("What does BrownHub do?", {}, "10.0.20.4")
+  );
+  const data = await res.json();
+
+  assert.equal(res.status, 200, JSON.stringify(data));
+  assert.ok(capture.chat && capture.chat.length === 1, "it must go straight to the provider it has a key for");
+  assert.ok(!capture.model, "with no Gemini key there is nothing to call Gemini with");
+});
+
+test("with no second key installed, nothing reaches OpenAI", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const logs = [];
+  const capture = {};
+  const res = await withLoggedErrors(logs, async () =>
+    createHandler(secondOpinionRuntime(capture, { ...GEMINI_DOWN, noOpenAIKey: true }))(
+      textRequest("How much is a flyer?", {}, "10.0.20.5")
+    )
+  );
+  const data = await res.json();
+
+  assert.equal(res.status, 502, JSON.stringify(data));
+  assert.ok(!capture.chat, "an uninstalled key must not open a door");
+  assert.equal(data.error, "The assistant is not answering right now.", "the message a visitor gets today, unchanged");
+});
+
+test("a picture travels to the second provider as itself", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(secondOpinionRuntime(capture, GEMINI_DOWN))(
+    requestWithFile("What is this?", createPngBytes(), "image/png", "sky.png", "10.0.20.6")
+  );
+
+  assert.equal(res.status, 200);
+  const content = capture.chat[0].body.messages[capture.chat[0].body.messages.length - 1].content;
+  const image = content.find((p) => p.type === "image_url");
+  assert.ok(image, "the picture must arrive as an image part, not a description of one");
+  assert.match(image.image_url.url, /^data:image\/png;base64,/, "an inline data URI, no file host involved");
+  assert.equal(image.image_url.url.split(",")[1], btoa(String.fromCharCode(...createPngBytes())), "the visitor's own bytes");
+});
+
+test("a document is never handed to a provider that cannot read it", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const pdf = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x37]);
+  const res = await createHandler(secondOpinionRuntime(capture, GEMINI_DOWN))(
+    requestWithFile("Summarise this brief", pdf, "application/pdf", "brief.pdf", "10.0.20.7")
+  );
+
+  assert.equal(res.status, 502);
+  assert.ok(!capture.chat, "a fallback that cannot see the PDF must not pretend to have read it");
+});
+
+test("a clip is never handed to a provider that cannot play it", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(secondOpinionRuntime(capture, GEMINI_DOWN))(
+    requestWithFile("What happens in this video?", createMp4Bytes(), "video/mp4", "press.mp4", "10.0.20.8")
+  );
+
+  assert.equal(res.status, 502);
+  assert.ok(!capture.chat, "no video on this provider means no answer about the video");
+});
+
+test("a Gemini answer already spent is not answered twice", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  // A clock that jumps forward while the Gemini call is in flight: the browser's 25 s is
+  // gone, so a second provider call would only guarantee the visitor gets nothing twice.
+  let ticks = 0;
+  const runtime = secondOpinionRuntime(capture, GEMINI_DOWN);
+  runtime.now = () => (capture.chat ? 60_000 : ++ticks * 20_000);
+  const res = await createHandler(runtime)(textRequest("How much is a flyer?", {}, "10.0.20.9"));
+  const data = await res.json();
+
+  assert.equal(res.status, 502, JSON.stringify(data));
+  assert.ok(!capture.chat, "there is no time left for a second provider");
+});
+
+test("both providers down is still an honest answer", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(secondOpinionRuntime(capture, {
+    ...GEMINI_DOWN, openaiStatus: 503, openaiMessage: "The other provider is also down.",
+  }))(textRequest("How much is a flyer?", {}, "10.0.20.10"));
+  const data = await res.json();
+
+  assert.equal(res.status, 502);
+  assert.equal(data.error, "The assistant is not answering right now.");
+  assert.equal(capture.chat.length, 1, "one fallback try, then stop");
+  assert.ok(!JSON.stringify(data).includes("test-openai-key"), "the visitor must never see a key");
+});
+
+test("the second provider's key cannot reach the log", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const logs = [];
+  const capture = {};
+  const res = await withLoggedErrors(logs, async () =>
+    createHandler(secondOpinionRuntime(capture, {
+      geminiStatus: 401, geminiMessage: "API key not valid. Pass a valid API key. AIzaSyDUMMYDUMMYDUMMY1234567",
+      openaiStatus: 401, openaiMessage: "Incorrect API key provided: sk-proj-DUMMYDUMMYDUMMY1234567890. You can find your key at https://platform.openai.com/api-keys.",
+    }))(textRequest("How much is a flyer?", {}, "10.0.20.11"))
+  );
+
+  const text = logs.join(" ");
+  assert.ok(!text.includes("sk-proj-DUMMYDUMMYDUMMY1234567890"), "an OpenAI key must never reach the log: " + text);
+  assert.ok(!text.includes("AIzaSyDUMMYDUMMYDUMMY1234567"), "a Gemini key must never reach the log: " + text);
+  assert.ok(!text.includes("test-openai-key"), "the installed key must not be echoed: " + text);
+  assert.equal(res.status, 500, "a rejected key on both providers is what it was before: a 500, not a new code");
+});
+
+test("the fallback keeps the visitor's history", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  await createHandler(secondOpinionRuntime(capture, GEMINI_DOWN))(
+    textRequest("and the print?", { h: [{ role: "user", text: "I need a flyer" }, { role: "model", text: "For what event?" }] }, "10.0.20.12")
+  );
+
+  const roles = capture.chat[0].body.messages.map((m) => m.role);
+  assert.deepEqual(roles, ["system", "user", "assistant", "user"], "the thread must carry over the provider switch");
+});
+
+test("a live-search answer loses its citations but not its reply", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(secondOpinionRuntime(capture, GEMINI_DOWN))(
+    textRequest("what is trending in design this year?", {}, "10.0.20.13")
+  );
+  const data = await res.json();
+
+  assert.equal(res.status, 200, JSON.stringify(data));
+  assert.deepEqual(data.sources, [], "this provider has no search grounding to report");
+});
+
+function withLoggedErrors(logs, run) {
+  const realError = console.error;
+  console.error = (...args) => { logs.push(args.join(" ")); };
+  return run().finally(() => { console.error = realError; });
+}
+
+// The brief has had a parity test since 2026-11-07 because index.ts — the file pasted into
+// Supabase — is a hand-copied duplicate of handler.ts plus core.ts. Everything else was
+// fair game to drift, and a fallback that only exists in the tested module is a fallback
+// nobody gets. These two cut the same span out of both files and compare them.
+function spanFrom(source, start, end) {
+  const text = readFileSync(new URL(source, import.meta.url), "utf8");
+  const from = text.indexOf(start);
+  assert.ok(from >= 0, source + " is missing " + start);
+  const to = text.indexOf(end, from);
+  assert.ok(to > from, source + " is missing " + end + " after " + start);
+  return text.slice(from, to);
+}
+
+const DEPLOYED = "../supabase/functions/brownhub-assistant/index.ts";
+const TESTED = "../supabase/functions/brownhub-assistant/handler.ts";
+
+test("the deployed bundle carries the second provider's adapter byte for byte", () => {
+  const live = spanFrom(DEPLOYED, "// ─── THE SECOND PROVIDER", "async function fetchCatalog(");
+  const tested = spanFrom(TESTED, "// ─── THE SECOND PROVIDER", "async function fetchCatalog(");
+  assert.equal(tested, live, "the deployed adapter must match the tested one byte for byte");
+});
+
+test("the deployed bundle makes the same fallback call as the tested handler", () => {
+  const live = spanFrom(DEPLOYED, "    const altModel", "      const sources = groundingSources");
+  const tested = spanFrom(TESTED, "    const altModel", "      const sources = groundingSources");
+  assert.equal(tested, live, "the deployed gate must match the tested gate byte for byte");
+});

@@ -389,6 +389,7 @@ export function sanitizeProviderError(raw: string): string {
     .replace(/files\/[A-Za-z0-9_-]+/g, "[file]")
     .replace(/AIza[A-Za-z0-9_-]{15,}/g, "[key]")
     .replace(/sk_(?:live|test)_[A-Za-z0-9]+/g, "[key]")
+    .replace(/\bsk-[A-Za-z0-9_-]{20,}/g, "[key]")
     .replace(/\s+/g, " ")
     .trim();
   return (clean || "no reason returned").slice(0, MAX_PROVIDER_REASON);

@@ -11,6 +11,9 @@
 //   2. Select all in the editor, paste this file, Deploy updates.
 //   3. Edge Functions -> Secrets -> GEMINI_API_KEY is already stored; only
 //      GEMINI_MODEL is optional, and it defaults to gemini-3.5-flash-lite.
+//      OPENAI_API_KEY is the second provider's key and is optional: without it
+//      nothing changes, with it ChatGPT answers when Gemini refuses a question
+//      it can still read in time. OPENAI_MODEL is optional too, gpt-4o-mini.
 // "Verify JWT" is left ON and works, because the site sends the publishable key,
 // which Supabase accepts for it. The slug cannot be renamed later: it is taken
 // from the name field on the create page, before anything is typed into it.
@@ -395,6 +398,7 @@ function sanitizeProviderError(raw: string): string {
     .replace(/files\/[A-Za-z0-9_-]+/g, "[file]")
     .replace(/AIza[A-Za-z0-9_-]{15,}/g, "[key]")
     .replace(/sk_(?:live|test)_[A-Za-z0-9]+/g, "[key]")
+    .replace(/\bsk-[A-Za-z0-9_-]{20,}/g, "[key]")
     .replace(/\s+/g, " ")
     .trim();
   return (clean || "no reason returned").slice(0, MAX_PROVIDER_REASON);
@@ -683,6 +687,78 @@ async function generate(
   return { text, grounding: data?.candidates?.[0]?.groundingMetadata };
 }
 
+// ─── THE SECOND PROVIDER ─────────────────────────────────────────────────────
+// One call is the whole budget: the browser gives up at 25 s and a live answer already
+// costs about twelve, so ChatGPT is never a second opinion — only a second chance. It
+// runs when Gemini refused rather than when it was slow, and it reads the same brief,
+// so the studio's prices, hours and catalog stay the server's facts under either key.
+
+const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
+const FALLBACK_GRACE_MS = 9_000;
+
+function toBase64(bytes: Uint8Array): string {
+  let binary = "";
+  const CHUNK = 0x8000;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + CHUNK)));
+  }
+  return btoa(binary);
+}
+
+function openAIMessages(
+  history: { role: string; parts: unknown[] }[],
+  question: string,
+  files: { kind: string; mime: string; bytes: Uint8Array }[]
+): unknown[] {
+  const messages = history.map((turn) => ({
+    role: turn.role === "model" ? "assistant" : "user",
+    content: (turn.parts as { text?: string }[]).map((p) => p.text || "").join("\n"),
+  }));
+  if (files.length === 0) {
+    messages.push({ role: "user", content: question });
+    return messages;
+  }
+  messages.push({
+    role: "user",
+    content: [
+      { type: "text", text: question },
+      ...files.map((f) => ({
+        type: "image_url",
+        image_url: { url: `data:${f.mime};base64,${toBase64(f.bytes)}` },
+      })),
+    ],
+  });
+  return messages;
+}
+
+async function generateOpenAI(
+  runtime: Runtime,
+  key: string,
+  model: string,
+  messages: unknown[],
+  systemInstruction: string
+): Promise<{ text: string; grounding?: unknown }> {
+  const res = await runtime.fetch(OPENAI_URL, {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: "Bearer " + key },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: "system", content: systemInstruction }].concat(messages),
+      temperature: 0.3,
+      max_tokens: 800,
+    }),
+  });
+  if (!res.ok) {
+    let raw = "";
+    try { raw = await res.text(); } catch { /* no body to read */ }
+    throw new Error("generate-" + res.status + " " + sanitizeProviderError(raw));
+  }
+  const data = await res.json();
+  const text = String(data?.choices?.[0]?.message?.content || "").trim();
+  if (!text) throw new Error("empty-response");
+  return { text };
+}
+
 async function fetchCatalog(runtime: Runtime): Promise<unknown[]> {
   const res = await runtime.fetch("https://www.brownhub283.com/data/assistant-catalog.json");
   if (!res.ok) throw new Error("catalog-" + res.status);
@@ -923,7 +999,8 @@ function createHandler(runtime: Runtime): (request: Request) => Promise<Response
     if (!allowed(req.headers.get("origin"))) return json({ error: "off" }, 403);
 
     const key = runtime.env("GEMINI_API_KEY") || "";
-    if (!key) return json({ error: "The studio has not switched the assistant on yet." }, 500);
+    const altKey = runtime.env("OPENAI_API_KEY") || "";
+    if (!key && !altKey) return json({ error: "The studio has not switched the assistant on yet." }, 500);
 
     const ip = (req.headers.get("cf-connecting-ip") || req.headers.get("x-forwarded-for") || "unknown")
       .split(",")[0]
@@ -988,39 +1065,60 @@ function createHandler(runtime: Runtime): (request: Request) => Promise<Response
       bn: "Bengali", ta: "Tamil", hi: "Hindi", ur: "Urdu"
     };
     const model = runtime.env("GEMINI_MODEL") || "gemini-3.5-flash-lite";
+    const altModel = runtime.env("OPENAI_MODEL") || "gpt-4o-mini";
 
     const uploaded: { name: string; uri: string }[] = [];
     try {
-      for (const file of validated) {
-        const ref = await uploadFile(runtime, key, file.name, file.mime, file.bytes);
-        uploaded.push(ref);
-        await waitActive(runtime, key, ref.name);
-      }
-
       const userText = q || "Please identify and analyse the attached file.";
       const prompt = `Answer in ${LANGUAGE[code] || "English"}. ${userText}`;
-      const parts: unknown[] = [{ text: prompt }];
-      uploaded.forEach((ref, i) => {
-        parts.push({ fileData: { mimeType: validated[i].mime, fileUri: ref.uri } });
-      });
-
       const histTurns = conversation(history, "");
-      const contents = histTurns.slice(0, -1);
-      contents.push({ role: "user", parts });
-
-      // One call, and it carries everything the answer needs: the studio brief, the server's
-      // own clock, the weather if the question asked for it, and live search for the world
-      // outside the studio. A picture already costs the most time, so the media path goes
-      // without the search tool rather than adding a round to the slowest request there is.
-      const brief = BRIEF + contextBlock(runtime.now(), await liveWeather(runtime, userText));
-      const searchTool = uploaded.length ? undefined : [{ googleSearch: {} }];
+      const startedAt = runtime.now();
+      const brief = BRIEF + contextBlock(startedAt, await liveWeather(runtime, userText));
 
       let analysisResult: { text: string; grounding?: unknown };
       try {
-        analysisResult = await generate(runtime, key, model, contents, brief, searchTool);
-      } catch (err) {
-        if (!searchTool) throw err;
-        analysisResult = await generate(runtime, key, model, contents, brief);
+        if (!key) throw new Error("no-gemini-key");
+
+        for (const file of validated) {
+          const ref = await uploadFile(runtime, key, file.name, file.mime, file.bytes);
+          uploaded.push(ref);
+          await waitActive(runtime, key, ref.name);
+        }
+
+        const parts: unknown[] = [{ text: prompt }];
+        uploaded.forEach((ref, i) => {
+          parts.push({ fileData: { mimeType: validated[i].mime, fileUri: ref.uri } });
+        });
+        const contents = histTurns.slice(0, -1);
+        contents.push({ role: "user", parts });
+
+        // One call, and it carries everything the answer needs: the studio brief, the server's
+        // own clock, the weather if the question asked for it, and live search for the world
+        // outside the studio. A picture already costs the most time, so the media path goes
+        // without the search tool rather than adding a round to the slowest request there is.
+        const searchTool = uploaded.length ? undefined : [{ googleSearch: {} }];
+        try {
+          analysisResult = await generate(runtime, key, model, contents, brief, searchTool);
+        } catch (err) {
+          if (!searchTool) throw err;
+          analysisResult = await generate(runtime, key, model, contents, brief);
+        }
+      } catch (gemErr) {
+        // ChatGPT answers only when there is still time to say anything and something it can
+        // actually read. A document or a clip reaches a model through Gemini's Files API, and
+        // this provider has no equivalent — so it would be inventing the attachment rather
+        // than answering it. A refusal costs under two seconds; a spent timeout costs all
+        // twenty-five, and no second provider can fit inside what the first one used up.
+        const spent = runtime.now() - startedAt;
+        const readable = validated.every((f) => f.kind === "image");
+        if (!altKey || spent > FALLBACK_GRACE_MS || !readable) throw gemErr;
+        analysisResult = await generateOpenAI(
+          runtime,
+          altKey,
+          altModel,
+          openAIMessages(histTurns.slice(0, -1), prompt, validated),
+          brief
+        );
       }
       const analysis = parseAnalysis(analysisResult.text);
       const sources = groundingSources(analysisResult.grounding);

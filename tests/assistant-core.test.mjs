@@ -539,3 +539,28 @@ test("contextBlock always carries the clock and only carries weather when measur
   assert.match(without, /TODAY FOR THIS CONVERSATION/, without);
   assert.ok(!/LIVE WEATHER/.test(without), "no invented weather header when nothing was measured");
 });
+
+// ─── PROVIDER SECRETS IN THE LOG ─────────────────────────────────────────────
+// The log is the one place the assistant's own words stop being the visitor's, so a
+// provider rejecting a call must be able to name the reason without naming the key.
+// Gemini keys look like AIza…, and now an OpenAI key may be in play, which looks
+// like sk-… — a shape the old Stripe-shaped rule (sk_live/sk_test) does not catch.
+
+test("sanitizeProviderError hides an OpenAI key of any project shape", () => {
+  const raw = JSON.stringify({
+    error: { message: "Incorrect API key provided: sk-proj-AbCdEf0123456789_abcdefghIJKLMN. Find it at https://platform.openai.com/api-keys." },
+  });
+  const clean = sanitizeProviderError(raw);
+  assert.ok(!clean.includes("sk-proj-AbCdEf0123456789_abcdefghIJKLMN"), clean);
+  assert.match(clean, /\[key\]/, "the reason survives, the key does not: " + clean);
+});
+
+test("sanitizeProviderError hides a bare OpenAI secret key", () => {
+  const clean = sanitizeProviderError("rejected key sk-abcdefghijklmnopqrstuvwxyzABCDEFGHIJ");
+  assert.ok(!clean.includes("sk-abcdefghijklmnopqrstuvwxyzABCDEFGHIJ"), clean);
+});
+
+test("sanitizeProviderError leaves a short sk- word alone", () => {
+  const clean = sanitizeProviderError("the sk- budget is too small");
+  assert.match(clean, /sk-/, "a redaction that ate ordinary words would hide the real reason");
+});
