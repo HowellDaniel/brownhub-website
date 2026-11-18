@@ -652,6 +652,25 @@ async function deleteFile(runtime: Runtime, key: string, fileName: string): Prom
   } catch { /* best effort */ }
 }
 
+// A candidate stops for reasons that are a decision and for reasons that are only mechanics.
+// SAFETY, RECITATION and the prohibited/blocklist/spii family decline to answer; STOP and
+// MAX_TOKENS mean it finished or ran out of room. Reading the whole finishReason field as a
+// verdict would silence every long answer that got cut off mid-sentence.
+const POLICY_VERDICTS = new Set([
+  "SAFETY", "RECITATION", "BLOCKLIST", "PROHIBITED_CONTENT", "SPII", "IMAGE_SAFETY",
+]);
+
+// Matched as the whole message, never as a substring: Google says a revoked key was "blocked",
+// and an outage must stay an outage rather than be reported to the visitor as a refusal.
+function blockedReason(e: unknown): string {
+  const verdict = /^Error: blocked-([A-Z_]+)$/.exec(String(e));
+  return verdict ? verdict[1] : "";
+}
+
+// The studio's own words, not the provider's: a visitor who is declined still needs a door,
+// and a 500 would tell them the site broke when nothing broke.
+const DECLINED = "That question isn't one the assistant will answer. A person at the studio can take it — send us a message on WhatsApp or use the contact form and we'll pick it up.";
+
 async function generate(
   runtime: Runtime,
   key: string,
@@ -679,6 +698,11 @@ async function generate(
     throw new Error("generate-" + res.status + " " + sanitizeProviderError(raw));
   }
   const data = await res.json();
+  // A refusal arrives as a 200 with nothing in it, and "nothing in it" is the exact shape the
+  // caller reads as "the first provider failed — ask the second". Naming the verdict here is
+  // what stops this endpoint from being a way round the provider's own safety policy.
+  const verdict = data?.promptFeedback?.blockReason || data?.candidates?.[0]?.finishReason;
+  if (typeof verdict === "string" && POLICY_VERDICTS.has(verdict)) throw new Error("blocked-" + verdict);
   const text = (data?.candidates?.[0]?.content?.parts ?? [])
     .map((p: { text?: string }) => p.text || "")
     .join(" ")
@@ -1100,7 +1124,9 @@ function createHandler(runtime: Runtime): (request: Request) => Promise<Response
         try {
           analysisResult = await generate(runtime, key, model, contents, brief, searchTool);
         } catch (err) {
-          if (!searchTool) throw err;
+          // The ungrounded retry exists for a search-tool failure, not for a decision: a
+          // blocked question already has its answer, and asking it twice buys only the delay.
+          if (!searchTool || blockedReason(err)) throw err;
           analysisResult = await generate(runtime, key, model, contents, brief);
         }
       } catch (gemErr) {
@@ -1109,9 +1135,11 @@ function createHandler(runtime: Runtime): (request: Request) => Promise<Response
         // this provider has no equivalent — so it would be inventing the attachment rather
         // than answering it. A refusal costs under two seconds; a spent timeout costs all
         // twenty-five, and no second provider can fit inside what the first one used up.
+        // And a policy block never gets re-asked at all: the first provider's decision is the
+        // studio's decision, not a malfunction this server gets to appeal to a laxer judge.
         const spent = runtime.now() - startedAt;
         const readable = validated.every((f) => f.kind === "image");
-        if (!altKey || spent > FALLBACK_GRACE_MS || !readable) throw gemErr;
+        if (blockedReason(gemErr) || !altKey || spent > FALLBACK_GRACE_MS || !readable) throw gemErr;
         analysisResult = await generateOpenAI(
           runtime,
           altKey,
@@ -1137,6 +1165,9 @@ function createHandler(runtime: Runtime): (request: Request) => Promise<Response
       return json(envelope);
     } catch (e) {
       console.error("assistant error", String(e));
+      // A declined question reads as the studio declining, not as the site breaking: the
+      // visitor gets a human route, at 200, and the block itself is only ever a server log.
+      if (blockedReason(e)) return json({ answer: DECLINED });
       if (String(e).includes("generate-5")) return json({ error: "The assistant is not answering right now." }, 502);
       return json({ error: "The assistant could not process that." }, 500);
     } finally {

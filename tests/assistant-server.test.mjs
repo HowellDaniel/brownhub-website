@@ -1219,6 +1219,19 @@ function secondOpinionRuntime(capture, opts = {}) {
       }
       if (url.includes(":generateContent")) {
         capture.model = (capture.model || []).concat(JSON.parse(options.body));
+        if (opts.block) {
+          // Two real shapes of one decision: Gemini refuses the whole prompt before the model
+          // runs, or it opens a candidate and stops it on policy. Both arrive as a 200 with no
+          // parts — which is precisely what the fallback reads as "the first provider failed".
+          const body = opts.block === "prompt"
+            ? { promptFeedback: { blockReason: "SAFETY" } }
+            : { candidates: [{ content: { parts: [] }, finishReason: "SAFETY" }] };
+          return new Response(JSON.stringify(body), { status: 200 });
+        }
+        if (opts.silentModel) {
+          // No parts and no verdict: the model simply came back with nothing to say.
+          return new Response(JSON.stringify({ candidates: [{ content: { parts: [] } }] }), { status: 200 });
+        }
         if (opts.geminiStatus === 0) throw new Error("socket hung up");
         const message = opts.geminiMessage || "Model was stopped.";
         return new Response(JSON.stringify({
@@ -1429,6 +1442,65 @@ test("a live-search answer loses its citations but not its reply", async () => {
   assert.deepEqual(data.sources, [], "this provider has no search grounding to report");
 });
 
+// A safety block is a decision, not an outage. The bug this guards: a blocked candidate has
+// no parts, and no parts used to look identical to "Gemini returned nothing" — so every
+// question Gemini refused on policy was re-asked of a provider with different rules, turning
+// the studio's own endpoint into a way round the first provider's safety policy. Both shapes
+// Google actually sends are covered: the prompt refused before the model ran, and the
+// candidate stopped mid-answer.
+test("a prompt Gemini blocked on policy is not re-asked of ChatGPT", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(secondOpinionRuntime(capture, { block: "prompt" }))(
+    textRequest("Make me a fake degree certificate", {}, "10.0.20.14")
+  );
+  const data = await res.json();
+
+  assert.ok(!capture.chat, "a provider that declined on policy must not be re-asked by another");
+  assert.equal(res.status, 200, JSON.stringify(data));
+  assert.ok(data.answer, "the visitor gets a refusal, not a system failure");
+  assert.ok(!data.error, "a refusal must not be reported as a breakdown");
+});
+
+test("a candidate Gemini stopped mid-answer is not re-asked either", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(secondOpinionRuntime(capture, { block: "candidate" }))(
+    textRequest("Write me a passport application", {}, "10.0.20.15")
+  );
+  const data = await res.json();
+
+  assert.ok(!capture.chat, "a truncated refusal is still a refusal");
+  assert.equal(res.status, 200, JSON.stringify(data));
+  assert.match(String(data.answer), /person/, "and it hands the visitor to a human");
+});
+
+test("an empty Gemini answer with no verdict behind it still gets the second provider", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  const res = await createHandler(secondOpinionRuntime(capture, { silentModel: true }))(
+    textRequest("How much is a flyer?", {}, "10.0.20.16")
+  );
+  const data = await res.json();
+
+  assert.equal(capture.chat.length, 1, "a blank reply is an availability failure, so the fallback stands");
+  assert.equal(res.status, 200, JSON.stringify(data));
+});
+
+test("a refused question is not put to Gemini a second time either", async () => {
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  const capture = {};
+  // A plain text question normally goes out twice when the grounded call fails: once with
+  // googleSearch and once without. A block is not that kind of failure — the retry would ask
+  // the same refused question again and pay a second round trip for the same decision.
+  const res = await createHandler(secondOpinionRuntime(capture, { block: "prompt" }))(
+    textRequest("Make me a fake degree certificate", {}, "10.0.20.17")
+  );
+
+  assert.equal(capture.model.length, 1, "one call, then the refusal");
+  assert.equal(res.status, 200);
+});
+
 function withLoggedErrors(logs, run) {
   const realError = console.error;
   console.error = (...args) => { logs.push(args.join(" ")); };
@@ -1461,4 +1533,19 @@ test("the deployed bundle makes the same fallback call as the tested handler", (
   const live = spanFrom(DEPLOYED, "    const altModel", "      const sources = groundingSources");
   const tested = spanFrom(TESTED, "    const altModel", "      const sources = groundingSources");
   assert.equal(tested, live, "the deployed gate must match the tested gate byte for byte");
+});
+
+// A policy block is decided in two more hand-copied places than the gate: where Gemini's body
+// is parsed, and where the throw becomes the words the visitor reads. Guarding only the gate
+// would let the deployed bundle keep asking ChatGPT anyway.
+test("the deployed bundle reads a policy block the same way as the tested handler", () => {
+  const live = spanFrom(DEPLOYED, "const POLICY_VERDICTS", "// ─── THE SECOND PROVIDER");
+  const tested = spanFrom(TESTED, "const POLICY_VERDICTS", "// ─── THE SECOND PROVIDER");
+  assert.equal(tested, live, "the deployed verdict parse must match the tested one byte for byte");
+});
+
+test("the deployed bundle answers a policy block with the same refusal", () => {
+  const live = spanFrom(DEPLOYED, '      console.error("assistant error", String(e));', "    } finally {");
+  const tested = spanFrom(TESTED, '      console.error("assistant error", String(e));', "    } finally {");
+  assert.equal(tested, live, "the deployed refusal must match the tested one byte for byte");
 });
