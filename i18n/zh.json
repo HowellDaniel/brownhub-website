@@ -962,7 +962,6 @@
   "The BrownHub": "BrownHub 的",
   "The Studio Journal": "工作室日志",
   "The app works in 39 languages, accepts video files in chat, and installs on your phone like a native app.": "应用支持39种语言，可在聊天中接受视频文件，并像原生应用一样安装在您的手机上。",
-  "The assistant in the corner answers from a written fact sheet about this studio. Your message travels to a single server-side function, which forwards it to the model and returns the answer. The key for that model lives in the function's configuration on the server, never in the browser, and the function refuses requests that arrive from any site other than this one. Each question and its answer are also filed in a log the studio can read, under a random code for your browser rather than your name; the database rule that accepts those entries lets a browser write and never lets it read.": "角落里那个助手是根据一份写好的本工作室事实清单来回答的。您的消息发往唯一的一个服务端函数,由它转给模型并把答案取回。该模型的密钥存在服务器上函数的配置里,绝不在浏览器里,而且这个函数会拒绝从别的网站发来的请求。每个问题与它的答案也会被记进一份工作室能读的日志里,用的是您浏览器的随机代码而不是您的名字;接收这些条目的数据库规则允许浏览器写入,绝不允许它读取。",
   "The booking, tracking and depot board are one app, built by the studio's software side. Travellers book and track in the browser; the depot runs the manifest from the same code.": "预订、追踪和仓库面板是一个应用，由工作室的软件端构建。旅客在浏览器中预订和追踪；仓库用相同代码管理清单。",
   "The brief": "需求",
   "The businesses already on our books": "已经在我们名册上的企业",
@@ -1023,7 +1022,6 @@
   "This catalog is only websites and software — the print, banners and frames we deliver live in the main catalog.": "本目录只收录网站与软件——我们交付的印刷、横幅与装框作品在主目录中。",
   "This is where we reply, so give the number on your WhatsApp.": "我们会在这里回复您，请填写您在 WhatsApp 上使用的号码。",
   "This site is a set of static pages served over HTTPS. It has no user accounts database of its own, it loads no advertising script until you say yes in the cookie preferences, and it never sees a card number. The pieces that do hold data — sign-in, request history and payments — sit with established providers, and the only code we run on a server is a small relay for the chat assistant.": "这个网站只是一组通过 HTTPS 提供的静态页面。它本身没有用户账户数据库,在您于 cookie 设置里同意之前不加载任何广告脚本,也从来看不到卡号。真正存放数据的那几块——登录、需求记录与付款——都交给成熟的服务商,而我们在服务器上运行的唯一代码,只是给聊天助手做的一次中转。",
-  "This site keeps your own settings and your chat with our assistant in your browser. No analytics or advertising cookie is placed here.": "本站会在您的浏览器中保存您自己的设置以及您与我们助手的对话。此处不会放置任何分析或广告 Cookie。",
   "This site reads in forty languages, from Twi and Arabic to Chinese, Russian and French.": "本站有四十种语言，从契维语、阿拉伯语到中文、俄语和法语。",
   "This site saves a few small things in your browser: the language you picked, the dark or light theme, your cookie choice, a sign-in session while you are logged in, the note that you have already answered our quote question, and a random code that keeps the chat assistant's answers to you in one thread. The chat you have with the assistant is kept on this device too, for about a week, so a refresh finds the conversation where you left it. None of those is an advertising cookie, and you can clear all of them in your browser at any time. That includes the switch that decides whether the assistant makes a sound when it has a question or an answer.": "本站会在您的浏览器中保存几样小东西：您选择的语言、深色或浅色主题、您的 Cookie 选择、登录期间的会话、您已回答过我们报价询问的记号，以及一个把助手回复串成同一段对话的随机代码。与助手的对话也会在此设备上保存约一周，刷新页面后仍可接着之前的内容。这些都不是广告 Cookie，您随时可以在浏览器里清除它们。其中包括那个决定助手在有问题或有答案时是否发出声音的开关。",
   "Three steps from browse to delivered.": "从浏览到交付，只需三步。",
@@ -1291,5 +1289,13 @@
   "unmissable": "过目难忘",
   "your goals": "您的目标打造服务",
   "© 2026 BrownHub. All rights reserved.": "© 2026 BrownHub。保留所有权利。",
-  "← Back to the studio": "← 返回工作室"
+  "← Back to the studio": "← 返回工作室",
+  "Take this code. Say it to me on any other device and we pick up this chat right there.": "请记下这个代码。在任何其他设备上把它告诉我，我们就从这里继续这段对话。",
+  "Found it — we pick up where you left off.": "找到了——我们就从这里继续。",
+  "I don't have a chat under that code. Check it and say it again.": "这个代码下没有对话。请检查后再说一次。",
+  "There is nothing to carry over yet. Ask me something first.": "还没有可转移的内容。请先问我一个问题。",
+  "Carry this chat to another device": "把这段对话带到另一个设备",
+  "The assistant in the corner answers from a written fact sheet about this studio. Your message travels to a single server-side function, which forwards it to the model and returns the answer. The key for that model lives in the function's configuration on the server, never in the browser, and the function refuses requests that arrive from any site other than this one. Each question and its answer are also filed in a log the studio can read, under a random code for your browser rather than your name; a browser may put entries into that log but cannot take anything out of it. A chat you ask to carry to another device is kept apart from that log, on our server, under a code you can keep — only someone who types that code back can read it.": "角落里那个助手是根据一份写好的本工作室事实清单来回答的。您的消息发往唯一的一个服务端函数,由它转给模型并把答案取回。该模型的密钥存在服务器上函数的配置里,绝不在浏览器里,而且这个函数会拒绝从别的网站发来的请求。每个问题与它的答案也会被记进一份工作室能读的日志里,用的是您浏览器的随机代码而不是您的名字;浏览器能往这份日志里写,却不能从里面读出任何东西。您要求带到另一台设备上的那段对话,则与这份日志分开存在我们的服务器上,由一个您自己保存的代码管着;只有再把那个代码输入进来的人才能读回它。",
+  "This site keeps your own settings and your chat with our assistant in your browser. A chat you ask it to carry to another device is kept on our server for thirty days, under a code only you hold. No analytics or advertising cookie is placed here.": "本站会在您的浏览器中保存您自己的设置以及您与我们助手的对话。 您要求带到另一台设备上的那段对话会在我们的服务器上保存三十天，由一个只有您掌握的代码看管。 此处不会放置任何分析或广告 Cookie。",
+  "If you ask the assistant to carry a chat to another device, a copy of that chat is kept on our server for thirty days under a code we hand you. The copy carries no name, email or phone number, and it is gone as soon as you start a new chat or the thirty days run out.": "如果您请助手把一段对话带到另一台设备上，我们会在服务器上保存这段对话的一份副本三十天，并由我们交给您一个代码来看管它。这份副本不带姓名、邮箱或电话号码，一旦您开始新的对话，或者三十天期满，它就消失了。"
 }

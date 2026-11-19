@@ -139,7 +139,7 @@
         <p>Submissions that trip those checks are dropped silently; the sender still sees a confirmation, so a bot gets no signal about what stopped it.</p>
         <p>The upload fields accept audio files of a bounded size and type. Nothing you send there is published anywhere on the site.</p>
         <h2 id="7">The chat assistant</h2>
-        <p>The assistant in the corner answers from a written fact sheet about this studio. Your message travels to a single server-side function, which forwards it to the model and returns the answer. The key for that model lives in the function's configuration on the server, never in the browser, and the function refuses requests that arrive from any site other than this one. Each question and its answer are also filed in a log the studio can read, under a random code for your browser rather than your name; the database rule that accepts those entries lets a browser write and never lets it read.</p>
+        <p>The assistant in the corner answers from a written fact sheet about this studio. Your message travels to a single server-side function, which forwards it to the model and returns the answer. The key for that model lives in the function's configuration on the server, never in the browser, and the function refuses requests that arrive from any site other than this one. Each question and its answer are also filed in a log the studio can read, under a random code for your browser rather than your name; a browser may put entries into that log but cannot take anything out of it. A chat you ask to carry to another device is kept apart from that log, on our server, under a code you can keep — only someone who types that code back can read it.</p>
         <p>It is still a third-party AI service. Ask it about prices, lead times and what we do; do not type an address book, a password or anything you would not send in an email.</p>
         <h2 id="8">What this site keeps on your device</h2>
         <p>Your chosen language, the dark or light theme, the state of your sign-in session, your cookie choice, and a random code that ties the chat assistant's answers to one conversation. That is the whole list, and you can inspect or clear it in your browser at any time.</p>
@@ -271,9 +271,9 @@
     </div>
   </div>
 
-  <script src="js/assistant-shared.js?v=1" defer></script><script src="js/chat.js?v=43" defer></script><script src="js/accounts.js?v=20" defer></script>
+  <script src="js/assistant-shared.js?v=1" defer></script><script src="js/chat.js?v=44" defer></script><script src="js/accounts.js?v=21" defer></script>
   <script src="js/scroll.js?v=14" defer></script>
-  <script src="js/nav.js?v=14" defer></script><script src="js/search.js?v=25" defer></script><script src="js/cookies.js?v=8" defer></script><script src="js/social.js?v=1" defer></script>
+  <script src="js/nav.js?v=14" defer></script><script src="js/search.js?v=25" defer></script><script src="js/cookies.js?v=9" defer></script><script src="js/social.js?v=1" defer></script>
 
 </body>
 </html>

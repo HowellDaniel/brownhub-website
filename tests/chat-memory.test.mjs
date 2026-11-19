@@ -13,8 +13,8 @@
 // Second, that failure is a bad moment rather than a bad question. The byte-identical
 // request that returned 502 returned 200 nine seconds later, twice over, with no change of
 // input — so the question is worth putting once more before the visitor is handed an
-// apology. Not after our own wait, though: a second 25 seconds is not a retry, it is a
-// longer silence.
+// apology. Not after our own wait, though: a retry that follows a full wait is not a retry,
+// it is a longer silence.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -89,10 +89,11 @@ test("the archive has four doors and every one of them is an answer that arrived
 
 test("a question the provider failed on fast is put once more", () => {
   const worthAskingAgain = rule("worthAskingAgain", "RETRY_WINDOW_MS");
+  const waitMs = Number(given("WAIT_MS").match(/\d+/)[0]);
   assert.equal(worthAskingAgain(0), true, "a call that came back at once is a bad moment");
   assert.equal(worthAskingAgain(9000), true, "the request that failed and then succeeded today sat nine seconds apart");
   assert.equal(worthAskingAgain(20000), true, "a window read as a limit and not a head start");
-  assert.equal(worthAskingAgain(25000), false, "our own wait must not double into a 50-second silence");
+  assert.equal(worthAskingAgain(waitMs), false, "a call that ran the whole wait is not a bad moment worth asking again");
 });
 
 test("the retry window sits inside the wait it follows", () => {
@@ -100,6 +101,15 @@ test("the retry window sits inside the wait it follows", () => {
   const waitMs = Number(given("WAIT_MS").match(/\d+/)[0]);
   assert.ok(windowMs < waitMs, `a retry worth taking has to finish before our own ${waitMs}ms wait ends`);
   assert.ok(windowMs >= 5000, "a window this side of a network blip would never let the good minute back in");
+});
+
+test("the wait is long enough for the answers that really do arrive", () => {
+  const waitMs = Number(given("WAIT_MS").match(/\d+/)[0]);
+  // Measured on the live origin on 2026-11-19: grounded answers landed at 8.6–19.2 s and at
+  // least one was still on its way when our own 25 s gave up. An apology for an answer that
+  // arrives a second later is the failure the visitor sees, so the wait sits above the
+  // slowest answer the provider has actually produced, with room over it.
+  assert.ok(waitMs >= 30000, `a ${waitMs}ms wait cuts off an answer measured arriving after 25s`);
 });
 
 test("the retry is one retry, and it is the typed question that gets it", () => {

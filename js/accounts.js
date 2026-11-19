@@ -103,6 +103,8 @@
     signedIn: function () { return false; },
     email: function () { return ""; },
     logChat: function () {},
+    saveThread: function () { return Promise.resolve(null); },
+    loadThread: function () { return Promise.resolve(null); },
     ask: function () { return Promise.reject(new Error("The assistant is not switched on yet.")); }
   };
 
@@ -236,6 +238,45 @@
         source: row.source === "model" || row.source === "fallback" ? row.source : "intent"
       })
     })["catch"](function () { /* a lost transcript loses nothing for the visitor */ });
+  }
+
+  // ---- carrying one conversation to another device ------------------------------
+  // The visitor's own thread, under a code only they hold, is the one thing on this site
+  // a browser may read back out of the database. It is still not a policy: a policy opens
+  // a table to a role, and a role that can select can select every code in it, so the
+  // visitor's typed code would be a password the client checked for the server. Instead
+  // anon has no privilege on chat_threads at all, and these two RPC calls are the only
+  // doors — each takes the code as an argument and touches the one row keyed by it.
+  // The transcript archive above is untouched and stays write-only.
+  function rpc(fn, body) {
+    if (!configured) return Promise.resolve(null);
+    return fetch(SB_API_URL + "/rest/v1/rpc/" + fn, {
+      method: "POST",
+      headers: {
+        apikey: SB_API_KEY,
+        Authorization: "Bearer " + SB_API_KEY,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify(body)
+    }).then(function (res) {
+      // A void function answers 204 with no body, which is the yes. Anything else that
+      // did not work has to be an error, or the page would believe its copy was saved.
+      if (!res.ok) return res.json().catch(function () { return null; }).then(function (data) {
+        throw new Error((data && data.message) || "The studio could not carry that chat.");
+      });
+      if (res.status === 204) return null;
+      return res.json().catch(function () { return null; });
+    });
+  }
+
+  function saveThread(code, turns) {
+    return rpc("chat_thread_save", { p_code: code, p_turns: turns || [] });
+  }
+
+  // A code that holds nothing — wrong, spent, or swept — comes back as no thread rather
+  // than as an error, so the assistant can say so in one sentence instead of going quiet.
+  function loadThread(code) {
+    return rpc("chat_thread_load", { p_code: code })["catch"](function () { return null; });
   }
 
   var navLi, modal, card, tabs, form, noteEl, nameField, nameInp, emailInp, passInp;
@@ -412,6 +453,8 @@
       email: function () { return session && session.user ? session.user.email : ""; },
       record: record,
       logChat: logChat,
+      saveThread: saveThread,
+      loadThread: loadThread,
       ask: ask
     };
     checkSms();

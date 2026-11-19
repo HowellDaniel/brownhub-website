@@ -91,7 +91,7 @@
 
   const greeting = `Hi, I'm BrownHub Studio Assistance. I give quick replies on anything about our <strong>graphic design</strong> and <strong>branding</strong> work — logos, identities, print, social media and packaging. What can I help with?`;
 
-  const defaultChips = ["Logo & branding", "Social media design", "Catalog items", "Get a quote", "Talk to a human"];
+  const defaultChips = ["Logo & branding", "Social media design", "Catalog items", "Carry this chat to another device", "Get a quote", "Talk to a human"];
 
   function bestOf(list, t) {
     let best = null, bestScore = 0;
@@ -117,7 +117,11 @@
   // dictionary entirely rather than being looked up in it. The thread goes with
   // the question, so the model hears a follow-up as a follow-up.
   // `files` is an optional array of File objects for automatic image/document analysis.
-  const WAIT_MS = 25000;
+  // Measured on the live origin on 2026-11-19: grounded answers landed at 8.6–19.2 s, and at
+  // least one was still arriving when the old 25 s gave up — so the apology we were seeing was
+  // for an answer that was already on its way. The wait is the provider's slowest real answer
+  // plus room, not a round number we happen to like.
+  const WAIT_MS = 35000;
   function askModel(question, files) {
     const ask = window.BHAccounts && window.BHAccounts.ask;
     if (typeof ask !== "function") return Promise.reject(new Error("No assistant is wired up."));
@@ -132,7 +136,7 @@
   // 502 came back 200 nine seconds later, twice over, with nothing about the question
   // changed. So a failed call is a bad minute at the provider and not a bad question from
   // the visitor, and the question is worth putting once more before the studio's apology
-  // goes on the screen. The wait is ours, though, and a second 25 seconds is not a retry —
+  // goes on the screen. The wait is ours, though, and a second 35 seconds is not a retry —
   // it is a longer silence — so only a call that came back inside the window gets asked
   // again.
   const RETRY = 1;
@@ -323,6 +327,23 @@
   const thread = [];
   const HISTORY_KEY = "brownhub-chat-history";
   const HISTORY_AGE = 7 * 86400000;
+  // The window the page keeps, in one place: it is also the cap the server checks, so a
+  // retune has to move both and cannot quietly move one.
+  const TURN_CAP = 24;
+  // O and 0, I and 1 are out of the alphabet because a code copied off a screen by eye is
+  // read back wrong, and a code read back wrong is somebody else's conversation, or none.
+  // Sixteen of the thirty-two signs left is 32 bits of entropy, minted by the browser.
+  const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const CODE_LENGTH = 16;
+  const CARRY_KEY = "brownhub-chat-carry";
+  // One turn files two remember() calls — the question, then the answer — so the copy is
+  // written after the turn settles rather than twice in the middle of it.
+  const CARRY_MIRROR_MS = 900;
+  const RECALL_ASK = "Carry this chat to another device";
+  const CARRY_TAKE = "Take this code. Say it to me on any other device and we pick up this chat right there.";
+  const CARRY_FOUND = "Found it — we pick up where you left off.";
+  const CARRY_NONE = "I don't have a chat under that code. Check it and say it again.";
+  const CARRY_EMPTY = "There is nothing to carry over yet. Ask me something first.";
   // An apology is worth showing and not worth remembering: filed as a `model` turn it becomes
   // the last thing the visitor was ever told, plays back on their return, and rides to the
   // provider as part of the thread — so one bad minute at the provider leaves an assistant
@@ -337,15 +358,16 @@
     const clean = (text || "").replace(/\s+/g, " ").trim();
     if (!clean) return;
     thread.push({ role: role, text: clean.slice(0, 400) });
-    while (thread.length > 24) thread.shift();
+    while (thread.length > TURN_CAP) thread.shift();
     keep();
   }
 
   function keep() {
     try {
-      if (!thread.length) { localStorage.removeItem(HISTORY_KEY); return; }
-      localStorage.setItem(HISTORY_KEY, JSON.stringify({ at: Date.now(), turns: thread }));
+      if (!thread.length) { localStorage.removeItem(HISTORY_KEY); }
+      else localStorage.setItem(HISTORY_KEY, JSON.stringify({ at: Date.now(), turns: thread }));
     } catch (e) {}
+    mirror();
   }
 
   // Reading it back is guarded line by line: whatever is in that slot is data from
@@ -360,14 +382,121 @@
       try { localStorage.removeItem(HISTORY_KEY); } catch (e) {}
       return;
     }
-    for (const t of saved.turns) {
-      if (!t || (t.role !== "user" && t.role !== "model")) continue;
-      const text = typeof t.text === "string" ? t.text.replace(/\s+/g, " ").trim() : "";
-      if (text) thread.push({ role: t.role, text: text.slice(0, 400) });
-    }
-    while (thread.length > 24) thread.shift();
+    for (const t of validTurns(saved.turns)) thread.push(t);
   }
   reopen();
+
+  // ---- carrying the same conversation onto another device ---------------------
+  // What is remembered above lives in this browser and stops there, so someone who asked
+  // about flyers at a desk and answers on a phone is a stranger again. A visitor who wants
+  // to keep talking takes a code, and the thread is kept under it until they say the code
+  // somewhere else. The code is the whole of the proof of who is asking: no name, no
+  // number and no account is involved, and until the chip has been pressed nothing at all
+  // leaves the device.
+
+  // Anything the visitor hands back is read as data from a network, not as an object: the
+  // two roles this page files, the length it caps its own turns at, the window it keeps.
+  function validTurns(list) {
+    if (!Array.isArray(list)) return [];
+    const kept = [];
+    for (const t of list) {
+      if (!t || (t.role !== "user" && t.role !== "model")) continue;
+      const text = typeof t.text === "string" ? t.text.replace(/\s+/g, " ").trim() : "";
+      if (text) kept.push({ role: t.role, text: text.slice(0, 400) });
+    }
+    return kept.slice(-TURN_CAP);
+  }
+
+  // Four signs, a dash, four signs — the groups are how a person reads a code back off a
+  // screen, so they are shown that way and accepted that way, and also run together and in
+  // lower case. A bare run of letters is only a code if it holds a digit: "send that code
+  // here" is sixteen letters and a sentence.
+  function codeFrom(text) {
+    const up = String(text || "").toUpperCase();
+    const sign = "[" + CODE_ALPHABET + "]";
+    const grouped = up.match(new RegExp(sign + "{4}(-" + sign + "{4}){3}(?!" + sign + ")"));
+    if (grouped) return grouped[0].replace(/-/g, "");
+    const run = up.replace(/[^A-Z2-9]/g, "");
+    if (run.length !== CODE_LENGTH) return "";
+    if (!new RegExp("^" + sign + "{" + CODE_LENGTH + "}$").test(run)) return "";
+    return /[2-9]/.test(run) ? run : "";
+  }
+
+  function formatCode(code) {
+    const signs = String(code || "");
+    const groups = [];
+    for (let i = 0; i < signs.length; i += 4) groups.push(signs.slice(i, i + 4));
+    return groups.join("-");
+  }
+
+  // One byte per sign, and 256 divides into thirty-two exactly, so no sign is favoured by
+  // the way a byte is cut down to an index.
+  function mintCode(bytes) {
+    let out = "";
+    for (const b of bytes) out += CODE_ALPHABET.charAt(b % CODE_ALPHABET.length);
+    return out;
+  }
+
+  // The code this device is carrying a thread under: what this page minted for itself, or
+  // what the visitor just proved they hold by saying it. Held in memory as well as in
+  // storage, because a browser that refuses to store must still be able to carry the chat
+  // it is standing in front of.
+  let takenCode = "";
+  function holdCode(code) {
+    takenCode = code;
+    try { localStorage.setItem(CARRY_KEY, code); } catch (e) {}
+  }
+
+  function carryCode() {
+    if (codeFrom(takenCode) === takenCode && takenCode.length === CODE_LENGTH) return takenCode;
+    let stored = "";
+    try { stored = localStorage.getItem(CARRY_KEY) || ""; } catch (e) { return ""; }
+    return codeFrom(stored) === stored ? stored : "";
+  }
+
+  function takeCode() {
+    const bytes = new Uint8Array(CODE_LENGTH);
+    window.crypto.getRandomValues(bytes);
+    const code = mintCode(bytes);
+    holdCode(code);
+    return code;
+  }
+
+  // Nothing is sent to the studio's server until a code is in hand, and the send is the
+  // same one the transcript archive already uses, through the account layer that holds the
+  // key. A copy that fails to arrive is a carry that did not happen, not a lost chat.
+  function mirror() {
+    if (!carryCode()) return;
+    clearTimeout(mirrorTimer);
+    mirrorTimer = setTimeout(() => {
+      const code = carryCode();
+      const api = window.BHAccounts;
+      if (!code || !api || typeof api.saveThread !== "function") return;
+      Promise.resolve(api.saveThread(code, thread.slice(-TURN_CAP)))
+        .catch(() => { /* a thread that did not carry is a thread that stays on this device */ });
+    }, CARRY_MIRROR_MS);
+  }
+  let mirrorTimer = null;
+
+  // Saying the code back is the other half: the thread comes off the server, replaces what
+  // this browser remembered (which is, by then, the older copy), and is drawn again as text
+  // rather than as markup, exactly as a restored local conversation is.
+  function carryThread(code) {
+    const load = window.BHAccounts && window.BHAccounts.loadThread;
+    if (typeof load !== "function") return Promise.resolve(false);
+    return Promise.resolve(load(code)).then((row) => {
+      const turns = validTurns(row && row.turns);
+      if (!turns.length) return false;
+      thread.length = 0;
+      for (const t of turns) thread.push(t);
+      holdCode(code);
+      keep();
+      messages.innerHTML = "";
+      botHistory.length = 0;
+      replay();
+      return true;
+    }).catch(() => false);
+  }
 
   function logExchange(question, answer, source) {
     const log = window.BHAccounts && window.BHAccounts.logChat;
@@ -413,6 +542,27 @@
       settle();
       logExchange(clean, said, source);
     };
+    // Both halves of a carry-over are read here, ahead of every intent and before a model
+    // call is spent: a recall code sent to the studio's assistant is a question it has no
+    // way to answer, and the apology it earns then becomes the last thing remembered of a
+    // conversation that was only just being found.
+    function offerCarry() {
+      if (!thread.some((t) => t.role === "user")) { replyWith(CARRY_EMPTY, "intent"); return; }
+      const code = carryCode() || takeCode();
+      replyWith(CARRY_TAKE, "intent");
+      // The code itself is never markup, and never a keyed sentence: it is one string of
+      // signs that must reach the visitor's eyes exactly as the server holds it.
+      addPlain(formatCode(code));
+    }
+    if (routeAs === RECALL_ASK) { setTimeout(offerCarry, 550 + Math.random() * 450); return; }
+    const said = codeFrom(clean);
+    if (said) {
+      setTimeout(() => {
+        carryThread(said).then((found) => replyWith(found ? CARRY_FOUND : CARRY_NONE, "intent"));
+      }, 350);
+      return;
+    }
+
     // Only exact commands and explicit quick actions stay deterministic; substantive questions reach the model.
     const known = BHAssistant.route(clean, routeAs, matchIntent);
     if (known) { setTimeout(() => replyWith(known, "intent"), 550 + Math.random() * 450); return; }

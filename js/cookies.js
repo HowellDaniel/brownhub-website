@@ -77,6 +77,7 @@
     const inner = el("div", "cookie-notice__inner");
     inner.appendChild(el("p", "cookie-notice__text",
       "This site keeps your own settings and your chat with our assistant in your browser. " +
+      "A chat you ask it to carry to another device is kept on our server for thirty days, under a code only you hold. " +
       "No analytics or advertising cookie is placed here."));
     const btns = el("div", "cookie-notice__btns");
     const ok = el("button", "btn btn--primary btn--sm"); ok.type = "button"; ok.textContent = "Accept all";

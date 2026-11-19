@@ -296,3 +296,121 @@ select (select count(*) from pg_policies where tablename = 'leads')  as lead_pol
 --     from public.leads order by id desc limit 100;
 --   select day, count(*) as page_views, count(distinct visitor) as people
 --     from public.visits group by day order by day desc limit 30;
+
+
+-- ============================================================================
+-- chat_threads — carrying one conversation to another device (added 2026-11-19)
+--
+-- A visitor's thread lives in that browser's localStorage, and localStorage does
+-- not cross a device: the same person on a phone is a stranger to the assistant.
+-- This table is the second copy. It is keyed by a code the visitor's own browser
+-- mints and shows only to them, which makes the code the whole of the proof of who
+-- is asking — so carrying a chat involves no name, no email, no phone number and no
+-- sign-in, and nothing at all is filed unless the visitor presses the chip that
+-- takes a code out.
+--
+-- Deliberately NOT policy-driven, which is the opposite of chat_logs above. A policy
+-- can only open a table to a role, and any role that can select can select every row
+-- in it: the code would then be a password the client checks for the server, which is
+-- not a check at all. So anon keeps no privilege on the table whatever, and the two
+-- functions below are the only doors. Each takes the code as an argument, runs as the
+-- owner, and reads or writes the one row keyed by it. The archive in chat_logs is
+-- untouched and is still write-only: what these functions return goes to the browser
+-- that proved the code, and to nowhere else.
+--
+-- Two shapes are checked here as well as in the page, because a stranger holding the
+-- publishable key can call these functions all day: the code's alphabet and length,
+-- and each turn's role and size. Growth is bounded three ways — 24 turns per thread,
+-- 30 days of life swept on each new thread, and rate_take credits for calls a day.
+-- ============================================================================
+
+create table if not exists public.chat_threads (
+  code        text primary key,
+  turns       jsonb not null default '[]'::jsonb,
+  updated_at  timestamptz not null default now(),
+  constraint chat_threads_code_form
+    check (char_length(code) = 16 and code ~ '^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]+$'),
+  constraint chat_threads_turns_shape
+    check (jsonb_typeof(turns) = 'array' and jsonb_array_length(turns) between 0 and 24)
+);
+
+alter table public.chat_threads enable row level security;
+
+-- No policy is created on this table, on purpose: see the note above. With row level
+-- security on and no policies, a role reaching the table directly would read nothing
+-- even if a grant were ever handed out by mistake — the grant below is what makes it
+-- not reach the table at all.
+revoke all on table public.chat_threads from anon, authenticated;
+
+-- The visitor's browser writes their own thread: the code, then the turns as the page
+-- keeps them. Anything the page would not mint for itself is refused before the table
+-- sees it.
+create or replace function public.chat_thread_save(p_code text, p_turns jsonb)
+returns void language plpgsql security definer set search_path = public as $$
+declare credit jsonb; live int;
+begin
+  if p_code is null or char_length(p_code) <> 16
+     or p_code !~ '^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]+$' then
+    raise exception 'a chat code is sixteen of the signs this site mints, and nothing else';
+  end if;
+  if p_turns is null or jsonb_typeof(p_turns) <> 'array'
+     or jsonb_array_length(p_turns) > 24 then
+    raise exception 'a carried chat is at most twenty-four turns';
+  end if;
+  if exists (select 1 from jsonb_array_elements(p_turns) as e
+               where coalesce(e ->> 'role', '') not in ('user', 'model')
+                  or coalesce(length(e ->> 'text'), 0) < 1
+                  or length(e ->> 'text') > 400) then
+    raise exception 'a carried turn is a role and a sentence';
+  end if;
+
+  credit := public.rate_take('thread_saves', 300);
+  if (credit ->> 'today')::int > 300 then raise exception 'chat carry-over is at its daily limit'; end if;
+
+  -- A thread only costs storage while someone still holds its code, so the sweep runs
+  -- where the growth does: on the arrival of a new one, not on a job that may not exist.
+  if not exists (select 1 from public.chat_threads where code = p_code) then
+    delete from public.chat_threads where updated_at < now() - interval '30 days';
+    live := (select count(*) from public.chat_threads);
+    if live > 5000 then raise exception 'chat carry-over is full'; end if;
+  end if;
+
+  insert into public.chat_threads (code, turns, updated_at)
+  values (p_code, p_turns, now())
+  on conflict (code) do update set turns = excluded.turns, updated_at = now();
+end $$;
+
+-- The other direction, and the only place a thread is ever read out of the database by
+-- a browser key: the caller has to say the code, and gets back the turns and nothing
+-- else from the row.
+create or replace function public.chat_thread_load(p_code text)
+returns jsonb language plpgsql stable security definer set search_path = public as $$
+declare outcome jsonb; credit jsonb;
+begin
+  if p_code is null or char_length(p_code) <> 16
+     or p_code !~ '^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]+$' then
+    return '[]'::jsonb;
+  end if;
+
+  credit := public.rate_take('thread_loads', 600);
+  if (credit ->> 'today')::int > 600 then raise exception 'chat carry-over is at its daily limit'; end if;
+
+  select jsonb_build_object('turns', turns, 'at', extract(epoch from updated_at)) into outcome
+    from public.chat_threads
+   where chat_threads.code = p_code and updated_at > now() - interval '30 days';
+  return outcome;
+end $$;
+
+-- Both are callable by the key every visitor's browser already holds, and neither
+-- grants a way past the code it asks for. An empty or wrong code answers with nothing,
+-- not with an error, so a mistyped code costs a visitor one retry rather than a stack.
+revoke all on function public.chat_thread_save(text, jsonb) from public, anon, authenticated;
+revoke all on function public.chat_thread_load(text) from public, anon, authenticated;
+grant execute on function public.chat_thread_save(text, jsonb) to anon;
+grant execute on function public.chat_thread_load(text) to anon;
+
+-- Proof it is shut the way it was meant to be: the first two counts must be zero (no
+-- policies on this table) and the third must be that the key cannot read the table.
+select (select count(*) from pg_policies where tablename = 'chat_threads') as thread_policies,
+       (select has_table_privilege('anon', 'public.chat_threads', 'select')) as anon_can_select,
+       (select has_function_privilege('anon', 'public.chat_thread_load(text)', 'execute')) as anon_can_load;
