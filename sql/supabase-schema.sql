@@ -382,9 +382,10 @@ end $$;
 
 -- The other direction, and the only place a thread is ever read out of the database by
 -- a browser key: the caller has to say the code, and gets back the turns and nothing
--- else from the row.
+-- else from the row. Deliberately volatile, not stable: it pays for a rate credit, and
+-- PostgREST runs a stable function in a read-only transaction, where that insert dies.
 create or replace function public.chat_thread_load(p_code text)
-returns jsonb language plpgsql stable security definer set search_path = public as $$
+returns jsonb language plpgsql security definer set search_path = public as $$
 declare outcome jsonb; credit jsonb;
 begin
   if p_code is null or char_length(p_code) <> 16

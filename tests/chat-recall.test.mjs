@@ -185,6 +185,21 @@ test("the save function will not take what it is not shown", () => {
   assert.match(body, /on conflict \(code\) do update/, "the same code over its whole life is one row, not one row a turn");
 });
 
+test("a function that takes a rate credit is not declared read-only", () => {
+  // PostgREST dispatches a stable or immutable function inside a read-only
+  // transaction, and rate_take() inserts its own count row: the credit IS a write.
+  // So a load that pays for itself cannot be declared read-only, and the page has
+  // no way to tell that from a code nobody ever minted — it can only say "I don't
+  // have a chat under that code" to every visitor who did.
+  for (const fn of ["chat_thread_save", "chat_thread_load"]) {
+    const whole = sqlFn(fn);
+    const head = whole.slice(0, whole.indexOf("$$"));
+    assert.match(whole, /rate_take\(/, `${fn} is expected to take a credit`);
+    assert.doesNotMatch(head, /\b(?:stable|immutable)\b/,
+      `${fn} takes a rate credit, so PostgREST must be free to open a write transaction for it`);
+  }
+});
+
 /* ------------------------------------------------------------------ what the site says about it */
 
 const NEW_LINES = [
