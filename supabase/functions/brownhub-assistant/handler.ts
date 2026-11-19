@@ -378,10 +378,10 @@ OUR PRINT OUT 2, VIDEO SAMPLES OF OUR PRINT OUT 3, VIDEO SAMPLES OF OUR PRINT OU
 Invitation Cards, Winners' Chapel International Flyer. The four VIDEO SAMPLES OF OUR PRINT OUT
 groups show the studio's own printed work as short
 clips, ten clips in each of the first three and five in the last. That is the whole catalog — if a visitor asks for something not on that list, say we have not
-listed it but can usually make it, and point them to WhatsApp. Three of them show the studio's own
-price on their card, and those figures are the ones to repeat: Winners' Chapel International Flyer
-GH₵300-350, Gold Perspex GH₵40, Banner Printing GH₵300. Every other catalog item is not priced on
-the page: its price is confirmed on WhatsApp from sizes, quantity and deadline.
+listed it but can usually make it, and point them to WhatsApp. No catalog card shows a price at all:
+every item is quoted on WhatsApp from sizes, quantity and deadline. Never state a figure for a
+catalog item - the only prices published on the site are the design packages and sponsored slots
+under PAID PACKAGES AND PRICES.
 Merchandise such as t-shirts, caps, tags, mugs and flasks is printed with the client's own
 logo or artwork.
 
