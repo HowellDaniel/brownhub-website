@@ -29,11 +29,14 @@ function fnBody(name, file = src) {
   assert.fail(`${name}() never closed`);
 }
 
+/* A dependency is either a constant at the top of the file or another of the file's own
+   rules, and a rule only runs under the gate below if it needs nothing but those. */
 function given(...names) {
   return names
     .map((name) => {
+      if (src.includes(`function ${name}(`)) return fnBody(name);
       const m = src.match(new RegExp(`^ +(const ${name} = [^;\\n]+);$`, "m"));
-      assert.ok(m, `no constant ${name} in js/chat.js`);
+      assert.ok(m, `no constant or rule ${name} in js/chat.js`);
       return m[1];
     })
     .join("\n");
@@ -138,6 +141,27 @@ test("the copy of the thread on the server is only kept once the visitor has tak
   assert.match(body, /if \(!carryCode\(\)\) return;/, "with no code taken out there is nothing to mirror, and nothing leaves the device");
   assert.equal((src.match(/saveThread\(/g) || []).length, 1, "one call site, so the server copy cannot be written from two places");
   assert.match(body, /setTimeout\(/, "a turn files two remember() calls, so the mirror waits for the turn to settle");
+});
+
+test("what the studio keeps of a recall never holds the code", () => {
+  // The code is the whole proof of who a carried thread belongs to, and the studio reads
+  // chat_logs in the dashboard. Filing a code there would hand anyone with that access the
+  // one string that unlocks a stranger's conversation — so the exchange is archived as what
+  // it was (a carry asked for) and never as the characters that proved it.
+  const forArchive = rule("forArchive", "CODE_ALPHABET", "CODE_LENGTH", "CARRY_LOGGED", "codeFrom");
+  assert.equal(forArchive("LZZR-K8AV-NUW5-DREB"), "A chat carried to another device",
+    "a code in the shape the page shows is filed as the marker, never as itself");
+  assert.equal(forArchive("lzzrk8avnuw5dreb"), forArchive("LZZR-K8AV-NUW5-DREB"),
+    "the same code typed bare is redacted the same way");
+  assert.equal(forArchive("my code is LZZR-K8AV-NUW5-DREB, thanks"), forArchive("LZZR-K8AV-NUW5-DREB"),
+    "a code said inside a sentence takes the sentence with it, because the sentence names the code");
+  assert.equal(forArchive("I need 500 flyers for a launch"), "I need 500 flyers for a launch",
+    "an ordinary question is archived whole, or the studio loses what visitors ask");
+  const ask = given("RECALL_ASK").match(/"([^"]+)"/)[1];
+  assert.equal(forArchive(ask), ask, "the chip label is not a code and stays readable in the archive");
+  const body = fnBody("logExchange");
+  assert.match(body, /q: forArchive\(question\)/, "the redaction sits at the one place that writes the archive");
+  assert.match(body, /a: answer/, "the reply is still filed, so a carry counted is a carry understood");
 });
 
 test("the visitor has a way to ask for this that is on the screen", () => {

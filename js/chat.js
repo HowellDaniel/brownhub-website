@@ -344,6 +344,9 @@
   const CARRY_FOUND = "Found it — we pick up where you left off.";
   const CARRY_NONE = "I don't have a chat under that code. Check it and say it again.";
   const CARRY_EMPTY = "There is nothing to carry over yet. Ask me something first.";
+  // What the studio's transcript archive sees when someone says a code. Never shown to a
+  // visitor, so unlike the lines above it is not a key in any dictionary.
+  const CARRY_LOGGED = "A chat carried to another device";
   // An apology is worth showing and not worth remembering: filed as a `model` turn it becomes
   // the last thing the visitor was ever told, plays back on their return, and rides to the
   // provider as part of the thread — so one bad minute at the provider leaves an assistant
@@ -409,8 +412,9 @@
 
   // Four signs, a dash, four signs — the groups are how a person reads a code back off a
   // screen, so they are shown that way and accepted that way, and also run together and in
-  // lower case. A bare run of letters is only a code if it holds a digit: "send that code
-  // here" is sixteen letters and a sentence.
+  // lower case, or buried in a sentence with nothing around it to mark it. A bare run of
+  // letters is only a code if it holds a digit: "send that code here" is sixteen letters and
+  // a sentence.
   function codeFrom(text) {
     const up = String(text || "").toUpperCase();
     const sign = "[" + CODE_ALPHABET + "]";
@@ -498,11 +502,15 @@
     }).catch(() => false);
   }
 
+  function forArchive(text) {
+    return codeFrom(text) ? CARRY_LOGGED : text;
+  }
+
   function logExchange(question, answer, source) {
     const log = window.BHAccounts && window.BHAccounts.logChat;
     if (typeof log !== "function") return;
     log({
-      q: question,
+      q: forArchive(question),
       a: answer,
       source: source,
       page: location.pathname,
