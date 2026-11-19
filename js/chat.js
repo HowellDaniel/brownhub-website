@@ -117,14 +117,35 @@
   // dictionary entirely rather than being looked up in it. The thread goes with
   // the question, so the model hears a follow-up as a follow-up.
   // `files` is an optional array of File objects for automatic image/document analysis.
+  const WAIT_MS = 25000;
   function askModel(question, files) {
     const ask = window.BHAccounts && window.BHAccounts.ask;
     if (typeof ask !== "function") return Promise.reject(new Error("No assistant is wired up."));
     const lang = (window.I18N && window.I18N.lang) || "en";
     return Promise.race([
       ask(question, lang, thread, files || []),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("The assistant took too long.")), 25000))
+      new Promise((_, reject) => setTimeout(() => reject(new Error("The assistant took too long.")), WAIT_MS))
     ]);
+  }
+
+  // Measured on the live origin on 2026-11-19: the byte-identical request that came back
+  // 502 came back 200 nine seconds later, twice over, with nothing about the question
+  // changed. So a failed call is a bad minute at the provider and not a bad question from
+  // the visitor, and the question is worth putting once more before the studio's apology
+  // goes on the screen. The wait is ours, though, and a second 25 seconds is not a retry —
+  // it is a longer silence — so only a call that came back inside the window gets asked
+  // again.
+  const RETRY = 1;
+  const RETRY_WINDOW_MS = 20000;
+  function worthAskingAgain(waited) {
+    return waited <= RETRY_WINDOW_MS;
+  }
+  function askTwice(question, files) {
+    const from = Date.now();
+    return askModel(question, files).catch((err) => {
+      if (!RETRY || !worthAskingAgain(Date.now() - from)) return Promise.reject(err);
+      return askModel(question, files);
+    });
   }
 
   // Let other scripts (catalog "Order now via chat") send a message with a
@@ -302,6 +323,15 @@
   const thread = [];
   const HISTORY_KEY = "brownhub-chat-history";
   const HISTORY_AGE = 7 * 86400000;
+  // An apology is worth showing and not worth remembering: filed as a `model` turn it becomes
+  // the last thing the visitor was ever told, plays back on their return, and rides to the
+  // provider as part of the thread — so one bad minute at the provider leaves an assistant
+  // that looks as though it never listened. Every source that is not listed here is kept.
+  const FORGOTTEN = { fallback: true };
+
+  function memorise(source) {
+    return !FORGOTTEN[source];
+  }
 
   function remember(role, text) {
     const clean = (text || "").replace(/\s+/g, " ").trim();
@@ -377,15 +407,16 @@
       addMsg(html, "bot");
       // The archive holds the English sentence the studio wrote; the conversation
       // holds what this visitor actually read, because a restored chat must show
-      // the answer in the language it was given in.
-      remember("model", plainText(T(html)));
+      // the answer in the language it was given in. An answer that never arrived
+      // is shown but not filed, so a visitor's memory keeps only what was said.
+      if (memorise(source)) remember("model", plainText(T(html)));
       settle();
       logExchange(clean, said, source);
     };
     // Only exact commands and explicit quick actions stay deterministic; substantive questions reach the model.
     const known = BHAssistant.route(clean, routeAs, matchIntent);
     if (known) { setTimeout(() => replyWith(known, "intent"), 550 + Math.random() * 450); return; }
-    askModel(clean).then((result) => {
+    askTwice(clean).then((result) => {
       // The server may return a plain string (legacy) or an envelope object (new).
       if (result && typeof result === "object" && result.answer) {
         addEnvelope(result);
@@ -1751,9 +1782,8 @@
         settle();
         logExchange(analysisPrompt, result.answer, "model");
       } else {
-        const reply = result && result.answer ? result.answer : "I could not analyse that just now.";
+        const reply = "I could not analyse that just now.";
         addPlain(reply);
-        remember("model", reply);
         settle();
         logExchange(analysisPrompt, reply, "model");
       }
