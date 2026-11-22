@@ -912,6 +912,18 @@ test("the brief reads emoji and keeps them out of the catalog", async () => {
   assert.match(brief, /at most one emoji/, "the model may mirror one emoji, never more");
 });
 
+test("the brief answers the turn that arrived before it asks about the work", async () => {
+  const capture = {};
+  const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
+  await createHandler(speakingRuntime(capture))(textRequest("good morning"));
+
+  const brief = capture.brief;
+  assert.match(brief, /Answer the turn that arrived/, "the answer must come before the asking");
+  assert.match(brief, /good morning/i, "a greeting must be answered as the greeting it is");
+  assert.match(brief, /never a qualifier/, "small talk must not be met with questions about the job");
+  assert.ok(!/Keep the thread moving/.test(brief), "no rule may demand a question on every turn");
+});
+
 test("a message that is only an emoji still gets an answer", async () => {
   const capture = {};
   const { createHandler } = await import("../supabase/functions/brownhub-assistant/handler.ts");
