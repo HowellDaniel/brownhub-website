@@ -98,11 +98,8 @@ test('the phone panel is told its height, so it stops leaving its room unused', 
   assert.match(d.value, /--chat-top|--nav-h/, `height must stop under the sticky header — got ${d.value}`);
   assert.match(d.value, /100dvh|100vh/, `height has no viewport term, so it cannot follow the phone's own edge — got ${d.value}`);
 
-  /* The desk panel is anchored to the bubble and has always been content-sized; a
-     forced height there would hang a 700px sheet off a 56px button. */
-  const desk = decls('.chat-widget__panel', 'height').filter((d2) => !isPhone(d2.media));
-  assert.deepEqual(desk, [],
-    `the desk panel was given a height too (${desk.map((d2) => d2.value).join(', ')}); this pass is the phone sheet only`);
+  /* The panel above 640px is covered by its own test below — the same defect the
+     phone had, at the widths the owner actually saw it at. */
 });
 
 test('the anchor and the height pay one bottom-edge figure', () => {
@@ -191,4 +188,43 @@ test('the diet never touches the suggestions or the composer', () => {
     const hidden = decls(sel, 'display').filter((d) => isPhone(d.media) && /none/.test(d.value));
     assert.deepEqual(hidden, [], `${sel} is hidden on a phone — the visitor cannot read a suggestion or send a reply from a sheet that removed it`);
   }
+});
+
+/* Measured on the live origin after the phone pass shipped (v165), because the owner
+   came back and said the box had not grown: at 1440x900 the panel painted 500px of a
+   granted 581px, and at 768x1024 it painted 500px of a granted 705px. Only a phone was
+   ever told its height — above 640px the panel still had just a floor and a ceiling, so
+   its own content kept arguing for 500px and the room it was already allowed stayed
+   empty. The phone defect and the desk defect are the same defect; the fix has to cover
+   both, or the owner is right that nothing got bigger. */
+const isDesk = (media) => !isPhone(media);
+
+test('the panel above 640px is told its height too, not just its ceiling', () => {
+  const height = decls('.chat-widget__panel', 'height').filter((d) => isDesk(d.media));
+  assert.ok(height.length,
+    'the desk panel declares no height: with only a floor and a ceiling the box is sized by its own content, so it rendered 500px of a granted 581px at 1440x900 and 500px of a granted 705px at 768x1024 while the owner waited for it to get bigger');
+  const d = last(height);
+  assert.match(d.value, /--chat-h/,
+    `the stated height must stop at the panel's own ceiling or it overruns the screen at 1080p and above — got ${d.value}`);
+  assert.match(d.value, /--chat-clear|--nav-h/,
+    `the height must stop under the sticky header like the old clamp did — got ${d.value}`);
+  assert.match(d.value, /--chat-queue|--queue-h/,
+    `the height must keep paying for whatever stands below it on a desk — got ${d.value}`);
+  assert.match(d.value, /100dvh/,
+    `no viewport term means the height cannot follow the window it is in — got ${d.value}`);
+
+  /* The ceiling and the height must price the identical lane: a max-height left
+     on the old arithmetic would clip the fill straight back to what it replaced. */
+  const max = last(decls('.chat-widget__panel', 'max-height').filter((x) => isDesk(x.media)));
+  assert.ok(max, 'the desk panel has no ceiling to cap the new height against');
+  const norm = (v) => v.replace(/\s+/g, '').replace(/100vh/g, '100dvh');
+  assert.equal(norm(max.value), norm(d.value),
+    `the ceiling still prices (${norm(max.value)}) what the height now prices (${norm(d.value)}) — the fill is clipped back to the figure the height replaced`);
+
+  /* The floor has to go the same way the phone took it, or a panel shorter than
+     --chat-min pushes its own composer under the queue it is told to clear. */
+  const min = last(decls('.chat-widget__panel', 'min-height').filter((x) => isDesk(x.media)));
+  assert.ok(min, 'the desk panel lost its floor entirely — a 300px window now has nothing holding the composer on screen');
+  assert.match(min.value, /--chat-min/,
+    `the desk floor must stay the token it was, clamped to the room — got ${min.value}`);
 });

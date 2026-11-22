@@ -128,6 +128,11 @@ h2{font-size:clamp(1.55rem,1.35rem + .8vw,2.05rem);line-height:1.15;letter-spaci
 .app-band h2{margin-bottom:.35rem}
 .app-band p{color:var(--text-muted);font-size:.94rem;max-width:48rem}
 .app-band .by{font-size:.75rem;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.6rem}
+/* The documents that govern a haul are the app's, not the agency's — so they are
+   offered here, next to the button that opens the app, in the band's own voice. */
+.app-band .haul-legal{margin-top:1rem;font-size:.82rem;line-height:2}
+.app-band .haul-legal a{color:var(--accent-2);text-decoration:none;border-bottom:1px solid var(--glass-border)}
+.app-band .haul-legal a:hover,.app-band .haul-legal a:focus-visible{color:var(--accent);border-bottom-color:var(--accent)}
 footer{border-top:1px solid var(--glass-border);padding:2.2rem 0;color:var(--text-muted);font-size:.88rem;background:var(--glass-inset)}
 .foot{display:grid;gap:1.5rem;grid-template-columns:1.4fr 1fr 1fr}
 footer h3{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:.4rem}
@@ -303,6 +308,14 @@ html.lights-off,html.lights-off body{overflow:hidden}
       <p class="by" id="attribution">An app by BrownHub Studio</p>
       <h2 id="haul-name">BrownHub Haul</h2>
       <p id="haul-blurb">The booking, tracking and depot board are one app, built by the studio's software side. Travellers book and track in the browser; the depot runs the manifest from the same code.</p>
+      <!-- The static addresses are the published ones; the feed script below
+           rewrites the origin from data/haul.json, so a new app host moves the
+           app button and these three links in one edit. -->
+      <p class="haul-legal">What we are answerable for when your bags are with us:
+        <a id="haul-terms" href="https://brownhub-haul.onrender.com/terms.html" data-page="terms.html">Terms of business</a> ·
+        <a id="haul-privacy" href="https://brownhub-haul.onrender.com/privacy.html" data-page="privacy.html">Privacy</a> ·
+        <a id="haul-liability" href="https://brownhub-haul.onrender.com/liability.html" data-page="liability.html">Liability &amp; transit cover</a>
+      </p>
     </div>
     <a class="btn primary" id="open-app-3" href="#" hidden>Open the app</a>
   </section>
@@ -371,6 +384,14 @@ html.lights-off,html.lights-off body{overflow:hidden}
       if (appUrl) {
         ["open-app", "open-app-2", "open-app-3"].forEach(function (id) {
           var a = document.getElementById(id); if (a) { a.href = appUrl; a.hidden = false; }
+        });
+        /* The legal pages are served by the app, so they live at the app's origin.
+         * Only the origin is taken from the feed; the file names are the app's own
+         * and are written in the markup, so a wrong feed value cannot invent one. */
+        var origin = new URL(appUrl).origin;
+        ["terms", "privacy", "liability"].forEach(function (key) {
+          var a = document.getElementById("haul-" + key);
+          if (a) a.href = origin + "/" + a.getAttribute("data-page");
         });
       }
     })

@@ -5707,10 +5707,20 @@ html[data-theme="light"][data-lights="on"] body::after{content:"";position:fixed
    live origin at 390x844, 172px of a 379px panel sat under a notice on z-index
    9993 with the composer out of sight, and at 320x568 the whole 26px of it was
    underneath. Lifting the anchor by the same figure the clamp subtracts is what
-   makes the arithmetic describe the box the visitor actually sees. */
+   makes the arithmetic describe the box the visitor actually sees.
+
+   The height is the third consumer and it used to be missing. With only a floor
+   and a ceiling, a flex column is sized by its own content, so at 1440x900 the
+   desk panel painted 500px of a granted 581px and at 768x1024 it painted 500px
+   of a granted 705px — the box the owner asked to be bigger never got bigger
+   above 640px, and it shrank again on the first send because the suggestions
+   empty themselves. Stating the height against the ceiling pays for the room
+   whether or not there is anything in it yet. */
 .chat-widget__panel{
   min-height:min(var(--chat-min), calc(100vh - var(--chat-clear) - var(--chat-queue) - env(safe-area-inset-bottom)));
   min-height:min(var(--chat-min), calc(100dvh - var(--chat-clear) - var(--chat-queue) - env(safe-area-inset-bottom)));
+  height:min(var(--chat-h), calc(100vh - var(--chat-clear) - var(--chat-queue) - env(safe-area-inset-bottom)));
+  height:min(var(--chat-h), calc(100dvh - var(--chat-clear) - var(--chat-queue) - env(safe-area-inset-bottom)));
   max-height:min(var(--chat-h), calc(100vh - var(--chat-clear) - var(--chat-queue) - env(safe-area-inset-bottom)));
   max-height:min(var(--chat-h), calc(100dvh - var(--chat-clear) - var(--chat-queue) - env(safe-area-inset-bottom)))}
 /* The messages list is the row that gives, and it gives before anything else.
