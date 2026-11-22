@@ -5999,3 +5999,73 @@ html[data-theme="light"] #product-modal .modal__clip{background:var(--bg-alt)}
   background:rgba(9,4,3,.55)}
 .chat-msg__media img,.chat-msg__media video{display:block;width:auto;height:auto;
   max-width:100%;max-height:min(52vh,26rem);object-fit:contain}
+
+/* ==========================================================================
+   #624 — on a phone the assistant is a sheet, and it stops exactly where the
+   bottom edge of the screen is already spoken for.
+
+   Measured on the live origin at 390x844 (tools/pane624.mjs, --consent=1): the
+   panel was granted 635px between the sticky header and the launcher and took
+   450px of it, because a fixed box with a floor and a ceiling but no height is
+   sized by its own content. The empty 185px sat under the composer as grey, and
+   sending the first message made the box SHRINK to 423px — the suggestions empty
+   themselves on a send, so the column lost the 124px they were holding. The phone now
+   states the height outright instead of letting the content argue for it: 614px at
+   390x844, 410px at 360x640, 314px at 320x568.
+
+   The same pass caught the panel standing on the asks it shares the edge with:
+   the install pill painted at y 740 underneath a panel that reached y 760,
+   because the phone only ever priced the cookie notice and the quote card by
+   name. js/app.js already measures the distance from the bottom of the screen to
+   the top of whatever is actually standing there and publishes it as --queue-h,
+   so that figure — floored at the launcher lane the panel hangs over — is now the
+   one number the anchor and the height both spend. A grant the queue owns is
+   never under the glass, and the glass never pays twice for the same lane. One
+   pixel of slack rides on the queue term because reserve() rounds its measurement
+   to whole pixels and rounding goes DOWN: at 390x844 with the pill standing it
+   published 104px for a grant of 104.54px, and the sheet painted half a pixel of
+   glass across the top of the pill.
+
+   The suggestions go one way only: sideways, whole, in one line. They wrapped to
+   two and three rows, and a wrapped row that does not fit is sawn through the
+   middle of a chip — measured on the live origin, 124px of chips collapsed to 10px
+   once the first reply landed. One line costs 44px whatever the language, so the
+   conversation keeps 371px on a 390x844 phone — 414px before a reply arrives — and
+   the visitor swipes to the rest, which the faded inline end says out loud.
+   ========================================================================== */
+@media (max-width:640px){
+  :root{--chat-top:calc(var(--nav-h, 72px) + .5rem);
+    --chat-edge:max(5.25rem + env(safe-area-inset-bottom, 0px), calc(var(--queue-h, 0px) + 1px))}
+  .chat-widget__panel{
+    bottom:var(--chat-edge);
+    height:calc(100vh - var(--chat-top) - var(--chat-edge));
+    height:calc(100dvh - var(--chat-top) - var(--chat-edge));
+    max-height:calc(100vh - var(--chat-top) - var(--chat-edge));
+    max-height:calc(100dvh - var(--chat-top) - var(--chat-edge));
+    /* The floor the old clamp carried would push the sheet back over the header
+       in the one state where the room is genuinely smaller than 400px. */
+    min-height:0}
+  .chat-widget__chips{flex:none;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
+    overscroll-behavior-x:contain;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(to right,#000 0,#000 calc(100% - 1.75rem),transparent calc(100% - .35rem));
+    mask-image:linear-gradient(to right,#000 0,#000 calc(100% - 1.75rem),transparent calc(100% - .35rem))}
+  .chat-widget__chips::-webkit-scrollbar{display:none}
+  .chat-widget__chips>*{flex:none}
+  /* The bubble is pinned to the physical right in both directions, so the strip
+     runs out towards it: the fade belongs on the same side the chips start from. */
+  html[dir="rtl"] .chat-widget__chips{
+    -webkit-mask-image:linear-gradient(to left,#000 0,#000 calc(100% - 1.75rem),transparent calc(100% - .35rem));
+    mask-image:linear-gradient(to left,#000 0,#000 calc(100% - 1.75rem),transparent calc(100% - .35rem))}
+}
+
+/* A short phone cannot pay for the sheet's own chrome and the conversation both.
+   Measured at 320x568 with the install pill standing: 314px of lane, 229px of it spent on
+   the head (69), the handoff bar (50), the suggestions (44) and the composer (66), leaving
+   74px for the messages once an answer has arrived — 133px before one has — inside a 464px
+   conversation. The status line under the assistant's name is the only one of those rows
+   that says nothing the visitor needs, so on a short screen it leaves and the conversation
+   takes its row. The suggestions and the composer never do: a chip you cannot read and a
+   field you cannot reach are the two failures this sheet is here to prevent. */
+@media (max-width:640px) and (max-height:660px){
+  .chat-widget__head-sub{display:none}
+}
