@@ -155,7 +155,7 @@ test("every ask script goes through the queue and gives the edge back", () => {
 });
 
 test("the queue is built once, from app.js, against what is really on screen", () => {
-  assert.match(app, /window\.bhAsk = BHAskQueue\.make\(/, "nothing builds the queue");
+  assert.match(app, /BHAskQueue\.make\(BHAskQueue\.RANKS, askStanding\)/, "nothing builds the queue");
   const probe = app.slice(app.indexOf("function askStanding"), app.indexOf("function askStanding") + 900);
   assert.ok(probe.length > 60, "js/app.js: the queue is not given a way to see the edge");
   assert.match(probe, /querySelector/, "the standing check does not look at the DOM");
@@ -220,4 +220,34 @@ test("no page leaves script markup stranded between tags", () => {
     }
   }
   assert.deepEqual(stranded, []);
+});
+
+/* A fetched file is not a guarantee. Blocking js/askqueue.js for one pageview — which is
+   what a dropped script on a bad mobile connection looks like — took `window.bhAsk` with
+   it, and three things fell over that have nothing to do with the bottom edge: the line
+   that builds the queue threw, so nothing after it in js/app.js ran; the cookie notice's
+   own request threw, so no consent was ever asked for; and the assistant's openChat()
+   handed the teaser claim back BEFORE it revealed the panel, so the visitor's click on
+   the chat bubble did nothing at all. Measured in Blink by blocking the one URL. */
+test("the queue is built whether or not the module arrived", () => {
+  assert.match(app, /typeof BHAskQueue === "undefined"/, "js/app.js: building the queue assumes the fetch won");
+  const at = app.indexOf("function fallbackAsk");
+  assert.ok(at >= 0, "js/app.js: there is no queue to fall back to");
+  const body = app.slice(at, app.indexOf("\n  }", at) + 3);
+  for (const method of ["request", "release", "owner", "sweep"]) {
+    assert.ok(body.includes(method + ":"), `the fallback cannot answer ${method}()`);
+  }
+  /* Granting on the spot is the point: an ask that is queued forever is an ask that
+     never appears, and the pre-queue site at least showed all four at once. */
+  assert.match(body, /fn\(\)/, "the fallback never raises the ask it was given");
+});
+
+test("no assistant call lets a missing queue eat the click", () => {
+  const chat = read("js/chat.js");
+  const calls = chat.split("\n").filter((line) => /window\.bhAsk\.(request|release)\(/.test(line));
+  assert.ok(calls.length >= 4, `the assistant's queue calls have gone missing (${calls.length} left)`);
+  for (const line of calls) {
+    const before = line.slice(0, line.indexOf("window.bhAsk."));
+    assert.match(before, /bhAsk\s*&&/, `unguarded call: ${line.trim()}`);
+  }
 });

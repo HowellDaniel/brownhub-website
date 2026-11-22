@@ -267,7 +267,7 @@ const MEASURE = `
     await sleep(500);
   }
   ready.waitedMs = waited.length * 500;
-  ready.pendingFetch = await ev(`(fetch("js/chat.js?v=45",{cache:"no-store"}).then(function(r){return "chat.js " + r.status + " " + r.headers.get("content-type")}).catch(function(e){return "FETCH THREW " + e.message}))`, true);
+  ready.pendingFetch = await ev(`(fetch("js/chat.js?v=47",{cache:"no-store"}).then(function(r){return "chat.js " + r.status + " " + r.headers.get("content-type")}).catch(function(e){return "FETCH THREW " + e.message}))`, true);
   if (!ready.grip) console.log("NOT WIRED: js/chat.js never built the panel chrome —", JSON.stringify(ready, null, 1));
   if (!ready.nav) console.log("NAV UNPUBLISHED: js/scroll.js has not measured the header, so --nav-h is still the 72px stylesheet default —", JSON.stringify(ready, null, 1));
   if (ready.notFetched && ready.notFetched.length) console.log("STILL OUT OF THE PIPE at " + ready.now + "ms: " + ready.notFetched.join(", "));

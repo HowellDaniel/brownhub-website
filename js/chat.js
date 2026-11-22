@@ -830,7 +830,7 @@
     buzz();
     // A chime with nothing on screen to point at is just noise, so a repeat puts the
     // question back beside the icon before it makes itself heard.
-    if (repeat) window.bhAsk.request("teaser", function () { showTeaser(true); });
+    if (repeat) window.bhAsk && window.bhAsk.request("teaser", function () { showTeaser(true); });
     scheduleCue();
   }
   function scheduleCue() {
@@ -1166,7 +1166,7 @@
     if (teaserEl) { teaserEl.remove(); teaserEl = null; }
     // The question is off the screen, so the bottom edge it was holding is not the
     // assistant's to keep: whoever was waiting on it can stand there now.
-    window.bhAsk.release("teaser");
+    window.bhAsk && window.bhAsk.release("teaser");
   }
   function showTeaser(quiet) {
     /* On the edge already: nothing to do, and the claim it holds is its own.
@@ -1174,7 +1174,7 @@
        answered: the claim is handed back, because holding the bottom edge empty would
        park the install pill and the quote card behind a bubble that never arrives. */
     if (teaserEl) return;
-    if (!panel.hidden || seenThisVisit()) { window.bhAsk.release("teaser"); return; }
+    if (!panel.hidden || seenThisVisit()) { window.bhAsk && window.bhAsk.release("teaser"); return; }
     const box = document.createElement("div");
     box.className = "chat-widget__teaser";
     const bubble = document.createElement("button");
@@ -1230,7 +1230,7 @@
     // against, and four notices have been known to stand on it at once.
     const later = () => {
       if (document.body.classList.contains("promo-open")) { setTimeout(later, 1200); return; }
-      window.bhAsk.request("teaser", showTeaser);
+      window.bhAsk && window.bhAsk.request("teaser", showTeaser);
     };
     setTimeout(later, 1500);
   }
@@ -1630,16 +1630,16 @@
   const FILE_MAX = 10 * 1024 * 1024;
   const FILE_CAP = 3;
   const FILE_KIND = /\.(pdf|docx?|xlsx?|pptx?|txt|rtf|csv|odt|ods|odp|zip|png|jpe?g|webp|gif|heic|svg|ai|psd|eps|mp4|mov|avi|webm|mkv|m4v|mpg|mpeg|3gp|ogv)$/i;
-  const EMOJI = ["😀", "😄", "😊", "😍", "🤔", "😅", "🙂", "😉", "😎", "🥳", "😢", "😭",
-    "😮", "👍", "👎", "🙏", "👏", "💪", "🤝", "✍️", "👀", "❤️", "🧡", "💛",
-    "💚", "💙", "💜", "⭐", "🔥", "✨", "✅", "❌", "❓", "❗", "💯", "🎉",
-    "🎨", "🖌️", "🖼️", "📐", "✂️", "📄", "📎", "📁", "📌", "💼", "📞", "📱",
-    "💻", "🌍", "🚀", "⏰", "📅", "💰", "🇬🇭", "🙌"];
 
   const L_FILES = "Attach a file";
   const L_EMOJI = "Add an emoji";
   const L_REMOVE = "Remove this file";
   const L_PANEL = "Choose an emoji";
+  const L_EMOJI_SEARCH = "Search emoji";
+  const L_EMOJI_LOADING = "Loading emoji";
+  const L_EMOJI_NONE = "No emoji match that search";
+  const L_EMOJI_MORE = "More emoji";
+  const L_EMOJI_FAIL = "The emoji list could not load";
   const L_REJECT = "That file will not do — a picture, video, PDF, Word or Excel document, or a zip, up to 10 MB, three at most.";
   const L_SENDING = "Sending your file…";
   const L_SENT = "Your file is on its way to our team. We will open it and reply — keep asking here in the meantime.";
@@ -1653,20 +1653,176 @@
   fileRow.hidden = true;
   panel.insertBefore(fileRow, form);
 
+  // The sheet used to be fifty-six glyphs typed out in this file, which is a shortlist
+  // wearing the name of a set. Unicode publishes the set — every fully-qualified emoji
+  // in nine groups, each with the English name that makes a search box possible — and
+  // data/emoji.json is that file reshaped by tools/emoji-data.mjs from the copy of
+  // emoji-test.txt committed under tools/vendor/. It is deliberately NOT inlined here:
+  // js/chat.js is on the boot path of every page, and the phone has been measured. A
+  // visitor who never opens the picker never buys the 167 KB, and the service worker
+  // caches it the first time somebody does.
+  const CHUNK = 168; // twenty-one rows of eight: a 2,430-strong group arrives a screen at a time
+
   const emojiPop = document.createElement("div");
   emojiPop.className = "chat-widget__emoji";
   emojiPop.hidden = true;
   emojiPop.setAttribute("role", "dialog");
   emojiPop.setAttribute("aria-label", T(L_PANEL));
-  for (const glyph of EMOJI) {
+
+  const emojiSearch = document.createElement("input");
+  emojiSearch.type = "search";
+  emojiSearch.className = "chat-widget__emoji-search";
+  emojiSearch.autocomplete = "off";
+  emojiSearch.placeholder = T(L_EMOJI_SEARCH);
+  emojiSearch.setAttribute("aria-label", T(L_EMOJI_SEARCH));
+
+  const emojiTabs = document.createElement("div");
+  emojiTabs.className = "chat-widget__emoji-tabs";
+
+  const emojiGrid = document.createElement("div");
+  emojiGrid.className = "chat-widget__emoji-grid";
+  // Unicode's own names are data, not studio copy: three thousand of them are not
+  // dictionary keys and must never be offered to the translator.
+  emojiGrid.setAttribute("data-i18n-off", "");
+
+  const emojiNote = document.createElement("p");
+  emojiNote.className = "chat-widget__emoji-note";
+  emojiNote.hidden = true;
+
+  const emojiMore = document.createElement("button");
+  emojiMore.type = "button";
+  emojiMore.className = "chat-widget__emoji-more";
+  emojiMore.textContent = T(L_EMOJI_MORE);
+  emojiMore.hidden = true;
+  emojiMore.addEventListener("click", () => paintMore());
+
+  emojiPop.appendChild(emojiSearch);
+  emojiPop.appendChild(emojiTabs);
+  emojiPop.appendChild(emojiGrid);
+  emojiPop.appendChild(emojiNote);
+  emojiPop.appendChild(emojiMore);
+  panel.insertBefore(emojiPop, form);
+
+  let emojiBook = null; // the nine groups, once fetched
+  let emojiFetching = false;
+  let emojiGroup = ""; // whichever tab is lit
+  let emojiList = []; // the "glyph name" strings the grid is showing
+  let emojiShown = 0;
+  let noteLabel = ""; // which words the note is showing, so a language switch can re-say them
+
+  function note(label) {
+    noteLabel = label || "";
+    emojiNote.textContent = noteLabel ? T(noteLabel) : "";
+    emojiNote.hidden = !noteLabel;
+  }
+
+  function loadEmoji() {
+    if (emojiBook || emojiFetching) return;
+    emojiFetching = true;
+    note(L_EMOJI_LOADING);
+    fetch("/data/emoji.json?v=1")
+      .then((r) => (r && r.ok ? r.json() : Promise.reject(new Error(String(r && r.status)))))
+      .then((book) => {
+        emojiBook = book;
+        emojiFetching = false;
+        buildTabs();
+        showGroup(Object.keys(book.groups)[0]);
+      })
+      .catch(() => {
+        emojiFetching = false;
+        note(L_EMOJI_FAIL);
+      });
+  }
+
+  function buildTabs() {
+    emojiTabs.textContent = "";
+    for (const label in emojiBook.groups) {
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.className = "chat-widget__emoji-tab";
+      tab.dataset.group = label;
+      tab.textContent = T(label);
+      tab.setAttribute("aria-pressed", label === emojiGroup ? "true" : "false");
+      tab.addEventListener("click", () => showGroup(label));
+      emojiTabs.appendChild(tab);
+    }
+  }
+
+  // Relabel a language switch in place: rebuilding the tabs would throw away the
+  // scroll position the visitor had reached inside a two-thousand-glyph group.
+  function labelTabs() {
+    const tabs = emojiTabs.querySelectorAll(".chat-widget__emoji-tab");
+    for (let i = 0; i < tabs.length; i++) {
+      const label = tabs[i].dataset.group;
+      tabs[i].textContent = T(label);
+    }
+  }
+
+  function showGroup(label) {
+    emojiGroup = label;
+    emojiSearch.value = "";
+    const tabs = emojiTabs.querySelectorAll(".chat-widget__emoji-tab");
+    for (let i = 0; i < tabs.length; i++) {
+      tabs[i].setAttribute("aria-pressed", tabs[i].dataset.group === label ? "true" : "false");
+    }
+    paint();
+  }
+
+  function currentList() {
+    const groups = emojiBook ? emojiBook.groups : {};
+    const q = emojiSearch.value.trim().toLowerCase();
+    if (!q) return groups[emojiGroup] || [];
+    const hits = [];
+    for (const label in groups) {
+      const items = groups[label];
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].indexOf(q) >= 0) hits.push(items[i]);
+      }
+    }
+    return hits;
+  }
+
+  function tile(item) {
+    const sp = item.indexOf(" ");
+    const glyph = sp < 0 ? item : item.slice(0, sp);
+    const name = sp < 0 ? "" : item.slice(sp + 1);
     const b = document.createElement("button");
     b.type = "button";
     b.className = "chat-widget__emoji-pick";
     b.textContent = glyph;
+    b.title = name;
+    b.setAttribute("aria-label", name);
     b.addEventListener("click", () => putEmoji(glyph));
-    emojiPop.appendChild(b);
+    return b;
   }
-  panel.insertBefore(emojiPop, form);
+
+  function paint() {
+    emojiList = currentList();
+    emojiShown = 0;
+    emojiGrid.textContent = "";
+    paintMore();
+  }
+
+  function paintMore() {
+    if (!emojiList.length) {
+      emojiMore.hidden = true;
+      if (emojiBook) note(L_EMOJI_NONE);
+      return;
+    }
+    note("");
+    const frag = document.createDocumentFragment();
+    const end = Math.min(emojiShown + CHUNK, emojiList.length);
+    for (let i = emojiShown; i < end; i++) frag.appendChild(tile(emojiList[i]));
+    emojiShown = end;
+    emojiGrid.appendChild(frag);
+    emojiMore.hidden = emojiShown >= emojiList.length;
+  }
+
+  emojiSearch.addEventListener("input", () => paint());
+  emojiGrid.addEventListener("scroll", () => {
+    if (emojiShown >= emojiList.length) return;
+    if (emojiGrid.scrollTop + emojiGrid.clientHeight > emojiGrid.scrollHeight - 60) paintMore();
+  });
 
   const picker = document.createElement("input");
   picker.type = "file";
@@ -1807,6 +1963,7 @@
     emojiPop.hidden = false;
     emojiPop.setAttribute("aria-label", T(L_PANEL));
     emojiBtn.setAttribute("aria-expanded", "true");
+    loadEmoji();
   }
   function hideEmoji() {
     if (emojiPop.hidden) return;
@@ -1965,6 +2122,11 @@
     emojiBtn.setAttribute("aria-label", T(L_EMOJI));
     emojiBtn.title = T(L_EMOJI);
     emojiPop.setAttribute("aria-label", T(L_PANEL));
+    emojiSearch.placeholder = T(L_EMOJI_SEARCH);
+    emojiSearch.setAttribute("aria-label", T(L_EMOJI_SEARCH));
+    emojiMore.textContent = T(L_EMOJI_MORE);
+    if (emojiBook) labelTabs();
+    if (noteLabel) note(noteLabel);
     syncFileBtn();
     if (picked.length) paintFiles();
   });

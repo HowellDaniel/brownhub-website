@@ -33,7 +33,22 @@
     if (getComputedStyle(n).visibility === "hidden") return false;
     return n.getBoundingClientRect().height > 1;
   }
-  window.bhAsk = BHAskQueue.make(BHAskQueue.RANKS, askStanding);
+  /* js/askqueue.js is a fetched file, and a pageview where that one request is lost used
+     to take the assistant, the cookie notice and the install pill down with it: the line
+     below threw, so nothing after it in this file ever ran. Without the queue the asks
+     are still real asks — they simply are not sequenced, and each one is granted where it
+     stands, which is the crowded bottom edge this queue was written to replace. A lesser
+     evil than four notices that never arrive at all. */
+  function fallbackAsk() {
+    return {
+      request: function (key, fn) { if (fn) fn(); return true; },
+      release: function () { return true; },
+      owner: function () { return null; },
+      sweep: function () {}
+    };
+  }
+  window.bhAsk = typeof BHAskQueue === "undefined" ? fallbackAsk()
+    : BHAskQueue.make(BHAskQueue.RANKS, askStanding);
 
   var standalone = window.matchMedia("(display-mode: standalone)").matches ||
     window.matchMedia("(display-mode: fullscreen)").matches || navigator.standalone === true;

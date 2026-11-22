@@ -6079,3 +6079,65 @@ html[data-theme="light"] #product-modal .modal__clip{background:var(--bg-alt)}
 @media (max-width:640px) and (max-height:660px){
   .chat-widget__head-sub{display:none}
 }
+
+/* The sheet is no longer the list. It is a search field, a rail of group tabs, the
+   grid, and the one line that says why the grid is empty — so the rule that made the
+   sheet itself the grid has to be replaced by a column that hands its leftover height
+   to the grid. Measured at 1440x900 with the panel standing 581px: the sheet takes
+   270px of it, the search row costs 35px and the tab line 23px, and what is left for
+   glyphs is 147px — five rows of 29px, where the shortlist's 168px showed five and
+   two thirds. The grid gives up three quarters of a row to gain three and a half
+   thousand glyphs behind a scrollbar, which is the trade being made here.
+   overflow:hidden is the whole point: a grid of three and a half thousand glyphs is
+   only safe inside a sheet that clips itself, because a sheet that grows spends the
+   conversation and then the composer field the visitor is typing into. */
+.chat-widget__emoji{display:flex;flex-direction:column;gap:.35rem;
+  max-height:min(272px,30dvh);overflow:hidden;padding:.45rem .55rem;
+  border-top:1px solid var(--border);background:var(--bg-alt)}
+.chat-widget__emoji-search{flex:none;width:100%;min-width:0;padding:.32rem .5rem;
+  border:1px solid var(--border);border-radius:8px;background:var(--surface);
+  color:var(--text);font:inherit;font-size:.82rem}
+.chat-widget__emoji-search:focus{outline:none;border-color:var(--accent)}
+/* One sideways line of tabs, and the line runs out to the edge rather than wrapping:
+   nine tabs on two rows would be a second row of chrome, and it is the grid that needs
+   the room. The fade marks the end the rail runs out to, and it is written per direction
+   because a gradient is physical, not logical: measured at 1440x900 the rail spends 358px
+   beyond its 420px box in English, where the cut tabs sit at the physical right, and 218px
+   in Arabic, where the scroll starts flush with the physical right and the cut tab — سفر
+   at −36px — sits at the physical left. A fade at both ends, which is what the collection
+   rails do for their pictures, was measured here costing the tab an Arabic visitor reads
+   first 545 of its 19,502 lit label pixels, because that tab is pinned under the right
+   hand fade. The rail can be scrolled back to that end, but so can the chips above it, and
+   they already accept that for the same reason: the edge that says "there is more" is the
+   one the content is leaving through. Same 1.75rem hold and 0.35rem run-off as the chips,
+   so the two sideways rails in this sheet fade alike. */
+.chat-widget__emoji-tabs{flex:none;display:flex;gap:.3rem;overflow-x:auto;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  -webkit-mask-image:linear-gradient(to right,#000 0,#000 calc(100% - 1.75rem),transparent calc(100% - .35rem));
+  mask-image:linear-gradient(to right,#000 0,#000 calc(100% - 1.75rem),transparent calc(100% - .35rem))}
+.chat-widget__emoji-tabs::-webkit-scrollbar{display:none}
+html[dir="rtl"] .chat-widget__emoji-tabs{
+  -webkit-mask-image:linear-gradient(to left,#000 0,#000 calc(100% - 1.75rem),transparent calc(100% - .35rem));
+  mask-image:linear-gradient(to left,#000 0,#000 calc(100% - 1.75rem),transparent calc(100% - .35rem))}
+.chat-widget__emoji-tab{flex:none;white-space:nowrap;border:1px solid var(--border);
+  background:var(--surface);color:var(--text-muted);font:inherit;font-size:.72rem;
+  line-height:1;padding:.3rem .55rem;border-radius:999px;cursor:pointer;transition:.15s}
+.chat-widget__emoji-tab:hover{border-color:var(--accent);color:var(--accent-ink)}
+.chat-widget__emoji-tab[aria-pressed="true"]{border-color:var(--accent);
+  color:var(--accent-ink);background-color:rgba(var(--accent-rgb),.14)}
+.chat-widget__emoji-grid{flex:1 1 auto;min-height:0;display:grid;
+  grid-template-columns:repeat(8,minmax(0,1fr));gap:2px;align-content:start;
+  overflow-y:auto;-webkit-overflow-scrolling:touch}
+.chat-widget__emoji-note{flex:none;margin:0;padding:.2rem 0;font-size:.75rem;
+  color:var(--text-muted);text-align:center}
+.chat-widget__emoji-more{flex:none;align-self:center;background:transparent;
+  border:1px solid var(--accent);color:var(--accent-ink);border-radius:999px;
+  padding:.3rem .7rem;font:inherit;font-size:.75rem;font-weight:600;cursor:pointer}
+@media (max-width:640px){
+  /* Seven across is the phone's own grid from the shortlist days and it stays: at
+     390px an eighth column puts the glyph under 40px, which is below what a thumb
+     is aimed at. The cap pays for the search row and the tab line, nothing else. */
+  .chat-widget__emoji{max-height:min(240px,28dvh);padding:.45rem .5rem;gap:.3rem}
+  .chat-widget__emoji-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .chat-widget__emoji-tab{font-size:.7rem;padding:.3rem .48rem}
+}
