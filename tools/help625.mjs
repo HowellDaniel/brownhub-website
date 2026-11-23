@@ -6,14 +6,16 @@
                          [--port=9425] [--out=/tmp/bh625/<arm>-<lang>-<vw>x<vh>.json]
                          [--shot=/tmp/bh625] [--flow=yes|no|both]
 
-  Why the network is stubbed. The capture function that is deployed today has no feedback
-  branch, and public.feedback has no table yet, so a real tap from a test rig would be a
-  write attempt against the studio's production project — and every other *.supabase.co call
-  this page can make (the assistant, the chat transcript log) would land there too. So every
-  Supabase request is muted here and counted; what is asserted is the client's own contract:
-  the URL it aims at, the shape of the body it hands fetch, and the states it paints when the
-  answer comes back ok or does not. The DDL and the redeploy are proven separately, by their
-  own rail, before anything is claimed about the server.
+  Why the network is stubbed, and where it is not. The local arm never lets a request out:
+  a rating on a test page is not a fact about a customer, and the studio's feedback table is
+  business data, so the local arm mutes capture/feedback and every other *.supabase.co call
+  this page can make (the assistant, the chat transcript log), then asserts the client's own
+  contract — the URL it aims at, the shape of the body it hands fetch, the states it paints
+  when the answer comes back ok or does not. The live arm lets the one feedback POST leave
+  the browser for real, because that is the request a curl cannot prove: the page's own CSP
+  has to admit the functions origin, the Origin header has to be the site, and the deployed
+  function has to answer. The server's status and body are filed with the call and gated, and
+  the rows the live arm leaves behind are read back and deleted on the SQL rail afterwards.
 */
 import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
@@ -105,7 +107,8 @@ async function ev(expr) {
   return r.result.value;
 }
 
-/* Installed before the page's own scripts, so nothing ever reaches the project. */
+/* Installed before the page's own scripts. In the local arm nothing reaches the project. */
+const LIVE = ARM === "live";
 const SEED = `
 (function () {
   try { localStorage.setItem("brownhub-lang", ${JSON.stringify(LANG)}); } catch (e) {}
@@ -130,12 +133,25 @@ const SEED = `
     if (/capture\\/feedback/.test(u)) {
       var body = null;
       try { body = JSON.parse((opts && opts.body) || "null"); } catch (e) { body = "unparseable"; }
-      S.calls.push({ url: u, method: (opts && opts.method) || "GET",
-                     ctype: String((opts && opts.headers && (opts.headers["content-type"] || opts.headers["Content-Type"])) || "-"),
-                     credentials: (opts && opts.credentials) || "-", body: body });
-      return new Promise(function (res) {
-        setTimeout(function () { res({ ok: true, status: 200, json: function () { return Promise.resolve({}); } }); }, 30);
-      });
+      var c = { url: u, method: (opts && opts.method) || "GET",
+                ctype: String((opts && opts.headers && (opts.headers["content-type"] || opts.headers["Content-Type"])) || "-"),
+                credentials: (opts && opts.credentials) || "-", body: body,
+                door: ${LIVE ? "'live'" : "'stubbed'"} };
+      S.calls.push(c);
+      /* The local arm answers its own: a rating left on a test page is not a fact about a
+         customer, and the studio's feedback table is business data. */
+      if (c.door === "stubbed") {
+        return new Promise(function (res) {
+          setTimeout(function () { res({ ok: true, status: 200, json: function () { return Promise.resolve({}); } }); }, 30);
+        });
+      }
+      /* The live arm sends the real request and files the answer the server actually gave.
+         The clone is read so the page still gets an unconsumed body. */
+      return real.apply(this, arguments).then(function (r) {
+        c.status = r.status; c.ok = r.ok;
+        return r.clone().text().then(function (t) { c.answer = String(t).slice(0, 200); return r; },
+                                      function () { c.answer = "unread"; return r; });
+      }, function (e) { c.status = 0; c.ok = false; c.answer = "blocked: " + (e && e.message || e); throw e; });
     }
     if (/supabase\\.co/.test(u)) {
       S.muted.push(u.split("?")[0].replace(/^https:\\/\\/[^/]*\\//, "/"));
@@ -524,6 +540,20 @@ async function main() {
     return Object.assign({ pillY, y }, JSON.parse(await ev(SENDCLEAR)));
   }
 
+  /* The local arm's stub answers in 30 ms; the live arm's answer is a round-trip. A fixed
+     sleep read the panel while the reply was still in the air and a note the studio had
+     already filed looked like it never closed, so wait on the door and then breathe. */
+  async function answered(ms) {
+    if (!LIVE) { await sleep(ms); return; }
+    for (let i = 0; i < 60; i++) {
+      const done = Number(await ev(`(function () { var c = window.__hf.calls, l = c[c.length - 1];
+        return l && l.status !== undefined ? 1 : 0; })()`));
+      if (done === 1) break;
+      await sleep(150);
+    }
+    await sleep(250);
+  }
+
   /* "No" is the branch that must ask rather than post. */
   async function runNo() {
     await ev(`${CLICK}("no")`);
@@ -535,10 +565,11 @@ async function main() {
     await shoot(`l${load}-note-open`);
     const send = await sendClear();
     await ev(`${NOTE}("The pricing is not here.","+233 53 558 3460", true)`);
-    await sleep(600);
+    await answered(600);
     const afterNote = JSON.parse(await ev(STATE));
-    const body = JSON.parse(await ev(`JSON.stringify(window.__hf.calls.map(function (c) { return { url: c.url, method: c.method, ctype: c.ctype, credentials: c.credentials, body: c.body }; }))`));
-    results.flows.no = { afterNo, afterNote, body, send };
+    const body = JSON.parse(await ev(`JSON.stringify(window.__hf.calls)`));
+    const lastCall = body[body.length - 1] || {};
+    results.flows.no = { afterNo, afterNote, body, send, door: lastCall.door, status: lastCall.status, answer: lastCall.answer };
     await shoot(`l${load}-after-no-note`);
   }
 
@@ -546,9 +577,9 @@ async function main() {
   async function runYes() {
     const n = await ev(`window.__hf.calls.length`);
     await ev(`${CLICK}("yes")`);
-    await sleep(700);
+    await answered(700);
     const state = JSON.parse(await ev(STATE));
-    const calls = await ev(`JSON.stringify(window.__hf.calls.slice(${n}).map(function (c) { return { url: c.url, method: c.method, ctype: c.ctype, credentials: c.credentials, body: c.body }; }))`);
+    const calls = await ev(`JSON.stringify(window.__hf.calls.slice(${n}))`);
     const contrast = JSON.parse(await ev(CONTRAST));
     results.flows.yes = { state, calls: JSON.parse(calls), contrast };
     await shoot(`l${load}-after-yes`);
@@ -606,6 +637,7 @@ async function main() {
     const c0 = y.calls[0];
     rows.push(["yes call", (c0 ? `${c0.method} ${c0.url.split("/v1/")[1]} ct=${c0.ctype} cred=${c0.credentials} body=${JSON.stringify(c0.body)}` : "NO CALL") +
       ` (${y.calls.length} call${y.calls.length === 1 ? "" : "s"})`]);
+    rows.push(["yes door", `${c0 ? c0.door : "-"}${c0 && c0.door === "live" ? ` status ${c0.status} ok ${c0.ok} answer ${JSON.stringify(c0.answer)}` : ""}`]);
     rows.push(["yes states", `${y.state.pressed.join(" ")} rest ${y.state.restHidden} done ${y.state.doneHidden} "${y.state.doneText.slice(0, 40)}"`]);
     rows.push(["yes contrast", y.contrast.votes.map((v) => `${v.vote}:${v.pressed}${v.disabled ? "/off" : "/on"} AA ${v.ratio} op ${v.opacity}`).join("  ") + `  done AA ${y.contrast.done}`]);
   }
@@ -613,7 +645,8 @@ async function main() {
   if (n) {
     rows.push(["no asks", `rest open ${n.afterNo.restHidden === false}, calls after tap ${n.afterNo.calls} (was ${before.calls}), focus ${n.afterNo.focused}, pills ${JSON.stringify(n.afterNo.pressed)}`]);
     rows.push(["note call", JSON.stringify(n.body && n.body[n.body.length - 1] && n.body[n.body.length - 1].body)]);
-    rows.push(["note done", `"${n.afterNote.doneText.slice(0, 40)}" rest ${n.afterNote.restHidden}`]);
+    rows.push(["note done", `"${n.afterNote.doneText.slice(0, 40)}" rest ${n.afterNote.restHidden}` +
+      ` door ${n.door}${LIVE ? ` status ${n.status} answer ${JSON.stringify(n.answer)}` : ""}`]);
     if (n.send) rows.push(["send clear", `y ${n.send.y} send ${n.send.sendTop}..${n.send.sendBottom} of ${VH} ask ${n.send.askTop} "${n.send.askText}" gap ${n.send.gap} tappable ${n.send.pressable} (${n.send.hits}) queue ${n.send.queueH}`]);
   }
   rows.push(["net", `${results.net.failed.length} failed ${JSON.stringify(results.net.failed.slice(0, 6))}`]);
@@ -668,6 +701,14 @@ async function main() {
     if (!c || c.body.vote !== "yes" || c.body.topic !== "answer" || c.body.article !== "questions") fails.push("the yes body is wrong");
     if (!c || c.body.page !== "/help.html" || c.body.lang !== m.lang) fails.push("the yes body names the wrong page or language");
     if (!c || c.body.message !== "" || c.body.contact !== "") fails.push("a tap alone sent words or a number");
+    /* In the live arm the thank-you is only worth something if the studio's own function
+       said so: the page's CSP has to admit the functions origin and the Origin has to be
+       the site. A 200 the rig handed itself proves neither. */
+    if (LIVE && c) {
+      if (c.door !== "live") fails.push("the live arm stubbed the tap it was meant to send");
+      if (c.status !== 200 || c.ok !== true) fails.push(`the deployed function answered ${c.status} ${JSON.stringify(c.answer)}`);
+      else if (!/"ok":true/.test(String(c.answer))) fails.push("the function answered without ok: " + JSON.stringify(c.answer));
+    }
     if (y.state.doneHidden !== false) fails.push("the thank-you never appeared");
     if (y.contrast.votes.some((v) => v.pressed === "true" && v.ratio < 4.5)) fails.push("the pressed pill fails AA");
     if (y.contrast.doneVisible && y.contrast.done < 4.5) fails.push("the thank-you fails AA");
@@ -709,6 +750,12 @@ async function main() {
     if (!last || last.body.message !== "The pricing is not here.") fails.push("the note did not ride");
     if (!last || last.body.contact !== "+233 53 558 3460") fails.push("the number did not ride");
     if (!last || last.body._site !== "") fails.push("the honeypot was sent filled");
+    /* Sending the note has to close the form it was sent from, and in the live arm it has to
+       close it because the studio's function answered, not because the rig said so. */
+    if (n.afterNote.restHidden !== true) fails.push("the sent note left its form open");
+    if (LIVE && (!last || last.status !== 200 || last.ok !== true)) {
+      fails.push("the deployed function answered the note " + (last ? `${last.status} ${JSON.stringify(last.answer)}` : "nothing"));
+    }
   }
   if (results.errsFinal.length) { fails.push("page errors"); console.log("  " + JSON.stringify(results.errsFinal)); }
   /* A driver that never arrived is not a note to read later — half the page's
