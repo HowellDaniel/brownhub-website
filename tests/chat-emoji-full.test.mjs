@@ -106,9 +106,13 @@ test('the sheet can be searched, tabbed and scrolled without drowning the panel'
   assert.match(sheet[0], /max-height:/, 'the sheet is unbounded, so a long list would eat the panel');
   assert.match(sheet[0], /overflow:hidden/, 'the sheet must clip its own rows, not pass the growth up');
 
-  const tail = css.slice(css.lastIndexOf('@media (max-width:640px)'));
-  assert.match(tail, /\.chat-widget__emoji\{[^}]*max-height/, 'the phone sheet is unbounded');
-  assert.match(tail, /\.chat-widget__emoji-grid\{[^}]*grid-template-columns:repeat\(7/,
+  // The phone sheet is found by what it styles, not by where it sits: the sheet is
+  // append-only CSS, so any later 640 block for another component used to steal this.
+  const phone = [...css.matchAll(/@media \(max-width:640px\)\{[\s\S]*?\n\}/g)]
+    .filter((b) => b[0].includes('.chat-widget__emoji')).pop();
+  assert.ok(phone, 'no phone block styles the emoji sheet at all');
+  assert.match(phone[0], /\.chat-widget__emoji\{[^}]*max-height/, 'the phone sheet is unbounded');
+  assert.match(phone[0], /\.chat-widget__emoji-grid\{[^}]*grid-template-columns:repeat\(7/,
     'the phone grid stopped being seven across');
 });
 
