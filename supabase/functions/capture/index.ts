@@ -1,9 +1,10 @@
 // BrownHub capture — the studio's own record of who visited and who asked for a quote.
 //
-// Two jobs, one file, because both need the same three guards:
-//   POST /capture/lead   a name and WhatsApp number left in the quote card
-//   POST /capture/visit  one anonymous page view, only when the visitor allowed
-//                        "Analytics" in the cookie centre
+// Three jobs, one file, because all three need the same guards:
+//   POST /capture/lead      a name and WhatsApp number left in the quote card
+//   POST /capture/visit     one anonymous page view, only when the visitor allowed
+//                           "Analytics" in the cookie centre
+//   POST /capture/feedback  a rating and optional note left on the help page
 //
 // Why a function instead of the browser writing to the table itself, the way the
 // chat transcript does (js/accounts.js): a browser-side insert needs an insert
