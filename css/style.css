@@ -325,8 +325,10 @@ a.voice-btn{display:inline-flex;align-items:center;justify-content:center;text-d
   .shot__zoom{transition:none}
 }
 
-/* Contact form honeypot: reachable by bots, invisible to people and screen readers */
-.hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;pointer-events:none;opacity:0}
+/* Contact form honeypot: reachable by bots, invisible to people and screen readers.
+   No negative offset: under dir=rtl a left:−9999px box counts as forward overflow and
+   the whole page grows a ~10,000px horizontal scroll. Clipping in place costs nothing. */
+.hp{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;pointer-events:none;opacity:0}
 
 /* ---- Client accounts: nav entry, sign-up/login panel, request history ---- */
 .nav__link--acct{padding:0;border:none;background:none;font-family:inherit;cursor:pointer;white-space:nowrap}
@@ -6140,4 +6142,52 @@ html[dir="rtl"] .chat-widget__emoji-tabs{
   .chat-widget__emoji{max-height:min(240px,28dvh);padding:.45rem .5rem;gap:.3rem}
   .chat-widget__emoji-grid{grid-template-columns:repeat(7,minmax(0,1fr))}
   .chat-widget__emoji-tab{font-size:.7rem;padding:.3rem .48rem}
+}
+
+/* ===== The two-tap answer rating on help.html =====
+   Two columns, same as the question rail above it: the judgement is the point of
+   the band, so it takes minmax(0,1fr) and the "More to read" card holds 320px —
+   the width .faq__grid already pays for, so one number governs both shelves. */
+.feedback__grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:var(--t-5) var(--t-6);align-items:start}
+.feedback__main .section__head{margin-bottom:var(--t-3)}
+.feedback__main .section__head p{max-width:44rem}
+.feedback{max-width:44rem}
+.feedback__votes{display:flex;flex-wrap:wrap;gap:var(--t-2)}
+
+/* The pair is the whole ask, so it is sized as a control, not as prose: 44px is
+   the touch target the rest of the site holds its phone buttons to, and the
+   tinted-pill idiom is .filter__btn's, which keeps an unchosen vote reading as
+   interactive rather than as two plain words. The pressed state has to survive
+   js/feedback.js disabling the button that was not tapped — a disabled button
+   that is also the answer given is the record of the tap, so it keeps its weight
+   and only the other one fades. */
+.feedback__vote{display:inline-flex;align-items:center;justify-content:center;
+  min-height:44px;min-width:96px;padding:.5rem 1.4rem;border-radius:var(--t-r-pill);
+  border:1px solid rgba(var(--accent-fill-rgb),.52);background:rgba(var(--accent-fill-rgb),.13);
+  color:var(--accent-ink-tint);font:inherit;font-size:.95rem;font-weight:600;cursor:pointer;
+  transition:background .2s,color .2s,border-color .2s,transform .2s var(--ease-out)}
+.feedback__vote:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
+.feedback__vote:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.feedback__vote[aria-pressed="true"]{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
+.feedback__vote:disabled{cursor:default;opacity:.45;transform:none}
+.feedback__vote[aria-pressed="true"]:disabled{opacity:1}
+
+/* The note only opens under "No", and it opens in place. A bordered surface, not
+   a card, because it is part of the same question — it is the follow-up, not a
+   new section. */
+.feedback__rest{margin-top:var(--t-3);padding:var(--t-4);border:1px solid var(--border);
+  border-radius:var(--radius);background:var(--surface);display:grid;justify-items:start;gap:0}
+/* Both surfaces declare their own display, which beats the browser's [hidden] default,
+   so the note and the thank-you would sit on the page before anyone had tapped. */
+.feedback__rest[hidden],.form-success[hidden]{display:none}
+.feedback__rest .form-field{width:100%}
+.feedback__rest .btn{margin-top:var(--t-1)}
+.feedback__links{display:grid;gap:var(--t-1)}
+.feedback__links a{color:var(--accent);font-weight:600;font-size:.95rem}
+.feedback__links a:hover{text-decoration:underline}
+@media (max-width:991px){.feedback__grid{grid-template-columns:1fr;gap:var(--t-5)}}
+@media (max-width:640px){
+  /* Two across at 390px leaves each pill 168px, which the shortest "Yes"/"No"
+     pair still reads at, so the ask never becomes a vertical list of two taps. */
+  .feedback__vote{flex:1 1 0;min-width:0}
 }

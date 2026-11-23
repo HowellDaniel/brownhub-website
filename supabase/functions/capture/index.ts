@@ -37,7 +37,7 @@
 //     -H "Content-Type: application/json" \
 //     --data-binary @<(printf '[{"name":"TRACK_SALT","value":"%s"}]' "$(openssl rand -hex 32)") \
 //     https://api.supabase.com/v1/projects/rmvyrfqyxgupwuzxadyx/secrets
-// The table side lives in sql/supabase-schema.sql (leads, visits).
+// The table side lives in sql/supabase-schema.sql (leads, visits, feedback).
 
 // GitHub 301s the old Pages URL to the custom domain, so a browser can never
 // present howelldaniel.github.io as the origin of a request from this site.
@@ -53,12 +53,19 @@ const LEADS_PER_DAY = 12;
 // the site's own page count with room to spare.
 const VISITS_PER_MINUTE = 20;
 const VISITS_PER_DAY = 400;
+// A rating is one tap and a note is rarer still, so this sits well above anyone
+// being genuine on two pages and far below anything that is looping.
+const FEEDBACK_PER_MINUTE = 6;
+const FEEDBACK_PER_DAY = 20;
+// The one field a caller cannot be allowed to invent: which kind of note this is.
+const TOPICS = ["answer", "page", "other"];
 
 // Best effort, like the assistant's: an isolate is short-lived and shares no
 // store, so this slows one visitor down rather than stopping a determined one.
 type Hits = { minute: number[]; day: number[] };
 const leads = new Map<string, Hits>();
 const views = new Map<string, Hits>();
+const feedbacks = new Map<string, Hits>();
 
 function limited(store: Map<string, Hits>, ip: string, perMinute: number, perDay: number): boolean {
   const now = Date.now();
@@ -236,6 +243,44 @@ Deno.serve(async (req) => {
     });
     if (!ok) return json({ error: "The studio's list could not be reached." }, origin, 502);
     return json({ ok: true }, origin);
+  }
+
+  if (kind === "feedback") {
+    // The same honeypot, the same quiet 200: a script that fills the field nobody
+    // sees is answered exactly as a person is, so it learns nothing about the gate.
+    if (str(body._site, 200)) return json({ ok: true }, origin);
+    if (limited(feedbacks, ip, FEEDBACK_PER_MINUTE, FEEDBACK_PER_DAY)) return json({ error: "slow" }, origin, 429);
+
+    const rawVote = str(body.vote, 8).toLowerCase();
+    const vote = rawVote === "yes" || rawVote === "no" ? rawVote : "";
+    const message = str(body.message, 2000);
+    // Nothing voted and nothing written is not feedback, and an empty row would
+    // read as a rating in the studio's own numbers.
+    if (!vote && !message) return json({ error: "Nothing to record." }, origin, 400);
+
+    const rawTopic = str(body.topic, 24).toLowerCase();
+    const topic = TOPICS.indexOf(rawTopic) > -1 ? rawTopic : "other";
+    // Which part of the page the note is about, kept as the short label the page
+    // puts on itself. Anything odd-shaped is filed against the page as a whole.
+    const rawArticle = str(body.article, 40).toLowerCase();
+    const article = /^[a-z][a-z0-9_-]{0,39}$/.test(rawArticle) ? rawArticle : "help";
+
+    const asTyped = str(body.contact, 32);
+    const digits = digitsOf(asTyped);
+    // Left blank unless it could actually be dialled back, so the studio never
+    // holds a number that was really a name or a joke.
+    const contact = digits.length >= 7 && digits.length <= 15 ? digits : "";
+
+    const ok = await write("feedback", {
+      topic,
+      vote,
+      article,
+      message,
+      contact,
+      page: pathOf(body.page),
+      lang: str(body.lang, 8).toLowerCase() || "en",
+    });
+    return json({ ok }, origin, ok ? 200 : 502);
   }
 
   return json({ error: "Unknown" }, origin, 404);

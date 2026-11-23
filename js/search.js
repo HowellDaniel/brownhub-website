@@ -101,6 +101,7 @@
 
     { g: "Pages", t: "Privacy policy", h: "privacy.html", k: "privacy policy data personal information" },
     { g: "Pages", t: "Legal", h: "legal.html", k: "legal terms of business contract payment ownership cancellation" },
+    { g: "Pages", t: "Help", h: "help.html", k: "help faq frequently asked questions feedback tell us contact reach hours" },
     { g: "Pages", t: "Security", h: "security.html", k: "security safety password otp payment data protection report a problem" },
     { g: "Pages", t: "Cookie preferences", h: "", act: "cookie", k: "cookie consent analytics advertising necessary preferences" }
   ];

@@ -2673,6 +2673,12 @@
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
 </url>
+  <url>
+    <loc>https://www.brownhub283.com/help.html</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+</url>
   <!-- BEGIN JOURNAL (tools/blog.py — do not edit between the markers) -->
   <url>
     <loc>https://www.brownhub283.com/blog/</loc>

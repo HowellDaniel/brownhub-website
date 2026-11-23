@@ -23,6 +23,7 @@ Allow: /haul.html
 Allow: /privacy.html
 Allow: /legal.html
 Allow: /security.html
+Allow: /help.html
 Allow: /blog/
 
 # Optional: allow common AI crawlers to read the site content.

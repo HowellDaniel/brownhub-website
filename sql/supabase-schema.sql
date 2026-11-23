@@ -286,9 +286,44 @@ create index if not exists visits_created_idx
 alter table public.visits enable row level security;
 revoke all on table public.visits from anon, authenticated;
 
+-- ---------------------------------------------------------------------------
+-- The ratings and notes left on the help page. A row here is not a person asking
+-- to be reached the way a lead is: it is a tap that said whether an answer
+-- worked, an optional sentence, and a number only if the visitor typed one
+-- because they want a reply. Built the same way as the two above — RLS enabled,
+-- every grant to a browser key revoked, and deliberately no policy — so the only
+-- writer in the world is the studio's own service key inside /capture, and a bot
+-- that finds the endpoint has no way into the table.
+-- ---------------------------------------------------------------------------
+
+create table if not exists public.feedback (
+  id         bigint generated always as identity primary key,
+  created_at timestamptz not null default now(),
+  topic      text not null default 'other'
+             constraint feedback_topic_check
+             check (topic in ('answer', 'page', 'other')),
+  vote       text not null default ''
+             constraint feedback_vote_check
+             check (vote in ('', 'yes', 'no')),
+  article    text not null default 'help',
+  message    text not null default '',
+  contact    text not null default '',
+  page       text not null default '',
+  lang       text not null default 'en'
+);
+
+create index if not exists feedback_created_idx
+  on public.feedback (created_at desc);
+create index if not exists feedback_topic_idx
+  on public.feedback (topic, vote, created_at desc);
+
+alter table public.feedback enable row level security;
+revoke all on table public.feedback from anon, authenticated;
+
 -- Proof both are closed to a browser key: each count must come back zero.
 select (select count(*) from pg_policies where tablename = 'leads')  as lead_policies,
-       (select count(*) from pg_policies where tablename = 'visits') as visit_policies;
+       (select count(*) from pg_policies where tablename = 'visits') as visit_policies,
+       (select count(*) from pg_policies where tablename = 'feedback') as feedback_policies;
 
 -- The owner's reading query, when he wants the list rather than the table editor:
 --   select to_char(created_at,'YYYY-MM-DD HH24:MI') as when, name, whatsapp,

@@ -42,6 +42,7 @@ Logos, brand identity systems, print and packaging — designed to make brands s
 - Legal and terms of business: https://www.brownhub283.com/legal.html
 - Privacy policy: https://www.brownhub283.com/privacy.html
 - Security: https://www.brownhub283.com/security.html
+- Help and feedback: https://www.brownhub283.com/help.html
 - No advertising script and no analytics script run until the visitor says yes in the cookie centre. The visitor's own browser keeps language, theme, cookie consent, sign-in session and chat history. With consent to the Analytics category only, the studio's own script records an anonymous page read; a refusal writes nothing. With consent to the Advertising category the page loads Google's ad tag, which then sets its own cookies to choose and measure the ads; without it no ad request is made at all, and an ad slot Google does not fill stays hidden.
 
 ## Journal
