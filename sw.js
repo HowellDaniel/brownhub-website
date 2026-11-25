@@ -1,7 +1,7 @@
-const CACHE = "brownhub-v169";
+const CACHE = "brownhub-v170";
 const OFFLINE = "/offline.html";
 const SHELL = [OFFLINE, "/css/offline.css?v=2", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png",
-  "/icons/maskable-512.png", "/icons/apple-touch-icon.png", "/images/logo.png", "/images/favicon.png"];
+  "/icons/maskable-512.png", "/icons/apple-touch-icon.png", "/images/logo.png", "/favicon.ico"];
 
 // Anything served from another origin — Supabase auth, the chat proxy, Paystack —
 // is left completely alone. Only our own static files may ever be stored.

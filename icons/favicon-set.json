@@ -1,0 +1,233 @@
+{
+  "ico_only_sizes" : [
+    {
+      "ink_fill_pct" : 96,
+      "pad_px" : 1,
+      "px" : 24,
+      "px_per_pt" : 0.16293363490867943,
+      "resampled" : false
+    }
+  ],
+  "mark_box_frac" : {
+    "h" : 0.4609375,
+    "w" : 0.671875,
+    "x0" : 0.1611328125,
+    "y_top" : 0.232421875
+  },
+  "mark_box_pt" : {
+    "h" : 92.632949999999994,
+    "w" : 135.02429999999998
+  },
+  "note" : "each size rasterised from the vector at its own device size; nothing here is an upscale or a downsample",
+  "sheet_pt" : 200.96639999999999,
+  "sizes" : [
+    {
+      "file" : "icons\/favicon-16.png",
+      "ink_fill_pct" : 94,
+      "pad_px" : 1,
+      "px" : 16,
+      "px_per_pt" : 0.10368504039643234,
+      "resampled" : false
+    },
+    {
+      "file" : "icons\/favicon-32.png",
+      "ink_fill_pct" : 91,
+      "pad_px" : 2,
+      "px" : 32,
+      "px_per_pt" : 0.20737008079286467,
+      "resampled" : false
+    },
+    {
+      "file" : "icons\/favicon-48.png",
+      "ink_fill_pct" : 94,
+      "pad_px" : 2,
+      "px" : 48,
+      "px_per_pt" : 0.32586726981735886,
+      "resampled" : false
+    },
+    {
+      "file" : "icons\/favicon-64.png",
+      "ink_fill_pct" : 94,
+      "pad_px" : 2,
+      "px" : 64,
+      "px_per_pt" : 0.44436445884185294,
+      "resampled" : false
+    },
+    {
+      "file" : "icons\/favicon-128.png",
+      "ink_fill_pct" : 94,
+      "pad_px" : 4,
+      "px" : 128,
+      "px_per_pt" : 0.88872891768370588,
+      "resampled" : false
+    },
+    {
+      "file" : "icons\/favicon-192.png",
+      "ink_fill_pct" : 90,
+      "pad_px" : 10,
+      "px" : 192,
+      "px_per_pt" : 1.2738447820133119,
+      "resampled" : false
+    },
+    {
+      "file" : "icons\/favicon-512.png",
+      "ink_fill_pct" : 91,
+      "pad_px" : 24,
+      "px" : 512,
+      "px_per_pt" : 3.4364184817103292,
+      "resampled" : false
+    }
+  ],
+  "source" : "tools\/logo-master.svg",
+  "split" : {
+    "floor_pt" : 36.268155,
+    "heights_pt" : [
+      {
+        "el" : 1,
+        "h" : 74.184862499999994
+      },
+      {
+        "el" : 2,
+        "h" : 90.670387500000004
+      },
+      {
+        "el" : 3,
+        "h" : 46.316474999999997
+      },
+      {
+        "el" : 4,
+        "h" : 6.0839437499999995
+      },
+      {
+        "el" : 8,
+        "h" : 6.0839437499999995
+      },
+      {
+        "el" : 9,
+        "h" : 4.7101499999999996
+      },
+      {
+        "el" : 10,
+        "h" : 6.2801999999999998
+      },
+      {
+        "el" : 11,
+        "h" : 4.7101499999999996
+      },
+      {
+        "el" : 12,
+        "h" : 6.2801999999999998
+      },
+      {
+        "el" : 13,
+        "h" : 6.2801999999999998
+      },
+      {
+        "el" : 14,
+        "h" : 4.7101499999999996
+      },
+      {
+        "el" : 15,
+        "h" : 4.7101499999999996
+      },
+      {
+        "el" : 16,
+        "h" : 6.2801999999999998
+      },
+      {
+        "el" : 17,
+        "h" : 4.5138937500000003
+      },
+      {
+        "el" : 18,
+        "h" : 4.7101499999999996
+      },
+      {
+        "el" : 19,
+        "h" : 6.2801999999999998
+      },
+      {
+        "el" : 20,
+        "h" : 6.2801999999999998
+      },
+      {
+        "el" : 21,
+        "h" : 4.7101499999999996
+      },
+      {
+        "el" : 22,
+        "h" : 4.5138937500000003
+      },
+      {
+        "el" : 23,
+        "h" : 6.0839437499999995
+      },
+      {
+        "el" : 24,
+        "h" : 6.6727124999999994
+      },
+      {
+        "el" : 25,
+        "h" : 4.7101499999999996
+      },
+      {
+        "el" : 26,
+        "h" : 4.7101499999999996
+      },
+      {
+        "el" : 27,
+        "h" : 23.550750000000001
+      },
+      {
+        "el" : 28,
+        "h" : 14.915474999999999
+      },
+      {
+        "el" : 29,
+        "h" : 15.504243749999999
+      },
+      {
+        "el" : 30,
+        "h" : 15.307987499999999
+      },
+      {
+        "el" : 31,
+        "h" : 0.98128124999999999
+      }
+    ],
+    "mark_elements" : [
+      1,
+      2,
+      3
+    ],
+    "mark_over_type_margin" : 1.9666666666666666,
+    "method" : "every drawable element rasterised alone at 1024px and measured; the mark is the elements whose height reaches 40% of the tallest stroke",
+    "type_elements" : [
+      4,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ]
+  }
+}
