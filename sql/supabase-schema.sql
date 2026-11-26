@@ -305,6 +305,7 @@ create table if not exists public.feedback (
   vote       text not null default ''
              constraint feedback_vote_check
              check (vote in ('', 'yes', 'no')),
+  rating     smallint constraint feedback_rating_check check (rating between 1 and 5),
   article    text not null default 'help',
   message    text not null default '',
   contact    text not null default '',
@@ -312,10 +313,28 @@ create table if not exists public.feedback (
   lang       text not null default 'en'
 );
 
+-- The feedback table existed before stars did. Legacy Yes/No rows keep their vote;
+-- rating is nullable and constrained only when a caller supplies one.
+alter table public.feedback add column if not exists rating smallint;
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'feedback_rating_check'
+      and conrelid = 'public.feedback'::regclass
+  ) then
+    alter table public.feedback
+      add constraint feedback_rating_check check (rating between 1 and 5);
+  end if;
+end;
+$$;
+
 create index if not exists feedback_created_idx
   on public.feedback (created_at desc);
 create index if not exists feedback_topic_idx
   on public.feedback (topic, vote, created_at desc);
+create index if not exists feedback_rating_idx
+  on public.feedback (rating, article, created_at desc);
 
 alter table public.feedback enable row level security;
 revoke all on table public.feedback from anon, authenticated;

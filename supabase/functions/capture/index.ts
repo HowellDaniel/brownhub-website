@@ -60,6 +60,8 @@ const FEEDBACK_PER_MINUTE = 6;
 const FEEDBACK_PER_DAY = 20;
 // The one field a caller cannot be allowed to invent: which kind of note this is.
 const TOPICS = ["answer", "page", "other"];
+const OWNER_MSISDN = "233535583460";
+const SMS_GATEWAY = "https://sms.arkesel.com/api/v2/sms/send";
 
 // Best effort, like the assistant's: an isolate is short-lived and shares no
 // store, so this slows one visitor down rather than stopping a determined one.
@@ -163,6 +165,33 @@ async function write(table: string, row: Record<string, unknown>): Promise<boole
   return !!res && res.ok;
 }
 
+// Delivery uses the same Arkesel rail as paystack-webhook. The text names the
+// score and answer only; a visitor's words stay in the protected feedback table.
+async function alertOwner(summary: string): Promise<void> {
+  const key = Deno.env.get("ARKSEL_API_KEY") || "";
+  const sender = Deno.env.get("ARKSEL_SENDER") || "";
+  if (!key || !sender) {
+    console.log("feedback alert skipped: ARKSEL_API_KEY or ARKSEL_SENDER is not set");
+    return;
+  }
+  const res = await fetch(SMS_GATEWAY, {
+    method: "POST",
+    headers: { "content-type": "application/json", "api-key": key },
+    body: JSON.stringify({ sender, recipients: [OWNER_MSISDN], message: summary }),
+    signal: AbortSignal.timeout(5000),
+  }).catch(() => null);
+  if (!res) {
+    console.log("feedback alert not sent: Arkesel did not answer");
+    return;
+  }
+  const answer = await res.text().catch(() => "");
+  if (!res.ok || answer.indexOf('"success"') < 0) {
+    console.log(
+      `feedback alert not delivered: Arkesel HTTP ${res.status}${answer.indexOf("invalid") >= 0 ? ", number rejected" : ""}`
+    );
+  }
+}
+
 Deno.serve(async (req) => {
   const origin = req.headers.get("origin");
 
@@ -254,10 +283,12 @@ Deno.serve(async (req) => {
 
     const rawVote = str(body.vote, 8).toLowerCase();
     const vote = rawVote === "yes" || rawVote === "no" ? rawVote : "";
+    const rawRating = Number(body.rating);
+    const rating = Number.isInteger(rawRating) && rawRating >= 1 && rawRating <= 5 ? rawRating : null;
     const message = str(body.message, 2000);
-    // Nothing voted and nothing written is not feedback, and an empty row would
-    // read as a rating in the studio's own numbers.
-    if (!vote && !message) return json({ error: "Nothing to record." }, origin, 400);
+    // Nothing scored and nothing written is not feedback, and an empty row would
+    // distort the studio's own numbers.
+    if (!vote && !rating && !message) return json({ error: "Nothing to record." }, origin, 400);
 
     const rawTopic = str(body.topic, 24).toLowerCase();
     const topic = TOPICS.indexOf(rawTopic) > -1 ? rawTopic : "other";
@@ -272,15 +303,23 @@ Deno.serve(async (req) => {
     // holds a number that was really a name or a joke.
     const contact = digits.length >= 7 && digits.length <= 15 ? digits : "";
 
+    const detail = [
+      rating ? `${rating}/5` : "note",
+      message ? "note" : "",
+      contact ? "reply wanted" : "",
+    ].filter(Boolean).join(", ");
+    const summary = `BrownHub feedback: ${detail} on ${article}`.slice(0, 160);
     const ok = await write("feedback", {
       topic,
       vote,
+      rating,
       article,
       message,
       contact,
       page: pathOf(body.page),
       lang: str(body.lang, 8).toLowerCase() || "en",
     });
+    if (ok) await alertOwner(summary);
     return json({ ok }, origin, ok ? 200 : 502);
   }
 

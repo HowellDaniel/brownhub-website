@@ -6144,37 +6144,36 @@ html[dir="rtl"] .chat-widget__emoji-tabs{
   .chat-widget__emoji-tab{font-size:.7rem;padding:.3rem .48rem}
 }
 
-/* ===== The two-tap answer rating on help.html =====
-   Two columns, same as the question rail above it: the judgement is the point of
-   the band, so it takes minmax(0,1fr) and the "More to read" card holds 320px —
-   the width .faq__grid already pays for, so one number governs both shelves. */
+/* ===== The per-answer rating on help.html =====
+   The judgement belongs to the answer it rates, so every FAQ panel carries the
+   same compact form. The question rail above it keeps minmax(0,1fr); the support
+   card holds 320px, the width .faq__grid already reserves. */
 .feedback__grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:var(--t-5) var(--t-6);align-items:start}
 .feedback__main .section__head{margin-bottom:var(--t-3)}
 .feedback__main .section__head p{max-width:44rem}
-.feedback{max-width:44rem}
-.feedback__votes{display:flex;flex-wrap:wrap;gap:var(--t-2)}
+.faq details .feedback{margin-top:var(--t-4);padding-top:var(--t-4);border-top:1px solid var(--border);max-width:44rem}
+.feedback__stars{display:flex;flex-wrap:wrap;gap:.15rem}
 
-/* The pair is the whole ask, so it is sized as a control, not as prose: 44px is
-   the touch target the rest of the site holds its phone buttons to, and the
-   tinted-pill idiom is .filter__btn's, which keeps an unchosen vote reading as
-   interactive rather than as two plain words. The pressed state has to survive
-   js/feedback.js disabling the button that was not tapped — a disabled button
-   that is also the answer given is the record of the tap, so it keeps its weight
-   and only the other one fades. */
-.feedback__vote{display:inline-flex;align-items:center;justify-content:center;
-  min-height:44px;min-width:96px;padding:.5rem 1.4rem;border-radius:var(--t-r-pill);
-  border:1px solid rgba(var(--accent-fill-rgb),.52);background:rgba(var(--accent-fill-rgb),.13);
-  color:var(--accent-ink-tint);font:inherit;font-size:.95rem;font-weight:600;cursor:pointer;
-  transition:background .2s,color .2s,border-color .2s,transform .2s var(--ease-out)}
-.feedback__vote:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
-.feedback__vote:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.feedback__vote[aria-pressed="true"]{background:var(--accent-fill);border-color:var(--accent-fill);color:#fff}
-.feedback__vote:disabled{cursor:default;opacity:.45;transform:none}
-.feedback__vote[aria-pressed="true"]:disabled{opacity:1}
+/* The five stars are one control, not five decorative glyphs: each label is 44px
+   in both dimensions and the input fills it. Keyboard focus appears on the whole
+   label, while the native input remains the element that announces the choice. */
+.feedback__star{position:relative;display:inline-flex;align-items:center;justify-content:center;
+  min-width:44px;min-height:44px;border-radius:var(--t-r-pill);overflow:hidden;cursor:pointer;
+  color:var(--text-muted);font-size:1.75rem;line-height:1;transition:transform .16s var(--ease-out),background .16s}
+.feedback__star input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer}
+.feedback__star span{pointer-events:none;transition:color .16s,transform .16s var(--ease-out)}
+.feedback__star:hover,.feedback__star:focus-within{background:rgba(var(--accent-fill-rgb),.12);transform:translateY(-1px)}
+.feedback__star:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.feedback__stars[data-selected="1"] .feedback__star:nth-child(-n+1) span,
+.feedback__stars[data-selected="2"] .feedback__star:nth-child(-n+2) span,
+.feedback__stars[data-selected="3"] .feedback__star:nth-child(-n+3) span,
+.feedback__stars[data-selected="4"] .feedback__star:nth-child(-n+4) span,
+.feedback__stars[data-selected="5"] .feedback__star:nth-child(-n+5) span{
+  color:var(--accent);transform:scale(1.12)}
+.feedback__stars[data-selected] .feedback__star:nth-child(-n+5) span{transition:color .16s,transform .16s var(--ease-out)}
 
-/* The note only opens under "No", and it opens in place. A bordered surface, not
-   a card, because it is part of the same question — it is the follow-up, not a
-   new section. */
+/* The comment opens after a star is chosen. A bordered surface, not a new card,
+   because it remains part of the answer being rated. */
 .feedback__rest{margin-top:var(--t-3);padding:var(--t-4);border:1px solid var(--border);
   border-radius:var(--radius);background:var(--surface);display:grid;justify-items:start;gap:0}
 /* Both surfaces declare their own display, which beats the browser's [hidden] default,
@@ -6185,9 +6184,10 @@ html[dir="rtl"] .chat-widget__emoji-tabs{
 .feedback__links{display:grid;gap:var(--t-1)}
 .feedback__links a{color:var(--accent);font-weight:600;font-size:.95rem}
 .feedback__links a:hover{text-decoration:underline}
+.help-support__actions{display:flex;flex-wrap:wrap;gap:var(--t-2)}
+.rail-card address{font-style:normal;color:var(--text-muted);line-height:1.5}
 @media (max-width:991px){.feedback__grid{grid-template-columns:1fr;gap:var(--t-5)}}
 @media (max-width:640px){
-  /* Two across at 390px leaves each pill 168px, which the shortest "Yes"/"No"
-     pair still reads at, so the ask never becomes a vertical list of two taps. */
-  .feedback__vote{flex:1 1 0;min-width:0}
+  .feedback__stars{justify-content:flex-start}
+  .help-support__actions .btn{flex:1 1 auto;min-width:0}
 }

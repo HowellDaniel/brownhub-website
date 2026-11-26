@@ -48,6 +48,57 @@ test('help.html exists and is dressed in the site shell, not a new one', () => {
   assert.match(read('sw.js'), /const CACHE = "brownhub-v\d+"/);
 });
 
+test('every FAQ answer offers its own 1-5 rating', () => {
+  const help = read('help.html');
+  const forms = [...help.matchAll(/<form[^>]*class="feedback[^"]*"[^>]*data-article="([^"]+)"/g)];
+  assert.ok(forms.length >= 7, `only ${forms.length} answers ask for feedback`);
+  assert.equal((help.match(/class="feedback__vote"/g) || []).length, 0,
+    'the old Yes/No control is still competing with the star rating');
+
+  const articles = forms.map((m) => m[1]);
+  assert.equal(new Set(articles).size, articles.length, 'two answer forms share one article slug');
+  assert.ok(articles.includes('where-is-the-studio'), 'a visitor cannot rate directions to the studio');
+
+  for (const article of articles) {
+    const start = help.indexOf(`data-article="${article}"`);
+    const block = help.slice(start, help.indexOf('</form>', start));
+    assert.equal((block.match(/type="radio"/g) || []).length, 5, `${article} does not offer five stars`);
+    for (let rating = 1; rating <= 5; rating++) {
+      const label = `${rating} star${rating === 1 ? '' : 's'}`;
+      assert.ok(block.includes(`aria-label="${label}"`), `${article} has no accessible ${label} control`);
+    }
+    assert.ok(/class="feedback__rest"[^>]*hidden/.test(block), `${article} hides its Send control`);
+    assert.ok(/class="form-success"[^>]*hidden/.test(block), `${article} hides its thank-you`);
+    assert.ok(block.includes('name="_site"'), `${article} has no honeypot`);
+  }
+});
+
+test('a chosen star posts its rating to the answer it came from', () => {
+  const js = read('js/feedback.js');
+  assert.match(js, /querySelectorAll\(['"]\.feedback--answer['"]\)/,
+    'the script still drives only one page-level feedback form');
+  assert.match(js, /input:checked\[name=["']?rating/,
+    'the submitted rating is not read from the answer the visitor chose');
+  assert.match(js, /payload\s*=\s*\{[^}]*rating\s*:/s, 'the feedback request carries no rating');
+  assert.match(js, /payload\s*=\s*\{[^}]*topic:\s*["']answer["']/s, 'a per-answer note is not filed as an answer');
+  assert.match(js, /payload\s*=\s*\{[^}]*article\s*:/s, 'the note loses the answer slug');
+  assert.match(js, /dataset\.sent/, 'one form can be sent twice');
+});
+
+test('the stars are tappable and show the chosen value', () => {
+  const css = read('css/style.css');
+  const star = /\.feedback__star\s*\{([^}]*)\}/.exec(css);
+  assert.ok(star, 'the star control has no styles');
+  assert.match(star[1], /min-width:\s*44px/, 'a star is too small for a phone thumb');
+  assert.match(star[1], /min-height:\s*44px/, 'a star is too short for a phone thumb');
+  for (let value = 1; value <= 5; value++) {
+    assert.match(css, new RegExp(
+      `\\.feedback__stars\\[data-selected="${value}"\\][\\s\\S]*?\\.feedback__star:nth-child\\(-n\\+${value}\\)`,
+    ), `choosing ${value} stars does not fill that many stars`);
+  }
+  assert.match(css, /\.feedback__star:focus-within/, 'keyboard focus disappears from the star row');
+});
+
 test('every page that shows the site chrome links to help.html', () => {
   const missing = chromePages.filter((f) => !read(f).includes('href="help.html"')
     && !read(f).includes('href="../help.html"'));
@@ -167,6 +218,24 @@ test('the twelve dictionaries stay in one shared key order, and the exceptions s
     `${ref.length} keys hold ${descents.length} out-of-order positions, expected ${KNOWN_UNSORTED}: ${descents.slice(0, 8).join(" | ")}`);
 });
 
+test('capture files the rating and alerts the studio owner', () => {
+  const fn = read('supabase/functions/capture/index.ts');
+  const branch = fn.slice(fn.indexOf('kind === "feedback"'));
+  const block = branch.slice(0, branch.indexOf('return json({ error: "Unknown"'));
+  assert.match(block, /Number\.isInteger\(rawRating\)[\s\S]*rawRating >= 1[\s\S]*rawRating <= 5/,
+    'a rating outside 1-5 can reach the table');
+  assert.match(block, /body\.rating/, 'the numeric star rating is ignored');
+  assert.match(block, /await write\("feedback", \{[\s\S]*\brating\b/, 'the row stores no rating');
+  const writeAt = block.indexOf('await write("feedback"');
+  const alertAt = block.indexOf('await alertOwner');
+  assert.ok(writeAt >= 0 && alertAt > writeAt, 'the owner is alerted before the feedback row is saved');
+  assert.match(block, /if\s*\(ok\)\s*await alertOwner/, 'a failed database write still texts the owner');
+  assert.match(fn, /const OWNER_MSISDN = "233535583460"/, 'feedback does not reach the owner number');
+  assert.match(fn, /const SMS_GATEWAY = "https:\/\/sms\.arkesel\.com\/api\/v2\/sms\/send"/,
+    'the studio alert does not use the Arkesel route already proven by the payment webhook');
+  assert.match(fn, /const summary[\s\S]{0,160}\.slice\(0,\s*160\)/, 'the SMS has no 160-character segment budget');
+});
+
 test('capture answers a feedback post, and the same guards cover it', () => {
   const fn = read('supabase/functions/capture/index.ts');
   assert.match(fn, /kind === "feedback"/, 'the function still answers 404 to a feedback post');
@@ -179,6 +248,17 @@ test('capture answers a feedback post, and the same guards cover it', () => {
   assert.match(block, /message/, 'nothing of what the visitor typed is kept');
   assert.match(block, /topic/, 'the note is filed without saying what it is about');
   assert.match(block, /hostOf|pathOf/, 'the page the note came from is not sanitised');
+});
+
+test('feedback keeps a rating without discarding a legacy vote', () => {
+  const sql = read('sql/supabase-schema.sql');
+  const table = /create table if not exists public\.feedback \([\s\S]*?\);/.exec(sql);
+  assert.ok(table, 'public.feedback is missing from the schema');
+  assert.match(table[0], /\brating\s+smallint\b/i, 'the table has no numeric rating column');
+  assert.match(table[0], /check\s*\(rating between 1 and 5\)/i,
+    'a rating can be stored outside the visible 1-5 range');
+  assert.match(sql, /alter table public\.feedback add column if not exists rating smallint;/i,
+    'live schema updates do not add the rating column idempotently');
 });
 
 test('the feedback table is closed to a browser key by construction', () => {
@@ -230,7 +310,7 @@ test('the panel posts to the studio function and holds nothing back', () => {
     'a browser copy of the service role key would let anyone write the table');
   assert.match(js, /content-type.{0,40}application\/json/is);
   const html = read('help.html');
-  assert.match(html, /id="feedback-form"|class="feedback"/, 'the page has no feedback form');
+  assert.match(html, /class="feedback feedback--answer"/, 'the answers have no feedback forms');
   assert.match(html, /aria-hidden="true"/, 'the honeypot is reachable by a keyboard or a reader');
 });
 
@@ -249,6 +329,17 @@ test('the note opens with its Send button pressable', () => {
     'focus alone decides where the page stops, and focus scrolls to the textarea, not the Send');
   const helper = /function\s+\w+\s*\([^)]*\)\s*\{[\s\S]{0,700}?button\[type=["']?submit[\s\S]{0,700}?scroll(?:By|To)/.exec(js);
   assert.ok(helper, 'nothing scrolls the submit button clear after the note opens');
+});
+
+test('the thank-you says thanks in the language on screen', () => {
+  const js = read('js/feedback.js');
+  // translate.js fills the dictionary asynchronously, after feedback.js has already
+  // initialized. Caching the hidden English text at init makes a successful Arabic or
+  // Twi submission overwrite the visitor's own thank-you with English.
+  assert.match(js, /function\s+thanksText\b/, 'the driver has no late-language thank-you lookup');
+  assert.match(js, /if\s*\(done\.hidden\)\s*success\s*=\s*done\.textContent/, 'the thank-you is never refreshed while still hidden');
+  assert.match(js, /say\(thanksText\(\)\)/, 'a sent form announces its stale cached thank-you');
+  assert.doesNotMatch(js, /var\s+thanks\s*=/, 'a thank-you cached before translation can overwrite the live dictionary');
 });
 
 test('the privacy page admits what feedback keeps', () => {
