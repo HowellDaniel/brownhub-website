@@ -211,7 +211,7 @@
   /* The assistant's teaser hangs over the top of the bubble it comes out of, so a
      stage that stops at the bubble alone still has a speech bubble printed across
      its row of stones. It is charged by its own edge, not the button's. */
-  var QUEUE = ".install, .chat-widget__toggle, .chat-widget__teaser, .cookie-notice, .leadask";
+  var QUEUE = ".install, .chat-widget__toggle, .chat-widget__teaser, .cookie-notice, .leadask, .report-pair";
   function reserve() {
     /* A notice that folded away without saying so would keep its claim on the edge and
        park every ask queued behind it, so the pass that measures the bottom also checks

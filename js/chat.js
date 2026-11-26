@@ -997,6 +997,10 @@
   }
 
   toggle.addEventListener("click", () => (panel.hidden ? openChat() : closeChat()));
+  // js/report.js hands its own visitor over: someone who wanted to tell the studio
+  // something and chose to ask a person instead should land in the conversation, not
+  // in front of a button they have to find. Same shape as bh-cookie-open in cookies.js.
+  document.addEventListener("bh-chat-open", () => openChat());
   closeBtn.addEventListener("click", closeChat);
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && !panel.hidden) closeChat();

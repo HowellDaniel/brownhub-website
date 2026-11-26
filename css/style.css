@@ -6199,3 +6199,77 @@ html[dir="rtl"] .chat-widget__emoji-tabs{
   .feedback__stars{justify-content:flex-start}
   .help-support__actions .btn{flex:1 1 auto;min-width:0}
 }
+
+/* ===== The site-wide problem-feedback pair =====
+   A pill and a round question mark, fixed to the bottom edge immediately left of the
+   assistant's bubble. The geometry is the whole design: the row is 40px tall and stands
+   on the bubble's own 1.5rem, so its top edge sits 64px up from the bottom against the
+   bubble's 80px. js/app.js charges it to the queue and --queue-h does not move by a
+   pixel, which is why no pinned stage had to be re-measured for this to arrive.
+   The key hint is hidden by default and painted only where a keyboard is plausible:
+   printing ⌘⌥F on a phone would be a picture of keys that phone does not have. */
+.report-pair{position:fixed;bottom:1.5rem;right:calc(1.5rem + 56px + 10px);z-index:200;
+  display:flex;align-items:flex-end;gap:var(--t-1);height:40px}
+.report-pill{display:inline-flex;align-items:center;gap:var(--t-1);height:40px;padding:0 14px;
+  border:1px solid var(--glass-fill-hair);border-radius:999px;background:var(--glass-fill);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow);
+  color:var(--text);font:inherit;font-size:var(--t-fs-20);font-weight:600;cursor:pointer}
+.report-pill:hover,.report-pill:focus-visible{border-color:var(--accent);color:var(--accent)}
+.report-pill__key{display:none;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.78rem;letter-spacing:.02em;color:var(--text-muted)}
+@media (hover:hover) and (pointer:fine){.report-pill__key{display:inline}}
+.report-help{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;
+  border:1px solid var(--glass-fill-hair);background:var(--glass-fill);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow);
+  color:var(--text);font-size:1.05rem;font-weight:700}
+.report-help:hover,.report-help:focus-visible{border-color:var(--accent);color:var(--accent)}
+@media (max-width:600px){
+  .report-pair{right:calc(1.5rem + 56px + 6px)}
+  .report-pill{padding:0 10px}
+}
+
+/* The dialog is the same glass card the cookie preferences already use, at the same
+   depth, because a visitor who has opened one should not have to learn the other. */
+.report-modal{position:fixed;inset:0;z-index:9994;display:grid;place-items:center;padding:var(--t-4)}
+.report-modal[hidden]{display:none}
+.report-modal__scrim{position:absolute;inset:0;background:rgba(27,11,12,.74)}
+.report-modal__card{position:relative;width:min(560px,100%);max-height:min(84vh,720px);
+  overflow:auto;padding:var(--t-5);border:1px solid var(--glass-fill-hair);
+  border-radius:var(--t-r);background:var(--glass-fill);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);box-shadow:var(--shadow)}
+html[data-theme="light"] .report-modal__card{--glass-fill:rgba(255,255,255,.94)}
+.report-modal__head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--t-3)}
+.report-modal__title{margin:0;font-size:var(--t-fs-70);line-height:1.25}
+.report-modal__sub{margin:6px 0 0;font-size:var(--t-fs-30);line-height:var(--t-lh-medium);color:var(--text-muted)}
+.report-modal__close{flex:none;width:34px;height:34px;border:1px solid var(--glass-fill-hair);
+  border-radius:var(--t-r);background:none;color:inherit;font-size:1.35rem;line-height:1;cursor:pointer}
+.report-modal__close:hover,.report-modal__close:focus-visible{border-color:var(--accent);color:var(--accent)}
+.report-form{margin-top:var(--t-4);display:grid;gap:var(--t-3)}
+.report-form .form-field{margin-bottom:0}
+.report__note{min-height:120px;resize:vertical}
+.report__shots-label{margin:0;font-size:.9rem;font-weight:600}
+/* Dashed because that is the shape every upload on the web has taught people to look
+   for, and inert because there is nowhere to put a file yet. A tile that can be pressed
+   and then does nothing is the one thing here that would be a lie. */
+.report__shots{display:grid;justify-items:center;align-content:center;gap:4px;min-height:112px;
+  padding:var(--t-3);border:2px dashed var(--border);border-radius:var(--t-r);
+  color:var(--text-muted);text-align:center}
+.report__shots-plus{font-size:1.5rem;line-height:1}
+.report__shots-note{margin:0;font-size:.85rem;max-width:36ch}
+.report__error{padding-left:.6rem;border-left:3px solid var(--accent);color:var(--text);
+  font-size:.9rem;font-weight:600;line-height:1.45}
+.report-modal__foot{display:flex;flex-wrap:wrap;align-items:center;gap:var(--t-3)}
+.report__ask{background:none;border:none;padding:6px 0;color:var(--accent);font:inherit;
+  font-size:.95rem;font-weight:600;cursor:pointer}
+.report__ask:hover,.report__ask:focus-visible{text-decoration:underline}
+.report__send{margin-left:auto}
+html[dir="rtl"] .report__send{margin-left:0;margin-right:auto}
+.report-form[aria-busy="true"] .report__send{opacity:.62;cursor:progress}
+body.report-open{overflow:hidden}
+@media (max-width:600px){
+  .report-modal__card{padding:var(--t-4)}
+  .report-modal__foot .btn{flex:1 1 auto}
+}
+@media (prefers-reduced-motion:reduce){
+  .report-pill,.report-help,.report-modal__close{transition:none}
+}
