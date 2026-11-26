@@ -6200,33 +6200,29 @@ html[dir="rtl"] .chat-widget__emoji-tabs{
   .help-support__actions .btn{flex:1 1 auto;min-width:0}
 }
 
-/* ===== The site-wide problem-feedback pair =====
-   A pill and a round question mark, fixed to the bottom edge immediately left of the
-   assistant's bubble. The geometry is the whole design: the row is 40px tall and stands
-   on the bubble's own 1.5rem, so its top edge sits 64px up from the bottom against the
-   bubble's 80px. js/app.js charges it to the queue and --queue-h does not move by a
-   pixel, which is why no pinned stage had to be re-measured for this to arrive.
-   The key hint is hidden by default and painted only where a keyboard is plausible:
-   printing ⌘⌥F on a phone would be a picture of keys that phone does not have. */
-.report-pair{position:fixed;bottom:1.5rem;right:calc(1.5rem + 56px + 10px);z-index:200;
-  display:flex;align-items:flex-end;gap:var(--t-1);height:40px}
-.report-pill{display:inline-flex;align-items:center;gap:var(--t-1);height:40px;padding:0 14px;
-  border:1px solid var(--glass-fill-hair);border-radius:999px;background:var(--glass-fill);
-  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow);
-  color:var(--text);font:inherit;font-size:var(--t-fs-20);font-weight:600;cursor:pointer}
-.report-pill:hover,.report-pill:focus-visible{border-color:var(--accent);color:var(--accent)}
-.report-pill__key{display:none;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  font-size:.78rem;letter-spacing:.02em;color:var(--text-muted)}
-@media (hover:hover) and (pointer:fine){.report-pill__key{display:inline}}
-.report-help{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;
+/* ===== The site-wide problem-feedback badge =====
+   One round question mark, hung in the bottom-right corner the way the reference hangs
+   its own: a mark, not a sentence. The geometry is the whole design — a 44px circle on
+   the assistant bubble's own 1.5rem and its own right edge, so the two share a column
+   and never a row. Measured on a 1440x900 desk the bubble's bottom lands at 680 and the
+   badge's top at 832, and on a 390x844 phone at 583 and 776; js/app.js charges the badge
+   to the queue by its rect, so --queue-h grows by what a visitor can actually see.
+   A question mark can only mean one thing on a page that already has a Help page in its
+   nav, so the second circle that used to hang beside this one is gone, and the way into
+   help is printed inside the dialog instead.
+   The keyboard hint moved with it: a 44px circle cannot carry ⌘⌥F, and the dialog has
+   room to say it. It is hidden by default and painted only where a keyboard is
+   plausible — printing keys on a phone would be a picture of keys that phone does not
+   have. */
+.report-pair{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;height:44px}
+.report-pill{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;
   border:1px solid var(--glass-fill-hair);background:var(--glass-fill);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow);
-  color:var(--text);font-size:1.05rem;font-weight:700}
-.report-help:hover,.report-help:focus-visible{border-color:var(--accent);color:var(--accent)}
-@media (max-width:600px){
-  .report-pair{right:calc(1.5rem + 56px + 6px)}
-  .report-pill{padding:0 10px}
-}
+  color:var(--text);font-size:1.15rem;font-weight:700;line-height:1;cursor:pointer}
+.report-pill:hover,.report-pill:focus-visible{border-color:var(--accent);color:var(--accent)}
+.report-modal__key{display:none;margin:6px 0 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.78rem;letter-spacing:.02em;color:var(--text-muted)}
+@media (hover:hover) and (pointer:fine){.report-modal__key{display:block}}
 
 /* The dialog is the same glass card the cookie preferences already use, at the same
    depth, because a visitor who has opened one should not have to learn the other. */
@@ -6262,6 +6258,12 @@ html[data-theme="light"] .report-modal__card{--glass-fill:rgba(255,255,255,.94)}
 .report__ask{background:none;border:none;padding:6px 0;color:var(--accent);font:inherit;
   font-size:.95rem;font-weight:600;cursor:pointer}
 .report__ask:hover,.report__ask:focus-visible{text-decoration:underline}
+/* The way into the help centre used to be a second circle hanging beside this one. Two
+   identical question marks that do different things is the one arrangement a visitor
+   cannot learn, so the link lives here instead, beside the other quiet action. */
+a.report__help{padding:6px 0;color:var(--text-muted);font-size:.95rem;font-weight:600;
+  text-decoration:none;border-bottom:1px solid transparent}
+a.report__help:hover,a.report__help:focus-visible{color:var(--accent);border-bottom-color:var(--accent)}
 .report__send{margin-left:auto}
 html[dir="rtl"] .report__send{margin-left:0;margin-right:auto}
 .report-form[aria-busy="true"] .report__send{opacity:.62;cursor:progress}
@@ -6271,5 +6273,5 @@ body.report-open{overflow:hidden}
   .report-modal__foot .btn{flex:1 1 auto}
 }
 @media (prefers-reduced-motion:reduce){
-  .report-pill,.report-help,.report-modal__close{transition:none}
+  .report-pill,.report-modal__close{transition:none}
 }

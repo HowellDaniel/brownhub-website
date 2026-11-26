@@ -65,6 +65,17 @@ test('the pill stands on every page that wears the site shell, and on no page th
     assert.doesNotMatch(read(page), /js\/report\.js/,
       `${page} carries no site stylesheet, so a pill there would paint unstyled or promise a send it cannot make`);
   }
+  /* A page at the root asks for its scripts bare. `../js/…` there only works because a
+     browser clamps above the origin root, which is a courtesy a subpath deploy does not
+     extend — and one prefixed tag among fourteen bare ones is how a bulk edit betrays
+     itself. Depth has to be measured, not assumed the same for every directory. */
+  for (const page of chromePages) {
+    const depth = page.split('/').length - 1;
+    const tag = read(page).match(/<script src="((?:\.\.\/)?)js\/report\.js\?v=\d+"/);
+    assert.ok(tag, `${page} has a pill tag this file cannot read`);
+    assert.equal(tag[1].split('../').length - 1, depth,
+      `${page} sits ${depth} directories down and asks for the pill with the wrong prefix`);
+  }
 });
 
 test('the keyboard hint is a hint, not a sentence a translator has to render', () => {
@@ -74,8 +85,25 @@ test('the keyboard hint is a hint, not a sentence a translator has to render', (
     'nothing binds the feedback key');
   assert.match(script, /metaKey \|\| e\.ctrlKey/,
     'the binding works on one platform only, so the printed hint is a lie on the other');
-  assert.match(sheet, /\.report-pill__key\{display:none[^}]*\}[\s\S]{0,400}@media \(hover:hover\) and \(pointer:fine\)\{\.report-pill__key\{display:inline\}\}/,
+  /* The hint used to ride inside the corner mark. A 44px circle cannot carry ⌘⌥F, so it
+     is printed in the dialog it opens instead — and still only where a keyboard exists. */
+  assert.match(sheet, /\.report-modal__key\{display:none[^}]*\}[\s\S]{0,400}@media \(hover:hover\) and \(pointer:fine\)\{\.report-modal__key\{display:block\}\}/,
     'a phone with no keyboard is shown a ⌘⌥F it cannot press');
+});
+
+test('the corner holds one round mark, and says in words what it means', () => {
+  assert.match(sheet, /\.report-pill\{display:grid;place-items:center;width:44px;height:44px;border-radius:50%/,
+    'the corner is not the single round badge the reference hangs');
+  assert.match(script, /el\("span", "report-pill__mark", "\?"\)/,
+    'the mark itself is missing');
+  assert.match(script, /pill\.setAttribute\("aria-label", COPY\.pill\)/,
+    'a "?" paints nothing a screen reader can name, so the badge has to say what it opens');
+  assert.doesNotMatch(script, /report-pill__label/,
+    'the badge grew its sentence back and now the corner is a bar again');
+  assert.doesNotMatch(sheet, /\.report-help\{/,
+    'a second question mark hangs beside the first, and the two do different things');
+  assert.match(script, /el\("a", "report__help", COPY\.help\)/,
+    'the way into the help centre went out with the second circle');
 });
 
 test('the dialog behaves like the dialogs the rest of the site already has', () => {
@@ -149,26 +177,52 @@ test('every sentence the dialog paints is a key in all thirty-nine dictionaries'
 
 test('the pill cannot make the bottom edge the whole site is sized against grow', () => {
   assert.match(read('js/app.js'), /var QUEUE = "[^"]*\.report-pair/,
-    'the pair is not charged to the queue, so a pinned band can paint under it');
+    'the badge is not charged to the queue, so a pinned band can paint under it');
   const pair = sheet.match(/\.report-pair\{([^}]*)\}/);
-  assert.ok(pair, 'the pair has no CSS of its own');
+  assert.ok(pair, 'the badge has no CSS of its own');
   const bottom = (pair[1].match(/bottom:([\d.]+)rem/) || [])[1];
   const height = (pair[1].match(/height:([\d.]+)px/) || [])[1];
-  assert.ok(bottom && height, 'the pair must state its own bottom offset and height for this check');
-  /* The bubble this pair stands beside is 56px tall and sits 1.5rem off the edge, so
-     the queue already pays 80px there. Anything whose top edge lands at or below the
-     bubble's own top cannot raise that number. */
+  assert.ok(bottom && height, 'the badge must state its own bottom offset and height for this check');
+  /* The assistant bubble the badge shares a column with is 56px tall and stands on the
+     same 1.5rem, so the edge is already paid for at 80px. A 44px mark on that same line
+     costs 68px, which is why the corner can hold it without a single stage being
+     re-measured — reserve() reads the rect, not this arithmetic. */
   assert.ok(Number(bottom) * 16 + Number(height) <= 1.5 * 16 + 56,
-    `the pair reaches ${Number(bottom) * 16 + Number(height)}px from the bottom edge; the bubble only reaches 80px`);
+    `the badge reaches ${Number(bottom) * 16 + Number(height)}px from the bottom edge; the bubble only reaches 80px`);
+});
+
+test('a send that locked its own button still hands the visitor back to the badge', () => {
+  /* A successful send disables Send, and focus cannot land on a disabled control, so the
+     old restore left the caret inside a dialog that had already closed. A visitor who
+     opened it by its key from the page body was stranded the same way, because focusing
+     the body is nothing at all. */
+  assert.match(script, /lastFocus !== doc\.body && !lastFocus\.disabled\) \? lastFocus : pill/,
+    'closing can hand focus back to something that cannot take it');
+});
+
+/* Two dialogs cannot both own the tab order. The arrival card the home page raises is a
+   modal with its own Tab trap, and the feedback key is bound on the document with no
+   qualifier, so a visitor who pressed ⌘⌥F while the studio's offer was up got this dialog
+   painted over the card with both traps live — Tab then moved focus around a card the
+   visitor could not see. Opening therefore retires the card through its own close control,
+   which is the path promo.js already exposes, instead of reaching into its state. */
+test('the feedback key never leaves two dialogs fighting for the tab order', () => {
+  const body = script.slice(script.indexOf('function open()'), script.indexOf('function close('));
+  assert.match(body, /#home-promo:not\(\[hidden\]\) \.promo__close/,
+    'the dialog opens without noticing the arrival card the home page raises');
+  assert.match(body, /if \(arrival\) arrival\.click\(\)/,
+    'the card is dismissed by something other than its own close control, so promo.js state can drift');
+  assert.match(body, /lastFocus = arrival \? pill : doc\.activeElement/,
+    'focus is captured from a card that has just been hidden, so closing the dialog strands the caret');
 });
 
 test('the cache ledger moved with the files it caches', () => {
   const ledger = Number((read('index.html').match(/css\/style\.min\.css\?v=(\d+)/) || [])[1]);
-  assert.ok(ledger >= 200, `the stylesheet is still served as v${ledger}; this change rewrote it`);
+  assert.ok(ledger >= 201, `the stylesheet is still served as v${ledger}; this change rewrote it`);
   for (const page of chromePages) {
-    assert.equal(asked('report', page), 1, `${page} asks for report.js at the wrong version`);
+    assert.ok((asked('report', page) || 0) >= 3, `${page} caches a pill that leaves the arrival card up`);
     const sheetMatch = read(page).match(/css\/style\.min\.css\?v=(\d+)/);
-    if (sheetMatch) assert.ok(Number(sheetMatch[1]) >= 200, `${page} still caches an older sheet`);
+    if (sheetMatch) assert.ok(Number(sheetMatch[1]) >= 201, `${page} still caches an older sheet`);
     if (/js\/chat\.js/.test(read(page))) {
       assert.ok(asked('chat', page) >= 48, `${page} caches a chat that cannot hear bh-chat-open`);
     }

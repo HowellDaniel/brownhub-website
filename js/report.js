@@ -4,14 +4,16 @@
   A visitor whose price is wrong, whose link is dead or whose assistant will not answer
   is standing on a page that is not help.html, and until now the only way to tell the
   studio was to go and find help.html first. This is the way that needs no finding: a
-  pill at the bottom of every page that wears the shell, opened by hand or by its own
-  key.
+  round question mark hung in the bottom-right corner of every page that wears the
+  shell, opened by hand or by its own key.
 
   The copy rule is the one js/cookies.js writes under. Every sentence a visitor reads is
   painted here in its English source form, and translate.js — which watches the body for
-  nodes added after it ran — repaints them in the language the visitor chose. The
-  keyboard hint is the single exception and it is aria-hidden: ⌘⌥F is a picture of keys,
-  not a sentence, and the keys differ by platform rather than by language.
+  nodes added after it ran — repaints them in the language the visitor chose. The corner
+  mark is the exception on purpose: "?" reads the same in Accra and in Warsaw, so it
+  carries its words as an aria-label instead of as text. The keyboard hint is the other,
+  and it is aria-hidden — ⌘⌥F is a picture of keys, not a sentence, and the keys differ
+  by platform rather than by language.
 
   Nothing here uploads. The screenshots tile is printed because the shape of the form
   asks for it, and it says in words that attachments open with the next release — there
@@ -67,19 +69,18 @@
     if (on) node.hidden = false;
   }
 
-  // ── the pair ────────────────────────────────────────────────────────────────
+  // ── the badge ───────────────────────────────────────────────────────────────
   var apple = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent || "");
   var pair = el("div", "report-pair");
   var pill = el("button", "report-pill");
   pill.type = "button";
-  pill.appendChild(el("span", "report-pill__label", COPY.pill));
-  var hint = el("kbd", "report-pill__key", apple ? "⌘ + ⌥ + F" : "Ctrl + Alt + F");
-  hint.setAttribute("aria-hidden", "true");
-  pill.appendChild(hint);
-  var help = el("a", "report-help", "?");
-  help.href = ROOT + "help.html";
-  help.setAttribute("aria-label", COPY.help);
-  pair.append(pill, help);
+  /* One mark, not a sentence: the reference hangs a question mark in the corner and a
+     visitor reads it in any language. The words it replaces are kept where an AT user is
+     still told what they are pressing. */
+  pill.appendChild(el("span", "report-pill__mark", "?"));
+  pill.setAttribute("aria-label", COPY.pill);
+  pill.title = COPY.pill;
+  pair.appendChild(pill);
 
   // ── the dialog ──────────────────────────────────────────────────────────────
   var modal = el("div", "report-modal");
@@ -99,7 +100,12 @@
   x.type = "button";
   x.setAttribute("aria-label", COPY.close);
   var headings = el("div", "report-modal__headings");
-  headings.append(heading, sub);
+  /* The shortcut is printed where there is room for it now that the corner holds only a
+     mark. Keys are a picture, not a sentence, so this stays out of the dictionaries and
+     out of the screen reader — and CSS keeps it off any device with no keyboard. */
+  var hint = el("kbd", "report-modal__key", apple ? "⌘ + ⌥ + F" : "Ctrl + Alt + F");
+  hint.setAttribute("aria-hidden", "true");
+  headings.append(heading, sub, hint);
   head.append(headings, x);
 
   var form = el("form", "report-form");
@@ -152,6 +158,9 @@
   done.hidden = true;
 
   var foot = el("div", "report-modal__foot");
+  var help = el("a", "report__help", COPY.help);
+  help.href = ROOT + "help.html";
+  foot.appendChild(help);
   var send = el("button", "btn btn--primary report__send", COPY.send);
   send.type = "submit";
   send.disabled = true;
@@ -191,7 +200,16 @@
 
   function open() {
     if (!modal.hidden) return;
-    lastFocus = doc.activeElement;
+    /* The home page's arrival card is a dialog with its own Tab trap, and this one answers
+       to a key that works anywhere. Summoned while the card is up, both traps would be live
+       at once and Tab would move a caret around a card the visitor cannot see — so the card
+       is retired first, through its own close control, which is the only dismissal promo.js
+       listens for. Nothing here reaches into the card's state. */
+    var arrival = doc.querySelector("#home-promo:not([hidden]) .promo__close");
+    if (arrival) arrival.click();
+    /* The visitor was standing on a button inside a card that no longer exists; handing
+       focus back there at close time strands the caret, so they go back to the badge. */
+    lastFocus = arrival ? pill : doc.activeElement;
     /* Taking the scrollbar away would shift everything behind the card by its width;
        pay that width back as padding so the page does not move under the visitor. */
     var gap = window.innerWidth - doc.documentElement.clientWidth;
@@ -206,7 +224,14 @@
     modal.hidden = true;
     doc.body.classList.remove("report-open");
     doc.body.style.paddingRight = "";
-    if (restore !== false && lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    if (restore === false) return;
+    /* A send that succeeded locks its own button, and focus cannot land on a disabled
+       control — the visitor would be left with the caret in a dialog that has already
+       closed. The same happens to a visitor who opened this by its key from the page
+       body, because focusing the body is nothing at all. The badge is where they came
+       from, so that is where they go back to. */
+    var back = (lastFocus && lastFocus !== doc.body && !lastFocus.disabled) ? lastFocus : pill;
+    back.focus({ preventScroll: true });
   }
 
   pill.addEventListener("click", open);
