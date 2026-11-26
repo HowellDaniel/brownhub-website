@@ -80,6 +80,8 @@
     { g: "Catalog", t: "Logo Design Mockup", h: "catalog.html?q=Logo%20Design%20Mockup", k: "logo design brand identity mockup sign storefront 3d" },
     { g: "Catalog", t: "Embroidery and Helmet Branding", h: "catalog.html?q=Embroidery%20and%20Helmet%20Branding", k: "embroidery helmet branding safety site cap workwear branded kit logo" },
     { g: "Catalog", t: "Wedding Invitation Cards", h: "catalog.html?q=Wedding%20Invitation%20Cards", k: "wedding invitation card invite marriage ceremony printed card gold" },
+    { g: "Catalog", t: "Mina's Touch Beauty Branding", h: "catalog.html?q=Mina%27s%20Touch%20Beauty%20Branding", k: "mina's touch beauty branding skincare cosmetics serum lotion cream carton label packaging range" },
+    { g: "Catalog", t: "Kyridel Beauty Branding", h: "catalog.html?q=Kyridel%20Beauty%20Branding", k: "kyridel beauty branding essentials monogram serum carton label packaging skincare" },
 
     // The website catalog is its own shelf, so it gets its own rows. Every label
     // is a string that already exists on the page, which keeps the dictionaries

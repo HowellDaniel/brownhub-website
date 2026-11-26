@@ -7,7 +7,7 @@ test("catalog export is current and every item has a stable public target", () =
   execFileSync("/usr/bin/python3", ["tools/assistant_catalog.py", "--check"]);
   const data = JSON.parse(readFileSync("data/assistant-catalog.json", "utf8"));
   assert.equal(data.version, 1);
-  assert.equal(data.items.length, 33);
+  assert.equal(data.items.length, 35);
   const ids = new Set(data.items.map((item) => item.id));
   assert.equal(ids.size, data.items.length);
   for (const item of data.items) {

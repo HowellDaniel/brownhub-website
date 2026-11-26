@@ -558,6 +558,32 @@
         "images/catalog/wedding-invitation-cards-7.jpg"
       ],
       "url": "catalog.html?q=Wedding%20Invitation%20Cards"
+    },
+    {
+      "id": "mina-s-touch-beauty-branding",
+      "name": "Mina's Touch Beauty Branding",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Brand identity for a skincare house — the mark, its red and gold palette, and the labels carried across bottle, tube, jar and carton.",
+      "images": [
+        "images/catalog/minas-touch.jpg",
+        "images/catalog/minas-touch-2.jpg",
+        "images/catalog/minas-touch-3.jpg",
+        "images/catalog/minas-touch-4.jpg"
+      ],
+      "url": "catalog.html?q=Mina's%20Touch%20Beauty%20Branding"
+    },
+    {
+      "id": "kyridel-beauty-branding",
+      "name": "Kyridel Beauty Branding",
+      "category": "print",
+      "categoryLabel": "Flyers & printing",
+      "description": "Beauty essentials dressed from a single mark — a fine-line monogram, warm neutrals, and the serum bottle and its carton carrying both.",
+      "images": [
+        "images/catalog/kyriddel.jpg",
+        "images/catalog/kyriddel-2.jpg"
+      ],
+      "url": "catalog.html?q=Kyridel%20Beauty%20Branding"
     }
   ]
 }
