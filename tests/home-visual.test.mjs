@@ -152,3 +152,40 @@ test('Home motion and interaction hooks remain intact', () => {
   assert.ok(asked("pinband") >= 21, "the band driver must be at or past the queue-settle build");
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.hold-plate\{translate:none\}/);
 });
+
+/* A JPEG carries its own size in the start-of-frame marker, which is the only number
+   here that cannot be edited to match a claim. */
+function jpegSize(file) {
+  const buf = readFileSync(path.join(root, file));
+  for (let i = 2; i + 9 < buf.length;) {
+    if (buf[i] !== 0xff) { i++; continue; }
+    const mark = buf[i + 1];
+    if (mark >= 0xc0 && mark <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(mark)) {
+      return { w: buf.readUInt16BE(i + 7), h: buf.readUInt16BE(i + 5) };
+    }
+    i += 2 + buf.readUInt16BE(i + 2);
+  }
+  assert.fail(`${file} has no start-of-frame marker`);
+}
+
+test('the fourth process step paints a real piece of the shop, stamped to its own pixels', () => {
+  const visuals = [...html.matchAll(/<div class="pstory__visual"([^>]*)>([\s\S]*?)<\/div>/g)];
+  assert.equal(visuals.length, 4, `the story should hold four painted steps, found ${visuals.length}`);
+  const [, attrs, inner] = visuals[3];
+  const tag = inner.match(/<img\b[^>]*>/i);
+  assert.ok(tag, 'step 04 should carry a picture');
+  const source = srcOf(tag[0]);
+  /* The three other steps show work the shop has actually made. This one wore a
+     generated plate from images/collection/ — a red square and a grey bar that read
+     as an empty shelf — so the step that promises "print-ready" showed nothing
+     printed. A catalogue photograph is the only honest picture of delivered work. */
+  assert.match(source, /^images\/catalog\//,
+    `step 04 shows ${source}, which is an abstract plate and not a photograph of work the shop delivered`);
+  assert.equal(existsSync(path.join(root, source)), true, `${source} should exist`);
+  const { w, h } = jpegSize(source);
+  const stamp = (name) => Number((attrs.match(new RegExp(`--${name}:(\\d+)`)) || [])[1]);
+  assert.equal(stamp('art-w'), w, `--art-w should carry the file's own ${w}px width`);
+  assert.equal(stamp('art-h'), h, `--art-h should carry the file's own ${h}px height`);
+  assert.equal(Number(tagAttribute(tag[0], 'width')), w, 'the img width attribute should match the file');
+  assert.equal(Number(tagAttribute(tag[0], 'height')), h, 'the img height attribute should match the file');
+});
