@@ -5,7 +5,8 @@
   node tools/help625.mjs [--arm=local|live] [--lang=en|ar] [--theme=dark|light|system]
                          [--vw=1440] [--vh=900] [--port=9425]
                          [--out=/tmp/bh625/<arm>-<lang>-<vw>x<vh>.json]
-                         [--shot=/tmp/bh625] [--flow=rate|note|both]
+                         [--shot=/tmp/bh625] [--flow=rate|note|both|reject]
+                         [--door=ok|fail|once] [--doorMs=700]
 
   Why the network is stubbed, and where it is not. The local arm never lets a request out:
   a rating on a test page is not a fact about a customer, and the studio's feedback table is
@@ -39,14 +40,26 @@ const VW = Number(ARG.vw || 1440);
 const VH = Number(ARG.vh || 900);
 const PORT = Number(ARG.port || 9425);
 let FLOW = ARG.flow || "both";
+/* The local arm owns its answer, so it can own a refusal too. `once` rejects the first
+   post and accepts the retry, which is the only way this rig can watch a visitor
+   actually try again. The live arm never uses either: a failed send is a fake fact
+   about a real table. */
+const DOOR = ARG.door || "ok";
+const SERVE = DOOR === "fail" ? "true" : DOOR === "once" ? "S.calls.length === 1" : "false";
+const DOOR_MS = Number(ARG.doorMs || (DOOR === "ok" ? 30 : 700));
 const OUT = ARG.out || `/tmp/bh625/${ARM}-${LANG}-${THEME}-${VW}x${VH}-${FLOW}.json`;
 const SHOTDIR = ARG.shot || null;
 const RATE_FORM = 0;
 const NOTE_FORM = 1;
+const REJECT_FORM = 2;
 
 /* One live run files one production row. The rating-only arm is safe on live, but the
    note arm deliberately owns the single live submission rather than leaving two. */
 if (LIVE && FLOW === "both") FLOW = "note";
+/* A refused send is a lie about the studio's own table, so the live arm cannot order one. */
+if (LIVE && (DOOR !== "ok" || FLOW === "reject")) {
+  throw new Error("the live arm cannot fake a rejected send: run --arm=live --door=ok");
+}
 
 const dict = LANG === "en" ? {} : JSON.parse(readFileSync(join(ROOT, "i18n", `${LANG}.json`), "utf8"));
 const SOURCE = {
@@ -57,6 +70,7 @@ const SOURCE = {
   placeholder: "What helped, or what was still missing?",
   send: "Send feedback",
   thanks: "Thanks — your feedback reached the studio.",
+  fail: "Could not send that. Try again, or tell us on the contact page.",
   still: "Still need help?",
   support: "Tell us what you could not resolve. The studio replies on WhatsApp or by phone, and directions are available before travelling.",
   contactBtn: "Contact the studio",
@@ -177,10 +191,12 @@ const SEED = `
                 door: ${LIVE ? "'live'" : "'stubbed'"} };
       S.calls.push(c);
       if (c.door === "stubbed") {
+        var reject = ${SERVE};
         return new Promise(function (res) {
           setTimeout(function () {
-            res({ ok: true, status: 200, json: function () { return Promise.resolve({ ok: true }); } });
-          }, 30);
+            res({ ok: !reject, status: reject ? 500 : 200,
+                  json: function () { return Promise.resolve(reject ? { error: "rig rejection" } : { ok: true }); } });
+          }, ${DOOR_MS});
         });
       }
       return real.apply(this, arguments).then(function (r) {
@@ -240,6 +256,7 @@ window.__bhHelp = (function () {
     var spans = [].slice.call(f.querySelectorAll(".feedback__star span"));
     var group = f.querySelector(".feedback__stars");
     var rest = f.querySelector(".feedback__rest"), done = f.querySelector(".form-success");
+    var error = f.querySelector(".feedback__error");
     var message = f.querySelector(".feedback-message"), contact = f.querySelector(".feedback-contact");
     var send = rest ? rest.querySelector('button[type="submit"]') : null;
     var hp = f.querySelector("[name='_site']");
@@ -260,6 +277,13 @@ window.__bhHelp = (function () {
       sendText: send ? send.textContent.replace(/\\s+/g, " ").trim() : null,
       sendBox: send ? box(send) : null, sendRatio: send ? contrast(send) : null,
       restHidden: !rest || rest.hidden, doneHidden: !done || done.hidden,
+      busy: f.getAttribute("aria-busy") || "",
+      sendDisabled: send ? !!send.disabled : null,
+      sendOpacity: send ? num(parseFloat(getComputedStyle(send).opacity)) : null,
+      errorHidden: !error || error.hidden,
+      errorText: error ? error.textContent.replace(/\\s+/g, " ").trim() : null,
+      errorBox: error ? box(error) : null, errorRatio: error ? contrast(error) : null,
+      errorLive: error ? [error.getAttribute("role"), error.getAttribute("aria-live")].join("|") : null,
       doneText: done ? done.textContent.replace(/\\s+/g, " ").trim() : null,
       doneRatio: done ? contrast(done) : null, sent: f.getAttribute("data-sent") || "",
       disabled: allFields.map(function (n) { return !!n.disabled; }),
@@ -503,6 +527,17 @@ async function main() {
     return "never fired";
   }
 
+  /* A round trip is not a stopwatch. Every wait in this rig polls a fact the page states
+     about itself, because the one thing already proved here is that a fixed sleep samples
+     the panel before the answer lands. */
+  async function pollUntil(expr, limit = 60, step = 50) {
+    for (let i = 0; i < limit; i++) {
+      if (await ev(expr)) return true;
+      await sleep(step);
+    }
+    return false;
+  }
+
   if (SHOTDIR) await shoot("idle", ARTICLES[RATE_FORM]);
 
   if (FLOW === "rate" || FLOW === "both") {
@@ -539,6 +574,33 @@ async function main() {
     results.flows.note = { opened, send, doneProbe, finalProbe, beforeSecond, afterSecond, calls, last,
       otherForm: JSON.parse(await ev(`JSON.stringify(window.__bhHelp.probe(window.__bhHelp.form(${FLOW === "both" ? RATE_FORM : NOTE_FORM + 1})))`)) };
     if (SHOTDIR) await shoot("sent", ARTICLES[NOTE_FORM]);
+  }
+
+  /* Only a browser knows what a refusal looks like. The static test can prove the line
+     is in the markup; it cannot prove the note survives the failure, that Send is dead
+     while the request is open, or that Arabic speaks when the send does not land. */
+  if (FLOW === "reject") {
+    const opened = await tapStar(REJECT_FORM, 2);
+    await ev(`(function () {
+      var f = window.__bhHelp.form(${REJECT_FORM});
+      f.querySelector(".feedback-message").value = "Sizes are not listed.";
+      f.requestSubmit(); return "submitted";
+    })()`);
+    const sawWaiting = await pollUntil(`window.__bhHelp.form(${REJECT_FORM}).getAttribute("aria-busy") === "true"`);
+    const mid = JSON.parse(await ev(`JSON.stringify(window.__bhHelp.probe(window.__bhHelp.form(${REJECT_FORM})))`));
+    const callsMid = Number(await ev("String(window.__hf.calls.length)"));
+    await ev(`(function () { window.__bhHelp.form(${REJECT_FORM}).requestSubmit(); return "again"; })()`);
+    await sleep(120);
+    const callsHeld = Number(await ev("String(window.__hf.calls.length)"));
+    const sawError = await pollUntil(`(function () { var e = window.__bhHelp.form(${REJECT_FORM}).querySelector(".feedback__error"); return !!e && !e.hidden; })()`, 80, 60);
+    const after = JSON.parse(await ev(`JSON.stringify(window.__bhHelp.probe(window.__bhHelp.form(${REJECT_FORM})))`));
+    await ev(`(function () { window.__bhHelp.form(${REJECT_FORM}).requestSubmit(); return "retried"; })()`);
+    const retried = await pollUntil(`window.__bhHelp.form(${REJECT_FORM}).getAttribute("data-sent") === "1"`, 80, 60);
+    const retryProbe = JSON.parse(await ev(`JSON.stringify(window.__bhHelp.probe(window.__bhHelp.form(${REJECT_FORM})))`));
+    const calls = JSON.parse(await ev("JSON.stringify(window.__hf.calls)"));
+    results.flows.reject = { opened, sawWaiting, mid, callsMid, callsHeld, sawError, after, retried, retryProbe,
+      calls: calls.length, answer: (calls[0] || {}).answer || null };
+    if (SHOTDIR) await shoot("rejected", ARTICLES[REJECT_FORM]);
   }
 
   const harvest = {
@@ -641,6 +703,34 @@ async function main() {
       if (n.otherForm.selected !== "4" || n.otherForm.sent !== "") fails.push("one answer's submission affected another answer");
     }
   }
+  const j = results.flows.reject;
+  if (j) {
+    if (j.opened.probe.selected !== "2") fails.push("the reject branch did not choose two stars");
+    if (!j.sawWaiting) fails.push("an open send never announced a waiting state");
+    if (j.mid.busy !== "true") fails.push("the form did not carry aria-busy while the request was open");
+    if (j.mid.sendDisabled !== true) fails.push("Send stayed pressable for 3.5 seconds of round trip");
+    if (!(j.mid.sendOpacity < 0.95)) fails.push(`the waiting Send looks identical to an idle one (opacity ${j.mid.sendOpacity})`);
+    if (j.callsMid !== 1) fails.push(`one press of Send fired ${j.callsMid} requests`);
+    if (j.callsHeld !== 1) fails.push(`a press during the round trip added ${j.callsHeld - 1} more requests`);
+    if (!j.sawError) fails.push("a refused send never said so");
+    if (j.after.errorHidden !== false) fails.push("the failure line stayed hidden after a refusal");
+    if (j.after.errorText !== EXPECT.fail) fails.push(`the failure line is not the dictionary's: "${j.after.errorText}"`);
+    if (!(j.after.errorBox.h > 0)) fails.push("the failure line occupies no box");
+    if (j.after.errorRatio < 4.5) fails.push(`the failure line fails AA (${j.after.errorRatio})`);
+    if (!/status\|polite/.test(String(j.after.errorLive))) fails.push("the failure line is not announced");
+    if (j.after.sent !== "") fails.push("a refused send claimed the feedback reached the studio");
+    if (j.after.doneHidden !== true) fails.push("a refused send showed the thank-you");
+    if (j.after.restHidden !== false) fails.push("a refused send closed the note form");
+    if (j.after.messageValue !== "Sizes are not listed.") fails.push(`a refused send lost what the visitor wrote: "${j.after.messageValue}"`);
+    if (j.after.disabled.some(Boolean)) fails.push("a refused send left the form locked");
+    if (j.after.busy === "true") fails.push("a refused send stayed busy forever");
+    if (!j.retried) fails.push("the retry never landed, so \"try again\" was bad advice");
+    if (j.retryProbe.sent !== "1") fails.push("a successful retry never locked its form");
+    if (j.retryProbe.errorHidden !== true) fails.push("the stale failure line outlived the send that fixed it");
+    if (j.retryProbe.doneHidden !== false) fails.push("a retry that landed never thanked the visitor");
+    if (j.calls !== 2) fails.push(`the reject flow expected two posts, saw ${j.calls}`);
+  }
+
   /* Boot CLS is the number a visitor is scored on. The shifts the flows add are the
      note panel opening under a click — and Chrome only forgives a shift that follows
      real user input, which a programmatic .click() is not. They are printed, not gated. */

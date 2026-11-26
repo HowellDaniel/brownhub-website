@@ -24,6 +24,9 @@
 //   - A lead is a name and a number someone chose to type, kept so the studio can
 //     reply. It is deleted on request like an enquiry (privacy.html, "Deleting
 //     your information").
+//   - A feedback row keeps the number exactly as it was typed next to the dialable
+//     form of it, and one word from ALERTS saying whether the studio's own text went
+//     out. Neither leaves the closed table, and neither is in the text message.
 //
 // Deploy after editing this file (same runbook as bank-details):
 //   curl -X POST -H "Authorization: Bearer $(cat /tmp/bh_tok)" \
@@ -60,6 +63,22 @@ const FEEDBACK_PER_MINUTE = 6;
 const FEEDBACK_PER_DAY = 20;
 // The one field a caller cannot be allowed to invent: which kind of note this is.
 const TOPICS = ["answer", "page", "other"];
+// The owner reads this text, not the database. A slug like `project-cost` is a key
+// written for a stylesheet, so the answers it names are held here in words.
+const ARTICLE_LABELS: Record<string, string> = {
+  "design-services": "Design services",
+  "project-cost": "Project cost",
+  "project-time": "Project timeline",
+  "order-an-item": "Ordering an item",
+  "print-files": "Print files",
+  "where-is-the-studio": "Where the studio is",
+  "get-started": "Getting started",
+  questions: "the help page",
+  help: "the help page",
+};
+// Filed on the row, because the function's own console is not readable from anywhere
+// a browser key can reach — see the note above `alertOwner`.
+const ALERTS = ["sent", "rejected", "timeout", "unconfigured"];
 const OWNER_MSISDN = "233535583460";
 const SMS_GATEWAY = "https://sms.arkesel.com/api/v2/sms/send";
 
@@ -147,32 +166,68 @@ async function sha256(text: string): Promise<string> {
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-async function write(table: string, row: Record<string, unknown>): Promise<boolean> {
+// Both helpers run on the same two secrets; a missing one is a 502, never a silent row.
+function restHeaders(): Record<string, string> | null {
   const url = Deno.env.get("SUPABASE_URL") || "";
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-  if (!url || !key) return false;
+  if (!url || !key) return null;
+  return { url, apikey: key, Authorization: `Bearer ${key}`, "content-type": "application/json" };
+}
+
+async function write(table: string, row: Record<string, unknown>): Promise<boolean> {
+  const headers = restHeaders();
+  if (!headers) return false;
+  const { url, ...auth } = headers;
   const res = await fetch(`${url}/rest/v1/${table}`, {
     method: "POST",
-    headers: {
-      apikey: key,
-      Authorization: `Bearer ${key}`,
-      "content-type": "application/json",
-      Prefer: "return=minimal",
-    },
+    headers: { ...auth, Prefer: "return=minimal" },
     body: JSON.stringify(row),
     signal: AbortSignal.timeout(5000),
   }).catch(() => null);
   return !!res && res.ok;
 }
 
+// PostgREST hands the new row back only when it is asked for. The feedback row needs
+// that id: its alert outcome is filed after the text has been attempted, and a row
+// nobody can name cannot be updated. Zero means the row is not there.
+async function insert(table: string, row: Record<string, unknown>): Promise<number> {
+  const headers = restHeaders();
+  if (!headers) return 0;
+  const { url, ...auth } = headers;
+  const res = await fetch(`${url}/rest/v1/${table}`, {
+    method: "POST",
+    headers: { ...auth, Prefer: "return=representation" },
+    body: JSON.stringify(row),
+    signal: AbortSignal.timeout(5000),
+  }).catch(() => null);
+  if (!res || !res.ok) return 0;
+  const rows = await res.json().catch(() => []);
+  return Array.isArray(rows) && rows.length ? Number(rows[0].id) || 0 : 0;
+}
+
+async function mark(id: number, status: string): Promise<void> {
+  const headers = restHeaders();
+  if (!headers || !id || ALERTS.indexOf(status) < 0) return;
+  const { url, ...auth } = headers;
+  const res = await fetch(`${url}/rest/v1/feedback?id=eq.${id}`, {
+    method: "PATCH",
+    headers: { ...auth, Prefer: "return=minimal" },
+    body: JSON.stringify({ alert_status: status }),
+    signal: AbortSignal.timeout(5000),
+  }).catch(() => null);
+  if (!res || !res.ok) console.log("feedback alert status could not be filed");
+}
+
 // Delivery uses the same Arkesel rail as paystack-webhook. The text names the
 // score and answer only; a visitor's words stay in the protected feedback table.
-async function alertOwner(summary: string): Promise<void> {
+// It answers with one of ALERTS so the outcome can be filed on the row — a console
+// line inside a short-lived isolate is not a record anyone can read afterwards.
+async function alertOwner(summary: string): Promise<string> {
   const key = Deno.env.get("ARKSEL_API_KEY") || "";
   const sender = Deno.env.get("ARKSEL_SENDER") || "";
   if (!key || !sender) {
     console.log("feedback alert skipped: ARKSEL_API_KEY or ARKSEL_SENDER is not set");
-    return;
+    return "unconfigured";
   }
   const res = await fetch(SMS_GATEWAY, {
     method: "POST",
@@ -182,14 +237,16 @@ async function alertOwner(summary: string): Promise<void> {
   }).catch(() => null);
   if (!res) {
     console.log("feedback alert not sent: Arkesel did not answer");
-    return;
+    return "timeout";
   }
   const answer = await res.text().catch(() => "");
   if (!res.ok || answer.indexOf('"success"') < 0) {
     console.log(
       `feedback alert not delivered: Arkesel HTTP ${res.status}${answer.indexOf("invalid") >= 0 ? ", number rejected" : ""}`
     );
+    return "rejected";
   }
+  return "sent";
 }
 
 Deno.serve(async (req) => {
@@ -299,28 +356,33 @@ Deno.serve(async (req) => {
 
     const asTyped = str(body.contact, 32);
     const digits = digitsOf(asTyped);
-    // Left blank unless it could actually be dialled back, so the studio never
-    // holds a number that was really a name or a joke.
+    // `contact` stays blank unless the number could actually be dialled back, so the
+    // studio never holds a name or a joke as a phone number — but the typed form rides
+    // along with it, because a visitor who wrote one did offer to be contacted, and a
+    // row that dropped it silently told the studio nobody had.
     const contact = digits.length >= 7 && digits.length <= 15 ? digits : "";
 
     const detail = [
       rating ? `${rating}/5` : "note",
       message ? "note" : "",
-      contact ? "reply wanted" : "",
+      contact ? "reply wanted" : asTyped ? "number unclear" : "",
     ].filter(Boolean).join(", ");
-    const summary = `BrownHub feedback: ${detail} on ${article}`.slice(0, 160);
-    const ok = await write("feedback", {
+    const summary = `BrownHub feedback: ${detail} on ${ARTICLE_LABELS[article] || "the help page"}`.slice(0, 160);
+    const id = await insert("feedback", {
       topic,
       vote,
       rating,
       article,
       message,
       contact,
+      contact_as_typed: asTyped,
       page: pathOf(body.page),
       lang: str(body.lang, 8).toLowerCase() || "en",
     });
-    if (ok) await alertOwner(summary);
-    return json({ ok }, origin, ok ? 200 : 502);
+    if (!id) return json({ ok: false }, origin, 502);
+    const status = await alertOwner(summary);
+    await mark(id, status);
+    return json({ ok: true }, origin);
   }
 
   return json({ error: "Unknown" }, origin, 404);

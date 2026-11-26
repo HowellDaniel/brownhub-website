@@ -225,11 +225,12 @@ test('capture files the rating and alerts the studio owner', () => {
   assert.match(block, /Number\.isInteger\(rawRating\)[\s\S]*rawRating >= 1[\s\S]*rawRating <= 5/,
     'a rating outside 1-5 can reach the table');
   assert.match(block, /body\.rating/, 'the numeric star rating is ignored');
-  assert.match(block, /await write\("feedback", \{[\s\S]*\brating\b/, 'the row stores no rating');
-  const writeAt = block.indexOf('await write("feedback"');
+  assert.match(block, /await insert\("feedback", \{[\s\S]*\brating\b/, 'the row stores no rating');
+  const writeAt = block.indexOf('await insert("feedback"');
   const alertAt = block.indexOf('await alertOwner');
   assert.ok(writeAt >= 0 && alertAt > writeAt, 'the owner is alerted before the feedback row is saved');
-  assert.match(block, /if\s*\(ok\)\s*await alertOwner/, 'a failed database write still texts the owner');
+  assert.match(block, /if\s*\(!id\)\s*return json\(\{ ok: false \}, origin, 502\)/,
+    'a failed database write still texts the owner');
   assert.match(fn, /const OWNER_MSISDN = "233535583460"/, 'feedback does not reach the owner number');
   assert.match(fn, /const SMS_GATEWAY = "https:\/\/sms\.arkesel\.com\/api\/v2\/sms\/send"/,
     'the studio alert does not use the Arkesel route already proven by the payment webhook');
@@ -239,7 +240,7 @@ test('capture files the rating and alerts the studio owner', () => {
 test('capture answers a feedback post, and the same guards cover it', () => {
   const fn = read('supabase/functions/capture/index.ts');
   assert.match(fn, /kind === "feedback"/, 'the function still answers 404 to a feedback post');
-  assert.match(fn, /write\("feedback"/, 'the feedback branch writes to no table');
+  assert.match(fn, /insert\("feedback"/, 'the feedback branch writes to no table');
   const branch = fn.slice(fn.indexOf('kind === "feedback"'));
   const block = branch.slice(0, branch.indexOf('return json({ error: "Unknown"'));
   assert.match(block, /limited\(feedbacks, ip, FEEDBACK_PER_MINUTE, FEEDBACK_PER_DAY\)/,
@@ -274,7 +275,8 @@ test('the feedback table is closed to a browser key by construction', () => {
   assert.equal(policies.some((p) => /\bpublic\.feedback\b/.test(p)), false,
     'a policy on public.feedback would open the table to every holder of the public key');
   const cols = table[0];
-  for (const col of ['topic', 'vote', 'article', 'message', 'contact', 'page', 'lang']) {
+  for (const col of ['topic', 'vote', 'rating', 'article', 'message', 'contact', 'contact_as_typed',
+    'alert_status', 'page', 'lang']) {
     assert.match(cols, new RegExp(`\\b${col}\\b`), `public.feedback has no ${col} column`);
   }
   assert.match(cols, /check \(topic in/, 'the table accepts any topic a caller invents');
@@ -331,15 +333,17 @@ test('the note opens with its Send button pressable', () => {
   assert.ok(helper, 'nothing scrolls the submit button clear after the note opens');
 });
 
-test('the thank-you says thanks in the language on screen', () => {
+test('the thank-you is revealed, never rewritten', () => {
   const js = read('js/feedback.js');
-  // translate.js fills the dictionary asynchronously, after feedback.js has already
-  // initialized. Caching the hidden English text at init makes a successful Arabic or
-  // Twi submission overwrite the visitor's own thank-you with English.
-  assert.match(js, /function\s+thanksText\b/, 'the driver has no late-language thank-you lookup');
-  assert.match(js, /if\s*\(done\.hidden\)\s*success\s*=\s*done\.textContent/, 'the thank-you is never refreshed while still hidden');
-  assert.match(js, /say\(thanksText\(\)\)/, 'a sent form announces its stale cached thank-you');
-  assert.doesNotMatch(js, /var\s+thanks\s*=/, 'a thank-you cached before translation can overwrite the live dictionary');
+  /* The same rule as the failure line, and for the same measured reason: translate.js
+     fills the dictionary asynchronously, after feedback.js has initialized, so a string
+     this script caches or invents is what an Arabic or Twi visitor ends up reading. */
+  assert.doesNotMatch(js, /function\s+thanksText|var\s+thanks\b|var\s+success\b/,
+    'the driver still builds its own thank-you out of cached text');
+  assert.match(js, /reveal\(done, true\)/, 'a sent form reveals no thank-you');
+  assert.match(js, /reveal\(done, false\)/, 'a failed send leaves a stale thank-you on screen');
+  assert.match(read('help.html'), /class="form-success"[^>]*hidden[^>]*>Thanks — your feedback reached the studio\.</,
+    'the page no longer carries the thank-you the dictionaries translate');
 });
 
 test('the privacy page admits what feedback keeps', () => {
@@ -349,3 +353,135 @@ test('the privacy page admits what feedback keeps', () => {
   assert.match(section[1], /feedback/i,
     'feedback is collected but privacy.html still does not say so');
 });
+
+/* privacy.html described the flow that shipped in November 2026's first pass — "one
+   question, was that useful?" — after the page had been rebuilt as a per-answer star
+   rating. A privacy page that narrates a form nobody can find is worse than no sentence:
+   it tells a visitor the studio writes about itself carelessly. Every field now kept,
+   including the two nobody thinks to disclose, has to be named. */
+test('the privacy page describes the rating actually taken', () => {
+  const privacy = read('privacy.html');
+  const section = /<h2 id="1">What you send us<\/h2>([\s\S]*?)<h2/.exec(privacy);
+  assert.match(section[1], /one to five stars/i, 'the star rating is not what privacy promises');
+  assert.doesNotMatch(section[1], /was that useful\?/i, 'the page still describes the Yes/No tap');
+  assert.match(section[1], /number as you typed it/i,
+    'the typed form of a WhatsApp number is filed and never disclosed');
+  assert.match(section[1], /whether (our|the) text reached the studio/i,
+    'the alert outcome stored on the row is not disclosed');
+  const deletion = /<h2 id="8">Deleting your information<\/h2>([\s\S]*?)<h2/.exec(privacy);
+  assert.ok(deletion, 'the deletion section is gone');
+  assert.match(deletion[1], /rating|feedback/i, 'a feedback row has no stated deletion route');
+  assert.doesNotMatch(privacy, /SMS provider configured by Supabase/i,
+    'the studio, not Supabase, holds the SMS account the alerts leave from');
+});
+
+/* The failure sentence was already written and already translated into all twelve
+   dictionaries — and no visitor ever read it in their own language, because it lived
+   only as a JS constant and translate.js paints what the DOM holds. A string that is
+   a dictionary key with nothing on the page carrying it is dead translation work.
+   The rule this installs is wider than the sentence: translate.js fills the dictionaries
+   asynchronously, after feedback.js has initialized, so the script must never write copy
+   into the page. It owns which line is on screen, and the page owns the words. */
+test('a send that fails speaks the language on screen', () => {
+  const help = read('help.html');
+  const js = read('js/feedback.js');
+  const SENTENCE = 'Could not send that. Try again, or tell us on the contact page.';
+  const forms = (help.match(/class="feedback feedback--answer"/g) || []).length;
+  const carried = (help.match(/<p class="feedback__error"/g) || []).length;
+  assert.ok(forms >= 7, `only ${forms} answer forms exist`);
+  assert.equal(carried, forms,
+    `${forms} answers ask for a rating but ${carried} carry their own failure line`);
+  for (const m of help.matchAll(/<p class="feedback__error"([^>]*)>([^<]*)<\/p>/g)) {
+    assert.match(m[1], /\shidden\s*$/, 'a failure line shows before anything has failed');
+    assert.equal(m[2], SENTENCE, 'the failure line drifted from the dictionary key');
+  }
+  assert.doesNotMatch(js, /\.textContent\s*=/,
+    'the driver writes its own copy over a line the dictionaries own');
+  assert.doesNotMatch(js, /\bFAIL\b/, 'the driver still carries its own English failure copy');
+  assert.match(js, /node\.hidden\s*=\s*true;\s*\n\s*node\.hidden\s*=\s*false/,
+    'a second failure is not announced, because nothing toggles the live region');
+  assert.match(js, /reveal\(error, true\)/, 'a failed send leaves its line hidden');
+  for (const code of FULL) {
+    assert.ok(SENTENCE in JSON.parse(read(`i18n/${code}.json`)), `${code} has no failure sentence`);
+  }
+});
+
+// Measured on the live function: the feedback request took 3,465 ms end to end. That is
+// long enough that a second press of Send is certain, and today it does nothing at all —
+// `busy` swallows it silently, so the visitor reads a dead button and taps a third time.
+test('a send that is still travelling shows itself', () => {
+  const js = read('js/feedback.js');
+  const css = read('css/style.css');
+  assert.match(js, /setAttribute\("aria-busy",\s*"true"\)/,
+    'a send that takes over three seconds reports no state to a screen reader');
+  assert.match(js, /function\s+waiting\(on\)[\s\S]*?send\.disabled\s*=\s*on/,
+    'Send stays pressable while the request is open');
+  assert.match(js, /waiting\(true\)/, 'a send never enters its waiting state');
+  const unlock = /function\s+unlock\(\)\s*\{[\s\S]*?\n\s*\}/.exec(js);
+  assert.ok(unlock, 'the driver has no unlock step to restore a waiting button');
+  assert.match(unlock[0], /waiting\(false\)/, 'a rejected send stays waiting forever');
+  assert.match(js, /removeAttribute\("aria-busy"\)/, 'nothing ever clears the busy state');
+  assert.match(unlock[0], /disabled\s*=\s*false/, 'a rejected send leaves Send dead');
+  assert.match(css, /\[aria-busy="true"\]/, 'nothing paints the waiting state');
+});
+
+/* A number that fails the 7-15 digit test used to vanish: the visitor had typed it,
+   believed it was filed, and the studio never saw it. `leads` already keeps the typed
+   form beside the normalised one for exactly this reason, and the owner SMS must not
+   claim "reply wanted" about digits nobody can dial. */
+test('an odd WhatsApp number is kept as typed, and said so', () => {
+  const fn = read('supabase/functions/capture/index.ts');
+  const sql = read('sql/supabase-schema.sql');
+  const branch = fn.slice(fn.indexOf('kind === "feedback"'));
+  const block = branch.slice(0, branch.indexOf('return json({ error: "Unknown"'));
+  assert.match(block, /contact_as_typed\s*:/, 'the typed number is thrown away instead of filed');
+  assert.match(block, /contact_as_typed\s*:\s*asTyped/, 'the stored typed number is not what was typed');
+  assert.match(block, /number unclear/, 'a dial-unclear number still reads as reply wanted');
+  const table = /create table if not exists public\.feedback \([\s\S]*?\);/.exec(sql);
+  assert.match(table[0], /\bcontact_as_typed\b/i, 'public.feedback has nowhere to keep it');
+  assert.match(sql, /alter table public\.feedback add column if not exists contact_as_typed/i,
+    'the live schema does not add the typed column idempotently');
+});
+
+// The SMS is the one promise in this flow that nothing could prove: the gateway's answer
+// went to console.log, and the function logs a browser key can reach carry no stdout at
+// all. Filing the outcome on the row makes delivery a query, not a favour.
+test('the studio can read whether the text went out', () => {
+  const fn = read('supabase/functions/capture/index.ts');
+  const sql = read('sql/supabase-schema.sql');
+  assert.match(fn, /const ALERTS = \[[^\]]*"sent"[^\]]*"rejected"[^\]]*"timeout"[^\]]*"unconfigured"/,
+    'the alert outcome is not a closed set the table can hold');
+  assert.match(/async function alertOwner[\s\S]*?\n\}/.exec(fn)[0], /return "(sent|rejected|timeout|unconfigured)"/,
+    'alertOwner still reports nothing to its caller');
+  const branch = fn.slice(fn.indexOf('kind === "feedback"'));
+  const block = branch.slice(0, branch.indexOf('return json({ error: "Unknown"'));
+  assert.match(block, /const status = await alertOwner/, 'the gateway answer is dropped on the floor');
+  assert.match(block, /await mark\(id, status\)/, 'the answer is never filed');
+  assert.match(block, /if\s*\(!id\)\s*return json\(\{ ok: false \}, origin, 502\)/,
+    'the owner is texted about a row that never landed');
+  assert.match(fn, /return=representation|Prefer:\s*"return=representation"/,
+    'the insert cannot name the row the alert has to be filed against');
+  const table = /create table if not exists public\.feedback \([\s\S]*?\);/.exec(sql);
+  assert.match(table[0], /\balert_status text\b/i, 'public.feedback has no column for the outcome');
+  assert.match(table[0], /check \(alert_status in \('', 'sent', 'rejected', 'timeout', 'unconfigured'\)\)/i,
+    'any string a caller invents can be filed as the alert outcome');
+  assert.match(sql, /alter table public\.feedback add column if not exists alert_status/i,
+    'the live schema does not add the outcome column idempotently');
+});
+
+// The owner is the audience of this one string, and `project-cost` is not a sentence.
+test('the text names the answer in words, not a slug', () => {
+  const fn = read('supabase/functions/capture/index.ts');
+  const labels = /const ARTICLE_LABELS[^=]*=\s*\{([\s\S]*?)\};/.exec(fn);
+  assert.ok(labels, 'the SMS is built from the raw article slug');
+  const help = read('help.html');
+  for (const article of [...help.matchAll(/data-article="([^"]+)"/g)].map((m) => m[1])) {
+    assert.match(labels[1], new RegExp(`"${article}"\\s*:`), `the SMS cannot name ${article}`);
+  }
+  const branch = fn.slice(fn.indexOf('kind === "feedback"'));
+  const summary = /const summary = ([\s\S]*?);/.exec(branch)[1];
+  assert.match(summary, /ARTICLE_LABELS\[article\]/, 'the text falls back to the slug');
+  assert.doesNotMatch(summary, /\bmessage\b/, 'a visitor\u2019s own words reach the SMS');
+  assert.doesNotMatch(summary, /\bcontact\b/, 'a visitor\u2019s number reaches the SMS');
+});
+

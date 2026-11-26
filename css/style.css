@@ -6181,6 +6181,14 @@ html[dir="rtl"] .chat-widget__emoji-tabs{
 .feedback__rest[hidden],.form-success[hidden]{display:none}
 .feedback__rest .form-field{width:100%}
 .feedback__rest .btn{margin-top:var(--t-1)}
+/* A refusal is a line, not a card: the thank-you keeps its bordered surface, this only
+   has to be read beside what was already typed. Ink, not the muted tone, because it is
+   the one sentence on the panel that must not be skimmable. */
+.feedback__error{margin-top:.65rem;padding-left:.6rem;border-left:3px solid var(--accent);
+  color:var(--text);font-size:.9rem;font-weight:600;line-height:1.45}
+/* Three and a half seconds is long enough to press again. The button goes inert and the
+   form says so to a screen reader; no new words, because the page owns the words. */
+.feedback[aria-busy="true"] .btn{opacity:.62;cursor:progress}
 .feedback__links{display:grid;gap:var(--t-1)}
 .feedback__links a{color:var(--accent);font-weight:600;font-size:.95rem}
 .feedback__links a:hover{text-decoration:underline}

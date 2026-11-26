@@ -309,6 +309,10 @@ create table if not exists public.feedback (
   article    text not null default 'help',
   message    text not null default '',
   contact    text not null default '',
+  contact_as_typed text not null default '',
+  alert_status text not null default ''
+               constraint feedback_alert_check
+               check (alert_status in ('', 'sent', 'rejected', 'timeout', 'unconfigured')),
   page       text not null default '',
   lang       text not null default 'en'
 );
@@ -325,6 +329,27 @@ begin
   ) then
     alter table public.feedback
       add constraint feedback_rating_check check (rating between 1 and 5);
+  end if;
+end;
+$$;
+
+-- What a visitor typed and what could be dialled are two different facts, and the
+-- studio needs the first when the second comes back blank.
+alter table public.feedback add column if not exists contact_as_typed text not null default '';
+
+-- The gateway's answer used to go only to the function's console, which nothing can
+-- read back. Filed on the row, one rating on the live page proves delivery as a query.
+alter table public.feedback add column if not exists alert_status text not null default '';
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'feedback_alert_check'
+      and conrelid = 'public.feedback'::regclass
+  ) then
+    alter table public.feedback
+      add constraint feedback_alert_check
+      check (alert_status in ('', 'sent', 'rejected', 'timeout', 'unconfigured'));
   end if;
 end;
 $$;

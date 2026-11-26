@@ -1,6 +1,11 @@
 /*
   One rating per help answer. The panel posts to /capture/feedback, where the
   studio's service role is the only writer allowed into public.feedback.
+
+  This script owns state and nothing else. Every sentence a visitor reads — the
+  thank-you and the "it did not send" line — lives in help.html so translate.js can
+  paint it, and translate.js fills the dictionaries after this file has run. Copy
+  written here would overwrite the visitor's own language with English.
 */
 (function () {
   "use strict";
@@ -9,28 +14,36 @@
   var FN = "https://rmvyrfqyxgupwuzxadyx.supabase.co/functions/v1";
   var MAX_MESSAGE = 2000;
   var MAX_CONTACT = 32;
-  var FAIL = "Could not send that. Try again, or tell us on the contact page.";
 
   function init(form) {
     var stars = form.querySelector(".feedback__stars");
     var rest = form.querySelector(".feedback__rest");
     var done = form.querySelector(".form-success");
+    var error = form.querySelector(".feedback__error");
+    var send = form.querySelector('button[type="submit"]');
     var hp = form.querySelector("[name='_site']");
     var message = form.querySelector(".feedback-message");
     var contact = form.querySelector(".feedback-contact");
-    var success = done ? done.textContent : "";
     var busy = false;
 
-    function say(text) {
-      if (!done) return;
-      done.textContent = text;
-      done.hidden = false;
+    /* Off then on, deliberately: a status region that is already open says nothing
+       again, and a visitor who presses Send twice deserves to hear about it twice. */
+    function reveal(node, on) {
+      if (!node) return;
+      if (!on) {
+        node.hidden = true;
+        return;
+      }
+      node.hidden = true;
+      node.hidden = false;
     }
 
-    function thanksText() {
-      if (!done) return "Thank you.";
-      if (done.hidden) success = done.textContent;
-      return success.trim() || "Thank you.";
+    // Measured on the live function: a feedback post takes about three and a half
+    // seconds. Left alone, Send looks dead for that whole time and gets pressed again.
+    function waiting(on) {
+      if (on) form.setAttribute("aria-busy", "true");
+      else form.removeAttribute("aria-busy");
+      if (send) send.disabled = on;
     }
 
     function liftSend() {
@@ -48,32 +61,35 @@
 
     function unlock() {
       busy = false;
+      waiting(false);
       form.querySelectorAll("input").forEach(function (input) {
         input.disabled = false;
       });
-      var button = form.querySelector('button[type="submit"]');
-      if (button) button.disabled = false;
     }
 
     function finish(ok) {
       if (!ok) {
         unlock();
-        if (rest) rest.hidden = false;
-        say(FAIL);
+        reveal(rest, true);
+        reveal(error, true);
+        reveal(done, false);
         return;
       }
+      waiting(false);
       form.dataset.sent = "1";
       form.querySelectorAll("input, button").forEach(function (field) {
         field.disabled = true;
       });
-      if (rest) rest.hidden = true;
-      say(thanksText());
+      reveal(rest, false);
+      reveal(error, false);
+      reveal(done, true);
     }
 
     form.addEventListener("change", function (event) {
       if (!event.target.matches('.feedback__stars input[type="radio"]')) return;
       if (stars) stars.dataset.selected = event.target.value;
-      if (rest) rest.hidden = false;
+      reveal(error, false);
+      reveal(rest, true);
       liftSend();
     });
 
@@ -82,13 +98,14 @@
       if (busy || form.dataset.sent) return;
       var rating = chosenRating();
       if (!rating) {
-        if (rest) rest.hidden = false;
+        reveal(rest, true);
         if (message) message.focus({ preventScroll: true });
         liftSend();
         return;
       }
 
       busy = true;
+      waiting(true);
       var payload = {
         rating: Number(rating.value),
         topic: "answer",
