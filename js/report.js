@@ -90,9 +90,12 @@
   }
 
   /* The mail form prints this field as the envelope subject, so it is built from the page
-     the visitor is standing on — never from the words they typed or the number they left. */
+     the visitor is standing on — never from the words they typed or the number they left.
+     Pages answers an unknown path with 404.html, which loads this script too, so even the page
+     is only as trustworthy as a URL: keep the characters a path can hold and one line of them. */
   function shotSubject(path, total, index) {
-    return "BrownHub screenshot " + index + " of " + total + " from " + path;
+    var where = String(path || "").replace(/[^A-Za-z0-9._\/-]/g, "").slice(0, 120);
+    return "BrownHub screenshot " + index + " of " + total + " from " + where;
   }
 
   function megabytes(bytes) {

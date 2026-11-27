@@ -261,6 +261,21 @@ test('the mail subject is built from the page, never from the visitor’s words'
     'the visitor’s note or number reaches the envelope subject');
 });
 
+/* GitHub Pages answers any path it does not have with 404.html, and that page wears the shell and
+   loads this script — so the pathname the subject is built from is entirely the sender’s choosing.
+   A stranger should not get to write the whole first line of a mail that lands in the studio’s
+   inbox, so the path keeps only the characters a path can hold and is cut to a length a mail
+   client can actually show. */
+test('a crafted URL cannot write the whole mail subject', () => {
+  const shotSubject = runnable('shotSubject');
+  const loud = shotSubject("/" + "WIN".repeat(140) + "!.html", 1, 1);
+  assert.ok(loud.length <= 160, `a URL runs the subject out to ${loud.length} characters`);
+  const shaped = shotSubject("/price\n<b>ƒ</b>.html", 1, 1);
+  assert.doesNotMatch(shaped, /[\n\r\t<>]/, 'a URL puts a line break or markup into the subject');
+  assert.doesNotMatch(shaped, /[^\x20-\x7e]/, 'a URL puts a character outside plain text into the subject');
+  assert.match(shaped, /price/, 'the subject stops naming the page the picture came from');
+});
+
 /* CSP is declared per page, and a page that allows the capture endpoint but not the mail host
    would offer a tile whose send can only ever fail. Fifty-four pages carry the pill. */
 test('every page that offers the tile is allowed to send it', () => {
