@@ -77,7 +77,7 @@
 body{-webkit-tap-highlight-color:rgba(var(--accent-rgb),.18)}
 .container{padding-left:max(1.25rem,env(safe-area-inset-left,0px));padding-right:max(1.25rem,env(safe-area-inset-right,0px))}
 .site-header{padding-top:env(safe-area-inset-top,0px)}
-.chat-widget{bottom:calc(1.5rem + env(safe-area-inset-bottom,0px));right:calc(1.5rem + env(safe-area-inset-right,0px))}
+.chat-widget{bottom:calc(1.5rem + var(--report-lane) + env(safe-area-inset-bottom,0px));right:calc(1.5rem + env(safe-area-inset-right,0px))}
 .chat-widget__panel{max-height:min(380px,calc(100vh - 7rem));max-height:min(380px,calc(100dvh - 7rem))}
 
 /* ===== Phones and small tablets ===== */
@@ -2548,10 +2548,10 @@ html[data-theme="light"] :is(.band--ink,.hero,.cta,.site-footer,.band--exp){
    clears the quote card, which is full width there (on wider screens the card is
    left-anchored and the two never meet). The panel's height is cut back by the
    same figure, or a lifted bubble would push its own dialog off the top. */
-.chat-widget{bottom:calc(1.5rem + var(--cookie-h,0px) + env(safe-area-inset-bottom))}
+.chat-widget{bottom:calc(1.5rem + var(--report-lane) + var(--cookie-h,0px) + env(safe-area-inset-bottom))}
 .chat-widget__panel{max-height:min(380px, calc(100vh - 6rem - var(--cookie-h,0px) - env(safe-area-inset-bottom)))}
 @media (max-width:600px){
-  .chat-widget{bottom:calc(.75rem + max(var(--cookie-h,0px), var(--lead-h,0px)) + env(safe-area-inset-bottom))}
+  .chat-widget{bottom:calc(.75rem + var(--report-lane) + max(var(--cookie-h,0px), var(--lead-h,0px)) + env(safe-area-inset-bottom))}
   .chat-widget__panel{max-height:calc(100vh - 5.5rem - max(var(--cookie-h,0px), var(--lead-h,0px)) - env(safe-area-inset-bottom))}
 }
 
@@ -3801,7 +3801,7 @@ html.is-flying *,html.is-flying *::before,html.is-flying *::after{
   .leadask{bottom:calc(1rem + var(--cookie-h,0px) + var(--rail-lane) + env(safe-area-inset-bottom));
     max-height:calc(58vh - var(--cookie-h,0px) - var(--rail-lane))}
   .install{--lift:max(calc(var(--cookie-h,0px) + var(--rail-lane)), var(--lead-h,0px))}
-  .chat-widget{bottom:calc(1.5rem + var(--cookie-h,0px) + var(--rail-lane) + env(safe-area-inset-bottom))}
+  .chat-widget{bottom:calc(1.5rem + var(--report-lane) + var(--cookie-h,0px) + var(--rail-lane) + env(safe-area-inset-bottom))}
   .chat-widget__panel{max-height:min(380px, calc(100vh - 6rem - var(--cookie-h,0px) - var(--rail-lane) - env(safe-area-inset-bottom)))}
   .footer__bottom{padding-bottom:calc(max(calc(var(--cookie-h,0px) + var(--rail-lane)), var(--lead-h,0px)) + 1rem)}
   .locale.is-open .locale__panel{max-height:calc(100vh - var(--locale-top,56px) - 16px - var(--cookie-h,0px) - var(--rail-lane))}
@@ -5941,7 +5941,7 @@ body[data-nav="home"] .hero__orb{z-index:0;opacity:.5;filter:blur(18px);
    Measured: nine 20px cells over the gallery tiles were dead while the wrapper
    owned them (z-index 200 against the wall), and are pictures again.
    ========================================================================== */
-.chat-widget{bottom:calc(1.5rem + env(safe-area-inset-bottom,0px));
+.chat-widget{bottom:calc(1.5rem + var(--report-lane) + env(safe-area-inset-bottom,0px));
   --lift:var(--cookie-h,0px);pointer-events:none}
 .chat-widget__toggle,.chat-widget__panel,.chat-widget__teaser{pointer-events:auto}
 .chat-widget__toggle{transform:translateY(calc(-1 * var(--lift)))}
@@ -5952,7 +5952,7 @@ body[data-nav="home"] .hero__orb{z-index:0;opacity:.5;filter:blur(18px);
   .chat-widget__panel{translate:0 calc(-1 * var(--lift))}
 }
 @media (max-width:600px){
-  .chat-widget{bottom:calc(.75rem + env(safe-area-inset-bottom,0px));
+  .chat-widget{bottom:calc(.75rem + var(--report-lane) + env(safe-area-inset-bottom,0px));
     --lift:max(var(--cookie-h,0px), var(--lead-h,0px))}
 }
 @media (min-width:720px){
@@ -6202,11 +6202,16 @@ html[dir="rtl"] .chat-widget__emoji-tabs{
 
 /* ===== The site-wide problem-feedback badge =====
    One round question mark, hung in the bottom-right corner the way the reference hangs
-   its own: a mark, not a sentence. The geometry is the whole design — a 44px circle on
-   the assistant bubble's own 1.5rem and its own right edge, so the two share a column
-   and never a row. Measured on a 1440x900 desk the bubble's bottom lands at 680 and the
-   badge's top at 832, and on a 390x844 phone at 583 and 776; js/app.js charges the badge
-   to the queue by its rect, so --queue-h grows by what a visitor can actually see.
+   its own: a mark, not a sentence. It shares the assistant's right edge, so the corner
+   only holds two circles if they never share a row — which is what --report-lane buys.
+   The first cut of this hung both on the same bottom:1.5rem, and a 44px mark on that line
+   spans rows 832-876 of a 900px desk while the 56px bubble spans 820-876: the badge was
+   painted on top of the assistant, not under it. Reading the two bottom-anchored numbers
+   as if one of them were a top coordinate is what let that ship with a comment claiming
+   they "never a row". The bubble now stands on the badge's top edge plus 12px of air at
+   every anchor that moves it, and the badge takes the phone's home-indicator inset the
+   same way the bubble already did. js/app.js charges both to the queue by their rects, so
+   --queue-h pays for the stack honestly: the corner edge moves from 80px to 136px.
    A question mark can only mean one thing on a page that already has a Help page in its
    nav, so the second circle that used to hang beside this one is gone, and the way into
    help is printed inside the dialog instead.
@@ -6214,7 +6219,9 @@ html[dir="rtl"] .chat-widget__emoji-tabs{
    room to say it. It is hidden by default and painted only where a keyboard is
    plausible — printing keys on a phone would be a picture of keys that phone does not
    have. */
-.report-pair{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;height:44px}
+:root{--report-lane:56px}
+.report-pair{position:fixed;bottom:calc(1.5rem + env(safe-area-inset-bottom,0px));
+  right:calc(1.5rem + env(safe-area-inset-right,0px));z-index:200;height:44px}
 .report-pill{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;
   border:1px solid var(--glass-fill-hair);background:var(--glass-fill);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:var(--shadow);

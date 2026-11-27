@@ -175,20 +175,46 @@ test('every sentence the dialog paints is a key in all thirty-nine dictionaries'
     `left in English:\n  ${untranslated.slice(0, 12).join('\n  ')}`);
 });
 
-test('the pill cannot make the bottom edge the whole site is sized against grow', () => {
+test('the pill is charged to the bottom edge the whole site is sized against', () => {
   assert.match(read('js/app.js'), /var QUEUE = "[^"]*\.report-pair/,
     'the badge is not charged to the queue, so a pinned band can paint under it');
   const pair = sheet.match(/\.report-pair\{([^}]*)\}/);
   assert.ok(pair, 'the badge has no CSS of its own');
-  const bottom = (pair[1].match(/bottom:([\d.]+)rem/) || [])[1];
+  const bottom = (pair[1].match(/bottom:(?:calc\()?([\d.]+)rem/) || [])[1];
   const height = (pair[1].match(/height:([\d.]+)px/) || [])[1];
   assert.ok(bottom && height, 'the badge must state its own bottom offset and height for this check');
-  /* The assistant bubble the badge shares a column with is 56px tall and stands on the
-     same 1.5rem, so the edge is already paid for at 80px. A 44px mark on that same line
-     costs 68px, which is why the corner can hold it without a single stage being
-     re-measured — reserve() reads the rect, not this arithmetic. */
+  /* reserve() reads each member's rect, so the arithmetic here is only a guard against a
+     number nobody thought about again: the mark cannot reach past the bubble it stands
+     under, or the queue would be charged to the badge while a stage sized itself to the
+     bubble alone. */
   assert.ok(Number(bottom) * 16 + Number(height) <= 1.5 * 16 + 56,
     `the badge reaches ${Number(bottom) * 16 + Number(height)}px from the bottom edge; the bubble only reaches 80px`);
+});
+
+/* The badge and the assistant bubble are hung on the same right edge, so the corner can
+   hold both only if they never share a row. The first version of this shipped both on
+   `bottom:1.5rem`, which put the 44px mark at rows 832–876 of a 900px desk — entirely
+   inside the bubble's own 820–876 — and the sheet comment read the two bottom-anchored
+   numbers as if one were a top coordinate and declared they "never a row". The bubble
+   therefore stands on the badge's top edge plus air, measured at every breakpoint that
+   moves it, because each of them states its own offset. */
+test('the assistant stands clear of the badge instead of wearing it', () => {
+  const pair = sheet.match(/\.report-pair\{([^}]*)\}/);
+  const badgeTop = Number(pair[1].match(/bottom:(?:calc\()?([\d.]+)rem/)[1]) * 16 +
+    Number(pair[1].match(/height:([\d.]+)px/)[1]);
+  const rules = [];
+  const re = /\.chat-widget\{[^}]*?bottom:calc\(([\d.]+)rem([^;}]*)\)/g;
+  let m;
+  while ((m = re.exec(sheet))) rules.push({ base: Number(m[1]) * 16, rest: m[2] });
+  assert.ok(rules.length >= 2, 'only one breakpoint positions the bubble, so this check reads a fraction of the layout');
+  for (const rule of rules) {
+    assert.ok(/var\(--report-lane\)/.test(rule.rest),
+      `a bubble anchored at ${rule.base / 16}rem is not lifted over the ${badgeTop}px badge`);
+  }
+  const lane = sheet.match(/--report-lane:\s*(\d+)px/);
+  assert.ok(lane, 'the lane the badge owns is never stated, so nothing can prove it is paid for');
+  assert.ok(Number(lane[1]) >= 44 + 8, '--report-lane does not cover the 44px mark with air above it');
+  assert.ok(badgeTop + Number(lane[1]) - 8 >= badgeTop, 'the lane overlaps its own mark');
 });
 
 test('a send that locked its own button still hands the visitor back to the badge', () => {
