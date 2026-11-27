@@ -54,6 +54,8 @@ const PAGE_HEADERS = {
     "display-capture=(), idle-detection=()",
 };
 
+// A header the response already carries is left alone: if the host ever starts
+// sending its own, that value wins instead of being overwritten here.
 function guard(res) {
   if (!res || res.status !== 200 || res.type !== "basic") return res;
   try {
