@@ -6,7 +6,6 @@
  "Main navigation": "주요 내비게이션",
  "Problem feedback": "문제 피드백",
  "Problem or suggestion (required)": "문제 또는 제안 (필수)",
- "Screenshot attachments open with the next release.": "스크린샷 첨부는 다음 릴리스에서 사용할 수 있습니다.",
  "Screenshots": "스크린샷",
  "Send feedback": "피드백 보내기",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "BrownHub 스튜디오가 개선될 수 있도록 문제나 제안을 알려주세요.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "함께 일한 회사들을 우리가 직접 적었습니다.",
  "Tap to turn on the light": "탭하여 불을 켜세요",
  "Loading": "로딩 중",
- "Move the chat box": "채팅 창 이동"
+ "Move the chat box": "채팅 창 이동",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "이미지 최대 3개 첨부 — PNG, JPG 또는 WebP, 장당 10MB 이내",
+ "Drop pictures here, or paste them": "여기에 이미지를 놓거나 붙여넣으세요",
+ "Remove this picture": "이 이미지 삭제",
+ "That will not do — a picture up to 10 MB, three at most.": "그렇게 할 수 없습니다 — 이미지 장당 10MB 이내, 최대 3장입니다.",
+ "Sending your screenshots…": "스크린샷 보내는 중…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "말씀은 스튜디오에 도착했습니다. 스크린샷은 도착하지 않았습니다 — 문의 페이지에서 첨부하세요."
 }

@@ -6,7 +6,6 @@
  "Main navigation": "প্রধান নেভিগেশন",
  "Problem feedback": "সমস্যা সম্পর্কে মতামত",
  "Problem or suggestion (required)": "সমস্যা বা পরামর্শ (আবশ্যক)",
- "Screenshot attachments open with the next release.": "পরবর্তী সংস্করণে স্ক্রিনশট সংযুক্ত করা যাবে।",
  "Screenshots": "স্ক্রিনশট",
  "Send feedback": "মতামত পাঠান",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "BrownHub Studio উন্নত করতে সমস্যা বা পরামর্শ সম্পর্কে জানান।",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "আমরা যাদের জন্য কাজ করেছি, নিজেই লিখেছি।",
  "Tap to turn on the light": "আলো জ্বালাতে ট্যাপ করুন",
  "Loading": "লোড হচ্ছে",
- "Move the chat box": "চ্যাট বক্স সরান"
+ "Move the chat box": "চ্যাট বক্স সরান",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "সর্বোচ্চ ৩টি ছবি সংযুক্ত করুন — PNG, JPG বা WebP, প্রতিটি ১০ MB পর্যন্ত",
+ "Drop pictures here, or paste them": "ছবিগুলো এখানে ফেলুন, অথবা পেস্ট করুন",
+ "Remove this picture": "এই ছবিটি সরান",
+ "That will not do — a picture up to 10 MB, three at most.": "এটি চলবে না — একটি ছবি ১০ MB পর্যন্ত, সর্বোচ্চ তিনটি।",
+ "Sending your screenshots…": "আপনার স্ক্রিনশটগুলো পাঠানো হচ্ছে…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "আপনার বার্তা স্টুডিওতে পৌঁছেছে; স্ক্রিনশটগুলো নয় — যোগাযোগের পাতায় সংযুক্ত করুন।"
 }

@@ -6,7 +6,6 @@
  "Main navigation": "Điều hướng chính",
  "Problem feedback": "Phản hồi về sự cố",
  "Problem or suggestion (required)": "Sự cố hoặc góp ý (bắt buộc)",
- "Screenshot attachments open with the next release.": "Đính kèm ảnh chụp màn hình sẽ có ở phiên bản tới.",
  "Screenshots": "Ảnh chụp màn hình",
  "Send feedback": "Gửi phản hồi",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Hãy cho chúng tôi biết về sự cố hoặc góp ý để BrownHub Studio tốt hơn.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Những doanh nghiệp chúng tôi từng phục vụ, do chính chúng tôi ghi.",
  "Tap to turn on the light": "Chạm để bật đèn",
  "Loading": "Đang tải",
- "Move the chat box": "Di chuyển cửa sổ trò chuyện"
+ "Move the chat box": "Di chuyển cửa sổ trò chuyện",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Đính kèm tối đa 3 hình ảnh — PNG, JPG hoặc WebP, mỗi ảnh tối đa 10 MB",
+ "Drop pictures here, or paste them": "Kéo thả hình ảnh vào đây hoặc dán chúng",
+ "Remove this picture": "Xóa hình ảnh này",
+ "That will not do — a picture up to 10 MB, three at most.": "Không được — mỗi ảnh tối đa 10 MB, nhiều nhất 3 ảnh.",
+ "Sending your screenshots…": "Đang gửi ảnh chụp màn hình của bạn…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Lời của bạn đã đến studio. Ảnh chụp màn hình thì chưa — hãy đính kèm ở trang liên hệ."
 }

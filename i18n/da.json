@@ -6,7 +6,6 @@
  "Main navigation": "Hovednavigation",
  "Problem feedback": "Feedback om et problem",
  "Problem or suggestion (required)": "Problem eller forslag (påkrævet)",
- "Screenshot attachments open with the next release.": "Det bliver muligt at vedhæfte skærmbilleder med den næste version.",
  "Screenshots": "Skærmbilleder",
  "Send feedback": "Send feedback",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Fortæl os om et problem eller et forslag, så BrownHub Studio kan blive bedre.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Virksomhederne, vi har arbejdet for, skrevet af os.",
  "Tap to turn on the light": "Tryk for at tænde lyset",
  "Loading": "Indlæser",
- "Move the chat box": "Flyt chatvinduet"
+ "Move the chat box": "Flyt chatvinduet",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Vedhæft op til 3 billeder — PNG, JPG eller WebP, hver op til 10 MB",
+ "Drop pictures here, or paste them": "Slip billeder her, eller indsæt dem",
+ "Remove this picture": "Fjern dette billede",
+ "That will not do — a picture up to 10 MB, three at most.": "Det dur ikke — et billede på op til 10 MB, højst tre.",
+ "Sending your screenshots…": "Dine skærmbilleder sendes…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Dine ord nåede studioet. Det gjorde skærmbillederne ikke — vedhæft dem på kontaktsiden."
 }

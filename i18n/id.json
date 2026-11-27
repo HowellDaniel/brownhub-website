@@ -6,7 +6,6 @@
  "Main navigation": "Navigasi utama",
  "Problem feedback": "Umpan balik masalah",
  "Problem or suggestion (required)": "Masalah atau saran (wajib)",
- "Screenshot attachments open with the next release.": "Lampiran tangkapan layar tersedia di rilis berikutnya.",
  "Screenshots": "Tangkapan layar",
  "Send feedback": "Kirim umpan balik",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Ceritakan masalah atau saran agar BrownHub Studio bisa lebih baik.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Perusahaan yang kami layani, kami tulis sendiri.",
  "Tap to turn on the light": "Ketuk untuk menyalakan lampu",
  "Loading": "Memuat",
- "Move the chat box": "Pindahkan kotak chat"
+ "Move the chat box": "Pindahkan kotak chat",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Lampirkan hingga 3 gambar — PNG, JPG, atau WebP, masing-masing hingga 10 MB",
+ "Drop pictures here, or paste them": "Letakkan gambar di sini, atau tempel",
+ "Remove this picture": "Hapus gambar ini",
+ "That will not do — a picture up to 10 MB, three at most.": "Tidak bisa — satu gambar hingga 10 MB, maksimal tiga.",
+ "Sending your screenshots…": "Mengirim tangkapan layar Anda…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Kata-kata Anda sampai ke studio. Tangkapan layar tidak — lampirkan di halaman kontak."
 }

@@ -6,7 +6,6 @@
  "Main navigation": "Hlavní navigace",
  "Problem feedback": "Zpětná vazba na problém",
  "Problem or suggestion (required)": "Problém nebo návrh (povinné)",
- "Screenshot attachments open with the next release.": "Přikládání snímků obrazovky přijde v další verzi.",
  "Screenshots": "Snímky obrazovky",
  "Send feedback": "Odeslat zpětnou vazbu",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Napište nám o problému nebo návrhu, ať může BrownHub Studio zlepšit.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Firmy, pro které jsme pracovali, napsané námi.",
  "Tap to turn on the light": "Klepněte pro rozsvícení",
  "Loading": "Načítání",
- "Move the chat box": "Přesunout okno chatu"
+ "Move the chat box": "Přesunout okno chatu",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Přiložte až 3 obrázky — PNG, JPG nebo WebP, každý až 10 MB",
+ "Drop pictures here, or paste them": "Přetáhněte obrázky sem nebo je vložte",
+ "Remove this picture": "Odebrat tento obrázek",
+ "That will not do — a picture up to 10 MB, three at most.": "To nepůjde — obrázek do 10 MB, maximálně tři.",
+ "Sending your screenshots…": "Odesílají se vaše snímky obrazovky…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Vaše slova do studia dorazila. Snímky obrazovky ne — přiložte je na kontaktní stránce."
 }

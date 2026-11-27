@@ -6,7 +6,6 @@
  "Main navigation": "Navigare principală",
  "Problem feedback": "Feedback despre o problemă",
  "Problem or suggestion (required)": "Problemă sau sugestie (obligatoriu)",
- "Screenshot attachments open with the next release.": "Atașarea capturilor de ecran vine în versiunea următoare.",
  "Screenshots": "Capturi de ecran",
  "Send feedback": "Trimite feedback",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Spune-ne despre o problemă sau o sugestie pentru ca BrownHub Studio să se îmbunătățească.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Companiile pentru care am lucrat, scrise de noi.",
  "Tap to turn on the light": "Atingeți pentru a aprinde lumina",
  "Loading": "Se încarcă",
- "Move the chat box": "Mută fereastra de chat"
+ "Move the chat box": "Mută fereastra de chat",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Atașează până la 3 imagini — PNG, JPG sau WebP, până la 10 MB fiecare",
+ "Drop pictures here, or paste them": "Trage imaginile aici sau lipește-le",
+ "Remove this picture": "Elimină această imagine",
+ "That will not do — a picture up to 10 MB, three at most.": "Nu merge — o imagine până la 10 MB, maxim trei.",
+ "Sending your screenshots…": "Se trimite capturile tale de ecran…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Cuvintele tale au ajuns la studio. Capturile de ecran nu — atașează-le pe pagina de contact."
 }

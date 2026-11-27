@@ -6,7 +6,6 @@
  "Main navigation": "Основна навигация",
  "Problem feedback": "Обратна връзка за проблем",
  "Problem or suggestion (required)": "Проблем или предложение (задължително)",
- "Screenshot attachments open with the next release.": "Прикачането на екранни снимки идва със следващата версия.",
  "Screenshots": "Екранни снимки",
  "Send feedback": "Изпратете обратна връзка",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Разкажете ни за проблем или предложение, за да подобряем BrownHub Studio.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Фирмите, за които работихме, написани от нас.",
  "Tap to turn on the light": "Докоснете, за да включите светлината",
  "Loading": "Зареждане",
- "Move the chat box": "Преминете прозореца на чата"
+ "Move the chat box": "Преминете прозореца на чата",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Прикачете до 3 снимки — PNG, JPG или WebP, до 10 MB всяка",
+ "Drop pictures here, or paste them": "Пуснете снимки тук или ги поставете",
+ "Remove this picture": "Премахни тази снимка",
+ "That will not do — a picture up to 10 MB, three at most.": "Така няма да стане — снимка до 10 MB, най-много три.",
+ "Sending your screenshots…": "Изпращане на вашите снимки на екрана…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Думите ви стигнаха до студиото. Снимките на екрана не — прикачете ги в контактната страница."
 }

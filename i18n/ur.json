@@ -6,7 +6,6 @@
  "Main navigation": "اہم نیویگیشن",
  "Problem feedback": "مسئلے پر تاثرات",
  "Problem or suggestion (required)": "مسئلہ یا تجویز (لازمی)",
- "Screenshot attachments open with the next release.": "اگلے ورژن میں اسکرین شاٹ منسلک کرنا ممکن ہوگا۔",
  "Screenshots": "اسکرین شاٹس",
  "Send feedback": "تاثرات بھیجیں",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "BrownHub اسٹوڈیو کی بہتری کے لیے ہمیں مسئلے یا تجویز سے آگاہ کریں۔",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "جن اداروں کے لیے ہم نے کام کیا، ہم نے خود لکھا۔",
  "Tap to turn on the light": "روشنی جلانے کے لیے ٹیپ کریں",
  "Loading": "لوڈ ہو رہا ہے",
- "Move the chat box": "چت باکس منتقل کریں"
+ "Move the chat box": "چت باکس منتقل کریں",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "3 تک تصاویر منسلک کریں — PNG، JPG یا WebP، ہر ایک 10 MB تک",
+ "Drop pictures here, or paste them": "تصاویر یہاں چھوڑیں یا انہیں پیسٹ کریں",
+ "Remove this picture": "یہ تصویر ہٹائیں",
+ "That will not do — a picture up to 10 MB, three at most.": "یہ ممکن نہیں — ایک تصویر 10 MB تک، زیادہ سے زیادہ تین۔",
+ "Sending your screenshots…": "آپ کے اسکرین شاٹ بھیجے جا رہے ہیں…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "آپ کے الفاظ اسٹوڈیو تک پہنچ گئے۔ اسکرین شاٹ نہیں پہنچے — رابطہ صفحے پر منسلک کریں۔"
 }

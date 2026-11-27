@@ -6,7 +6,6 @@
  "Main navigation": "Κύρια πλοήγηση",
  "Problem feedback": "Σχόλιο για πρόβλημα",
  "Problem or suggestion (required)": "Πρόβλημα ή πρόταση (απαραίτητο)",
- "Screenshot attachments open with the next release.": "Η επισύναψη στιγμιότυπων οθόνης έρχεται με την επόμενη έκδοση.",
  "Screenshots": "Στιγμιότυπα οθόνης",
  "Send feedback": "Αποστολή σχολίων",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Πείτε μας ένα πρόβλημα ή μια πρόταση για να βελτιωθεί το BrownHub Studio.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Οι εταιρείες που εξυπηρετήσαμε, γραμμένες από εμάς.",
  "Tap to turn on the light": "Πατήστε για να ανάψετε το φως",
  "Loading": "Φόρτωση",
- "Move the chat box": "Μετακίνηση παραθύρου συνομιλίας"
+ "Move the chat box": "Μετακίνηση παραθύρου συνομιλίας",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Επισυνάψτε έως 3 εικόνες — PNG, JPG ή WebP, έως 10 MB η καθεμία",
+ "Drop pictures here, or paste them": "Ρίξτε εικόνες εδώ ή επικολλήστε τις",
+ "Remove this picture": "Κατάργηση αυτής της εικόνας",
+ "That will not do — a picture up to 10 MB, three at most.": "Δε γίνεται — μια εικόνα έως 10 MB, το πολύ τρεις.",
+ "Sending your screenshots…": "Αποστολή των screenshot σας…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Τα λόγια σας έφτασαν στο στούντιο. Τα screenshot όχι — επισυνάψτε τα στη σελίδα επικοινωνίας."
 }

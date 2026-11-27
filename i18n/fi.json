@@ -6,7 +6,6 @@
  "Main navigation": "Päänavigaatio",
  "Problem feedback": "Palautetta ongelmasta",
  "Problem or suggestion (required)": "Ongelma tai ehdotus (pakollinen)",
- "Screenshot attachments open with the next release.": "Kuvakaappausten liittäminen tulee seuraavassa versiossa.",
  "Screenshots": "Kuvakaappaukset",
  "Send feedback": "Lähetä palautetta",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Kerro ongelmasta tai ehdotuksesta, jotta BrownHub Studio voi parantua.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Yritykset, joille teimme töitä, itse kirjoitettuna.",
  "Tap to turn on the light": "Napauta sytyttääksesi valot",
  "Loading": "Ladataan",
- "Move the chat box": "Siirrä chat-ikkunaa"
+ "Move the chat box": "Siirrä chat-ikkunaa",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Liitä enintään 3 kuvaa — PNG, JPG tai WebP, enintään 10 MB kappale",
+ "Drop pictures here, or paste them": "Pudota kuvat tähän tai liitä ne",
+ "Remove this picture": "Poista tämä kuva",
+ "That will not do — a picture up to 10 MB, three at most.": "Tuo ei kelpaa — kuva enintään 10 MB, korkeintaan kolme.",
+ "Sending your screenshots…": "Kuvakaappauksia lähetetään…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Viestisi tavoitti studion. Kuvakaappaukset eivät — liitä ne yhteystietosivulla."
 }

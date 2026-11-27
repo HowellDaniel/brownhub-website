@@ -6,7 +6,6 @@
  "Main navigation": "Huvudnavigering",
  "Problem feedback": "Feedback om ett problem",
  "Problem or suggestion (required)": "Problem eller förslag (krävs)",
- "Screenshot attachments open with the next release.": "Det går att bifoga skärmbilder i nästa version.",
  "Screenshots": "Skärmbilder",
  "Send feedback": "Skicka feedback",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Berätta om ett problem eller ett förslag så att BrownHub Studio kan bli bättre.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Företagen vi arbetat åt, skrivna av oss.",
  "Tap to turn on the light": "Tryck för att tända ljuset",
  "Loading": "Laddar",
- "Move the chat box": "Flytta chattfönstret"
+ "Move the chat box": "Flytta chattfönstret",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Bifoga upp till 3 bilder — PNG, JPG eller WebP, upp till 10 MB vardera",
+ "Drop pictures here, or paste them": "Släpp bilder här eller klistra in dem",
+ "Remove this picture": "Ta bort den här bilden",
+ "That will not do — a picture up to 10 MB, three at most.": "Det funkar inte — en bild på upp till 10 MB, högst tre.",
+ "Sending your screenshots…": "Skärmdumpar skickas…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Dina ord nådde studion. Skärmdumparna gjorde det inte — bifoga dem på kontaktsidan."
 }

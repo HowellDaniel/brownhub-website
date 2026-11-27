@@ -6,7 +6,6 @@
  "Main navigation": "Hoofnavigasie",
  "Problem feedback": "Probleemterugvoer",
  "Problem or suggestion (required)": "Probleem of voorstel (verpligtend)",
- "Screenshot attachments open with the next release.": "Skermbeeld-aanhegsels oop met die volgende vrystelling.",
  "Screenshots": "Skermbeelde",
  "Send feedback": "Stuur terugvoer",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Vertel ons van 'n probleem of voorstel sodat BrownHub Studio kan verbeter.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Die besighede waarvoor ons gewerk het, deur ons opgesom.",
  "Tap to turn on the light": "Tik om die lig aan te skakel",
  "Loading": "Laai tans",
- "Move the chat box": "Skuif die kletsbox"
+ "Move the chat box": "Skuif die kletsbox",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Sluit tot 3 prente aan — PNG, JPG of WebP, elk tot 10 MB",
+ "Drop pictures here, or paste them": "Los prente hier, of plak hulle",
+ "Remove this picture": "Verwyder hierdie prent",
+ "That will not do — a picture up to 10 MB, three at most.": "Dit gaan nie werk nie — een prent tot 10 MB, drie op 'n slag",
+ "Sending your screenshots…": "Jou skermfoto's word gestuur…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Jou woorde het die studio bereik. Die skermfoto's nie — heg hulle by op die kontakbladsy."
 }

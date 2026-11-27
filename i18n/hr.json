@@ -6,7 +6,6 @@
  "Main navigation": "Glavna navigacija",
  "Problem feedback": "Povratne informacije o problemu",
  "Problem or suggestion (required)": "Problem ili prijedlog (obavezno)",
- "Screenshot attachments open with the next release.": "Privitci sa snimkama zaslona dolaze u sljedećoj verziji.",
  "Screenshots": "Snimke zaslona",
  "Send feedback": "Pošalji povratne informacije",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Recite nam što je problem ili prijedlog kako bi BrownHub Studio bio bolji.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Tvrtke za koje smo radili, napisali smo sami.",
  "Tap to turn on the light": "Dodirnite da upalite svjetlo",
  "Loading": "Učitavanje",
- "Move the chat box": "Pomakni prozor razgovora"
+ "Move the chat box": "Pomakni prozor razgovora",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Priložite do 3 slike — PNG, JPG ili WebP, do 10 MB svaka",
+ "Drop pictures here, or paste them": "Ispustite slike ovdje ili ih zalijepite",
+ "Remove this picture": "Ukloni ovu sliku",
+ "That will not do — a picture up to 10 MB, three at most.": "To neće ići — slika do 10 MB, najviše tri.",
+ "Sending your screenshots…": "Slanje vaših snimaka zaslona…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Vaše riječi su stigle u studio. Snimke zaslona nisu — priložite ih na stranici za kontakt."
 }

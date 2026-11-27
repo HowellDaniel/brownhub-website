@@ -6,7 +6,6 @@
  "Main navigation": "முதன்மை வழிசெலுத்தல்",
  "Problem feedback": "சிக்கல் குறித்த கருத்து",
  "Problem or suggestion (required)": "சிக்கல் அல்லது ஆலோசனை (கட்டாயம்)",
- "Screenshot attachments open with the next release.": "அடுத்த வெளியீட்டில் திரைப்பிடிப்புகளை இணைக்கலாம்.",
  "Screenshots": "திரைப்பிடிப்புகள்",
  "Send feedback": "கருத்தை அனுப்பு",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "BrownHub ஸ்டுடியோ முன்னேற சிக்கல் அல்லது ஆலோசனையை எங்களுக்குக் கூறுங்கள்.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "நாங்கள் பணிபுரிந்த நிறுவனங்களை நாமே எழுதியுள்ளோம்.",
  "Tap to turn on the light": "விளக்கை ஏற்ற தட்டவும்",
  "Loading": "ஏற்றுகிறது",
- "Move the chat box": "அரட்டைப் பெட்டியை நகர்த்தவும்"
+ "Move the chat box": "அரட்டைப் பெட்டியை நகர்த்தவும்",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "3 படங்கள் வரை இணைக்கவும் — PNG, JPG அல்லது WebP, ஒவ்வொன்றும் 10 MB வரை",
+ "Drop pictures here, or paste them": "படங்களை இங்கே விடுங்கள், அல்லது ஒட்டவும்",
+ "Remove this picture": "இந்தப் படத்தை அகற்று",
+ "That will not do — a picture up to 10 MB, three at most.": "அது செல்லாது — ஒரு படம் 10 MB வரை, அதிகபட்சம் மூன்று.",
+ "Sending your screenshots…": "உங்கள் திரைப்பிடிப்புகள் அனுப்பப்படுகின்றன…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "உங்கள் வார்த்தைகள் ஸ்டூடியோவை அடைந்தன. திரைப்பிடிப்புகள் அடையவில்லை — தொடர்பு பக்கத்தில் இணைக்கவும்."
 }

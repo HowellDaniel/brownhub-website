@@ -6,7 +6,6 @@
  "Main navigation": "Pangunang nabigasyon",
  "Problem feedback": "Feedback sa problema",
  "Problem or suggestion (required)": "Problema o mungkahi (kailangan)",
- "Screenshot attachments open with the next release.": "Magiging available ang pag-attach ng screenshot sa susunod na release.",
  "Screenshots": "Mga screenshot",
  "Send feedback": "Magpadala ng feedback",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Sabihin sa amin ang problema o mungkahi para makapag-improve ang BrownHub Studio.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Ang mga negosyong pinagtrabahuan namin, kami mismo ang sumulat.",
  "Tap to turn on the light": "I-tap para buksan ang ilaw",
  "Loading": "Naglo-load",
- "Move the chat box": "Ilipat ang chat box"
+ "Move the chat box": "Ilipat ang chat box",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Mag-attach ng hanggang 3 larawan — PNG, JPG o WebP, hanggang 10 MB bawat isa",
+ "Drop pictures here, or paste them": "Ilagay ang mga larawan dito, o i-paste ang mga ito",
+ "Remove this picture": "Alisin ang larawang ito",
+ "That will not do — a picture up to 10 MB, three at most.": "Hindi pwede — isang larawan na hanggang 10 MB, tatlo lang.",
+ "Sending your screenshots…": "Ipinapadala ang mga screenshot mo…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Umntot sa studio ang mga salita mo. Hindi ang mga screenshot — i-attach ang mga ito sa contact page."
 }

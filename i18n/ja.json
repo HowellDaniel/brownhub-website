@@ -6,7 +6,6 @@
  "Main navigation": "メインナビゲーション",
  "Problem feedback": "問題に関するフィードバック",
  "Problem or suggestion (required)": "問題またはご意見（必須）",
- "Screenshot attachments open with the next release.": "スクリーンショットの添付は次のリリースで利用できます。",
  "Screenshots": "スクリーンショット",
  "Send feedback": "フィードバックを送信",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "BrownHub スタジオが改善できるよう、問題やご意見をお聞かせください。",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "お世話になった会社を、私たちの手で記しました。",
  "Tap to turn on the light": "タップして明かりを点ける",
  "Loading": "読み込み中",
- "Move the chat box": "チャットウィンドウを移動"
+ "Move the chat box": "チャットウィンドウを移動",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "画像を最大3枚添付 — PNG・JPG・WebP形式、各10 MB以内",
+ "Drop pictures here, or paste them": "ここに画像をドロップ、または貼り付けてください",
+ "Remove this picture": "この画像を削除",
+ "That will not do — a picture up to 10 MB, three at most.": "それは使えません — 画像は1枚10 MBまで、最大3枚です。",
+ "Sending your screenshots…": "スクリーンショットを送信中…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "ご連絡はスタジオに届きました。スクリーンショットは届いていません — お問い合わせページで添付してください。"
 }

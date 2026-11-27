@@ -6,7 +6,6 @@
  "Main navigation": "ניווט ראשי",
  "Problem feedback": "משוב על בעיה",
  "Problem or suggestion (required)": "בעיה או הצעה (חובה)",
- "Screenshot attachments open with the next release.": "צירוף צילומי מסך ייפתח בגרסה הבאה",
  "Screenshots": "צילומי מסך",
  "Send feedback": "שליחת משוב",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "ספרו לנו על בעיה או הצעה כדי ש-BrownHub Studio ישתפר.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "העסקים שעבדנו עבורם, בכתב ידנו.",
  "Tap to turn on the light": "הקישו כדי להדליק את האור",
  "Loading": "טוען",
- "Move the chat box": "הזז את חלון הצ'אט"
+ "Move the chat box": "הזז את חלון הצ'אט",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "צרף עד 3 תמונות — PNG, JPG או WebP, עד 10 MB כל אחת",
+ "Drop pictures here, or paste them": "גרור תמונות לכאן או הדבק אותן",
+ "Remove this picture": "הסר תמונה זו",
+ "That will not do — a picture up to 10 MB, three at most.": "זה לא יעבוד — תמונה עד 10 MB, לא יותר משלוש.",
+ "Sending your screenshots…": "שולח את צילומי המסך שלך…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "המילים שלך הגיעו לסטודיו. צילומי המסך לא — צרף אותם בדף יצירת הקשר."
 }

@@ -6251,16 +6251,36 @@ html[data-theme="light"] .report-modal__card{--glass-fill:rgba(255,255,255,.94)}
 .report-form .form-field{margin-bottom:0}
 .report__note{min-height:120px;resize:vertical}
 .report__shots-label{margin:0;font-size:.9rem;font-weight:600}
-/* Dashed because that is the shape every upload on the web has taught people to look
-   for, and inert because there is nowhere to put a file yet. A tile that can be pressed
-   and then does nothing is the one thing here that would be a lie. */
-.report__shots{display:grid;justify-items:center;align-content:center;gap:4px;min-height:112px;
+/* Dashed because that is the shape every upload on the web has taught people to look for,
+   and pressable because a picture now has somewhere to go: the tile opens the picker, takes
+   a drag, and takes a paste, and the thumbnails it collects stay visible until they are sent. */
+.report__shots{display:grid;justify-items:center;align-content:center;gap:6px;min-height:112px;
   padding:var(--t-3);border:2px dashed var(--border);border-radius:var(--t-r);
-  color:var(--text-muted);text-align:center}
-.report__shots-plus{font-size:1.5rem;line-height:1}
+  color:var(--text-muted);text-align:center;cursor:pointer}
+.report__shots:hover,.report__shots:focus-within{border-color:var(--accent)}
+.report__shots--over{border-color:var(--accent);border-style:solid}
+.report__shots-open{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--border);background:none;color:inherit;font-size:1.5rem;line-height:1;cursor:pointer}
+.report__shots-open:hover,.report__shots-open:focus-visible{border-color:var(--accent);color:var(--accent)}
 .report__shots-note{margin:0;font-size:.85rem;max-width:36ch}
+.report__shots-note--drop{color:var(--accent);font-weight:600}
+.report__shots-reject{margin:0;font-size:.85rem;font-weight:600;color:var(--accent);max-width:36ch}
+.report__shots-strip{display:grid;gap:6px;width:100%;margin-top:2px}
+.report__shots-tag{display:grid;grid-template-columns:56px minmax(0,1fr) auto auto;align-items:center;
+  gap:8px;padding:5px 7px;border:1px solid var(--glass-fill-hair);border-radius:var(--t-r);
+  background:var(--glass-fill);color:var(--text);text-align:left;font-size:.8rem}
+html[dir="rtl"] .report__shots-tag{text-align:right}
+.report__shots-thumb{width:56px;height:44px;object-fit:cover;border-radius:4px;display:block;
+  border:1px solid var(--glass-fill-hair);background:var(--glass-fill)}
+.report__shots-tag b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.report__shots-tag em{font-style:normal;color:var(--text-muted);white-space:nowrap}
+.report__shots-x{width:26px;height:26px;border:1px solid var(--glass-fill-hair);border-radius:var(--t-r);
+  background:none;color:inherit;font-size:1.05rem;line-height:1;cursor:pointer}
+.report__shots-x:hover,.report__shots-x:focus-visible{border-color:var(--accent);color:var(--accent)}
+.report__mailing{margin:0;font-size:.9rem;font-weight:600;color:var(--text-muted)}
 .report__error{padding-left:.6rem;border-left:3px solid var(--accent);color:var(--text);
   font-size:.9rem;font-weight:600;line-height:1.45}
+html[dir="rtl"] .report__error{padding-left:0;padding-right:.6rem;border-left:0;border-right:3px solid var(--accent)}
 .report-modal__foot{display:flex;flex-wrap:wrap;align-items:center;gap:var(--t-3)}
 .report__ask{background:none;border:none;padding:6px 0;color:var(--accent);font:inherit;
   font-size:.95rem;font-weight:600;cursor:pointer}

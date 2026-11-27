@@ -6,7 +6,6 @@
  "Main navigation": "Nawigacja główna",
  "Problem feedback": "Opinia o problemie",
  "Problem or suggestion (required)": "Problem lub sugestia (wymagane)",
- "Screenshot attachments open with the next release.": "Załączniki ze zrzutami ekranu pojawią się w następnej wersji.",
  "Screenshots": "Zrzuty ekranu",
  "Send feedback": "Wyślij opinię",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "Napisz nam o problemie lub pomyśle, aby BrownHub Studio mogło się poprawić.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "Firmy, dla których pracowaliśmy, zapisane przez nas.",
  "Tap to turn on the light": "Dotknij, aby zapalić światło",
  "Loading": "Ładowanie",
- "Move the chat box": "Przesuń okno czatu"
+ "Move the chat box": "Przesuń okno czatu",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "Dołącz do 3 obrazów — PNG, JPG lub WebP, maksymalnie 10 MB każdy",
+ "Drop pictures here, or paste them": "Upuść obrazy tutaj lub je wklej",
+ "Remove this picture": "Usuń ten obraz",
+ "That will not do — a picture up to 10 MB, three at most.": "Tak się nie da — obraz do 10 MB, maksymalnie trzy.",
+ "Sending your screenshots…": "Wysyłanie zrzutów ekranu…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "Twoje słowa dotarły do studia. Zrzuty ekranu nie — dołącz je na stronie kontaktu."
 }

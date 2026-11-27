@@ -6,7 +6,6 @@
  "Main navigation": "การนำทางหลัก",
  "Problem feedback": "แจ้งปัญหา",
  "Problem or suggestion (required)": "ปัญหาหรือข้อเสนอแนะ (จำเป็น)",
- "Screenshot attachments open with the next release.": "การแนบภาพหน้าจอจะเปิดให้ใช้งานในเวอร์ชันถัดไป",
  "Screenshots": "ภาพหน้าจอ",
  "Send feedback": "ส่งความคิดเห็น",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "บอกปัญหาหรือข้อเสนอแนะเพื่อให้ BrownHub Studio พัฒนาขึ้น",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "ธุรกิจที่เราเคยทำให้ เราเขียนเอง",
  "Tap to turn on the light": "แตะเพื่อเปิดไฟ",
  "Loading": "กำลังโหลด",
- "Move the chat box": "ย้ายหน้าต่างแชท"
+ "Move the chat box": "ย้ายหน้าต่างแชท",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "แนบรูปภาพได้สูงสุด 3 รูป — PNG, JPG หรือ WebP รูปละไม่เกิน 10 MB",
+ "Drop pictures here, or paste them": "ลากรูปมาวางที่นี่ หรือวางจากคลิปบอร์ด",
+ "Remove this picture": "ลบรูปนี้",
+ "That will not do — a picture up to 10 MB, three at most.": "แบบนี้ไม่ได้ — รูปละไม่เกิน 10 MB สูงสุด 3 รูป",
+ "Sending your screenshots…": "กำลังส่งภาพหน้าจอของคุณ…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "ข้อความของคุณมาถึงสตูดิโอแล้ว แต่ภาพหน้าจอยังมาไม่ถึง — แนบรูปในหน้าติดต่อเรา"
 }

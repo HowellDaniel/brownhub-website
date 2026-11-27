@@ -6,7 +6,6 @@
  "Main navigation": "ناوبری اصلی",
  "Problem feedback": "بازخورد مشکل",
  "Problem or suggestion (required)": "مشکل یا پیشنهاد (ضروری)",
- "Screenshot attachments open with the next release.": "پیوست کردن تصویر صفحه با نسخه بعدی فعال می‌شود.",
  "Screenshots": "تصاویر صفحه",
  "Send feedback": "ارسال بازخورد",
  "Tell us about a problem or suggestion so we can improve BrownHub Studio.": "درباره یک مشکل یا پیشنهاد به ما بگویید تا استودیوی BrownHub بهتر شود.",
@@ -220,5 +219,11 @@
  "The businesses we have worked for, written out by us.": "شرکت‌هایی که برایشان کار کرده‌ایم، به قلم خودمان.",
  "Tap to turn on the light": "برای روشن کردن نور ضربه بزنید",
  "Loading": "در حال بارگیری",
- "Move the chat box": "پنجره گفتگو را جابه‌جا کنید"
+ "Move the chat box": "پنجره گفتگو را جابه‌جا کنید",
+ "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each": "تا ۳ تصویر پیوست کنید — PNG، JPG یا WebP، هرکدام تا ۱۰ مگابایت",
+ "Drop pictures here, or paste them": "تصاویر را اینجا رها کنید یا جای‌گذاری کنید",
+ "Remove this picture": "حذف این تصویر",
+ "That will not do — a picture up to 10 MB, three at most.": "این ممکن نیست — هر تصویر تا ۱۰ مگابایت، حداکثر سه.",
+ "Sending your screenshots…": "در حال ارسال تصویرهای صفحه…",
+ "Your words reached the studio. The screenshots did not — attach them on the contact page.": "سخنان شما به استودیو رسید؛ تصویرهای صفحه نرسید — آن‌ها را در صفحه تماس پیوست کنید."
 }

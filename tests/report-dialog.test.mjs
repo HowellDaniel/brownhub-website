@@ -8,10 +8,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(path.join(root, p), 'utf8');
 const has = (p) => existsSync(path.join(root, p));
 
-/* The twelve dictionaries that carry the whole site and the twenty-seven that carry
-   only the shell. A pill bolted to the shell has to speak every one of them: an
-   English dialog in a Vietnamese page is not localisation, it is a missing file. */
-const FULL = ['zh', 'tw', 'sw', 'ru', 'pt', 'nl', 'it', 'hi', 'fr', 'es', 'de', 'ar'];
+/* The twelve dictionaries that carry the whole site and the twenty-seven that carry only
+   the shell add up to every language a pill bolted to the shell has to speak. An English
+   dialog in a Vietnamese page is not localisation, it is a missing file. */
 const ALL = readdirSync(path.join(root, 'i18n'))
   .filter((n) => n.endsWith('.json'))
   .map((n) => n.slice(0, -5))
@@ -54,6 +53,35 @@ const asked = (file, page) => {
   return m ? Number(m[1]) : null;
 };
 
+/* A regex on a key binding only proves the sentence is spelled the way the last author
+   left it. Reaching the handler with a real event shape is the only thing that proves
+   ⌘⌥F opens the dialog on the machine the hint was printed for, so the predicate is cut
+   out of the file and run here — production logic, not a picture of it. */
+function runnable(name, constants) {
+  const at = script.indexOf(`function ${name}(`);
+  assert.ok(at > -1, `js/report.js declares no ${name}() this file can run`);
+  let depth = 0, i = script.indexOf("{", at);
+  for (; i < script.length; i++) {
+    if (script[i] === "{") depth++;
+    else if (script[i] === "}" && --depth === 0) break;
+  }
+  assert.ok(depth === 0, `${name}() is never closed — this file cannot read it`);
+  // From the `function` keyword, not the brace: a bare block runs the body at once.
+  const src = script.slice(at, i + 1);
+  // The gate reads its limits out of the file's own scope; hand it the real bytes, and fail
+  // loudly if a constant it depends on is spelled but never declared.
+  const preamble = (constants || []).map((c) => {
+    const line = script.match(new RegExp(`^\\s*var ${c} = [^\\n]*\\n`, 'm'));
+    assert.ok(line, `${name}() leans on ${c}, which this file cannot find to give it`);
+    return line[0];
+  }).join('');
+  try {
+    return new Function(`${preamble}${src}; return ${name};`)();
+  } catch (e) {
+    return assert.fail(`${name}() does not run as written: ${e.message}`);
+  }
+}
+
 test('the pill stands on every page that wears the site shell, and on no page that cannot dress it', () => {
   assert.ok(has('js/report.js'), 'js/report.js is not there');
   assert.ok(chromePages.length >= 50, `expected the shell pages, found ${chromePages.length}`);
@@ -81,14 +109,38 @@ test('the pill stands on every page that wears the site shell, and on no page th
 test('the keyboard hint is a hint, not a sentence a translator has to render', () => {
   assert.match(script, /aria-hidden", "true"/,
     'the shortcut glyphs are printed to a screen reader as prose');
-  assert.match(script, /e\.key === "f"[\s\S]{0,120}(e\.metaKey|e\.ctrlKey)/,
-    'nothing binds the feedback key');
   assert.match(script, /metaKey \|\| e\.ctrlKey/,
     'the binding works on one platform only, so the printed hint is a lie on the other');
   /* The hint used to ride inside the corner mark. A 44px circle cannot carry ⌘⌥F, so it
      is printed in the dialog it opens instead — and still only where a keyboard exists. */
   assert.match(sheet, /\.report-modal__key\{display:none[^}]*\}[\s\S]{0,400}@media \(hover:hover\) and \(pointer:fine\)\{\.report-modal__key\{display:block\}\}/,
     'a phone with no keyboard is shown a ⌘⌥F it cannot press');
+});
+
+/* macOS holds Option and hands the browser the glyph the key would type, so ⌥+F on the US
+   layout arrives as key:"ƒ" — never "f". A binding that tests e.key against the letter was
+   dead on every Mac, and the rig that green-lit it dispatched key:"f", which is the shape no
+   Mac produces. Physical code is the modifier- and layout-independent answer; the glyph list
+   is kept beside it because code names the US position, so an AZERTY visitor pressing their
+   own F is standing on KeyG. */
+test('⌘⌥F opens the dialog on the machine the hint was printed for', () => {
+  const feedbackKey = runnable('feedbackKey', ['FEEDBACK_GLYPHS']);
+  const MAC = { code: "KeyF", key: "ƒ", metaKey: true, altKey: true };
+  assert.equal(feedbackKey(MAC), true,
+    'Option+F reaches the handler as "ƒ" on macOS, so a binding on the letter never fires');
+  assert.equal(feedbackKey({ code: "KeyF", key: "f", metaKey: true, altKey: true }), true,
+    'a Mac that reports the letter still opens it');
+  assert.equal(feedbackKey({ code: "KeyF", key: "f", ctrlKey: true, altKey: true }), true,
+    'the printed Ctrl+Alt+F does nothing on Windows and Linux');
+  assert.equal(feedbackKey({ key: "ƒ", metaKey: true, altKey: true }), true,
+    'a layout whose physical F is not KeyF still opens it through the typed glyph');
+  assert.equal(feedbackKey({ code: "KeyF", key: "F", metaKey: true }), false,
+    '⌘F alone is the browser’s own find bar; the dialog must not steal it');
+  assert.equal(feedbackKey({ code: "KeyF", key: "f", altKey: true }), false,
+    'Option+F alone is a typed character, not the shortcut');
+  assert.equal(feedbackKey({ code: "KeyG", key: "g", metaKey: true, altKey: true }), false,
+    'a different key opens the dialog');
+  assert.match(script, /if \(feedbackKey\(e\)\)/, 'the predicate is written but never consulted');
 });
 
 test('the corner holds one round mark, and says in words what it means', () => {
@@ -132,13 +184,109 @@ test('Send waits for words, and the row it writes says where the words came from
   assert.match(script, /AbortSignal\.timeout/, 'a dead function leaves Send pressed forever');
 });
 
-test('the screenshots tile promises nothing it cannot do', () => {
-  assert.match(script, /setAttribute\("aria-disabled", "true"\)/,
-    'the tile looks pressable to an AT user while nothing is behind it');
-  assert.match(script, /Screenshot attachments open with the next release\./,
-    'the tile says nothing about why it will not take a file');
-  assert.doesNotMatch(script, /type="file"|FormData|input\[type=file\]/,
-    'the dialog accepts a screenshot it has nowhere to put — there is no storage bucket in this project');
+test('the screenshots tile takes a picture and says where it goes', () => {
+  /* The tile used to be printed, dashed, and dead, and the honest defence was that this
+     project has no bucket. It has a mail rail instead — the one the assistant already
+     sends documents down — so an inert tile is no longer caution, it is just a broken
+     control that tells the visitor a lie about the next release. */
+  assert.match(script, /\.type = "file"/, 'the tile has no file input, so nothing can be chosen');
+  assert.match(script, /\.multiple = true/, 'a visitor with two pictures is allowed to send one');
+  assert.match(script, /\.accept = "image\//, 'the picker will take anything, and a spreadsheet is not a screenshot');
+  assert.match(script, /new FormData\(\)/, 'a chosen picture has no carrier to the studio');
+  assert.match(script, /https:\/\/formsubmit\.co\/ajax\//, 'the pictures go somewhere this file cannot name');
+  assert.match(script, /fd\.append\("picture", file\)/, 'a picture is not put in the envelope under the field the mail form reads');
+  assert.match(script, /function mailShot\(file, meta, next\)/,
+    'several pictures ride one POST, which is the shape nobody has proven against that endpoint');
+  assert.match(script, /attempt >= 1/, 'a dropped send is never tried a second time');
+  assert.match(script, /COPY\.shotsBusy/, 'the visitor is given no word that pictures are still going');
+  assert.match(script, /COPY\.shotsPartial/, 'a note that arrived without its evidence reads as a full success');
+  assert.match(script, /\.report__picker|class(Name)? = "hp"/, 'the input is left in the layout instead of hidden the way the honeypot hides');
+  /* A press has to reach the picker through a real button: a div with a click handler is
+     nothing to a keyboard or a screen reader. */
+  assert.match(script, /el\("button", "report__shots-open"/, 'the tile is opened by a div, which a keyboard cannot press');
+  assert.match(script, /addEventListener\("dragover"/, 'a dragged picture is refused by the page, not the mail form');
+  assert.match(script, /addEventListener\("drop"/, 'the drop handler does not exist');
+  assert.match(script, /addEventListener\("paste"/, 'a screenshot on the clipboard — the way a screenshot gets anywhere — is ignored');
+  assert.match(script, /clipboardData/, 'the paste handler reads nothing off the clipboard');
+  assert.match(script, /revokeObjectURL/, 'every thumbnail leaks a blob URL for the life of the tab');
+  assert.match(script, /URL\.createObjectURL/, 'the chosen picture is never shown to the visitor');
+  assert.doesNotMatch(script, /shots\.setAttribute\("aria-disabled"/,
+    'the tile still tells an assistive technology that it does nothing');
+  assert.doesNotMatch(script, /Screenshot attachments open with the next release/,
+    'the dialog still promises attachments in a release that has arrived');
+});
+
+test('the picture gate runs, and rejects for the reason it states', () => {
+  const acceptsShot = runnable('acceptsShot', ['SHOT_MAX', 'SHOT_KIND']);
+  const png = { type: "image/png", size: 40 * 1024 };
+  assert.equal(acceptsShot(png), true, 'a small PNG screenshot is rejected');
+  assert.equal(acceptsShot({ type: "image/webp", size: 40 * 1024 }), true, 'a WebP screenshot is rejected');
+  assert.equal(acceptsShot({ type: "video/mp4", size: 40 * 1024 }), false, 'a clip is accepted as a screenshot');
+  assert.equal(acceptsShot({ type: "application/pdf", size: 40 * 1024 }), false, 'a document is accepted as a screenshot');
+  assert.equal(acceptsShot({ type: "", size: 40 * 1024 }), false, 'a file with no type is accepted as a screenshot');
+  assert.equal(acceptsShot({ type: "image/png", size: 11 * 1024 * 1024 }), false,
+    'an 11 MB picture is accepted, and the mail rail the site rides drops it silently');
+  assert.equal(acceptsShot(undefined), false, 'no file passes the gate');
+
+  /* The caption states the limits, the gate enforces them, and the picker offers them. Three
+     lists of one fact is where a change gets forgotten, so they are read against each other. */
+  assert.equal(Number((script.match(/var SHOT_MAX = (\d+) \* 1024 \* 1024/) || [])[1]), 10,
+    'the gate no longer matches the "up to 10 MB each" the visitor is told');
+  assert.equal(Number((script.match(/var SHOT_CAP = (\d+)/) || [])[1]), 3,
+    'the gate no longer matches the "up to 3 pictures" the visitor is told');
+  assert.match(script, /picked\.length >= SHOT_CAP/, 'a fourth picture is pushed past the cap');
+  const kindsLine = script.split("\n").find((l) => l.trim().indexOf("var SHOT_KIND = ") === 0) || "";
+  const kinds = (kindsLine.match(/\(([^)]+)\)/) || [])[1];
+  assert.ok(kinds, 'the picture gate is not an image list this file can read');
+  const offered = ((script.match(/\.accept = "([^"]+)"/) || [])[1] || "")
+    .split(",").map((s) => s.replace("image/", "").trim());
+  const gate = kinds.split("|").flatMap((k) => (k === 'jpe?g' ? ["jpeg", "jpg"] : [k]));
+  for (const type of gate) {
+    if (type === "jpg") continue;
+    assert.ok(offered.indexOf(type) > -1,
+      `the gate takes ${type} but the picker will not offer it — a visitor cannot choose what the dialog says is fine`);
+  }
+});
+
+/* FormSubmit prints the _subject field as the envelope subject. Building it from anything a
+   visitor typed would let one line of the note choose what the studio’s mail client shows, and
+   a reply header is not a place for unsanitised prose. */
+test('the mail subject is built from the page, never from the visitor’s words', () => {
+  const shotSubject = runnable('shotSubject');
+  const line = shotSubject("/catalog.html", 2, 1);
+  assert.match(line, /\/catalog\.html/, 'the subject does not say which page the picture came from');
+  assert.match(line, /1 of 2/, 'the subject does not number the picture, so three mails cannot be reassembled');
+  const src = script.slice(script.indexOf("function shotSubject("));
+  assert.doesNotMatch(src.slice(0, src.indexOf("\n  }") + 4), /text\(\)|note\.value|contact\.value|message/,
+    'the visitor’s note or number reaches the envelope subject');
+});
+
+/* CSP is declared per page, and a page that allows the capture endpoint but not the mail host
+   would offer a tile whose send can only ever fail. Fifty-four pages carry the pill. */
+test('every page that offers the tile is allowed to send it', () => {
+  const blocked = [];
+  for (const page of chromePages) {
+    const html = read(page);
+    const m = html.match(/http-equiv="Content-Security-Policy"[^>]*content="([^"]+)"/);
+    if (!m) { blocked.push(`${page}: no CSP`); continue; }
+    const connect = (m[1].match(/connect-src([^;]*)/) || [])[1] || "";
+    const img = (m[1].match(/img-src([^;]*)/) || [])[1] || "";
+    if (connect.indexOf("formsubmit.co") < 0) blocked.push(`${page}: connect-src`);
+    if (img.indexOf("blob:") < 0) blocked.push(`${page}: img-src has no blob:`);
+  }
+  assert.equal(blocked.length, 0,
+    `the pill hangs on a page whose own CSP blocks the send:\n  ${blocked.join('\n  ')}`);
+});
+
+test('a send that succeeded hands back a form a visitor can use again', () => {
+  /* Locking the fields after a accepted send is right; leaving them locked when the same
+     visitor opens the dialog again is not — they meet a greyed box reading "thanks" with
+     nowhere to write the second thing they remembered. */
+  const body = script.slice(script.indexOf('function open()'), script.indexOf('function close('));
+  assert.match(body, /delete form\.dataset\.sent/, 'a reopened dialog is still marked as already sent');
+  assert.match(body, /note\.disabled = false/, 'the note box stays locked in the dialog the visitor just reopened');
+  assert.match(body, /resetShots|clearShots/, 'the thumbnails from the sent batch are still hanging in the reopened dialog');
+  assert.match(script, /sync\(\);/, 'Send is never re-armed after the reset');
 });
 
 test('it only offers the assistant to pages that have one', () => {
@@ -161,18 +309,31 @@ test('every sentence the dialog paints is a key in all thirty-nine dictionaries'
     `${missing.length} dialog sentences are unkeyed:\n  ${missing.slice(0, 20).join('\n  ')}`);
 
   /* Presence is not translation. A tier dictionary that carries the English bytes is
-     the lazy way through the gate above, so the eight sentences this change introduced
-     are required to read differently in every language but English. */
-  const NEW = keys.filter((k) => /^(Problem feedback|What would you like to share\?|Tell us about a problem|Problem or suggestion \(required\)|Describe what happened|Screenshots$|Screenshot attachments|Ask the studio assistant)/.test(k));
-  assert.equal(NEW.length, 8, `expected the eight new sentences, matched ${NEW.length}`);
+     the lazy way through the gate above, so the sentences this change introduced are
+     required to read differently in every language but English. */
+  const NEW = [
+    "Attach up to 3 pictures — PNG, JPG or WebP, up to 10 MB each",
+    "Drop pictures here, or paste them",
+    "Remove this picture",
+    "That will not do — a picture up to 10 MB, three at most.",
+    "Sending your screenshots…",
+    "Your words reached the studio. The screenshots did not — attach them on the contact page.",
+  ];
+  for (const k of NEW) {
+    assert.ok(keys.indexOf(k) > -1,
+      `the dialog paints "${k}" from outside its copy table, so no dictionary is ever asked for it`);
+  }
   const untranslated = [];
   for (const code of ALL) {
-    if (FULL.includes(code) && code === 'en') continue;
     const d = dict(code);
     for (const k of NEW) if (d[k] === k) untranslated.push(`${code}: ${k.slice(0, 40)}`);
   }
   assert.equal(untranslated.length, 0,
     `left in English:\n  ${untranslated.slice(0, 12).join('\n  ')}`);
+  /* The sentence that told visitors attachments were coming in a later release has no page
+     to speak for now. A key every dictionary still carries is a sentence nobody paints. */
+  assert.equal(keys.indexOf("Screenshot attachments open with the next release."), -1,
+    'the staged-attachments sentence is still in the copy table');
 });
 
 test('the pill is charged to the bottom edge the whole site is sized against', () => {
@@ -244,11 +405,11 @@ test('the feedback key never leaves two dialogs fighting for the tab order', () 
 
 test('the cache ledger moved with the files it caches', () => {
   const ledger = Number((read('index.html').match(/css\/style\.min\.css\?v=(\d+)/) || [])[1]);
-  assert.ok(ledger >= 201, `the stylesheet is still served as v${ledger}; this change rewrote it`);
+  assert.ok(ledger >= 203, `the stylesheet is still served as v${ledger}; this change rewrote it`);
   for (const page of chromePages) {
-    assert.ok((asked('report', page) || 0) >= 3, `${page} caches a pill that leaves the arrival card up`);
+    assert.ok((asked('report', page) || 0) >= 4, `${page} caches a pill whose screenshots tile is still inert`);
     const sheetMatch = read(page).match(/css\/style\.min\.css\?v=(\d+)/);
-    if (sheetMatch) assert.ok(Number(sheetMatch[1]) >= 201, `${page} still caches an older sheet`);
+    if (sheetMatch) assert.ok(Number(sheetMatch[1]) >= 203, `${page} still caches an older sheet`);
     if (/js\/chat\.js/.test(read(page))) {
       assert.ok(asked('chat', page) >= 48, `${page} caches a chat that cannot hear bh-chat-open`);
     }
@@ -256,10 +417,15 @@ test('the cache ledger moved with the files it caches', () => {
       assert.ok(asked('app', page) >= 13, `${page} caches an app.js whose queue ignores the pair`);
     }
   }
-  assert.match(read('js/translate.js'), /i18n\/" \+ code \+ "\.json\?v=(1[2-9]\d|[2-9]\d\d)/,
-    'the dictionaries were rewritten and are still fetched under the old version');
-  assert.match(read('sw.js'), /const CACHE = "brownhub-v(1[7][4-9]|[1-9]\d\d)"/,
-    'an HTML and CSS change shows no installed copy unless the cache name is renamed');
+  /* An alternation here let any three-digit number through, which is not a floor. Read the
+     number and compare it — a ledger check that cannot fail is decoration. */
+  const dictV = Number((read('js/translate.js').match(/i18n\/" \+ code \+ "\.json\?v=(\d+)/) || [])[1]);
+  assert.ok(dictV >= 122, `the dictionaries were rewritten and are still fetched under v${dictV}`);
+  const translateV = Number((read('index.html').match(/js\/translate\.js\?v=(\d+)/) || [])[1]);
+  assert.ok(translateV >= 128, `translate.js changed and the pages still cache it as v${translateV}`);
+  const cache = Number((read('sw.js').match(/const CACHE = "brownhub-v(\d+)"/) || [])[1]);
+  assert.ok(cache >= 178,
+    `installed copies still read brownhub-v${cache}; an HTML and CSS change shows no installed copy unless the cache name is renamed`);
 });
 
 test('the dialog is built, not pasted', () => {
