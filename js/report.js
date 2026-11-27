@@ -478,6 +478,8 @@
     form.setAttribute("aria-busy", "true");
     send.disabled = true;
 
+    /* Both free-text fields are capped here, before they leave the page, and nothing
+       goes out with a session attached — the fetch below asks for no credentials. */
     var payload = {
       topic: "other",
       article: "site",
