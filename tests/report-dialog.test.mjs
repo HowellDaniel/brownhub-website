@@ -21,7 +21,8 @@ const chromePages = (() => {
   const found = [];
   for (const dir of ['', 'blog', 'gallery']) {
     for (const name of readdirSync(path.join(root, dir))) {
-      if (!name.endsWith('.html')) continue;
+      // A leading dot is a rig fixture, and GitHub Pages never serves one anyway.
+      if (name.startsWith('.') || !name.endsWith('.html')) continue;
       const rel = path.join(dir, name);
       if (read(rel).includes('footer__legal')) found.push(rel);
     }
@@ -29,8 +30,36 @@ const chromePages = (() => {
   return found;
 })();
 
-// Pages that are deliberately outside the shell: no stylesheet, no chrome, no chat.
-const SHELLLESS = ['offline.html', 'haul.html', 'google6f29a84dcee68241.html'];
+// Pages deliberately outside the shell that also cannot carry the pill at all.
+const SHELLLESS = ['offline.html', 'google6f29a84dcee68241.html'];
+
+/* Haul wears no site stylesheet on purpose: it renders from its own inline tokens so a
+   visitor arriving from search still sees BrownHub even if the sheet moves. That is a
+   reason the pill has to be dressed inside the page, not a reason to leave the page with
+   no way to tell the studio anything went wrong. A page joins this list only when it owns
+   every rule below in its own <style>. */
+const STANDALONE = ['haul.html'];
+
+/* The rules a pill cannot do without. Without .hp the hidden file picker and the honeypot
+   both turn visible; without the [hidden] arm an author rule beats the UA sheet and the
+   dialog sits as a permanent grid over the page; without the card the words land directly
+   on the scrim. */
+const DIALOG_RULES = ['.report-pill', '.report-modal', '.report-modal[hidden]', '.report-modal__card',
+  '.report-modal__scrim', '.report-form', '.form-field', '.report__note', '.report__shots',
+  '.report__send', '.hp', '.report-open'];
+
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// `(?![-\w])` so `.report-modal` proves its own rule and is not credited to `.report-modal__card`.
+const carries = (css, sel) => new RegExp(esc(sel) + '(?![-\\w])').test(css);
+
+const dressesDialog = (page) => {
+  const html = read(page);
+  const sheetDresses = /href="(?:\.\.\/)?css\/style(?:\.min)?\.css/.test(html)
+    && DIALOG_RULES.every((sel) => carries(sheet, sel));
+  if (sheetDresses) return true;
+  const inline = (html.match(/<style>[\s\S]*?<\/style>/g) || []).join('\n');
+  return DIALOG_RULES.every((sel) => carries(inline, sel));
+};
 
 const script = has('js/report.js') ? read('js/report.js') : '';
 const sheet = read('css/style.css');
@@ -91,7 +120,7 @@ test('the pill stands on every page that wears the site shell, and on no page th
   }
   for (const page of SHELLLESS) {
     assert.doesNotMatch(read(page), /js\/report\.js/,
-      `${page} carries no site stylesheet, so a pill there would paint unstyled or promise a send it cannot make`);
+      `${page} is a fallback or a verification token, not a page a visitor reads — a pill there promises a send nobody is on hand to make`);
   }
   /* A page at the root asks for its scripts bare. `../js/…` there only works because a
      browser clamps above the origin root, which is a courtesy a subpath deploy does not
@@ -104,6 +133,60 @@ test('the pill stands on every page that wears the site shell, and on no page th
     assert.equal(tag[1].split('../').length - 1, depth,
       `${page} sits ${depth} directories down and asks for the pill with the wrong prefix`);
   }
+});
+
+/* Adding the script to a page that owns no stylesheet is the easy half, and it is the half
+   that ships broken: the pill lands as a bare unlabelled button, the dialog opens as a
+   full-bleed grid with nothing inside it, and the file picker plus the honeypot both turn
+   visible. So the claim this file tests is not "haul asks for report.js" but "haul can show
+   a visitor a dialog they would recognise as the studio's". */
+test('a page outside the shell that offers the pill clothes it in its own stylesheet block', () => {
+  for (const page of STANDALONE) {
+    const html = read(page);
+    assert.match(html, /<script src="js\/report\.js\?v=\d+" defer><\/script>/,
+      `${page} is a live indexed page with no way to report a problem and no printed shortcut`);
+    assert.ok((asked('report', page) || 0) >= 4,
+      `${page} caches the pill as v${asked('report', page)}; the screenshots tile needs v4`);
+    assert.ok(!/href="css\/style/.test(html),
+      `${page} is listed as standing alone but now links the shared sheet — move it to chromePages`);
+    const css = (html.match(/<style>[\s\S]*?<\/style>/g) || []).join('\n');
+    const bare = DIALOG_RULES.filter((sel) => !carries(css, sel));
+    assert.equal(bare.length, 0,
+      `${page} asks for the pill but paints it naked: ${bare.join(', ')}`);
+    // The mark must sit above this page's own sticky header, and the dialog above the mark.
+    const pillZ = Number((css.match(/\.report-pill\b[^}]*?z-index:\s*(\d+)/s) || [])[1]
+      || (css.match(/\.report-pair\b[^}]*?z-index:\s*(\d+)/s) || [])[1] || 0);
+    const modalZ = Number((css.match(/\.report-modal\b(?!__)[^}]*?z-index:\s*(\d+)/s) || [])[1] || 0);
+    const headerZ = Number((css.match(/\bheader\b[^}]*?z-index:\s*(\d+)/s) || [])[1] || 0);
+    assert.ok(pillZ > headerZ,
+      `${page}'s sticky header (z${headerZ}) would cover the feedback mark (z${pillZ})`);
+    assert.ok(modalZ > pillZ,
+      `${page} opens its dialog behind the mark that summoned it (modal z${modalZ} vs pill z${pillZ})`);
+  }
+});
+
+/* The repository-wide half of the same claim: any page, in any directory, that asks for the
+   pill has to dress it — from the shared sheet or from its own <style>. A page added tomorrow
+   with the tag and no rules fails here rather than in front of a visitor. */
+test('no page in the repository hangs an undressed pill', () => {
+  const wearers = [];
+  let inlineWearers = 0;
+  for (const dir of ['', 'blog', 'gallery']) {
+    for (const name of readdirSync(path.join(root, dir))) {
+      if (name.startsWith('.') || !name.endsWith('.html')) continue;
+      const rel = path.join(dir, name);
+      const html = read(rel);
+      if (!html.includes('js/report.js')) continue;
+      wearers.push(rel);
+      if (!/href="(?:\.\.\/)?css\/style(?:\.min)?\.css/.test(html)) inlineWearers++;
+    }
+  }
+  assert.ok(wearers.length >= 55, `expected the pages that offer the pill, found ${wearers.length}`);
+  assert.ok(inlineWearers >= 1,
+    'every wearer links the shared sheet — the inline half of this gate never ran and proves nothing');
+  const naked = wearers.filter((page) => !dressesDialog(page));
+  assert.equal(naked.length, 0,
+    `the pill is offered naked on:\n  ${naked.join('\n  ')}`);
 });
 
 test('the keyboard hint is a hint, not a sentence a translator has to render', () => {
@@ -418,11 +501,34 @@ test('the feedback key never leaves two dialogs fighting for the tab order', () 
     'focus is captured from a card that has just been hidden, so closing the dialog strands the caret');
 });
 
+/* The Luggage page dims the room and walks the visitor through it with its own takeover:
+   lights.js paints a full-viewport [aria-modal] at z-index 2147483000 and traps Tab itself.
+   The feedback key is bound on the document with no qualifier, so ⌘⌥F while that was up
+   opened this dialog underneath the veil — hidden=false, caret on the note, and a visitor
+   staring at a darkened room who could not reach anything they had just been told to type.
+   The arrival card above has its own close control to click; a takeover has none the visitor
+   did not ask for, and stealing it would be worse than waiting. So the open is refused while
+   someone else's modal owns the point the visitor is looking at. The centre is hit-tested
+   rather than compared by z-index because the pill's own dialog is legitimately the topmost
+   modal when it is open, and because Element.checkVisibility is too new for Safari. */
+test('the feedback key waits rather than open behind a takeover', () => {
+  const body = script.slice(script.indexOf('function open()'), script.indexOf('function close('));
+  assert.match(body, /if \(occupied\(\)\) return/,
+    'open() paints the dialog while another takeover owns the screen, so the caret lands where the visitor cannot reach it');
+  assert.match(script, /function occupied\(\)/,
+    'the takeover test lives inside open() and cannot be reused by the key handler');
+  const held = script.slice(script.indexOf('function occupied()'), script.indexOf('function occupied()') + 700);
+  assert.match(held, /\[aria-modal="true"\]/,
+    'occupied() does not ask what modal is up');
+  assert.match(held, /elementFromPoint/,
+    'occupied() compares z-index or identity instead of asking what the visitor can actually reach');
+});
+
 test('the cache ledger moved with the files it caches', () => {
   const ledger = Number((read('index.html').match(/css\/style\.min\.css\?v=(\d+)/) || [])[1]);
   assert.ok(ledger >= 203, `the stylesheet is still served as v${ledger}; this change rewrote it`);
   for (const page of chromePages) {
-    assert.ok((asked('report', page) || 0) >= 4, `${page} caches a pill whose screenshots tile is still inert`);
+    assert.ok((asked('report', page) || 0) >= 5, `${page} caches a pill that opens behind a takeover`);
     const sheetMatch = read(page).match(/css\/style\.min\.css\?v=(\d+)/);
     if (sheetMatch) assert.ok(Number(sheetMatch[1]) >= 203, `${page} still caches an older sheet`);
     if (/js\/chat\.js/.test(read(page))) {
@@ -439,7 +545,7 @@ test('the cache ledger moved with the files it caches', () => {
   const translateV = Number((read('index.html').match(/js\/translate\.js\?v=(\d+)/) || [])[1]);
   assert.ok(translateV >= 128, `translate.js changed and the pages still cache it as v${translateV}`);
   const cache = Number((read('sw.js').match(/const CACHE = "brownhub-v(\d+)"/) || [])[1]);
-  assert.ok(cache >= 178,
+  assert.ok(cache >= 179,
     `installed copies still read brownhub-v${cache}; an HTML and CSS change shows no installed copy unless the cache name is renamed`);
 });
 

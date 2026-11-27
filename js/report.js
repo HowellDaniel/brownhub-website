@@ -358,8 +358,29 @@
       });
   }
 
+  /* A page can own the screen without touching this dialog's markup. The Luggage page dims
+     the room for its own takeover: a full-viewport aria-modal sitting above everything here,
+     with its own Tab trap. The key that opens this dialog is bound on the document, so it
+     answered even then, and the visitor was left typing into a form hidden behind a dark room
+     — the caret in a field they could not see, Tab going to the takeover. The arrival card has
+     a close button to click and no mind of its own, so that one gets dismissed; a takeover does
+     not, so this one is waited out. The centre of the viewport is asked who is on top rather
+     than comparing stacking values, because that is the question the visitor is actually
+     asking — and because z-index here is a number on one page and 2147483000 on another. */
+  function occupied() {
+    var modals = doc.querySelectorAll('[aria-modal="true"]:not([hidden])');
+    if (!modals.length) return false;
+    var hit = doc.elementFromPoint(Math.floor(window.innerWidth / 2), Math.floor(window.innerHeight / 2));
+    if (!hit) return false;
+    for (var i = 0; i < modals.length; i++) {
+      if (modals[i] === hit || modals[i].contains(hit)) return true;
+    }
+    return false;
+  }
+
   function open() {
     if (!modal.hidden) return;
+    if (occupied()) return;
     /* The home page's arrival card is a dialog with its own Tab trap, and this one answers
        to a key that works anywhere. Summoned while the card is up, both traps would be live
        at once and Tab would move a caret around a card the visitor cannot see — so the card

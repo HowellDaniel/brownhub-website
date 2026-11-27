@@ -609,7 +609,12 @@ async function main() {
   console.log("rtl card", JSON.stringify(rtlCard));
 
   // ── pages that must stay bare ───────────────────────────────────────────────
-  for (const p of ["offline.html", "haul.html"]) {
+  /* haul.html used to sit here. It now hangs its own pill and clothes it in a block of its
+     own stylesheet, so the claim this loop makes would be false — tools/pill638.mjs is the rig
+     that proves that page. offline.html stays: it is the fallback the service worker paints,
+     and a feedback mark on the page you see when the network is gone asks for a POST that
+     cannot be made. */
+  for (const p of ["offline.html"]) {
     await load(`${ORIGIN}/${p}`, 2600);
     const f = await ev(FACTS);
     gate(`${p} carries no pill it cannot dress`, f.hasPair === false, `pair=${f.hasPair}`);
