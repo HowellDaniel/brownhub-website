@@ -225,6 +225,11 @@
       done.appendChild(a);
       form.replaceWith(done);
       remember({ answered: true });
+      // The function answers 200 to a honeypotted post as well, and the visitor sees
+      // the same receipt either way — but an ad pixel counting spam as a lead would
+      // inflate the one figure the studio spends money against, so only an enquiry
+      // whose hidden field was left empty is reported.
+      if (!honeypot) window.bhPixel("Lead", { page: location.pathname });
       setTimeout(function () { a.focus(); }, 60);
     }
 

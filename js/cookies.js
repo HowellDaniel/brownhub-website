@@ -3,10 +3,11 @@
   centre listing each category, plus a first-visit notice.
 
   Two things on this site read the answer before they do anything: the studio's
-  own page counter (js/leads.js) and the display ad slot (js/store.js). Both stay
-  silent for a visitor who has not said yes, which is what the two descriptions
-  below promise, so this file and the privacy page have to be read together — if
-  one of those features changes, say so here too.
+  own page counter (js/leads.js) and the advertising pair — the display ad slot and
+  the Meta Pixel (js/store.js, js/pixel.js). All three stay silent for a visitor who
+  has not said yes, which is what the two descriptions below promise, so this file and
+  the privacy page have to be read together — if one of those features changes, say so
+  here too.
 */
 (() => {
   "use strict";
@@ -34,7 +35,7 @@
     {
       id: "advertising",
       name: "Advertising and affiliate",
-      desc: "Lets the studio's display ad slot load, along with the cookies Google and its partners set to choose and measure the ads. No advertising script runs here unless you turn this on, and switching it off does not stop a partner setting their own cookie once you have followed a link to them."
+      desc: "Lets the studio's display ad slot load, and lets Meta — the company behind Facebook and Instagram — count which pages you read and whether an enquiry or a payment followed. No advertising script runs here unless you turn this on, and switching it off does not stop a partner setting their own cookie once you have followed a link to them."
     }
   ];
 

@@ -235,6 +235,10 @@
       return;
     }
     record(item, reference);
+    // Meta learns that a paid order happened and what it came to, in the currency the
+    // card already showed. The buyer's address, the item's title and the reference all
+    // stay on this page.
+    window.bhPixel("Purchase", { currency: "GHS", value: item.price });
     // The callback only means Paystack closed a session that ended in payment;
     // the money is confirmed in the dashboard, so nothing here claims more.
     say("We have your payment. We will confirm on WhatsApp and start the work.", reference, item);
