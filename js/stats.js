@@ -37,7 +37,10 @@
 
   function milestone(m) {
     if (!m || !m.title) return "";
-    return '<li class="tl"><p class="tl__date">' + esc(m.date || "") + "</p>" +
+    // <bdi> because the date never passes through a dictionary: metrics.json goes
+    // straight into innerHTML here, so "2022 – 2026" would reach an RTL reader as
+    // "2026 – 2022" and no translation could correct it.
+    return '<li class="tl"><p class="tl__date"><bdi>' + esc(m.date || "") + "</bdi></p>" +
       '<div class="tl__body"><h3 class="tl__title">' + esc(m.title) + "</h3>" +
       (m.text ? '<p class="tl__text">' + esc(m.text) + "</p>" : "") + "</div></li>";
   }

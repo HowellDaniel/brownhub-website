@@ -94,6 +94,14 @@ const NO_GLYPH = {
   'U+026B': 'ɫ — l with stroke, Ewe and Polish; ditto',
   'U+02BC': 'ʼ — the Greek script apostrophe el.json uses; absent from latin',
   'U+200C': '‌ — ZWNJ, Persian word joiner; invisible, so nothing visibly falls back',
+  /* ar/he/ur/fa wrap their opening-hours digit ranges in an LRI...PDI isolate pair
+     so the numbers cannot paint 19:00 before 08:30. The latin faces promise the
+     whole of U+2000-206F as one block, which is there for the dashes and quotes
+     the site really does draw; every Cf character in its tail (U+2060-2069,
+     U+206A-206F) has no glyph in any text face and advances zero, so the block
+     stays and these two are recorded here rather than cut out of the @font-face. */
+  'U+2066': '⁦ — LRI, opens the isolate around an RTL digit range; invisible, ditto',
+  'U+2069': '⁩ — PDI, closes it; invisible, ditto',
 };
 
 const hex = (cp) => `U+${cp.toString(16).toUpperCase().padStart(4, '0')}`;

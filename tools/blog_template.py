@@ -166,7 +166,7 @@ def index_page(posts):
         <p class="eyebrow">Journal</p>
         <h1>What the studio has worked out</h1>
         <p>Notes on getting design right: what a file needs before it goes to a printer, how a brief stops a job, what carrying forty languages costs, and how long a logo really takes. Written by whoever did the work.</p>
-        <p class="jlead" data-i18n-off>%d notes · last one %s</p>
+        <p class="jlead" data-i18n-off><bdi>%d notes · last one %s</bdi></p>
       </div>
     </section>
 
