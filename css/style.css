@@ -6302,3 +6302,46 @@ body.report-open{overflow:hidden}
 @media (prefers-reduced-motion:reduce){
   .report-pill,.report-modal__close{transition:none}
 }
+
+/* ═══════════════ DELIVERED-WORK RAIL (index #reviews) ═══════════════
+   The wall under this heading can only ever carry words a client wrote, so on a slow
+   day it reads as two quotes and a lot of space. This rail carries the other kind of
+   proof: a job, and the page that still holds its pictures. Every figure is a count of
+   what is published on the linked page — add a frame over there and this number has to
+   be edited here. Cards sit on solid --surface, never on the band's plate, because the
+   plate is a photograph and this band is `data-plate="dim"`.
+   Phone: the card turns sideways (figure in its own column, words beside it), which
+   holds eight of them to 1,702px measured at 390×844 — two screens, not the four a
+   stacked figure would cost. */
+.proof{margin-top:var(--t-6)}
+.proof__lead{margin:0 0 var(--t-4);max-width:56ch;color:var(--text-muted);
+  font-size:var(--t-fs-30);line-height:var(--t-lh-body)}
+.proof__grid{display:grid;gap:var(--t-3)}
+@media (min-width:641px){.proof__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--t-gap)}}
+@media (min-width:1080px){.proof__grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.proof__card{display:grid;gap:var(--t-1);align-content:start;padding:var(--t-4);
+  background:var(--surface);border:var(--t-bw) solid var(--border);border-radius:var(--t-r-lg);
+  color:var(--text);text-decoration:none;transition:border-color .2s,transform .2s}
+.proof__card:hover,.proof__card:focus-visible{border-color:var(--accent);transform:translateY(-3px)}
+.proof__fig{display:flex;align-items:baseline;gap:.4rem}
+/* A bare "1–3" in an RTL paragraph reads "3–1": both digits are European numbers,
+   which the bidi algorithm treats as right-to-left, so the neutral en dash between them
+   takes the paragraph direction and reverses the run. `plaintext` re-roots each figure
+   on its own first strong character — no strong character means left-to-right, so the
+   range keeps its order, while the Arabic `Mon–Sat` figure (first strong is AL) still
+   reads right to left the way it should. */
+.proof__num{unicode-bidi:plaintext;font-size:var(--t-fs-60);line-height:1.05;font-weight:var(--t-fw-bold);color:var(--accent-2)}
+.proof__unit{font-size:var(--t-fs-20);color:var(--text-muted)}
+.proof__who{margin-top:var(--t-1);font-size:var(--t-fs-30);font-weight:var(--t-fw-semi);line-height:var(--t-lh-small)}
+.proof__what{margin:0;font-size:var(--t-fs-20);line-height:var(--t-lh-body);color:var(--text-muted)}
+.proof__go{margin-top:var(--t-2);font-size:var(--t-fs-20);font-weight:var(--t-fw-semi);color:var(--accent)}
+@media (max-width:640px){
+  .proof__card{grid-template-columns:auto minmax(0,1fr);column-gap:var(--t-3)}
+  .proof__fig{grid-row:1/span 3;flex-direction:column;align-items:flex-start;gap:.1rem;min-width:4.5rem}
+  .proof__who{margin-top:0}
+  .proof__go{margin-top:var(--t-1)}
+}
+@media (prefers-reduced-motion:reduce){
+  .proof__card{transition:none}
+  .proof__card:hover,.proof__card:focus-visible{transform:none}
+}

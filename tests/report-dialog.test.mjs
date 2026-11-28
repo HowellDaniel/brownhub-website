@@ -526,11 +526,11 @@ test('the feedback key waits rather than open behind a takeover', () => {
 
 test('the cache ledger moved with the files it caches', () => {
   const ledger = Number((read('index.html').match(/css\/style\.min\.css\?v=(\d+)/) || [])[1]);
-  assert.ok(ledger >= 203, `the stylesheet is still served as v${ledger}; this change rewrote it`);
+  assert.ok(ledger >= 204, `the stylesheet is still served as v${ledger}; this change rewrote it`);
   for (const page of chromePages) {
     assert.ok((asked('report', page) || 0) >= 5, `${page} caches a pill that opens behind a takeover`);
     const sheetMatch = read(page).match(/css\/style\.min\.css\?v=(\d+)/);
-    if (sheetMatch) assert.ok(Number(sheetMatch[1]) >= 203, `${page} still caches an older sheet`);
+    if (sheetMatch) assert.ok(Number(sheetMatch[1]) >= 204, `${page} still caches an older sheet`);
     if (/js\/chat\.js/.test(read(page))) {
       assert.ok(asked('chat', page) >= 48, `${page} caches a chat that cannot hear bh-chat-open`);
     }
@@ -541,11 +541,11 @@ test('the cache ledger moved with the files it caches', () => {
   /* An alternation here let any three-digit number through, which is not a floor. Read the
      number and compare it — a ledger check that cannot fail is decoration. */
   const dictV = Number((read('js/translate.js').match(/i18n\/" \+ code \+ "\.json\?v=(\d+)/) || [])[1]);
-  assert.ok(dictV >= 122, `the dictionaries were rewritten and are still fetched under v${dictV}`);
+  assert.ok(dictV >= 123, `the dictionaries were rewritten and are still fetched under v${dictV}`);
   const translateV = Number((read('index.html').match(/js\/translate\.js\?v=(\d+)/) || [])[1]);
-  assert.ok(translateV >= 128, `translate.js changed and the pages still cache it as v${translateV}`);
+  assert.ok(translateV >= 132, `translate.js changed and the pages still cache it as v${translateV}`);
   const cache = Number((read('sw.js').match(/const CACHE = "brownhub-v(\d+)"/) || [])[1]);
-  assert.ok(cache >= 179,
+  assert.ok(cache >= 180,
     `installed copies still read brownhub-v${cache}; an HTML and CSS change shows no installed copy unless the cache name is renamed`);
 });
 
